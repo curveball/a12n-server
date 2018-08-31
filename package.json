@@ -1,16 +1,16 @@
 {
-  "name": "@curveball/new-package",
-  "version": "0.0.1",
-  "description": "Description goes here",
-  "main": "dist/index.js",
+  "name": "@savearthdigital/auth",
+  "version": "0.4.0",
+  "main": "dist/app.js",
   "scripts": {
     "prepublish": "make build",
     "test": "make lint test",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "start": "node ./dist/app.js"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/curveballjs/new-package.git"
+    "url": "git+https://github.com/savearthdigital/auth.git"
   },
   "files": [
     "package.json",
@@ -18,30 +18,18 @@
     "dist",
     "LICENSE"
   ],
-  "keywords": [
-    "http",
-    "framework",
-    "nodejs",
-    "typescript",
-    "push",
-    "http2",
-    "curveball"
-  ],
   "author": "Evert Pot (https://evertpot.com/)",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/curveballjs/new-package/issues"
-  },
-  "homepage": "https://github.com/curveballjs/new-package#readme",
+  "homepage": "https://github.com/savearthdigital/auth#readme",
   "devDependencies": {
     "@types/chai": "^4.1.4",
+    "@types/csv-stringify": "^1.4.2",
     "@types/mocha": "^5.2.3",
-    "@types/node": "^10.3.6",
+    "@types/node": "^10.5.2",
     "@types/sinon": "^5.0.1",
     "chai": "^4.1.2",
     "mocha": "^5.2.0",
     "nyc": "^12.0.2",
-    "sinon": "^6.0.1",
+    "sinon": "^6.1.3",
     "ts-node": "^7.0.0",
     "tslint": "^5.10.0",
     "typescript": "^2.9.2"
@@ -53,6 +41,12 @@
     ]
   },
   "dependencies": {
-    "@curveball/core": "^0.4.1"
+    "@curveball/bodyparser": "^0.1.0",
+    "@curveball/core": "^0.4.3",
+    "@curveball/router": "0.0.1",
+    "csv-stringify": "^3.1.1",
+    "hal-browser": "^0.4.1",
+    "moment": "^2.22.2",
+    "mysql2": "^1.5.3"
   }
 }

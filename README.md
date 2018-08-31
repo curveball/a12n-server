@@ -1,22 +1,4 @@
-Curveball New Package
+SavEARTH auth package
 =====================
 
-This repository serves as the skeleton for all new [Curveball][1] packages.
-
-Installation
-------------
-
-    npm install @curveball/new-package 
-
-
-Getting started
----------------
-
-...
-
-API
----
-
-...
-
-[1]: https://github.com/curveballjs/
+This package hosts the authentication API.

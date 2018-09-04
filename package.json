@@ -1,6 +1,6 @@
 {
   "name": "@savearthdigital/auth",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "main": "dist/app.js",
   "scripts": {
     "prepublish": "make build",

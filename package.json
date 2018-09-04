@@ -43,7 +43,7 @@
   "dependencies": {
     "@curveball/bodyparser": "^0.1.0",
     "@curveball/core": "^0.5.0",
-    "@curveball/router": "0.0.1",
+    "@curveball/router": "^0.1.0",
     "csv-stringify": "^3.1.1",
     "hal-browser": "^0.5.3",
     "moment": "^2.22.2",

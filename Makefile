@@ -1,11 +1,11 @@
 PATH:=./node_modules/.bin:$(PATH)
 SOURCE_FILES:=./src/*.ts
 
-PORT:=8501
+PORT:=8502
 MYSQL_HOST:=127.0.0.1
 MYSQL_PASSWORD:=
 MYSQL_USER:=savearth
-MYSQL_DATABASE:=market
+MYSQL_DATABASE:=auth
 
 export PORT
 export MYSQL_HOST

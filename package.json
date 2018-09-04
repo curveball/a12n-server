@@ -45,7 +45,7 @@
     "@curveball/core": "^0.5.0",
     "@curveball/router": "0.0.1",
     "csv-stringify": "^3.1.1",
-    "hal-browser": "^0.4.1",
+    "hal-browser": "^0.5.3",
     "moment": "^2.22.2",
     "mysql2": "^1.5.3"
   }

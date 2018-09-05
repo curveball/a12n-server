@@ -20,7 +20,6 @@ export function collection(users: User[]) {
 
 }
 
-
 export function item(user: User) {
 
   const hal:any = {

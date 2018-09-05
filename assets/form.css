@@ -1,0 +1,29 @@
+form {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  grid-gap: 20px;
+  font-size: 18px;
+  max-width: 400px;
+  padding: 20px;
+  margin: 10px;
+  border-radius: 2px;
+}
+
+form label {
+  grid-column: 1;
+  text-align: right;
+}
+
+form input, form button {
+  grid-column: 2;
+}
+
+form input {
+  background: rgba(0,0,0,.04);
+  border-width: 0 0 1px 0;
+  border-style: solid;
+  border-color: #8c8c8c;
+  padding: 10px;
+  border-radius: 4px 4px 0 0;
+}
+

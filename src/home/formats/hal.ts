@@ -9,5 +9,5 @@ export default (version: string) => ({
     'sa:user-collection': { href: '/user', title: 'List of users'},
   },
   version: version,
-  
+
 });

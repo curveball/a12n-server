@@ -2,7 +2,7 @@ import { User } from '../types';
 
 export function collection(users: User[]) {
 
-  const hal:any = {
+  const hal: any = {
     _links: {
       self: { href: '/user' },
       item: [],
@@ -22,7 +22,7 @@ export function collection(users: User[]) {
 
 export function item(user: User) {
 
-  const hal:any = {
+  const hal: any = {
     _links: {
       self: { href: '/user/' + user.id, title: user.nickname },
       me: { href: user.identity },

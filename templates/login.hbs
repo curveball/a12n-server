@@ -1,13 +1,17 @@
+{{# if msg}}
+<div class="msg">{{ msg }}</div>
+{{/if}}
+
 <form action="/login" method="post">
 
   <label for="username">User</label>
-  <input type="text" name="username" />
+  <input type="text" name="username" required="required" />
 
   <label for="password">Password</label>
-  <input type="password" name="password" />
+  <input type="password" name="password" required="required" />
 
   <label for="totp">TOTP code</label>
-  <input type="text" name="totp" />
+  <input type="text" name="totp" required="required" />
 
   <input type="submit" value="Login" />
 

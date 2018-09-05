@@ -27,3 +27,11 @@ form input {
   border-radius: 4px 4px 0 0;
 }
 
+.msg {
+  border: 1px solid #f00;
+  background: #ddd;
+  border-radius: 4px;
+  padding: 5px;
+  font-size: 150%;
+  margin: 15px;
+}

@@ -1,5 +1,5 @@
-import { default as handlebars } from 'handlebars';
 import fs from 'fs';
+import { default as handlebars } from 'handlebars';
 
 type Params = { [key: string]: string };
 type Template = (parameters?: Params) => string;

@@ -5,4 +5,4 @@ export type User = {
   nickname: string,
   created: Date
 
-}
+};

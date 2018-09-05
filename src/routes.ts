@@ -1,9 +1,9 @@
 import router from '@curveball/router';
+import blob from './blob/controller';
 import home from './home/controller';
+import login from './login/controller';
 import users from './user/controller/collection';
 import user from './user/controller/item';
-import login from './login/controller';
-import blob from './blob/controller';
 
 const routes = [
   router('/', home),

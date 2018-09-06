@@ -3,6 +3,8 @@ import { Application } from '@curveball/core';
 import halBrowser from 'hal-browser';
 import process from 'process';
 import routes from './routes';
+import session from '@curveball/session';
+import login from './middleware/login';
 
 const app = new Application();
 
@@ -23,9 +25,15 @@ app.use( async (ctx, next) => {
 
 });
 
+app.use(session({
+  store: 'memory'
+}));
+
 app.use(halBrowser({
   title: 'Auth API',
 }));
+
+app.use(login());
 
 app.use((ctx, next) => {
   return bodyParser()(ctx, next);

@@ -9,6 +9,7 @@ class LoginController extends BaseController {
 
   async get(ctx: Context) {
 
+    console.log(ctx.state.session);
     ctx.response.type = 'text/html';
     ctx.response.body = loginForm(ctx.query.msg);
 
@@ -31,7 +32,11 @@ class LoginController extends BaseController {
       return this.redirectToLogin(ctx, 'Incorrect TOTP code');
     }
 
-    ctx.response.body = { status: 'Success!' };
+    ctx.state.session.data = {
+      user: user,
+    };
+    ctx.status = 303;
+    ctx.response.headers.set('Location', '/');
 
   }
 

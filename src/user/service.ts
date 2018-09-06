@@ -86,7 +86,6 @@ export async function validateTotp(user: User, token: string) {
   }
   const secret = result[0][0].secret;
 
-  console.log(otplib);
   return otplib.authenticator.check(token, secret);
 
 }

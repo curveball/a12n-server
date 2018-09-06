@@ -42,7 +42,7 @@
   },
   "dependencies": {
     "@curveball/bodyparser": "^0.2.2",
-    "@curveball/core": "^0.5.0",
+    "@curveball/core": "^0.6.0",
     "@curveball/router": "^0.1.0",
     "@curveball/session": "^0.1.0",
     "@types/bcrypt": "^2.0.0",
@@ -50,7 +50,7 @@
     "@types/otplib": "^7.0.0",
     "bcrypt": "^3.0.0",
     "csv-stringify": "^3.1.1",
-    "hal-browser": "^0.5.3",
+    "hal-browser": "^0.5.4",
     "handlebars": "^4.0.12",
     "moment": "^2.22.2",
     "mysql2": "^1.5.3",

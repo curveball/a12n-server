@@ -1,6 +1,6 @@
 import { Middleware } from '@curveball/core';
 
-const whitelistPath = ['/login', '/assets'];
+const whitelistPath = ['/login', '/assets', '/health'];
 
 export default function (): Middleware {
 

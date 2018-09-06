@@ -22,14 +22,14 @@ run: start
 build: dist/build
 
 docker-build: build
-	docker build -t market-api .
+	docker build -t auth-api .
 
 docker-run:
-	docker run -it --rm --name market-api-01 market-api
+	docker run -it --rm --name auth-api-01 auth-api
 
 docker-push: docker-build
-	docker tag market-api:latest 934324510302.dkr.ecr.us-east-1.amazonaws.com/market-api:latest
-	docker push 934324510302.dkr.ecr.us-east-1.amazonaws.com/market-api:latest
+	docker tag auth-api:latest 934324510302.dkr.ecr.us-east-1.amazonaws.com/auth-api:latest
+	docker push 934324510302.dkr.ecr.us-east-1.amazonaws.com/auth-api:latest
 
 test:
 	nyc mocha

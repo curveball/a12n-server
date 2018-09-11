@@ -2,7 +2,7 @@
 <div class="msg">{{ msg }}</div>
 {{/if}}
 
-<form action="/login" method="post">
+<form action="{{ action }}" method="post">
 
   <label for="username">User</label>
   <input type="text" name="username" required="required" />
@@ -14,5 +14,9 @@
   <input type="text" name="totp" required="required" />
 
   <input type="submit" value="Login" />
+
+  {{#each hiddenFields}}
+    <input type="hidden" name="{{@key}}" value="{{this}}" />
+  {{/each}}
 
 </form>

@@ -1,6 +1,11 @@
 import { Middleware } from '@curveball/core';
 
-const whitelistPath = ['/login', '/assets', '/health'];
+const whitelistPath = [
+  '/login',
+  '/assets',
+  '/health',
+  '/authorize',
+];
 
 export default function (): Middleware {
 
@@ -13,7 +18,6 @@ export default function (): Middleware {
 
     for(const path of whitelistPath) {
 
-      console.log(ctx.path, path);
       if (ctx.path === path || ctx.path.startsWith(path + '/')) {
         // In whitelist
         return next();

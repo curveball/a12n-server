@@ -1,6 +1,6 @@
 import { Context } from '@curveball/core';
 import http from 'http';
-import * as errors from './errors';
+import * as errors from '@curveball/http-errors';
 
 abstract class BaseController {
 

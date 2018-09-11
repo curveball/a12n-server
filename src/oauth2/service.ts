@@ -1,5 +1,5 @@
 import { OAuth2Client, OAuth2Token } from './types';
-import { NotFound } from '../errors';
+import { NotFound } from '@curveball/http-errors';
 import db from '../database';
 import crypto from 'crypto';
 import { User } from '../user/types';

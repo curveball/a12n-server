@@ -1,7 +1,7 @@
 import { Context, Middleware } from '@curveball/core';
 import BaseController from '../../base-controller';
 import { loginForm } from '../formats/html';
-import { BadRequest } from '../../errors';
+import { BadRequest } from '@curveball/http-errors';
 import * as oauth2Service from '../service';
 import { OAuth2Client } from '../types';
 import querystring from 'querystring';

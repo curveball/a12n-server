@@ -14,12 +14,13 @@ app.use( async (ctx, next) => {
   console.log('<= %s', ctx.response.status);
 });
 
+
 app.use( async (ctx, next) => {
 
   try {
     await next();
   } catch (e) {
-    console.log(e);
+    console.error(e);
     throw e;
   }
 

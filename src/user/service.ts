@@ -1,7 +1,7 @@
 import bcrypt from 'bcrypt';
 import * as otplib from 'otplib';
 import database from '../database';
-import { NotFound } from '../errors';
+import { NotFound } from '@curveball/http-errors';
 import { User } from './types';
 
 export async function findAll(): Promise<User[]> {

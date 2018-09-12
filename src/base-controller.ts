@@ -1,6 +1,6 @@
 import { Context } from '@curveball/core';
-import http from 'http';
 import * as errors from '@curveball/http-errors';
+import http from 'http';
 
 abstract class BaseController {
 
@@ -25,7 +25,7 @@ abstract class BaseController {
   allowedMethods(): string[] {
 
     const result = [];
-    for(const method of http.METHODS) {
+    for (const method of http.METHODS) {
 
       if ((<any> this)[method.toLowerCase()] !== undefined) {
         result.push(method);

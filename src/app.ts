@@ -1,10 +1,10 @@
 import bodyParser from '@curveball/bodyparser';
 import { Application } from '@curveball/core';
+import session from '@curveball/session';
 import halBrowser from 'hal-browser';
 import process from 'process';
-import routes from './routes';
-import session from '@curveball/session';
 import login from './middleware/login';
+import routes from './routes';
 
 const app = new Application();
 

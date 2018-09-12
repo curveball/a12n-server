@@ -1,5 +1,5 @@
-import { HttpError } from '@curveball/http-errors';
 import { Context } from '@curveball/core';
+import { HttpError } from '@curveball/http-errors';
 
 interface OAuthError extends HttpError {
   errorCode: string;

@@ -8,7 +8,7 @@ const whitelistPath = [
   '/token',
 ];
 
-export default function (): Middleware {
+export default function(): Middleware {
 
   return (ctx, next): void|Promise<void> => {
 
@@ -17,7 +17,7 @@ export default function (): Middleware {
       return next();
     }
 
-    for(const path of whitelistPath) {
+    for (const path of whitelistPath) {
 
       if (ctx.path === path || ctx.path.startsWith(path + '/')) {
         // In whitelist

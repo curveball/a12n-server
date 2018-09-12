@@ -1,9 +1,11 @@
 import { Context, Middleware } from '@curveball/core';
-import BaseController from '../../base-controller';
-import * as oauthErrors from '../errors';
 import { BadRequest, Forbidden } from '@curveball/http-errors';
-// import * as oauth2Service from '../service';
+import BaseController from '../../base-controller';
 import * as permissionService from '../../permission/service';
+import * as userHal from '../../user/formats/hal';
+import * as userService from '../../user/service';
+import * as oauthErrors from '../errors';
+import * as oauth2Service from '../service';
 
 class ValidateBearerController extends BaseController {
 
@@ -17,8 +19,13 @@ class ValidateBearerController extends BaseController {
       throw new Forbidden('The "validate-bearer" permission is required to call this endpoint');
     }
 
-    // const bearer = ctx.request.body.bearer;
-    
+    const bearer = ctx.request.body.bearer;
+
+    const token = await oauth2Service.getTokenByAccessToken(bearer);
+    const user = await userService.findById(token.userId);
+    const permissions = await permissionService.getPermissionsForUser(user);
+
+    ctx.response.body = userHal.item(user, permissions);
 
   }
 

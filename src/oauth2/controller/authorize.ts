@@ -1,17 +1,17 @@
 import { Context, Middleware } from '@curveball/core';
-import BaseController from '../../base-controller';
-import { loginForm } from '../formats/html';
 import { BadRequest } from '@curveball/http-errors';
-import * as oauth2Service from '../service';
-import { OAuth2Client } from '../types';
 import querystring from 'querystring';
+import BaseController from '../../base-controller';
 import * as UserService from '../../user/service';
 import { User } from '../../user/types';
+import { loginForm } from '../formats/html';
+import * as oauth2Service from '../service';
+import { OAuth2Client } from '../types';
 
 class AuthorizeController extends BaseController {
 
   async get(ctx: Context) {
-    
+
     ctx.response.type = 'text/html';
     if (ctx.query.response_type !== 'token') {
       throw new BadRequest('The "response_type" parameter must be provided, and must be set to "token"');
@@ -27,15 +27,15 @@ class AuthorizeController extends BaseController {
     // const scope = ctx.query.scope;
     const responseType = ctx.query.response_type;
     const redirectUri = ctx.query.redirect_uri;
-      
+
     const oauth2Client = await oauth2Service.getClientByClientId(clientId);
-    
+
     if (!await oauth2Service.validateRedirectUri(oauth2Client, redirectUri)) {
       throw new BadRequest('This value for "redirect_uri" is not permitted.');
     }
 
     if (ctx.state.session.data.user !== undefined) {
-      
+
       return this.loginAndRedirect(
         ctx,
         oauth2Client,
@@ -104,13 +104,13 @@ class AuthorizeController extends BaseController {
       user: user,
     };
 
-    return this.loginAndRedirect(ctx, oauth2Client, params.redirect_uri, params.state); 
+    return this.loginAndRedirect(ctx, oauth2Client, params.redirect_uri, params.state);
 
   }
 
   async loginAndRedirect(ctx: Context, oauth2Client: OAuth2Client, redirectUri: string, state: string|undefined) {
 
-    const token = await oauth2Service.getAccessTokenForUser(
+    const token = await oauth2Service.getTokenForUser(
       oauth2Client,
       ctx.state.session.data.user
     );

@@ -1,7 +1,7 @@
 import { Context, Middleware } from '@curveball/core';
+import * as errors from '@curveball/http-errors';
 import fs from 'fs';
 import BaseController from '../base-controller';
-import * as errors from '@curveball/http-errors';
 
 class BlobController extends BaseController {
 

@@ -1,7 +1,7 @@
 import { Context, Middleware } from '@curveball/core';
+import { Unauthorized } from '@curveball/http-errors';
 import BaseController from '../../base-controller';
 import * as oauthErrors from '../errors';
-import { Unauthorized } from '@curveball/http-errors';
 import parseBasicAuth from '../parse-basic-auth';
 import * as oauth2Service from '../service';
 
@@ -20,8 +20,8 @@ class TokenController extends BaseController {
     if (!await oauth2Service.validateSecret(oauth2Client, basicAuth[1])) {
       throw new Unauthorized('Client id or secret incorrect', 'Basic');
     }
-    
-    const token = await oauth2Service.getAccessTokenForClient(oauth2Client);
+
+    const token = await oauth2Service.getTokenForClient(oauth2Client);
     ctx.response.type = 'application/json';
     ctx.response.body = {
       access_token: token.accessToken,

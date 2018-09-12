@@ -1,8 +1,8 @@
 import { Context, Middleware } from '@curveball/core';
 import BaseController from '../../base-controller';
+import * as permissionService from '../../permission/service';
 import * as hal from '../formats/hal';
 import * as userService from '../service';
-import * as permissionService from '../../permission/service';
 
 class UserController extends BaseController {
 

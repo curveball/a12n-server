@@ -43,7 +43,7 @@
   "dependencies": {
     "@curveball/bodyparser": "^0.2.2",
     "@curveball/core": "^0.6.0",
-    "@curveball/http-errors": "0.0.1",
+    "@curveball/http-errors": "^0.2.0",
     "@curveball/router": "^0.1.0",
     "@curveball/session": "^0.1.0",
     "@types/bcrypt": "^2.0.0",

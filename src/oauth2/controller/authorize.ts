@@ -110,7 +110,7 @@ class AuthorizeController extends BaseController {
 
   async loginAndRedirect(ctx: Context, oauth2Client: OAuth2Client, redirectUri: string, state: string|undefined) {
 
-    const token = await oauth2Service.getAccessToken(
+    const token = await oauth2Service.getAccessTokenForUser(
       oauth2Client,
       ctx.state.session.data.user
     );
@@ -120,7 +120,7 @@ class AuthorizeController extends BaseController {
       'Location',
       redirectUri + '#' + querystring.stringify({
         access_token: token.accessToken,
-        token_type: 'bearer',
+        token_type: token.tokenType,
         expires_in: token.accessTokenExpires - Math.round(Date.now() / 1000),
         state: state
       })

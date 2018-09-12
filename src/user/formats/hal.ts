@@ -20,15 +20,16 @@ export function collection(users: User[]) {
 
 }
 
-export function item(user: User) {
+export function item(user: User, permissions: string[]) {
 
   const hal: any = {
     _links: {
       self: { href: '/user/' + user.id, title: user.nickname },
-      me: { href: user.identity },
+      me: { href: user.identity, title: user.nickname },
     },
     nickName: user.nickname,
     created: user.created,
+    permissions
   };
   return hal;
 

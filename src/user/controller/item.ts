@@ -1,6 +1,6 @@
 import { Context, Middleware } from '@curveball/core';
 import BaseController from '../../base-controller';
-import * as permissionService from '../../permission/service';
+import * as privilegeService from '../../privilege/service';
 import * as hal from '../formats/hal';
 import * as userService from '../service';
 
@@ -11,7 +11,7 @@ class UserController extends BaseController {
     const user = await userService.findById(ctx.state.params.id);
     ctx.response.body = hal.item(
       user,
-      await permissionService.getPermissionsForUser(user)
+      await privilegeService.getPrivilegesForUser(user)
     );
 
   }

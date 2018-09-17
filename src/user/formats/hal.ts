@@ -20,7 +20,7 @@ export function collection(users: User[]) {
 
 }
 
-export function item(user: User, permissions: string[]) {
+export function item(user: User, privileges: string[]) {
 
   const hal: any = {
     _links: {
@@ -29,7 +29,7 @@ export function item(user: User, permissions: string[]) {
     },
     nickName: user.nickname,
     created: user.created,
-    permissions
+    privileges
   };
   return hal;
 

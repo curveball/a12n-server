@@ -1,7 +1,7 @@
 import { Context, Middleware } from '@curveball/core';
 import { BadRequest, NotFound } from '@curveball/http-errors';
 import BaseController from '../../base-controller';
-import * as permissionService from '../../permission/service';
+import * as privilegeService from '../../privilege/service';
 import * as userHal from '../../user/formats/hal';
 import * as userService from '../../user/service';
 import * as oauth2Service from '../service';
@@ -14,8 +14,8 @@ class ValidateTotpController extends BaseController {
       throw new BadRequest('Request must have an application/json Content-Type');
     }
 
-    //if (!await permissionService.hasPermission(ctx.state.session.data.user.id, 'validate-bearer')) {
-    //  throw new Forbidden('The "validate-bearer" permission is required to call this endpoint');
+    //if (!await privilegeService.hasPrivilege(ctx.state.session.data.user.id, 'validate-bearer')) {
+    //  throw new Forbidden('The "validate-bearer" privilege is required to call this endpoint');
     //}
 
     const bearer = ctx.request.body.bearer;
@@ -47,9 +47,9 @@ class ValidateTotpController extends BaseController {
       throw new BadRequest('The one time password was incorrect');
     }
 
-    const permissions = await permissionService.getPermissionsForUser(user);
+    const privileges = await privilegeService.getPrivilegesForUser(user);
 
-    ctx.response.body = userHal.item(user, permissions);
+    ctx.response.body = userHal.item(user, privileges);
 
   }
 

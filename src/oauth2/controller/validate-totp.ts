@@ -6,7 +6,7 @@ import * as userHal from '../../user/formats/hal';
 import * as userService from '../../user/service';
 import * as oauth2Service from '../service';
 
-class ValidateBearerController extends BaseController {
+class ValidateTotpController extends BaseController {
 
   async post(ctx: Context) {
 
@@ -19,15 +19,18 @@ class ValidateBearerController extends BaseController {
     //}
 
     const bearer = ctx.request.body.bearer;
+    const totp = ctx.request.body.totp;
+
     if (!bearer) {
       throw new BadRequest('The "bearer" property must be provided');
+    }
+    if (!totp) {
+      throw new BadRequest('The "totp" property must be provided');
     }
 
     let token;
     try {
-
-      token = await oauth2Service.getTokenByAccessToken(bearer);
-
+       token = await oauth2Service.getTokenByAccessToken(bearer);
     } catch (err) {
 
       if (err instanceof NotFound) {
@@ -39,6 +42,11 @@ class ValidateBearerController extends BaseController {
     }
 
     const user = await userService.findById(token.userId);
+
+    if (!await userService.validateTotp(user, totp)) {
+      throw new BadRequest('The one time password was incorrect');
+    }
+
     const permissions = await permissionService.getPermissionsForUser(user);
 
     ctx.response.body = userHal.item(user, permissions);
@@ -50,7 +58,7 @@ class ValidateBearerController extends BaseController {
 
 
 function mw(): Middleware {
-  const controller = new ValidateBearerController();
+  const controller = new ValidateTotpController();
   return controller.dispatch.bind(controller);
 }
 

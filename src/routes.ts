@@ -6,6 +6,7 @@ import login from './login/controller';
 import oauth2Authorize from './oauth2/controller/authorize';
 import oauth2Token from './oauth2/controller/token';
 import validateBearer from './oauth2/controller/validate-bearer';
+import validateTotp from './oauth2/controller/validate-totp';
 import users from './user/controller/collection';
 import user from './user/controller/item';
 
@@ -18,6 +19,7 @@ const routes = [
   router('/health', health),
   router('/authorize', oauth2Authorize),
   router('/validate-bearer', validateBearer),
+  router('/validate-totp', validateTotp),
   router('/token', oauth2Token),
 ];
 

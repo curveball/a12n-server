@@ -5,6 +5,7 @@ import halBrowser from 'hal-browser';
 import process from 'process';
 import login from './middleware/login';
 import routes from './routes';
+import problem from './middleware/problem';
 
 const app = new Application();
 
@@ -26,12 +27,14 @@ app.use( async (ctx, next) => {
 
 });
 
-app.use(session({
-  store: 'memory'
-}));
-
 app.use(halBrowser({
   title: 'Auth API',
+}));
+
+app.use(problem());
+
+app.use(session({
+  store: 'memory'
 }));
 
 app.use(login());

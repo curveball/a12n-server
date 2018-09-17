@@ -116,6 +116,7 @@ class AuthorizeController extends BaseController {
     );
 
     ctx.status = 302;
+    ctx.response.headers.set('Cache-Control', 'no-cache');
     ctx.response.headers.set(
       'Location',
       redirectUri + '#' + querystring.stringify({

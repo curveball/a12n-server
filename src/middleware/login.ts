@@ -6,6 +6,7 @@ const whitelistPath = [
   '/health',
   '/authorize',
   '/token',
+  '/validate-bearer',
 ];
 
 export default function(): Middleware {

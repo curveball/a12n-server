@@ -1,5 +1,5 @@
 PATH:=./node_modules/.bin:$(PATH)
-SOURCE_FILES:=./src/*.ts
+SOURCE_FILES:=./src/*.ts ./src/*/*.ts src/*/*/*.ts
 
 PORT:=8502
 MYSQL_HOST:=127.0.0.1

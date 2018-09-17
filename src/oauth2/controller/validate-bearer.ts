@@ -1,5 +1,5 @@
 import { Context, Middleware } from '@curveball/core';
-import { BadRequest, Forbidden } from '@curveball/http-errors';
+import { BadRequest } from '@curveball/http-errors';
 import BaseController from '../../base-controller';
 import * as permissionService from '../../permission/service';
 import * as userHal from '../../user/formats/hal';
@@ -15,9 +15,9 @@ class ValidateBearerController extends BaseController {
       throw new BadRequest('Request must have an application/json Content-Type');
     }
 
-    if (!await permissionService.hasPermission(ctx.state.session.data.user.id, 'validate-bearer')) {
-      throw new Forbidden('The "validate-bearer" permission is required to call this endpoint');
-    }
+    //if (!await permissionService.hasPermission(ctx.state.session.data.user.id, 'validate-bearer')) {
+    //  throw new Forbidden('The "validate-bearer" permission is required to call this endpoint');
+    //}
 
     const bearer = ctx.request.body.bearer;
 

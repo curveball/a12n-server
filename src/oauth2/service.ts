@@ -116,6 +116,15 @@ export async function getTokenForClient(client: OAuth2Client): Promise<OAuth2Tok
 
 }
 
+type OAuth2TokenRow = {
+  oauth2_client_id: number,
+  access_token: string,
+  refresh_token: string,
+  user_id: number,
+  access_token_expires: number,
+  refresh_token_expires: number
+};
+
 /**
  * Returns Token information for an existing Access Token.
  *
@@ -145,13 +154,13 @@ export async function getTokenByAccessToken(accessToken: string): Promise<OAuth2
     throw new NotFound('Access token not recognized');
   }
 
-  const row = result[0][0];
+  const row:OAuth2TokenRow = result[0][0];
   return {
     accessToken: row.access_token,
     refreshToken: row.refresh_token,
     accessTokenExpires: row.access_token_expires,
     tokenType: 'bearer',
-    userId: row.userId,
+    userId: row.user_id,
   };
 
 }

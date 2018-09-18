@@ -1,4 +1,9 @@
-import { User } from '../types';
+import { User, UserType } from '../types';
+
+const TypeMap = new Map<UserType, string>([
+  [UserType.user, 'user'],
+  [UserType.app, 'app'],
+]);
 
 export function collection(users: User[]) {
 
@@ -29,6 +34,7 @@ export function item(user: User, privileges: string[]) {
     },
     nickName: user.nickname,
     created: user.created,
+    type: TypeMap.get(user.type),
     privileges
   };
   return hal;

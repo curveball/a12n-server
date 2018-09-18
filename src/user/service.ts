@@ -4,9 +4,17 @@ import * as otplib from 'otplib';
 import database from '../database';
 import { User } from './types';
 
+const fieldNames = [
+  'id',
+  'identity',
+  'nickname',
+  'created',
+  'type',
+];
+
 export async function findAll(): Promise<User[]> {
 
-  const query = 'SELECT id, identity, nickname, created FROM users WHERE active = 1';
+  const query = `SELECT ${fieldNames.join(', ')} FROM users WHERE active = 1`;
   const result = await database.query(query);
 
   const users: User[] = [];
@@ -19,7 +27,7 @@ export async function findAll(): Promise<User[]> {
 
 export async function findById(id: number): Promise<User> {
 
-  const query = 'SELECT id, identity, nickname, created FROM users WHERE active = 1 AND id = ?';
+  const query = `SELECT ${fieldNames.join(', ')} FROM users WHERE active = 1 AND id = ?`;
   const result = await database.query(query, [id]);
 
   if (result[0].length !== 1) {
@@ -31,7 +39,7 @@ export async function findById(id: number): Promise<User> {
 }
 export async function findByIdentity(identity: string): Promise<User> {
 
-  const query = 'SELECT id, identity, nickname, created FROM users WHERE active = 1 AND identity = ?';
+  const query = `SELECT ${fieldNames.join(', ')} FROM users WHERE active = 1 AND identity = ?`;
   const result = await database.query(query, [identity]);
 
   if (result[0].length !== 1) {
@@ -95,6 +103,7 @@ type UserRecord = {
   identity: string,
   nickname: string,
   created: number,
+  type: number,
 };
 
 function recordToModel(user: UserRecord): User {
@@ -103,7 +112,8 @@ function recordToModel(user: UserRecord): User {
     id: user.id,
     identity: user.identity,
     nickname: user.nickname,
-    created: new Date(user.created * 1000)
+    created: new Date(user.created * 1000),
+    type: user.type,
   };
 
 }

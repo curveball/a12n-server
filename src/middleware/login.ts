@@ -7,6 +7,7 @@ const whitelistPath = [
   '/authorize',
   '/token',
   '/validate-bearer',
+  '/validate-totp',
 ];
 
 export default function(): Middleware {

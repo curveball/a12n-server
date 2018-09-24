@@ -14,7 +14,7 @@ export default function(): Middleware {
 
   return (ctx, next): void|Promise<void> => {
 
-    if (ctx.state.session.data.user) {
+    if (ctx.state.session.user) {
       // User is logged in.
       return next();
     }

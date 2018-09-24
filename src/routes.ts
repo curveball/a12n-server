@@ -9,6 +9,7 @@ import validateBearer from './oauth2/controller/validate-bearer';
 import validateTotp from './oauth2/controller/validate-totp';
 import users from './user/controller/collection';
 import user from './user/controller/item';
+import logout from './logout/controller';
 
 const routes = [
   router('/', home),
@@ -21,6 +22,7 @@ const routes = [
   router('/validate-bearer', validateBearer),
   router('/validate-totp', validateTotp),
   router('/token', oauth2Token),
+  router('/logout', logout),
 ];
 
 export default routes;

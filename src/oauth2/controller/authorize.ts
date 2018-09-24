@@ -34,7 +34,7 @@ class AuthorizeController extends BaseController {
       throw new BadRequest('This value for "redirect_uri" is not permitted.');
     }
 
-    if (ctx.state.session.data.user !== undefined) {
+    if (ctx.state.session.user !== undefined) {
 
       return this.loginAndRedirect(
         ctx,
@@ -100,7 +100,7 @@ class AuthorizeController extends BaseController {
       return this.redirectToLogin(ctx, { ...params, msg: 'Incorrect TOTP code'});
     }
 
-    ctx.state.session.data = {
+    ctx.state.session = {
       user: user,
     };
 
@@ -112,7 +112,7 @@ class AuthorizeController extends BaseController {
 
     const token = await oauth2Service.getTokenForUser(
       oauth2Client,
-      ctx.state.session.data.user
+      ctx.state.session.user
     );
 
     ctx.status = 302;

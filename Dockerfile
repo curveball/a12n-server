@@ -5,13 +5,10 @@ RUN mkdir /opt/app
 WORKDIR /opt/app
 COPY package.json package.json
 COPY node_modules node_modules
+RUN npm rebuild bcrypt --update-binary
+
 COPY assets assets
 COPY templates templates
-RUN npm rebuild bcrypt --update-binary
 COPY dist dist
 
-RUN ls -la
-
-
-RUN pwd
 CMD node dist/app.js 

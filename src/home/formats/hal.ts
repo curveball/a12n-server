@@ -8,6 +8,7 @@ export default (version: string) => ({
     'sa:validate-bearer': { href: '/validate-bearer', title: 'Validate a OAuth2 bearer token'},
     'sa:validate-totp': { href: '/validate-totp', title: 'Validate a TOTP 2FA token + bearer token'},
     'sa:user-collection': { href: '/user', title: 'List of users'},
+    'oauth_server_metadata_uri' : { href: '/.well-known/oauth-authorization-server', title: 'OAuth 2.0 Authorization Server Metadata' }
   },
   version: version,
 

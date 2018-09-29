@@ -5,6 +5,7 @@ import home from './home/controller';
 import login from './login/controller';
 import oauth2Authorize from './oauth2/controller/authorize';
 import oauth2Token from './oauth2/controller/token';
+import oauth2Metadata from './oauth2/controller/metadata';
 import validateBearer from './oauth2/controller/validate-bearer';
 import validateTotp from './oauth2/controller/validate-totp';
 import users from './user/controller/collection';
@@ -23,6 +24,7 @@ const routes = [
   router('/validate-totp', validateTotp),
   router('/token', oauth2Token),
   router('/logout', logout),
+  router('/.well-known/oauth-authorization-server', oauth2Metadata),
 ];
 
 export default routes;

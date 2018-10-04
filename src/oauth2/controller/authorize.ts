@@ -7,6 +7,8 @@ import { User } from '../../user/types';
 import { loginForm } from '../formats/html';
 import * as oauth2Service from '../service';
 import { OAuth2Client } from '../types';
+import { EventType } from '../../log/types';
+import log from '../../log/service';
 
 class AuthorizeController extends BaseController {
 
@@ -31,6 +33,7 @@ class AuthorizeController extends BaseController {
     const oauth2Client = await oauth2Service.getClientByClientId(clientId);
 
     if (!await oauth2Service.validateRedirectUri(oauth2Client, redirectUri)) {
+      log(EventType.oauth2BadRedirect, ctx);
       throw new BadRequest('This value for "redirect_uri" is not permitted.');
     }
 
@@ -75,6 +78,7 @@ class AuthorizeController extends BaseController {
     const oauth2Client = await oauth2Service.getClientByClientId(clientId);
 
     if (!await oauth2Service.validateRedirectUri(oauth2Client, redirectUri)) {
+      log(EventType.oauth2BadRedirect, ctx);
       throw new BadRequest('This value for "redirect_uri" is not permitted.');
     }
 
@@ -93,16 +97,19 @@ class AuthorizeController extends BaseController {
     }
 
     if (!await UserService.validatePassword(user, ctx.request.body.password)) {
+      log(EventType.loginFailed, ctx.ip(), user.id);
       return this.redirectToLogin(ctx, { ...params, msg: 'Incorrect username or password'});
     }
 
     if (!await UserService.validateTotp(user, ctx.request.body.totp)) {
+      log(EventType.totpFailed, ctx.ip(), user.id);
       return this.redirectToLogin(ctx, { ...params, msg: 'Incorrect TOTP code'});
     }
 
     ctx.state.session = {
       user: user,
     };
+    log(EventType.loginSuccess, ctx);
 
     return this.loginAndRedirect(ctx, oauth2Client, params.redirect_uri, params.state);
 

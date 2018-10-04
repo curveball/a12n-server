@@ -14,9 +14,9 @@ class ValidateTotpController extends BaseController {
       throw new BadRequest('Request must have an application/json Content-Type');
     }
 
-    //if (!await privilegeService.hasPrivilege(ctx.state.session.data.user.id, 'validate-bearer')) {
+    // if (!await privilegeService.hasPrivilege(ctx.state.session.data.user.id, 'validate-bearer')) {
     //  throw new Forbidden('The "validate-bearer" privilege is required to call this endpoint');
-    //}
+    // }
 
     const bearer = ctx.request.body.bearer;
     const totp = ctx.request.body.totp;
@@ -54,7 +54,6 @@ class ValidateTotpController extends BaseController {
   }
 
 }
-
 
 
 function mw(): Middleware {

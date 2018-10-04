@@ -1,5 +1,5 @@
 import { Middleware } from '@curveball/core';
-import { isClientError, isHttpError, HttpProblem } from '@curveball/http-errors';
+import { HttpProblem, isClientError, isHttpError } from '@curveball/http-errors';
 
 export default function(): Middleware {
 
@@ -17,11 +17,11 @@ export default function(): Middleware {
       if (isHttpError(e)) {
         status = e.httpCode;
         clientError = isClientError(e);
-        if ((<HttpProblem>e).title) {
-          title = (<HttpProblem>e).title;
+        if ((<HttpProblem> e).title) {
+          title = (<HttpProblem> e).title;
         }
-        if ((<HttpProblem>e).detail) {
-          detail = (<HttpProblem>e).detail;
+        if ((<HttpProblem> e).detail) {
+          detail = (<HttpProblem> e).detail;
         }
 
       } else {
@@ -46,6 +46,6 @@ export default function(): Middleware {
 
     }
 
-  }
+  };
 
-};
+}

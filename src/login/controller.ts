@@ -1,9 +1,11 @@
 import { Context, Middleware } from '@curveball/core';
 import querystring from 'querystring';
 import BaseController from '../base-controller';
+import log from '../log/service';
 import * as UserService from '../user/service';
 import { User } from '../user/types';
 import { loginForm } from './formats/html';
+import { EventType } from '../log/types';
 
 class LoginController extends BaseController {
 
@@ -34,6 +36,7 @@ class LoginController extends BaseController {
     ctx.state.session = {
       user: user,
     };
+    log(ctx, EventType.loginSuccess);
     ctx.status = 303;
     ctx.response.headers.set('Location', '/');
 

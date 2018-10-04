@@ -154,7 +154,7 @@ export async function getTokenByAccessToken(accessToken: string): Promise<OAuth2
     throw new NotFound('Access token not recognized');
   }
 
-  const row:OAuth2TokenRow = result[0][0];
+  const row: OAuth2TokenRow = result[0][0];
   return {
     accessToken: row.access_token,
     refreshToken: row.refresh_token,

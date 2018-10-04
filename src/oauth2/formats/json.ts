@@ -1,6 +1,6 @@
 export function metadata() {
 
-  return <any>{
+  return <any> {
     issuer: '/',
     authorization_endpoint: '/authorize',
     token_endpoint: '/token',

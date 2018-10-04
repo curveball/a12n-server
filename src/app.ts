@@ -4,8 +4,8 @@ import session from '@curveball/session';
 import halBrowser from 'hal-browser';
 import process from 'process';
 import login from './middleware/login';
-import routes from './routes';
 import problem from './middleware/problem';
+import routes from './routes';
 
 const app = new Application();
 

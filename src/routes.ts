@@ -3,14 +3,14 @@ import blob from './blob/controller';
 import health from './health/controller';
 import home from './home/controller';
 import login from './login/controller';
+import logout from './logout/controller';
 import oauth2Authorize from './oauth2/controller/authorize';
-import oauth2Token from './oauth2/controller/token';
 import oauth2Metadata from './oauth2/controller/metadata';
+import oauth2Token from './oauth2/controller/token';
 import validateBearer from './oauth2/controller/validate-bearer';
 import validateTotp from './oauth2/controller/validate-totp';
 import users from './user/controller/collection';
 import user from './user/controller/item';
-import logout from './logout/controller';
 
 const routes = [
   router('/', home),

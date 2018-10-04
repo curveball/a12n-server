@@ -7,7 +7,7 @@ class MetadataController extends BaseController {
   async get(ctx: Context) {
 
     ctx.response.type = 'application/json';
-    ctx.response.body = metadata(); 
+    ctx.response.body = metadata();
 
   }
 

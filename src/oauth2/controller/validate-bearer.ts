@@ -44,7 +44,6 @@ class ValidateBearerController extends BaseController {
 }
 
 
-
 function mw(): Middleware {
   const controller = new ValidateBearerController();
   return controller.dispatch.bind(controller);

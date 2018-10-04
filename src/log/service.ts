@@ -10,14 +10,20 @@ export default async function log(
   arg2?: number,
 ) {
 
-  let userId, ip;
   if (isContext(arg1)) {
-    userId = arg1.state.user.id ? arg1.state.user.id : null;
-    ip = arg1.ip();
+    addLogEntry(
+      eventType,
+      arg1.ip(),
+      arg1.state.session.user && arg1.state.session.user.id ? arg1.state.session.user.id : null
+    );
   } else {
-    ip = arg1;
-    userId = arg2;
+    addLogEntry(eventType, arg1, arg2);
   }
+
+}
+
+export async function addLogEntry(eventType: EventType, ip: string, userId: number): Promise<void> {
+
   await db.query('INSERT INTO user_log SET time = UNIX_TIMESTAMP(), ?', {
     user_id: userId,
     event_type: eventType,

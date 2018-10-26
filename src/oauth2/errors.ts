@@ -29,3 +29,10 @@ export class UnsupportedGrantType extends Error implements OAuthError {
   errorCode = 'unsupported_grant_type';
 
 }
+
+export class UnauthorizedClient extends Error implements OAuthError {
+
+  httpCode = 400;
+  errorCode = 'unauthorized_client';
+
+}

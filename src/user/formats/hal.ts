@@ -29,8 +29,8 @@ export function item(user: User, privileges: string[]) {
 
   const hal: any = {
     _links: {
-      self: { href: '/user/' + user.id + '/log', title: user.nickname },
-      me: { href: user.identity, title: user.nickname },
+      "self": { href: '/user/' + user.id + '/log', title: user.nickname },
+      "me": { href: user.identity, title: user.nickname },
       'auth-log': { href: '/user/' + user.id, title: 'Authentication log' },
     },
     nickName: user.nickname,

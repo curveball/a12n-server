@@ -21,7 +21,7 @@ class TokenController extends BaseController {
       throw new Unauthorized('Client id or secret incorrect', 'Basic');
     }
 
-    const token = await oauth2Service.getTokenForClient(oauth2Client);
+    const token = await oauth2Service.generateTokenForClient(oauth2Client);
     ctx.response.type = 'application/json';
     ctx.response.body = {
       access_token: token.accessToken,
@@ -40,6 +40,7 @@ class TokenController extends BaseController {
       await super.dispatch(ctx);
     } catch (err) {
       if (err.errorCode) {
+        console.log(err);
         oauthErrors.serializeError(ctx, err);
       } else {
         throw err;

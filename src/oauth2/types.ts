@@ -12,3 +12,7 @@ export type OAuth2Token = {
   tokenType: 'bearer',
   userId: number,
 };
+
+export type OAuth2Code = {
+  code: string;
+};

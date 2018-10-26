@@ -3,7 +3,7 @@ import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import db from '../database';
 import { User } from '../user/types';
-import { OAuth2Client, OAuth2Token } from './types';
+import { OAuth2Client, OAuth2Code, OAuth2Token } from './types';
 
 // 10 minutes
 const ACCESS_TOKEN_EXPIRY = 600;
@@ -44,13 +44,12 @@ export async function validateRedirectUri(client: OAuth2Client, redirectUrl: str
 
 }
 
-
 /**
  * This function is used for the implicit grant oauth2 flow.
  *
  * This function creates an access token for a specific user.
  */
-export async function getTokenForUser(client: OAuth2Client, user: User): Promise<OAuth2Token> {
+export async function generateTokenForUser(client: OAuth2Client, user: User): Promise<OAuth2Token> {
 
   const accessToken = crypto.randomBytes(32).toString('base64').replace('=', '');
   const refreshToken = crypto.randomBytes(32).toString('base64').replace('=', '');
@@ -87,7 +86,7 @@ export async function getTokenForUser(client: OAuth2Client, user: User): Promise
  *
  * The client acts on behalf of itself, not someone else.
  */
-export async function getTokenForClient(client: OAuth2Client): Promise<OAuth2Token> {
+export async function generateTokenForClient(client: OAuth2Client): Promise<OAuth2Token> {
 
   const accessToken = crypto.randomBytes(32).toString('base64').replace('=', '');
   const refreshToken = crypto.randomBytes(32).toString('base64').replace('=', '');
@@ -112,6 +111,30 @@ export async function getTokenForClient(client: OAuth2Client): Promise<OAuth2Tok
     accessTokenExpires: accessTokenExpires,
     tokenType: 'bearer',
     userId: client.userId,
+  };
+
+}
+
+/**
+ * This function is used for the authorization_code grant flow.
+ *
+ * This function creates an code for a user. The code is later exchanged for
+ * a oauth2 access token.
+ */
+export async function generateCodeForUser(client: OAuth2Client, user: User): Promise<OAuth2Code> {
+
+  const code = crypto.randomBytes(32).toString('base64').replace('=', '');
+
+  const query = 'INSERT INTO oauth2_codes SET created = UNIX_TIMESTAMP(), ?';
+
+  await db.query(query, {
+    client_id: client.id,
+    user_id: user.id,
+    code: code,
+  });
+
+  return {
+    code: code
   };
 
 }

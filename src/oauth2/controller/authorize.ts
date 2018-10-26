@@ -2,21 +2,22 @@ import { Context, Middleware } from '@curveball/core';
 import { BadRequest } from '@curveball/http-errors';
 import querystring from 'querystring';
 import BaseController from '../../base-controller';
+import log from '../../log/service';
+import { EventType } from '../../log/types';
 import * as UserService from '../../user/service';
 import { User } from '../../user/types';
 import { loginForm } from '../formats/html';
 import * as oauth2Service from '../service';
 import { OAuth2Client } from '../types';
-import { EventType } from '../../log/types';
-import log from '../../log/service';
 
 class AuthorizeController extends BaseController {
 
   async get(ctx: Context) {
 
     ctx.response.type = 'text/html';
-    if (ctx.query.response_type !== 'token') {
-      throw new BadRequest('The "response_type" parameter must be provided, and must be set to "token"');
+
+    if (!['token', 'code'].includes(ctx.query.response_type)) {
+      throw new BadRequest('The "response_type" parameter must be provided, and must be "token" or "code"');
     }
     if (!ctx.query.client_id) {
       throw new BadRequest('The "client_id" parameter must be provided');
@@ -39,12 +40,11 @@ class AuthorizeController extends BaseController {
 
     if (ctx.state.session.user !== undefined) {
 
-      return this.loginAndRedirect(
-        ctx,
-        oauth2Client,
-        redirectUri,
-        state,
-      );
+      if (responseType === 'token') {
+        return this.tokenRedirect(ctx, oauth2Client, redirectUri, state);
+      } else {
+        return this.codeRedirect(ctx, oauth2Client, redirectUri, state);
+      }
 
     } else {
       ctx.response.body = loginForm(
@@ -62,8 +62,8 @@ class AuthorizeController extends BaseController {
 
   async post(ctx: Context) {
 
-    if (ctx.request.body.response_type !== 'token') {
-      throw new BadRequest('The "response_type" parameter must be provided, and must be set to "token"');
+    if (!['token', 'code'].includes(ctx.request.body.response_type)) {
+      throw new BadRequest('The "response_type" parameter must be provided, and must be set to "token" or "code"');
     }
     if (!ctx.request.body.client_id) {
       throw new BadRequest('The "client_id" parameter must be provided');
@@ -111,13 +111,18 @@ class AuthorizeController extends BaseController {
     };
     log(EventType.loginSuccess, ctx);
 
-    return this.loginAndRedirect(ctx, oauth2Client, params.redirect_uri, params.state);
+    if (responseType === 'token') {
+      return this.tokenRedirect(ctx, oauth2Client, params.redirect_uri, params.state);
+    } else {
+      return this.codeRedirect(ctx, oauth2Client, params.redirect_uri, params.state);
+    }
 
-  }
 
-  async loginAndRedirect(ctx: Context, oauth2Client: OAuth2Client, redirectUri: string, state: string|undefined) {
+ }
 
-    const token = await oauth2Service.getTokenForUser(
+  async tokenRedirect(ctx: Context, oauth2Client: OAuth2Client, redirectUri: string, state: string|undefined) {
+
+    const token = await oauth2Service.generateTokenForUser(
       oauth2Client,
       ctx.state.session.user
     );
@@ -130,6 +135,25 @@ class AuthorizeController extends BaseController {
         access_token: token.accessToken,
         token_type: token.tokenType,
         expires_in: token.accessTokenExpires - Math.round(Date.now() / 1000),
+        state: state
+      })
+    );
+
+  }
+
+  async codeRedirect(ctx: Context, oauth2Client: OAuth2Client, redirectUri: string, state: string|undefined) {
+
+    const code = await oauth2Service.generateCodeForUser(
+      oauth2Client,
+      ctx.state.session.user
+    );
+
+    ctx.status = 302;
+    ctx.response.headers.set('Cache-Control', 'no-cache');
+    ctx.response.headers.set(
+      'Location',
+      redirectUri + '?' + querystring.stringify({
+        code: code.code,
         state: state
       })
     );

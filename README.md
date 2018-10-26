@@ -1,4 +1,4 @@
-SavEARTH auth package
-=====================
+Authentication API
+==================
 
-This package hosts the authentication API.
+

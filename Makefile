@@ -4,7 +4,7 @@ SOURCE_FILES:=$(shell find src/ -type f -name '*.ts')
 PORT:=8502
 MYSQL_HOST:=127.0.0.1
 MYSQL_PASSWORD:=
-MYSQL_USER:=savearth
+MYSQL_USER:=root
 MYSQL_DATABASE:=auth
 
 export PORT
@@ -26,10 +26,6 @@ docker-build: build
 
 docker-run:
 	docker run -it --rm --name auth-api-01 auth-api
-
-docker-push: docker-build
-	docker tag auth-api:latest 934324510302.dkr.ecr.us-east-1.amazonaws.com/auth-api:latest
-	docker push 934324510302.dkr.ecr.us-east-1.amazonaws.com/auth-api:latest
 
 test:
 	nyc mocha
@@ -54,5 +50,3 @@ dist/build: $(SOURCE_FILES)
 inspect: build
 	node --inspect dist/app.js
 
-deploy: build
-	gcloud app deploy

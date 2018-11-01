@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.3.3 (2018-11-01)
+------------------
+
+* Added a few missing files from npm distribution.
+* Updated dependencies.
+
+
 0.3.2 (2018-11-01)
 ------------------
 

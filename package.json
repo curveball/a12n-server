@@ -1,6 +1,6 @@
 {
   "name": "a12n-server",
-  "version": "0.3.2",
+  "version": "0.3.3",
   "main": "dist/index.js",
   "description": "A ready-to-launch User and Authentication system for those that don't want to build it",
   "scripts": {
@@ -17,7 +17,9 @@
     "package.json",
     "README.md",
     "dist",
-    "LICENSE"
+    "LICENSE",
+    "assets",
+    "templates"
   ],
   "author": "Evert Pot (https://evertpot.com/)",
   "homepage": "https://github.com/evert/auth-api#readme",
@@ -43,8 +45,8 @@
   },
   "dependencies": {
     "@curveball/bodyparser": "^0.3.0",
-    "@curveball/core": "^0.7.0",
-    "@curveball/http-errors": "^0.2.2",
+    "@curveball/core": "^0.8.1",
+    "@curveball/http-errors": "^0.3.0",
     "@curveball/router": "^0.2.0",
     "@curveball/session": "^0.3.0",
     "@types/bcrypt": "^2.0.0",

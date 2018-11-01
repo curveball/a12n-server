@@ -7,7 +7,7 @@ interface OAuthError extends HttpError {
 
 export function serializeError(ctx: Context, err: OAuthError) {
 
-  ctx.response.status = err.httpCode;
+  ctx.response.status = err.httpStatus;
   ctx.response.headers.set('Content-Type', 'application/json');
   ctx.response.body = {
     error: err.errorCode,
@@ -18,21 +18,21 @@ export function serializeError(ctx: Context, err: OAuthError) {
 
 export class InvalidRequest extends Error implements OAuthError {
 
-  httpCode = 400;
+  httpStatus = 400;
   errorCode = 'invalid_request';
 
 }
 
 export class UnsupportedGrantType extends Error implements OAuthError {
 
-  httpCode = 400;
+  httpStatus = 400;
   errorCode = 'unsupported_grant_type';
 
 }
 
 export class UnauthorizedClient extends Error implements OAuthError {
 
-  httpCode = 400;
+  httpStatus = 400;
   errorCode = 'unauthorized_client';
 
 }

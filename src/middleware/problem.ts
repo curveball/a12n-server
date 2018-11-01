@@ -15,7 +15,7 @@ export default function(): Middleware {
       let detail;
 
       if (isHttpError(e)) {
-        status = e.httpCode;
+        status = e.httpStatus;
         clientError = isClientError(e);
         if ((<HttpProblem> e).title) {
           title = (<HttpProblem> e).title;

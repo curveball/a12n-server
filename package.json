@@ -1,5 +1,5 @@
 {
-  "name": "a10e-server",
+  "name": "a12n-server",
   "version": "0.3.1",
   "main": "dist/app.js",
   "description": "A ready-to-launch User and Authentication system for those that don't want to build it",

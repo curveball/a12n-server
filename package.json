@@ -1,7 +1,7 @@
 {
   "name": "a12n-server",
   "version": "0.3.1",
-  "main": "dist/app.js",
+  "main": "dist/index.js",
   "description": "A ready-to-launch User and Authentication system for those that don't want to build it",
   "scripts": {
     "prepublish": "make build",
@@ -22,18 +22,18 @@
   "author": "Evert Pot (https://evertpot.com/)",
   "homepage": "https://github.com/evert/auth-api#readme",
   "devDependencies": {
-    "@types/chai": "^4.1.5",
+    "@types/chai": "^4.1.7",
     "@types/csv-stringify": "^1.4.2",
     "@types/mocha": "^5.2.3",
-    "@types/node": "^10.11.0",
-    "@types/sinon": "^5.0.1",
-    "chai": "^4.1.2",
+    "@types/node": "^10.12.2",
+    "@types/sinon": "^5.0.5",
+    "chai": "^4.2.0",
     "mocha": "^5.2.0",
-    "nyc": "^13.0.1",
-    "sinon": "^6.3.4",
+    "nyc": "^13.1.0",
+    "sinon": "^6.3.5",
     "ts-node": "^7.0.0",
     "tslint": "^5.10.0",
-    "typescript": "^3.0.3"
+    "typescript": "^3.1.5"
   },
   "types": "dist/",
   "nyc": {
@@ -50,9 +50,9 @@
     "@types/bcrypt": "^2.0.0",
     "@types/handlebars": "^4.0.39",
     "@types/otplib": "^7.0.0",
-    "bcrypt": "^3.0.1",
-    "csv-stringify": "^4.0.1",
-    "hal-browser": "^0.5.6",
+    "bcrypt": "^3.0.2",
+    "csv-stringify": "^4.3.1",
+    "hal-browser": "^0.6.0",
     "handlebars": "^4.0.12",
     "moment": "^2.22.2",
     "mysql2": "^1.5.3",

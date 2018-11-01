@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.3.2 (2018-??-??)
+0.3.2 (2018-11-01)
 ------------------
 
 * The entire application now also exposes itself as a middleware, so it

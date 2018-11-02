@@ -4,7 +4,7 @@
   "main": "dist/index.js",
   "description": "A ready-to-launch User and Authentication system for those that don't want to build it",
   "scripts": {
-    "prepublish": "make build",
+    "prepublishOnly": "make build",
     "test": "make lint test",
     "tsc": "tsc",
     "start": "node ./dist/app.js"

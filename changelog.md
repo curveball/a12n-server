@@ -1,9 +1,10 @@
 Changelog
 =========
 
-0.3.4 (2018-??-??)
+0.3.4 (2018-11-02)
 ------------------
 
+* Fixed a bug that would cause sessions to be forgotten with every request.
 * Removed a bunch of debug code.
 
 

@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.3.5 (????-??-??)
+------------------
+
+* If an unrecognized client_id was provided, the server returned a `404` error.
+  This has been changed to `400`.
+
+
 0.3.4 (2018-11-02)
 ------------------
 

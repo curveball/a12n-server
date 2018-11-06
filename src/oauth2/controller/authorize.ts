@@ -1,5 +1,5 @@
 import { Context, Middleware } from '@curveball/core';
-import { BadRequest } from '@curveball/http-errors';
+import { BadRequest, NotFound } from '@curveball/http-errors';
 import querystring from 'querystring';
 import BaseController from '../../base-controller';
 import log from '../../log/service';
@@ -16,6 +16,8 @@ class AuthorizeController extends BaseController {
 
     ctx.response.type = 'text/html';
 
+    let oauth2Client;
+
     if (!['token', 'code'].includes(ctx.query.response_type)) {
       throw new BadRequest('The "response_type" parameter must be provided, and must be "token" or "code"');
     }
@@ -31,7 +33,16 @@ class AuthorizeController extends BaseController {
     const responseType = ctx.query.response_type;
     const redirectUri = ctx.query.redirect_uri;
 
-    const oauth2Client = await oauth2Service.getClientByClientId(clientId);
+    try {
+      oauth2Client = await oauth2Service.getClientByClientId(clientId);
+    } catch (e) {
+      if (e instanceof NotFound) {
+        throw new BadRequest('Client id incorrect');
+      } else {
+        // Rethrow
+        throw e;
+      }
+    }
 
     if (!await oauth2Service.validateRedirectUri(oauth2Client, redirectUri)) {
       log(EventType.oauth2BadRedirect, ctx);
@@ -62,6 +73,8 @@ class AuthorizeController extends BaseController {
 
   async post(ctx: Context) {
 
+    let oauth2Client;
+
     if (!['token', 'code'].includes(ctx.request.body.response_type)) {
       throw new BadRequest('The "response_type" parameter must be provided, and must be set to "token" or "code"');
     }
@@ -75,7 +88,17 @@ class AuthorizeController extends BaseController {
     const state = ctx.request.body.state;
     const redirectUri = ctx.request.body.redirect_uri;
     const responseType = ctx.request.body.response_type;
-    const oauth2Client = await oauth2Service.getClientByClientId(clientId);
+
+    try {
+      oauth2Client = await oauth2Service.getClientByClientId(clientId);
+    } catch (e) {
+      if (e instanceof NotFound) {
+        throw new BadRequest('Client id incorrect');
+      } else {
+        // Rethrow
+        throw e;
+      }
+    }
 
     if (!await oauth2Service.validateRedirectUri(oauth2Client, redirectUri)) {
       log(EventType.oauth2BadRedirect, ctx);

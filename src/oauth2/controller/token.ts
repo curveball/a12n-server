@@ -1,5 +1,5 @@
 import { Context, Middleware } from '@curveball/core';
-import { BadRequest, Unauthorized } from '@curveball/http-errors';
+import { BadRequest, NotFound, Unauthorized } from '@curveball/http-errors';
 import BaseController from '../../base-controller';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
@@ -13,6 +13,7 @@ class TokenController extends BaseController {
   async post(ctx: Context) {
 
     const supportedGrantTypes = ['client_credentials', 'authorization_code'];
+    let oauth2Client;
 
     if (!supportedGrantTypes.includes(ctx.request.body.grant_type)) {
       throw new oauthErrors.UnsupportedGrantType('The "grant_type" must be one of ' + supportedGrantTypes.join(', '));
@@ -21,7 +22,16 @@ class TokenController extends BaseController {
     if (!basicAuth) {
       throw new Unauthorized('Basic Auth is missing or malformed', 'Basic');
     }
-    const oauth2Client = await oauth2Service.getClientByClientId(basicAuth[0]);
+    try {
+      oauth2Client = await oauth2Service.getClientByClientId(basicAuth[0]);
+    } catch (e) {
+      if (e instanceof NotFound) {
+        throw new Unauthorized('Client id or secret incorrect', 'Basic');
+      } else {
+        // Rethrow
+        throw e;
+      }
+    }
     if (!await oauth2Service.validateSecret(oauth2Client, basicAuth[1])) {
       throw new Unauthorized('Client id or secret incorrect', 'Basic');
     }

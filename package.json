@@ -24,18 +24,19 @@
   "author": "Evert Pot (https://evertpot.com/)",
   "homepage": "https://github.com/evert/auth-api#readme",
   "devDependencies": {
+    "@types/bcrypt": "^3.0.0",
     "@types/chai": "^4.1.7",
     "@types/csv-stringify": "^1.4.2",
     "@types/mocha": "^5.2.3",
-    "@types/node": "^10.12.2",
-    "@types/sinon": "^5.0.5",
+    "@types/node": "^10.12.20",
+    "@types/sinon": "^7.0.5",
     "chai": "^4.2.0",
     "mocha": "^5.2.0",
     "nyc": "^13.1.0",
-    "sinon": "^6.3.5",
+    "sinon": "^7.2.3",
     "ts-node": "^7.0.0",
-    "tslint": "^5.10.0",
-    "typescript": "^3.1.5"
+    "tslint": "^5.12.1",
+    "typescript": "^3.2.4"
   },
   "types": "dist/",
   "nyc": {
@@ -44,20 +45,19 @@
     ]
   },
   "dependencies": {
-    "@curveball/bodyparser": "^0.3.0",
+    "@curveball/bodyparser": "^0.4.0",
     "@curveball/core": "^0.8.1",
     "@curveball/http-errors": "^0.3.0",
     "@curveball/router": "^0.2.0",
     "@curveball/session": "^0.3.0",
-    "@types/bcrypt": "^2.0.0",
-    "@types/handlebars": "^4.0.39",
+    "@types/handlebars": "^4.0.40",
     "@types/otplib": "^7.0.0",
-    "bcrypt": "^3.0.2",
-    "csv-stringify": "^4.3.1",
-    "hal-browser": "^0.6.0",
+    "bcrypt": "^3.0.3",
+    "csv-stringify": "^5.3.0",
+    "hal-browser": "^0.6.3",
     "handlebars": "^4.0.12",
-    "moment": "^2.22.2",
-    "mysql2": "^1.5.3",
+    "moment": "^2.24.0",
+    "mysql2": "^1.6.4",
     "otplib": "^10.0.1"
   }
 }

@@ -12,7 +12,7 @@ class TokenController extends BaseController {
 
   async post(ctx: Context) {
 
-    const supportedGrantTypes = ['client_credentials', 'authorization_code'];
+    const supportedGrantTypes = ['client_credentials', 'authorization_code', 'refresh_token'];
     let oauth2Client;
 
     if (!supportedGrantTypes.includes(ctx.request.body.grant_type)) {
@@ -56,6 +56,12 @@ class TokenController extends BaseController {
           throw new BadRequest('This value for "redirect_uri" is not recognized.');
         }
         token = await oauth2Service.generateTokenFromCode(oauth2Client, ctx.request.body.code);
+        break;
+      case 'refresh_token' :
+        if (!ctx.request.body.refresh_token) {
+          throw new BadRequest('The "refresh_token" property is required');
+        }
+        token = await oauth2Service.refreshToken(oauth2Client, ctx.request.body.refresh_token);
         break;
 
     }

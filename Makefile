@@ -33,8 +33,10 @@ test:
 lint:
 	tslint -p .
 
-lint-fix:
+fix:
 	tslint -p . --fix
+
+lint-fix: fix
 
 start-dev:
 	ts-node src/app.js

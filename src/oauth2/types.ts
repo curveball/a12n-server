@@ -11,6 +11,7 @@ export type OAuth2Token = {
   accessTokenExpires: number,
   tokenType: 'bearer',
   userId: number,
+  clientId: number,
 };
 
 export type OAuth2Code = {

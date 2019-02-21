@@ -36,7 +36,6 @@ class TokenController extends BaseController {
       throw new Unauthorized('Client id or secret incorrect', 'Basic');
     }
 
-    console.log(ctx.request.headers.get('accept'));
     let token: OAuth2Token;
 
     switch (ctx.request.body.grant_type) {

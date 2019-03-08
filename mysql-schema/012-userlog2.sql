@@ -1,0 +1,10 @@
+SET NAMES utf8mb4;
+START TRANSACTION;
+
+INSERT INTO changelog VALUES (12, UNIX_TIMESTAMP());
+
+RENAME TABLE users_auth_log TO user_log;
+ALTER TABLE user_log ADD
+  ip VARCHAR(45) NOT NULL;
+
+COMMIT;

@@ -6,12 +6,18 @@ import mainMw from './main-mw';
 const app = new Application();
 
 app.use( async (ctx, next) => {
+  // tslint:disable-next-line:no-console
   console.log('=> %s %s', ctx.request.method, ctx.request.path);
   await next();
+  // tslint:disable-next-line:no-console
   console.log('<= %s', ctx.response.status);
 });
 
 app.use(mainMw());
 
-app.listen(parseInt(process.env.PORT, 10));
-console.log('Listening on port', process.env.PORT);
+const port = process.env.PORT ? parseInt(port, 10) :  8531;
+
+app.listen(port, 10);
+
+// tslint:disable-next-line:no-console
+console.log('Listening on port', port);

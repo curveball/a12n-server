@@ -77,6 +77,7 @@ class TokenController extends BaseController {
       await super.dispatch(ctx);
     } catch (err) {
       if (err.errorCode) {
+        // tslint:disable-next-line:no-console
         console.log(err);
         oauthErrors.serializeError(ctx, err);
       } else {

@@ -1,5 +1,5 @@
 FROM node:8
-EXPOSE 8888
+EXPOSE 8531
 
 RUN mkdir /opt/app
 WORKDIR /opt/app

@@ -15,9 +15,9 @@ app.use( async (ctx, next) => {
 
 app.use(mainMw());
 
-const port = process.env.PORT ? parseInt(port, 10) :  8531;
+const port = process.env.PORT ? parseInt(process.env.PORT, 10) :  8531;
 
-app.listen(port, 10);
+app.listen(port);
 
 // tslint:disable-next-line:no-console
 console.log('Listening on port', port);

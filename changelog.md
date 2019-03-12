@@ -1,6 +1,17 @@
 Changelog
 =========
 
+0.4.0 (2019-03-12)
+------------------
+
+* Default port is `8531`.
+* Added a 'Getting started' guide.
+* Added all database schemas to set up a new server.
+* The `password` `grant_type` is now supported.
+* The `allowed_grant_types` is now actively enforced for every client.
+* Returning correct OAuth2 error responses for more internal errors.
+
+
 0.3.5 (2019-01-31)
 ------------------
 

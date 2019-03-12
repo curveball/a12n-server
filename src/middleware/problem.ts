@@ -37,8 +37,10 @@ export default function(): Middleware {
       };
 
       if (clientError) {
+        // tslint:disable-next-line:no-console
         console.warn(e);
       } else {
+        // tslint:disable-next-line:no-console
         console.error(e);
         // Re-throwing for other HTTP handlers
         throw e;

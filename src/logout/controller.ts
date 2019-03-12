@@ -6,7 +6,6 @@ class LogoutController extends BaseController {
 
   async get(ctx: Context) {
 
-    console.log(ctx.state.session);
     ctx.response.type = 'text/html';
     ctx.response.body = logoutForm(ctx.query.msg);
 

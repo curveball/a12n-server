@@ -1,0 +1,19 @@
+SET NAMES utf8mb4;
+START TRANSACTION;
+
+INSERT INTO changelog VALUES (6, UNIX_TIMESTAMP());
+
+DROP TABLE oauth2_token;
+
+CREATE TABLE oauth2_tokens (
+  id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+  oauth2_client_id VARCHAR(50) NOT NULL,
+  access_token VARCHAR(50) NOT NULL UNIQUE,
+  refresh_token VARCHAR(50) NOT NULL UNIQUE,
+  user_id INT UNSIGNED NOT NULL,
+  access_token_expires INT UNSIGNED NOT NULL,
+  refresh_token_expires INT UNSIGNED NOT NULL,
+  created INT UNSIGNED NOT NULL
+);
+
+COMMIT;

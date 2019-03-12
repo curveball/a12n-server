@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.4.0 (????-??-??)
+------------------
+
+* Default port is `8531`.
+* Added a 'Getting started' guide.
+* Added all database schemas to set up a new server.
+
+
 0.3.5 (2019-01-31)
 ------------------
 

@@ -3,35 +3,28 @@ import { NotFound, Unauthorized } from '@curveball/http-errors';
 import BaseController from '../../base-controller';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
-import { InvalidRequest, serializeError, UnsupportedGrantType } from '../errors';
+import * as userService from '../../user/service';
+import { User } from '../../user/types';
+import { InvalidGrant, InvalidRequest, serializeError, UnsupportedGrantType } from '../errors';
 import parseBasicAuth from '../parse-basic-auth';
 import * as oauth2Service from '../service';
+import { OAuth2Client } from '../types';
 
 class TokenController extends BaseController {
 
-  post(ctx: Context) {
+  async post(ctx: Context) {
 
-    const supportedGrantTypes = ['client_credentials', 'authorization_code'];
+    const supportedGrantTypes = ['client_credentials', 'authorization_code', 'password'];
 
-    switch (ctx.request.body.grant_type) {
-      case 'client_credentials' :
-        return this.clientCredentials(ctx);
-      case 'authorization_code' :
-        return this.authorizationCode(ctx);
-      default :
-        throw new UnsupportedGrantType('The "grant_type" must be one of ' + supportedGrantTypes.join(', '));
+    const grantType = ctx.request.body.grant_type;
+
+    if (!supportedGrantTypes.includes(grantType)) {
+      throw new UnsupportedGrantType('The "grant_type" must be one of ' + supportedGrantTypes.join(', '));
     }
-
-  }
-
-  async clientCredentials(ctx: Context) {
-
-    let oauth2Client;
 
     const basicAuth = parseBasicAuth(ctx);
-    if (!basicAuth) {
-      throw new Unauthorized('Basic Auth is missing or malformed', 'Basic');
-    }
+    let oauth2Client: OAuth2Client;
+
     try {
       oauth2Client = await oauth2Service.getClientByClientId(basicAuth[0]);
     } catch (e) {
@@ -45,6 +38,23 @@ class TokenController extends BaseController {
     if (!await oauth2Service.validateSecret(oauth2Client, basicAuth[1])) {
       throw new Unauthorized('Client id or secret incorrect', 'Basic');
     }
+
+    if (!oauth2Client.allowedGrantTypes.includes(grantType)) {
+      throw new UnsupportedGrantType('The current client is not allowed to use the ' + grantType + ' grant_type');
+    }
+
+    switch (grantType) {
+      case 'client_credentials' :
+        return this.clientCredentials(oauth2Client, ctx);
+      case 'authorization_code' :
+        return this.authorizationCode(oauth2Client, ctx);
+      case 'password' :
+        return this.password(oauth2Client, ctx);
+    }
+
+  }
+
+  async clientCredentials(oauth2Client: OAuth2Client, ctx: Context) {
 
     const token = await oauth2Service.generateTokenForClient(oauth2Client);
 
@@ -57,27 +67,7 @@ class TokenController extends BaseController {
 
   }
 
-  async authorizationCode(ctx: Context) {
-
-    let oauth2Client;
-
-    const basicAuth = parseBasicAuth(ctx);
-    if (!basicAuth) {
-      throw new Unauthorized('Basic Auth is missing or malformed', 'Basic');
-    }
-    try {
-      oauth2Client = await oauth2Service.getClientByClientId(basicAuth[0]);
-    } catch (e) {
-      if (e instanceof NotFound) {
-        throw new Unauthorized('Client id or secret incorrect', 'Basic');
-      } else {
-        // Rethrow
-        throw e;
-      }
-    }
-    if (!await oauth2Service.validateSecret(oauth2Client, basicAuth[1])) {
-      throw new Unauthorized('Client id or secret incorrect', 'Basic');
-    }
+  async authorizationCode(oauth2Client: OAuth2Client, ctx: Context) {
 
     if (!ctx.request.body.code) {
       throw new InvalidRequest('The "code" property is required');
@@ -96,6 +86,36 @@ class TokenController extends BaseController {
       access_token: token.accessToken,
       token_type: token.tokenType,
       expires_in: token.accessTokenExpires - Math.round(Date.now() / 1000),
+    };
+
+  }
+
+  async password(oauth2Client: OAuth2Client, ctx: Context) {
+
+    let user: User;
+    try {
+      user = await userService.findByIdentity('mailto:' + ctx.request.body.username);
+    } catch (err) {
+      throw new InvalidGrant('Unknown username or password');
+    }
+
+    if (!await userService.validatePassword(user, ctx.request.body.password)) {
+      log(EventType.loginFailed, ctx.ip(), user.id);
+      throw new InvalidGrant('Unknown username or password');
+    }
+
+    log(EventType.loginSuccess, ctx);
+
+    const token = await oauth2Service.generateTokenForUser(
+      oauth2Client,
+      user
+    );
+
+    ctx.response.body = {
+      access_token: token.accessToken,
+      token_type: token.tokenType,
+      expires_in: token.accessTokenExpires - Math.round(Date.now() / 1000),
+      refresh_token: token.refreshToken,
     };
 
   }

@@ -4,9 +4,9 @@ import querystring from 'querystring';
 import BaseController from '../../base-controller';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
-import * as UserService from '../../user/service';
+import * as userService from '../../user/service';
 import { User } from '../../user/types';
-import { InvalidClient, InvalidRequest, serializeError } from '../errors';
+import { InvalidClient, InvalidRequest, serializeError, UnsupportedGrantType } from '../errors';
 import { loginForm } from '../formats/html';
 import * as oauth2Service from '../service';
 import { OAuth2Client } from '../types';
@@ -33,6 +33,7 @@ class AuthorizeController extends BaseController {
     // const scope = ctx.query.scope;
     const responseType = ctx.query.response_type;
     const redirectUri = ctx.query.redirect_uri;
+    const grantType = responseType === 'code' ? 'authorization_code' : 'implicit';
 
     try {
       oauth2Client = await oauth2Service.getClientByClientId(clientId);
@@ -45,9 +46,13 @@ class AuthorizeController extends BaseController {
       }
     }
 
+    if (!oauth2Client.allowedGrantTypes.includes(grantType)) {
+      throw new UnsupportedGrantType('The current client is not allowed to use the ' + grantType + ' grant_type');
+    }
+
     if (!await oauth2Service.validateRedirectUri(oauth2Client, redirectUri)) {
       log(EventType.oauth2BadRedirect, ctx);
-      throw new InvalidRequest('This value for "redirect_uri" is not permitted.');
+      throw new UnsupportedGrantType('This value for "redirect_uri" is not permitted.');
     }
 
     if (ctx.state.session.user !== undefined) {
@@ -89,6 +94,7 @@ class AuthorizeController extends BaseController {
     const state = ctx.request.body.state;
     const redirectUri = ctx.request.body.redirect_uri;
     const responseType = ctx.request.body.response_type;
+    const grantType = responseType === 'code' ? 'authorization_code' : 'implicit';
 
     try {
       oauth2Client = await oauth2Service.getClientByClientId(clientId);
@@ -99,6 +105,10 @@ class AuthorizeController extends BaseController {
         // Rethrow
         throw e;
       }
+    }
+
+    if (!oauth2Client.allowedGrantTypes.includes(grantType)) {
+      throw new UnsupportedGrantType('The current client is not allowed to use the ' + grantType + ' grant_type');
     }
 
     if (!await oauth2Service.validateRedirectUri(oauth2Client, redirectUri)) {
@@ -115,17 +125,17 @@ class AuthorizeController extends BaseController {
 
     let user: User;
     try {
-      user = await UserService.findByIdentity('mailto:' + ctx.request.body.username);
+      user = await userService.findByIdentity('mailto:' + ctx.request.body.username);
     } catch (err) {
       return this.redirectToLogin(ctx, { ...params, msg: 'Incorrect username or password' });
     }
 
-    if (!await UserService.validatePassword(user, ctx.request.body.password)) {
+    if (!await userService.validatePassword(user, ctx.request.body.password)) {
       log(EventType.loginFailed, ctx.ip(), user.id);
       return this.redirectToLogin(ctx, { ...params, msg: 'Incorrect username or password'});
     }
 
-    if (!await UserService.validateTotp(user, ctx.request.body.totp)) {
+    if (!await userService.validateTotp(user, ctx.request.body.totp)) {
       log(EventType.totpFailed, ctx.ip(), user.id);
       return this.redirectToLogin(ctx, { ...params, msg: 'Incorrect TOTP code'});
     }

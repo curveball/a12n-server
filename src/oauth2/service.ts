@@ -18,7 +18,7 @@ const CODE_EXPIRY = 600;
 
 export async function getClientByClientId(clientId: string): Promise<OAuth2Client> {
 
-  const query = 'SELECT id, client_id, client_secret, user_id FROM oauth2_clients WHERE client_id = ?';
+  const query = 'SELECT id, client_id, client_secret, user_id, allowed_grant_types FROM oauth2_clients WHERE client_id = ?';
   const result = await db.query(query, [clientId]);
 
   if (!result[0].length) {
@@ -30,6 +30,7 @@ export async function getClientByClientId(clientId: string): Promise<OAuth2Clien
     clientId: result[0][0].client_id,
     clientSecret: result[0][0].client_secret,
     userId: result[0][0].user_id,
+    allowedGrantTypes: result[0][0].allowed_grant_types.split(' '),
   };
 
 }

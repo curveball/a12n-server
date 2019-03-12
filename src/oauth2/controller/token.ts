@@ -13,7 +13,7 @@ class TokenController extends BaseController {
 
     const supportedGrantTypes = ['client_credentials', 'authorization_code'];
 
-    switch(ctx.request.body.grant_type) {
+    switch (ctx.request.body.grant_type) {
       case 'client_credentials' :
         return this.clientCredentials(ctx);
       case 'authorization_code' :

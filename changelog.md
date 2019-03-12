@@ -7,7 +7,7 @@ Changelog
 * Default port is `8531`.
 * Added a 'Getting started' guide.
 * Added all database schemas to set up a new server.
-
+* Returning correct OAuth2 error responses for more internal errors.
 
 0.3.5 (2019-01-31)
 ------------------

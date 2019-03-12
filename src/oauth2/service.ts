@@ -184,7 +184,7 @@ export async function generateTokenFromRefreshToken(client: OAuth2Client, refres
  */
 export async function revokeToken(token: OAuth2Token) {
 
-  const query = 'DELETE FROM oauth2_tokens WHERE access_code = ?';
+  const query = 'DELETE FROM oauth2_tokens WHERE access_token = ?';
   await db.query(query, [token.accessToken]);
 
 }

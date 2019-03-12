@@ -1,0 +1,9 @@
+SET NAMES utf8mb4;
+START TRANSACTION;
+
+INSERT INTO changelog VALUES (20, UNIX_TIMESTAMP());
+
+ALTER TABLE oauth2_tokens 
+  CHANGE oauth2_client_id oauth2_client_id INT UNSIGNED NOT NULL;
+
+COMMIT;

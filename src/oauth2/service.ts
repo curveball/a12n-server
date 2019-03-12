@@ -80,6 +80,7 @@ export async function generateTokenForUser(client: OAuth2Client, user: User): Pr
     accessTokenExpires: accessTokenExpires,
     tokenType: 'bearer',
     userId: user.id,
+    clientId: client.id,
   };
 
 }
@@ -117,6 +118,7 @@ export async function generateTokenForClient(client: OAuth2Client): Promise<OAut
     accessTokenExpires: accessTokenExpires,
     tokenType: 'bearer',
     userId: client.userId,
+    clientId: client.id,
   };
 
 }
@@ -153,6 +155,37 @@ export async function generateTokenFromCode(client: OAuth2Client, code: string):
 
   const user = await UserService.findById(codeRecord.user_id);
   return generateTokenForUser(client, user);
+
+}
+
+/**
+ * This function is used for the 'refresh_token' grant.
+ *
+ * By specifying a refresh token, a new access/refresh token pair gets
+ * returned. This also expires the old token.
+ */
+export async function generateTokenFromRefreshToken(client: OAuth2Client, refreshToken: string): Promise<OAuth2Token> {
+
+  const oldToken = await getTokenByRefreshToken(refreshToken);
+  if (oldToken.clientId !== client.id) {
+    throw new UnauthorizedClient('The client_id associated with the refresh did not match with the authenticated client credentials');
+  }
+
+  await revokeToken(oldToken);
+  const user = await UserService.findById(oldToken.userId);
+  return generateTokenForUser(client, user);
+
+}
+
+/**
+ * Removes a token.
+ *
+ * This function will not throw an error if the token was deleted before.
+ */
+export async function revokeToken(token: OAuth2Token) {
+
+  const query = 'DELETE FROM oauth2_tokens WHERE access_token = ?';
+  await db.query(query, [token.accessToken]);
 
 }
 
@@ -233,6 +266,45 @@ export async function getTokenByAccessToken(accessToken: string): Promise<OAuth2
     accessTokenExpires: row.access_token_expires,
     tokenType: 'bearer',
     userId: row.user_id,
+    clientId: row.oauth2_client_id,
+  };
+
+}
+
+/**
+ * Returns Token information for an existing Refresh Token.
+ *
+ * This function will throw NotFound if the token was not recognized.
+ */
+export async function getTokenByRefreshToken(refreshToken: string): Promise<OAuth2Token> {
+
+  const query = `
+  SELECT
+   oauth2_client_id,
+   access_token,
+   refresh_token,
+   user_id,
+   access_token_expires,
+   refresh_token_expires
+  FROM oauth2_tokens
+  WHERE
+    refresh_token = ? AND
+    refresh_token_expires > UNIX_TIMESTAMP()
+  `;
+
+  const result = await db.query(query, [refreshToken]);
+  if (!result[0].length) {
+    throw new NotFound('Refresh token not recognized');
+  }
+
+  const row: OAuth2TokenRecord = result[0][0];
+  return {
+    accessToken: row.access_token,
+    refreshToken: row.refresh_token,
+    accessTokenExpires: row.access_token_expires,
+    tokenType: 'bearer',
+    userId: row.user_id,
+    clientId: row.oauth2_client_id,
   };
 
 }

@@ -7,7 +7,8 @@ Changelog
 * Default port is `8531`.
 * Added a 'Getting started' guide.
 * Added all database schemas to set up a new server.
-* The `password` `grant_type` is now supported.
+* The `password` grant type is now supported.
+* Refreshing tokens now works.
 * The `allowed_grant_types` is now actively enforced for every client.
 * Returning correct OAuth2 error responses for more internal errors.
 

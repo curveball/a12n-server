@@ -14,8 +14,7 @@ class TokenController extends BaseController {
 
   async post(ctx: Context) {
 
-    const supportedGrantTypes = ['client_credentials', 'authorization_code', 'password'];
-
+    const supportedGrantTypes = ['client_credentials', 'authorization_code', 'refresh_token', 'password'];
     const grantType = ctx.request.body.grant_type;
 
     if (!supportedGrantTypes.includes(grantType)) {
@@ -44,12 +43,14 @@ class TokenController extends BaseController {
     }
 
     switch (grantType) {
-      case 'client_credentials' :
-        return this.clientCredentials(oauth2Client, ctx);
       case 'authorization_code' :
         return this.authorizationCode(oauth2Client, ctx);
+      case 'client_credentials' :
+        return this.clientCredentials(oauth2Client, ctx);
       case 'password' :
         return this.password(oauth2Client, ctx);
+      case 'refresh_token' :
+        return this.refreshToken(oauth2Client, ctx);
     }
 
   }
@@ -109,6 +110,34 @@ class TokenController extends BaseController {
     const token = await oauth2Service.generateTokenForUser(
       oauth2Client,
       user
+    );
+
+    ctx.response.body = {
+      access_token: token.accessToken,
+      token_type: token.tokenType,
+      expires_in: token.accessTokenExpires - Math.round(Date.now() / 1000),
+      refresh_token: token.refreshToken,
+    };
+
+  }
+
+  async refreshToken(oauth2Client: OAuth2Client, ctx: Context) {
+
+    if (!ctx.request.body.refresh_token) {
+      throw new InvalidRequest('The "refresh_token" property is required');
+    }
+
+    const oldToken = await oauth2Service.getTokenByRefreshToken(
+      ctx.request.body.refresh_token
+    );
+
+    if (oldToken.clientId !== oauth2Client.id) {
+      throw new InvalidGrant('Refresh token was issued to a different client');
+    }
+
+    const token = await oauth2Service.generateTokenFromRefreshToken(
+      oauth2Client,
+      ctx.request.body.refresh_token
     );
 
     ctx.response.body = {

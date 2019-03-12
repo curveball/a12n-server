@@ -135,7 +135,7 @@ class TokenController extends BaseController {
       throw new InvalidGrant('Refresh token was issued to a different client');
     }
 
-    const token = await oauth2Service.refreshToken(
+    const token = await oauth2Service.generateTokenFromRefreshToken(
       oauth2Client,
       ctx.request.body.refresh_token
     );

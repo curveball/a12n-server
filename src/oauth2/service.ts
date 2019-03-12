@@ -164,7 +164,7 @@ export async function generateTokenFromCode(client: OAuth2Client, code: string):
  * By specifying a refresh token, a new access/refresh token pair gets
  * returned. This also expires the old token.
  */
-export async function refreshToken(client: OAuth2Client, refreshToken: string): Promise<OAuth2Token> {
+export async function generateTokenFromRefreshToken(client: OAuth2Client, refreshToken: string): Promise<OAuth2Token> {
 
   const oldToken = await getTokenByRefreshToken(refreshToken);
   if (oldToken.clientId !== client.id) {

@@ -35,7 +35,10 @@ test:
 lint:
 	tslint -p .
 
-lint-fix:
+fix:
+	tslint -p . --fix
+
+lint-fix: fix
 	tslint -p . --fix
 
 start-dev:

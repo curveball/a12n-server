@@ -1,11 +1,12 @@
 import { Context, Middleware } from '@curveball/core';
-import { BadRequest, NotFound } from '@curveball/http-errors';
+import { NotFound } from '@curveball/http-errors';
 import querystring from 'querystring';
 import BaseController from '../../base-controller';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
 import * as UserService from '../../user/service';
 import { User } from '../../user/types';
+import { InvalidClient, InvalidRequest, serializeError } from '../errors';
 import { loginForm } from '../formats/html';
 import * as oauth2Service from '../service';
 import { OAuth2Client } from '../types';
@@ -19,13 +20,13 @@ class AuthorizeController extends BaseController {
     let oauth2Client;
 
     if (!['token', 'code'].includes(ctx.query.response_type)) {
-      throw new BadRequest('The "response_type" parameter must be provided, and must be "token" or "code"');
+      throw new InvalidRequest('The "response_type" parameter must be provided, and must be "token" or "code"');
     }
     if (!ctx.query.client_id) {
-      throw new BadRequest('The "client_id" parameter must be provided');
+      throw new InvalidRequest('The "client_id" parameter must be provided');
     }
     if (!ctx.query.redirect_uri) {
-      throw new BadRequest('The "redirect_uri" parameter must be provided');
+      throw new InvalidRequest('The "redirect_uri" parameter must be provided');
     }
     const clientId = ctx.query.client_id;
     const state = ctx.query.state;
@@ -37,7 +38,7 @@ class AuthorizeController extends BaseController {
       oauth2Client = await oauth2Service.getClientByClientId(clientId);
     } catch (e) {
       if (e instanceof NotFound) {
-        throw new BadRequest('Client id incorrect');
+        throw new InvalidClient('Client id incorrect');
       } else {
         // Rethrow
         throw e;
@@ -46,7 +47,7 @@ class AuthorizeController extends BaseController {
 
     if (!await oauth2Service.validateRedirectUri(oauth2Client, redirectUri)) {
       log(EventType.oauth2BadRedirect, ctx);
-      throw new BadRequest('This value for "redirect_uri" is not permitted.');
+      throw new InvalidRequest('This value for "redirect_uri" is not permitted.');
     }
 
     if (ctx.state.session.user !== undefined) {
@@ -76,13 +77,13 @@ class AuthorizeController extends BaseController {
     let oauth2Client;
 
     if (!['token', 'code'].includes(ctx.request.body.response_type)) {
-      throw new BadRequest('The "response_type" parameter must be provided, and must be set to "token" or "code"');
+      throw new InvalidRequest('The "response_type" parameter must be provided, and must be set to "token" or "code"');
     }
     if (!ctx.request.body.client_id) {
-      throw new BadRequest('The "client_id" parameter must be provided');
+      throw new InvalidRequest('The "client_id" parameter must be provided');
     }
     if (!ctx.request.body.redirect_uri) {
-      throw new BadRequest('The "redirect_uri" parameter must be provided');
+      throw new InvalidRequest('The "redirect_uri" parameter must be provided');
     }
     const clientId = ctx.request.body.client_id;
     const state = ctx.request.body.state;
@@ -93,7 +94,7 @@ class AuthorizeController extends BaseController {
       oauth2Client = await oauth2Service.getClientByClientId(clientId);
     } catch (e) {
       if (e instanceof NotFound) {
-        throw new BadRequest('Client id incorrect');
+        throw new InvalidClient('Client id incorrect');
       } else {
         // Rethrow
         throw e;
@@ -102,7 +103,7 @@ class AuthorizeController extends BaseController {
 
     if (!await oauth2Service.validateRedirectUri(oauth2Client, redirectUri)) {
       log(EventType.oauth2BadRedirect, ctx);
-      throw new BadRequest('This value for "redirect_uri" is not permitted.');
+      throw new InvalidRequest('This value for "redirect_uri" is not permitted.');
     }
 
     const params = {
@@ -190,6 +191,25 @@ class AuthorizeController extends BaseController {
 
     ctx.response.status = 302;
     ctx.response.headers.set('Location', '/authorize?' + querystring.stringify(params));
+
+  }
+
+  /**
+   * We're overriding the default dipatcher to catch OAuth2 errors.
+   */
+  async dispatch(ctx: Context): Promise<void> {
+
+    try {
+      await super.dispatch(ctx);
+    } catch (err) {
+      if (err.errorCode) {
+        // tslint:disable-next-line:no-console
+        console.log(err);
+        serializeError(ctx, err);
+      } else {
+        throw err;
+      }
+    }
 
   }
 

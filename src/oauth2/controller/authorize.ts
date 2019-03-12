@@ -6,7 +6,7 @@ import log from '../../log/service';
 import { EventType } from '../../log/types';
 import * as userService from '../../user/service';
 import { User } from '../../user/types';
-import { InvalidClient, InvalidRequest, UnsupportedGrantType, serializeError } from '../errors';
+import { InvalidClient, InvalidRequest, serializeError, UnsupportedGrantType } from '../errors';
 import { loginForm } from '../formats/html';
 import * as oauth2Service from '../service';
 import { OAuth2Client } from '../types';

@@ -3,19 +3,19 @@ import { NotFound, Unauthorized } from '@curveball/http-errors';
 import BaseController from '../../base-controller';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
-import { InvalidRequest, serializeError, UnsupportedGrantType, InvalidGrant } from '../errors';
+import * as userService from '../../user/service';
+import { User } from '../../user/types';
+import { InvalidGrant, InvalidRequest, serializeError, UnsupportedGrantType } from '../errors';
 import parseBasicAuth from '../parse-basic-auth';
 import * as oauth2Service from '../service';
 import { OAuth2Client } from '../types';
-import * as userService from '../../user/service';
-import { User } from '../../user/types';
 
 class TokenController extends BaseController {
 
   async post(ctx: Context) {
 
     const supportedGrantTypes = ['client_credentials', 'authorization_code', 'password'];
-   
+
     const grantType = ctx.request.body.grant_type;
 
     if (!supportedGrantTypes.includes(grantType)) {
@@ -23,7 +23,7 @@ class TokenController extends BaseController {
     }
 
     const basicAuth = parseBasicAuth(ctx);
-    let oauth2Client:OAuth2Client;
+    let oauth2Client: OAuth2Client;
 
     try {
       oauth2Client = await oauth2Service.getClientByClientId(basicAuth[0]);

@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.4.1 (????-??-??)
+0.4.1 (2019-03-14)
 ------------------
 
 * `refresh_token` can now be used without a client secret.

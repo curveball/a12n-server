@@ -1,18 +1,22 @@
 import { Context, Middleware } from '@curveball/core';
-import { NotFound, Unauthorized } from '@curveball/http-errors';
 import BaseController from '../../base-controller';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
 import * as userService from '../../user/service';
 import { User } from '../../user/types';
 import { InvalidGrant, InvalidRequest, serializeError, UnsupportedGrantType } from '../errors';
-import parseBasicAuth from '../parse-basic-auth';
 import * as oauth2Service from '../service';
 import { OAuth2Client } from '../types';
+import {
+  getOAuth2ClientFromBasicAuth,
+  getOAuth2ClientFromBody,
+} from '../utilities';
 
 class TokenController extends BaseController {
 
   async post(ctx: Context) {
+
+    this.sendCORSHeaders(ctx);
 
     const supportedGrantTypes = ['client_credentials', 'authorization_code', 'refresh_token', 'password'];
     const grantType = ctx.request.body.grant_type;
@@ -21,21 +25,24 @@ class TokenController extends BaseController {
       throw new UnsupportedGrantType('The "grant_type" must be one of ' + supportedGrantTypes.join(', '));
     }
 
-    const basicAuth = parseBasicAuth(ctx);
     let oauth2Client: OAuth2Client;
 
-    try {
-      oauth2Client = await oauth2Service.getClientByClientId(basicAuth[0]);
-    } catch (e) {
-      if (e instanceof NotFound) {
-        throw new Unauthorized('Client id or secret incorrect', 'Basic');
-      } else {
-        // Rethrow
-        throw e;
-      }
-    }
-    if (!await oauth2Service.validateSecret(oauth2Client, basicAuth[1])) {
-      throw new Unauthorized('Client id or secret incorrect', 'Basic');
+    switch (grantType) {
+
+      case 'authorization_code' :
+        oauth2Client = await getOAuth2ClientFromBody(ctx);
+        break;
+      case 'refresh_token' :
+        if (ctx.request.headers.has('Authorization')) {
+          oauth2Client = await getOAuth2ClientFromBasicAuth(ctx);
+        } else {
+          oauth2Client = await getOAuth2ClientFromBody(ctx);
+        }
+        break;
+      default :
+        oauth2Client = await getOAuth2ClientFromBasicAuth(ctx);
+        break;
+
     }
 
     if (!oauth2Client.allowedGrantTypes.includes(grantType)) {
@@ -87,6 +94,7 @@ class TokenController extends BaseController {
       access_token: token.accessToken,
       token_type: token.tokenType,
       expires_in: token.accessTokenExpires - Math.round(Date.now() / 1000),
+      refresh_token: token.refreshToken,
     };
 
   }
@@ -146,6 +154,18 @@ class TokenController extends BaseController {
       expires_in: token.accessTokenExpires - Math.round(Date.now() / 1000),
       refresh_token: token.refreshToken,
     };
+
+  }
+
+  async options(ctx: Context) {
+
+    this.sendCORSHeaders(ctx);
+
+  }
+
+  sendCORSHeaders(ctx: Context) {
+
+    ctx.response.headers.set('Access-Control-Allow-Origin', '*');
 
   }
 

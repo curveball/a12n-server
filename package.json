@@ -1,6 +1,6 @@
 {
   "name": "a12n-server",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "main": "dist/index.js",
   "description": "A ready-to-launch User and Authentication system for those that don't want to build it",
   "scripts": {
@@ -29,15 +29,15 @@
     "@types/csv-stringify": "^1.4.3",
     "@types/handlebars": "^4.1.0",
     "@types/mocha": "^5.2.6",
-    "@types/node": "^10.12.30",
-    "@types/sinon": "^7.0.9",
+    "@types/node": "^11.11.3",
     "@types/otplib": "^7.0.0",
+    "@types/sinon": "^7.0.10",
     "chai": "^4.2.0",
     "mocha": "^5.2.0",
     "nyc": "^13.3.0",
     "sinon": "^7.2.7",
     "ts-node": "^7.0.0",
-    "tslint": "^5.13.1",
+    "tslint": "^5.14.0",
     "typescript": "^3.3.3333"
   },
   "types": "dist/",
@@ -54,10 +54,10 @@
     "@curveball/session": "^0.3.0",
     "bcrypt": "^3.0.4",
     "csv-stringify": "^5.3.0",
-    "hal-browser": "^0.6.3",
+    "hal-browser": "^0.7.0",
     "handlebars": "^4.1.0",
     "moment": "^2.24.0",
     "mysql2": "^1.6.5",
-    "otplib": "^10.2.2"
+    "otplib": "^11.0.0"
   }
 }

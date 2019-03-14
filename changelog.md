@@ -1,6 +1,15 @@
 Changelog
 =========
 
+0.4.1 (????-??-??)
+------------------
+
+* `refresh_token` can now be used without a client secret.
+* `authorization_code` no longer requires a client secret.
+* `authorization_code` grant now returns a refresh token.
+*  The token endpoint now returns cors headers.
+
+
 0.4.0 (2019-03-12)
 ------------------
 

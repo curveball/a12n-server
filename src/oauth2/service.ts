@@ -166,7 +166,13 @@ export async function generateTokenFromCode(client: OAuth2Client, code: string):
  */
 export async function generateTokenFromRefreshToken(client: OAuth2Client, refreshToken: string): Promise<OAuth2Token> {
 
-  const oldToken = await getTokenByRefreshToken(refreshToken);
+  let oldToken:OAuth2Token;
+  try {
+    oldToken = await getTokenByRefreshToken(refreshToken);
+
+  } catch (err) {
+    throw new InvalidRequest('The refresh token was not recognized');
+  }
   if (oldToken.clientId !== client.id) {
     throw new UnauthorizedClient('The client_id associated with the refresh did not match with the authenticated client credentials');
   }

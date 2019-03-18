@@ -1,6 +1,6 @@
 {
   "name": "a12n-server",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "main": "dist/index.js",
   "description": "A ready-to-launch User and Authentication system for those that don't want to build it",
   "scripts": {

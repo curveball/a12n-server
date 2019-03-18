@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.4.2 (2019-03-18)
+------------------
+
+* When a token is being refreshed, but the refresh_token is invalid, we're now
+  sending back a standard OAuth2 error response.
+
+
 0.4.1 (2019-03-14)
 ------------------
 

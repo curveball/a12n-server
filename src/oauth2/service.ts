@@ -166,7 +166,7 @@ export async function generateTokenFromCode(client: OAuth2Client, code: string):
  */
 export async function generateTokenFromRefreshToken(client: OAuth2Client, refreshToken: string): Promise<OAuth2Token> {
 
-  let oldToken:OAuth2Token;
+  let oldToken: OAuth2Token;
   try {
     oldToken = await getTokenByRefreshToken(refreshToken);
 

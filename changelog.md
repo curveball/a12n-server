@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.4.4 (2019-??-??)
+------------------
+
+* An expired refresh token should return `invalid_grant` and not
+  `invalid_request.`
+
+
 0.4.3 (2019-03-18)
 ------------------
 

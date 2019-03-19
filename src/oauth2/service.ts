@@ -4,7 +4,7 @@ import crypto from 'crypto';
 import db from '../database';
 import * as UserService from '../user/service';
 import { User } from '../user/types';
-import { InvalidRequest, UnauthorizedClient } from './errors';
+import { InvalidRequest, UnauthorizedClient, InvalidGrant} from './errors';
 import { OAuth2Client, OAuth2Code, OAuth2Token } from './types';
 
 // 10 minutes
@@ -172,7 +172,7 @@ export async function generateTokenFromRefreshToken(client: OAuth2Client, refres
 
   } catch (err) {
     if (err instanceof NotFound) {
-      throw new InvalidRequest('The refresh token was not recognized');
+      throw new InvalidGrant('The refresh token was not recognized');
     } else {
       throw err;
     }

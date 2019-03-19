@@ -171,7 +171,11 @@ export async function generateTokenFromRefreshToken(client: OAuth2Client, refres
     oldToken = await getTokenByRefreshToken(refreshToken);
 
   } catch (err) {
-    throw new InvalidRequest('The refresh token was not recognized');
+    if (err instanceof NotFound) {
+      throw new InvalidRequest('The refresh token was not recognized');
+    } else {
+      throw err;
+    }
   }
   if (oldToken.clientId !== client.id) {
     throw new UnauthorizedClient('The client_id associated with the refresh did not match with the authenticated client credentials');

@@ -135,14 +135,6 @@ class TokenController extends BaseController {
       throw new InvalidRequest('The "refresh_token" property is required');
     }
 
-    const oldToken = await oauth2Service.getTokenByRefreshToken(
-      ctx.request.body.refresh_token
-    );
-
-    if (oldToken.clientId !== oauth2Client.id) {
-      throw new InvalidGrant('Refresh token was issued to a different client');
-    }
-
     const token = await oauth2Service.generateTokenFromRefreshToken(
       oauth2Client,
       ctx.request.body.refresh_token

@@ -24,7 +24,7 @@ Features
 
 * A simple browseable API.
 * OAuth2
-  * Supported grants: `implicit`, `client_credentials` and `authorization_code`.
+  * Supported grants: `implicit`, `client_credentials`, `authorization_code` and `password`.
   * [OAuth2 discovery document][1].
 * Google Authenticator (TOTP).
 * A simple, flat, permission model.

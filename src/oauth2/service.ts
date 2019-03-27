@@ -10,8 +10,8 @@ import { OAuth2Client, OAuth2Code, OAuth2Token } from './types';
 // 10 minutes
 const ACCESS_TOKEN_EXPIRY = 600;
 
-// 1 hour
-const REFRESH_TOKEN_EXPIRY = 3600;
+// 6 hours
+const REFRESH_TOKEN_EXPIRY = 3600 * 6;
 
 // 10 minutes
 const CODE_EXPIRY = 600;

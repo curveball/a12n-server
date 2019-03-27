@@ -1,11 +1,12 @@
 Changelog
 =========
 
-0.4.4 (2019-??-??)
+0.4.4 (2019-03-27)
 ------------------
 
 * An expired refresh token should return `invalid_grant` and not
   `invalid_request.`
+* Default refresh token lifetime is now set to 6 hours.
 
 
 0.4.3 (2019-03-18)

@@ -1,7 +1,7 @@
-import { Context, Middleware } from '@curveball/core';
+import { Context } from '@curveball/core';
 import { NotFound } from '@curveball/http-errors';
 import querystring from 'querystring';
-import BaseController from '../../base-controller';
+import Controller from '@curveball/controller';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
 import * as userService from '../../user/service';
@@ -11,7 +11,7 @@ import { loginForm } from '../formats/html';
 import * as oauth2Service from '../service';
 import { OAuth2Client } from '../types';
 
-class AuthorizeController extends BaseController {
+class AuthorizeController extends Controller {
 
   async get(ctx: Context) {
 
@@ -225,9 +225,4 @@ class AuthorizeController extends BaseController {
 
 }
 
-function mw(): Middleware {
-  const controller = new AuthorizeController();
-  return controller.dispatch.bind(controller);
-}
-
-export default mw();
+export default new AuthorizeController();

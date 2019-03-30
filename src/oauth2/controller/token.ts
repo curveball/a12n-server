@@ -1,5 +1,5 @@
-import { Context, Middleware } from '@curveball/core';
-import BaseController from '../../base-controller';
+import { Context } from '@curveball/core';
+import Controller from '@curveball/controller';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
 import * as userService from '../../user/service';
@@ -12,7 +12,7 @@ import {
   getOAuth2ClientFromBody,
 } from '../utilities';
 
-class TokenController extends BaseController {
+class TokenController extends Controller {
 
   async post(ctx: Context) {
 
@@ -182,9 +182,4 @@ class TokenController extends BaseController {
 
 }
 
-function mw(): Middleware {
-  const controller = new TokenController();
-  return controller.dispatch.bind(controller);
-}
-
-export default mw();
+export default new TokenController();

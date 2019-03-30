@@ -1,8 +1,8 @@
-import { Context, Middleware } from '@curveball/core';
-import BaseController from '../../base-controller';
+import { Context } from '@curveball/core';
+import Controller from '@curveball/controller';
 import { metadata } from '../formats/json';
 
-class MetadataController extends BaseController {
+class MetadataController extends Controller {
 
   async get(ctx: Context) {
 
@@ -13,9 +13,4 @@ class MetadataController extends BaseController {
 
 }
 
-function mw(): Middleware {
-  const controller = new MetadataController();
-  return controller.dispatch.bind(controller);
-}
-
-export default mw();
+export default new MetadataController();

@@ -1,7 +1,7 @@
-import { Context, Middleware } from '@curveball/core';
-import BaseController from '../base-controller';
+import { Context } from '@curveball/core';
+import Controller from '@curveball/controller';
 
-class HealthController extends BaseController {
+class HealthController extends Controller {
 
   get(ctx: Context) {
 
@@ -11,9 +11,4 @@ class HealthController extends BaseController {
 
 }
 
-function mw(): Middleware {
-  const controller = new HealthController();
-  return controller.dispatch.bind(controller);
-}
-
-export default mw();
+export default new HealthController();

@@ -1,8 +1,8 @@
-import { Context, Middleware } from '@curveball/core';
-import BaseController from '../base-controller';
+import { Context } from '@curveball/core';
+import Controller from '@curveball/controller';
 import { logoutForm } from './formats/html';
 
-class LogoutController extends BaseController {
+class LogoutController extends Controller {
 
   async get(ctx: Context) {
 
@@ -22,9 +22,4 @@ class LogoutController extends BaseController {
 
 }
 
-function mw(): Middleware {
-  const controller = new LogoutController();
-  return controller.dispatch.bind(controller);
-}
-
-export default mw();
+export default new LogoutController();

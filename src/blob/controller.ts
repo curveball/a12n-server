@@ -1,9 +1,9 @@
-import { Context, Middleware } from '@curveball/core';
+import { Context } from '@curveball/core';
+import Controller from '@curveball/controller';
 import * as errors from '@curveball/http-errors';
 import fs from 'fs';
-import BaseController from '../base-controller';
 
-class BlobController extends BaseController {
+class BlobController extends Controller {
 
   get(ctx: Context) {
 
@@ -22,9 +22,4 @@ class BlobController extends BaseController {
 
 }
 
-function mw(): Middleware {
-  const controller = new BlobController();
-  return controller.dispatch.bind(controller);
-}
-
-export default mw();
+export default new BlobController();

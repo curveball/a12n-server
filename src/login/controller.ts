@@ -1,13 +1,13 @@
-import { Context, Middleware } from '@curveball/core';
 import querystring from 'querystring';
-import BaseController from '../base-controller';
+import { Context } from '@curveball/core';
+import Controller from '@curveball/controller';
 import log from '../log/service';
 import { EventType } from '../log/types';
 import * as UserService from '../user/service';
 import { User } from '../user/types';
 import { loginForm } from './formats/html';
 
-class LoginController extends BaseController {
+class LoginController extends Controller {
 
   async get(ctx: Context) {
 
@@ -54,9 +54,4 @@ class LoginController extends BaseController {
 
 }
 
-function mw(): Middleware {
-  const controller = new LoginController();
-  return controller.dispatch.bind(controller);
-}
-
-export default mw();
+export default new LoginController();

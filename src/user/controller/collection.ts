@@ -1,5 +1,5 @@
-import { Context } from '@curveball/core';
 import Controller from '@curveball/controller';
+import { Context } from '@curveball/core';
 import * as hal from '../formats/hal';
 import * as usersService from '../service';
 

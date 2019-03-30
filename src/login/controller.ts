@@ -1,6 +1,6 @@
-import querystring from 'querystring';
-import { Context } from '@curveball/core';
 import Controller from '@curveball/controller';
+import { Context } from '@curveball/core';
+import querystring from 'querystring';
 import log from '../log/service';
 import { EventType } from '../log/types';
 import * as UserService from '../user/service';

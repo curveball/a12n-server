@@ -1,7 +1,7 @@
+import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { NotFound } from '@curveball/http-errors';
 import querystring from 'querystring';
-import Controller from '@curveball/controller';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
 import * as userService from '../../user/service';

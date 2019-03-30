@@ -1,7 +1,7 @@
 import { Context } from '@curveball/core';
 import db from '../database';
-import { EventType, LogEntry } from './types';
 import { User } from '../user/types';
+import { EventType, LogEntry } from './types';
 
 export function log(eventType: EventType, ctx: Context): Promise<void>;
 export function log(eventType: EventType, ip: string, userId: number): Promise<void>;
@@ -39,7 +39,7 @@ type LogRow = {
   ip: string,
   time: number,
   event_type: EventType,
-}
+};
 
 export async function findByUser(user: User): Promise<LogEntry[]> {
 
@@ -47,7 +47,7 @@ export async function findByUser(user: User): Promise<LogEntry[]> {
     'SELECT * FROM user_log WHERE user_id = ?',
     [user.id]
   );
-  return result[0].map( (row:LogRow) => {
+  return result[0].map( (row: LogRow) => {
     return {
       time: new Date(row.time * 1000),
       ip: row.ip,

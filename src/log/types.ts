@@ -14,7 +14,7 @@ export type LogEntry = {
   eventType: EventType,
 };
 
-export const eventTypeString = new Map<EventType,string>([
+export const eventTypeString = new Map<EventType, string>([
   [EventType.loginSuccess,      'login-success'],
   [EventType.loginFailed,       'login-failed'],
   [EventType.totpFailed,        'totp-Failed'],

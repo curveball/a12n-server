@@ -1,6 +1,6 @@
+import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { BadRequest, NotFound } from '@curveball/http-errors';
-import Controller from '@curveball/controller';
 import * as privilegeService from '../../privilege/service';
 import * as userHal from '../../user/formats/hal';
 import * as userService from '../../user/service';

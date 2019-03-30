@@ -1,8 +1,8 @@
-import { LogEntry, eventTypeString } from '../types';
+import { eventTypeString, LogEntry } from '../types';
 
-export default function csv (log: LogEntry[]): string {
+export default function csv(log: LogEntry[]): string {
 
-  const header = "time,eventType,ip\n";
+  const header = 'time,eventType,ip\n';
   return header + log.map( entry => {
 
     return [
@@ -11,6 +11,6 @@ export default function csv (log: LogEntry[]): string {
       entry.ip
     ];
 
-  }).join("\n");
+  }).join('\n');
 
 }

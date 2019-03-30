@@ -1,5 +1,5 @@
-import { Context } from '@curveball/core';
 import Controller from '@curveball/controller';
+import { Context } from '@curveball/core';
 import hal from './formats/hal';
 
 class HomeController extends Controller {

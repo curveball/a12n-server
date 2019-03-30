@@ -1,5 +1,5 @@
-import { Context } from '@curveball/core';
 import Controller from '@curveball/controller';
+import { Context } from '@curveball/core';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
 import * as userService from '../../user/service';

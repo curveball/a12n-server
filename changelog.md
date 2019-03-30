@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.5.0 (????-??-??)
+------------------
+
+* Added a user log with all login attempts/
+* Switched to `@curveball/controller` for all controllers, simplifying the
+  source a bit.
+
+
 0.4.4 (2019-03-27)
 ------------------
 

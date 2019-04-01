@@ -18,7 +18,7 @@ export async function getPrivilegesForUser(user: User): Promise<string[]> {
 
 }
 
-export async function hasPermission(user: User, privilege: string): Promise<boolean> {
+export async function hasPrivilege(user: User, privilege: string): Promise<boolean> {
 
   const query = 'SELECT id FROM user_privileges WHERE user_id = ? AND privilege = ?';
   const result = await db.query(query, [user.id, privilege]);

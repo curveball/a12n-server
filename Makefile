@@ -15,7 +15,7 @@ export MYSQL_USER
 export MYSQL_DATABASE
 export MYSQL_PASSWORD
 
-.PHONY:start run build test lint lint-fix start-dev watch inspect deploy
+.PHONY:start run build test lint fix lint-fix start-dev watch inspect deploy
 start: build
 	node dist/app.js
 
@@ -35,8 +35,10 @@ test:
 lint:
 	tslint -p .
 
-lint-fix:
+fix:
 	tslint -p . --fix
+
+lint-fix: fix
 
 start-dev:
 	ts-node src/app.js

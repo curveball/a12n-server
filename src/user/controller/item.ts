@@ -1,10 +1,10 @@
-import { Context, Middleware } from '@curveball/core';
-import BaseController from '../../base-controller';
+import Controller from '@curveball/controller';
+import { Context } from '@curveball/core';
 import * as privilegeService from '../../privilege/service';
 import * as hal from '../formats/hal';
 import * as userService from '../service';
 
-class UserController extends BaseController {
+class UserController extends Controller {
 
   async get(ctx: Context) {
 
@@ -18,9 +18,4 @@ class UserController extends BaseController {
 
 }
 
-function mw(): Middleware {
-  const controller = new UserController();
-  return controller.dispatch.bind(controller);
-}
-
-export default mw();
+export default new UserController();

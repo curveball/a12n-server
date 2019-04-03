@@ -4,21 +4,21 @@ import crypto from 'crypto';
 import db from '../database';
 import * as UserService from '../user/service';
 import { User } from '../user/types';
-import { InvalidRequest, UnauthorizedClient } from './errors';
+import { InvalidGrant, InvalidRequest, UnauthorizedClient} from './errors';
 import { OAuth2Client, OAuth2Code, OAuth2Token } from './types';
 
 // 10 minutes
 const ACCESS_TOKEN_EXPIRY = 600;
 
-// 1 hour
-const REFRESH_TOKEN_EXPIRY = 3600;
+// 6 hours
+const REFRESH_TOKEN_EXPIRY = 3600 * 6;
 
 // 10 minutes
 const CODE_EXPIRY = 600;
 
 export async function getClientByClientId(clientId: string): Promise<OAuth2Client> {
 
-  const query = 'SELECT id, client_id, client_secret, user_id FROM oauth2_clients WHERE client_id = ?';
+  const query = 'SELECT id, client_id, client_secret, user_id, allowed_grant_types FROM oauth2_clients WHERE client_id = ?';
   const result = await db.query(query, [clientId]);
 
   if (!result[0].length) {
@@ -30,6 +30,7 @@ export async function getClientByClientId(clientId: string): Promise<OAuth2Clien
     clientId: result[0][0].client_id,
     clientSecret: result[0][0].client_secret,
     userId: result[0][0].user_id,
+    allowedGrantTypes: result[0][0].allowed_grant_types.split(' '),
   };
 
 }
@@ -79,6 +80,7 @@ export async function generateTokenForUser(client: OAuth2Client, user: User): Pr
     accessTokenExpires: accessTokenExpires,
     tokenType: 'bearer',
     userId: user.id,
+    clientId: client.id,
   };
 
 }
@@ -116,6 +118,7 @@ export async function generateTokenForClient(client: OAuth2Client): Promise<OAut
     accessTokenExpires: accessTokenExpires,
     tokenType: 'bearer',
     userId: client.userId,
+    clientId: client.id,
   };
 
 }
@@ -152,6 +155,47 @@ export async function generateTokenFromCode(client: OAuth2Client, code: string):
 
   const user = await UserService.findById(codeRecord.user_id);
   return generateTokenForUser(client, user);
+
+}
+
+/**
+ * This function is used for the 'refresh_token' grant.
+ *
+ * By specifying a refresh token, a new access/refresh token pair gets
+ * returned. This also expires the old token.
+ */
+export async function generateTokenFromRefreshToken(client: OAuth2Client, refreshToken: string): Promise<OAuth2Token> {
+
+  let oldToken: OAuth2Token;
+  try {
+    oldToken = await getTokenByRefreshToken(refreshToken);
+
+  } catch (err) {
+    if (err instanceof NotFound) {
+      throw new InvalidGrant('The refresh token was not recognized');
+    } else {
+      throw err;
+    }
+  }
+  if (oldToken.clientId !== client.id) {
+    throw new UnauthorizedClient('The client_id associated with the refresh did not match with the authenticated client credentials');
+  }
+
+  await revokeToken(oldToken);
+  const user = await UserService.findById(oldToken.userId);
+  return generateTokenForUser(client, user);
+
+}
+
+/**
+ * Removes a token.
+ *
+ * This function will not throw an error if the token was deleted before.
+ */
+export async function revokeToken(token: OAuth2Token) {
+
+  const query = 'DELETE FROM oauth2_tokens WHERE access_token = ?';
+  await db.query(query, [token.accessToken]);
 
 }
 
@@ -232,6 +276,45 @@ export async function getTokenByAccessToken(accessToken: string): Promise<OAuth2
     accessTokenExpires: row.access_token_expires,
     tokenType: 'bearer',
     userId: row.user_id,
+    clientId: row.oauth2_client_id,
+  };
+
+}
+
+/**
+ * Returns Token information for an existing Refresh Token.
+ *
+ * This function will throw NotFound if the token was not recognized.
+ */
+export async function getTokenByRefreshToken(refreshToken: string): Promise<OAuth2Token> {
+
+  const query = `
+  SELECT
+   oauth2_client_id,
+   access_token,
+   refresh_token,
+   user_id,
+   access_token_expires,
+   refresh_token_expires
+  FROM oauth2_tokens
+  WHERE
+    refresh_token = ? AND
+    refresh_token_expires > UNIX_TIMESTAMP()
+  `;
+
+  const result = await db.query(query, [refreshToken]);
+  if (!result[0].length) {
+    throw new NotFound('Refresh token not recognized');
+  }
+
+  const row: OAuth2TokenRecord = result[0][0];
+  return {
+    accessToken: row.access_token,
+    refreshToken: row.refresh_token,
+    accessTokenExpires: row.access_token_expires,
+    tokenType: 'bearer',
+    userId: row.user_id,
+    clientId: row.oauth2_client_id,
   };
 
 }

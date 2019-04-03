@@ -13,3 +13,10 @@ export type LogEntry = {
   ip: string,
   eventType: EventType,
 };
+
+export const eventTypeString = new Map<EventType, string>([
+  [EventType.loginSuccess,      'login-success'],
+  [EventType.loginFailed,       'login-failed'],
+  [EventType.totpFailed,        'totp-Failed'],
+  [EventType.oauth2BadRedirect, 'oauth2-badredirect'],
+]);

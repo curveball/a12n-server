@@ -1,9 +1,9 @@
-import { Context, Middleware } from '@curveball/core';
-import BaseController from '../../base-controller';
+import Controller from '@curveball/controller';
+import { Context } from '@curveball/core';
 import * as hal from '../formats/hal';
 import * as usersService from '../service';
 
-class UserCollectionController extends BaseController {
+class UserCollectionController extends Controller {
 
   async get(ctx: Context) {
 
@@ -14,9 +14,4 @@ class UserCollectionController extends BaseController {
 
 }
 
-function mw(): Middleware {
-  const controller = new UserCollectionController();
-  return controller.dispatch.bind(controller);
-}
-
-export default mw();
+export default new UserCollectionController();

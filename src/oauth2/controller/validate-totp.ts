@@ -1,12 +1,12 @@
-import { Context, Middleware } from '@curveball/core';
+import Controller from '@curveball/controller';
+import { Context } from '@curveball/core';
 import { BadRequest, NotFound } from '@curveball/http-errors';
-import BaseController from '../../base-controller';
 import * as privilegeService from '../../privilege/service';
 import * as userHal from '../../user/formats/hal';
 import * as userService from '../../user/service';
 import * as oauth2Service from '../service';
 
-class ValidateTotpController extends BaseController {
+class ValidateTotpController extends Controller {
 
   async post(ctx: Context) {
 
@@ -55,10 +55,4 @@ class ValidateTotpController extends BaseController {
 
 }
 
-
-function mw(): Middleware {
-  const controller = new ValidateTotpController();
-  return controller.dispatch.bind(controller);
-}
-
-export default mw();
+export default new ValidateTotpController();

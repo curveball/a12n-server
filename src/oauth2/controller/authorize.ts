@@ -1,16 +1,17 @@
-import { Context, Middleware } from '@curveball/core';
-import { BadRequest, NotFound } from '@curveball/http-errors';
+import Controller from '@curveball/controller';
+import { Context } from '@curveball/core';
+import { NotFound } from '@curveball/http-errors';
 import querystring from 'querystring';
-import BaseController from '../../base-controller';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
-import * as UserService from '../../user/service';
+import * as userService from '../../user/service';
 import { User } from '../../user/types';
+import { InvalidClient, InvalidRequest, serializeError, UnsupportedGrantType } from '../errors';
 import { loginForm } from '../formats/html';
 import * as oauth2Service from '../service';
 import { OAuth2Client } from '../types';
 
-class AuthorizeController extends BaseController {
+class AuthorizeController extends Controller {
 
   async get(ctx: Context) {
 
@@ -19,34 +20,39 @@ class AuthorizeController extends BaseController {
     let oauth2Client;
 
     if (!['token', 'code'].includes(ctx.query.response_type)) {
-      throw new BadRequest('The "response_type" parameter must be provided, and must be "token" or "code"');
+      throw new InvalidRequest('The "response_type" parameter must be provided, and must be "token" or "code"');
     }
     if (!ctx.query.client_id) {
-      throw new BadRequest('The "client_id" parameter must be provided');
+      throw new InvalidRequest('The "client_id" parameter must be provided');
     }
     if (!ctx.query.redirect_uri) {
-      throw new BadRequest('The "redirect_uri" parameter must be provided');
+      throw new InvalidRequest('The "redirect_uri" parameter must be provided');
     }
     const clientId = ctx.query.client_id;
     const state = ctx.query.state;
     // const scope = ctx.query.scope;
     const responseType = ctx.query.response_type;
     const redirectUri = ctx.query.redirect_uri;
+    const grantType = responseType === 'code' ? 'authorization_code' : 'implicit';
 
     try {
       oauth2Client = await oauth2Service.getClientByClientId(clientId);
     } catch (e) {
       if (e instanceof NotFound) {
-        throw new BadRequest('Client id incorrect');
+        throw new InvalidClient('Client id incorrect');
       } else {
         // Rethrow
         throw e;
       }
     }
 
+    if (!oauth2Client.allowedGrantTypes.includes(grantType)) {
+      throw new UnsupportedGrantType('The current client is not allowed to use the ' + grantType + ' grant_type');
+    }
+
     if (!await oauth2Service.validateRedirectUri(oauth2Client, redirectUri)) {
       log(EventType.oauth2BadRedirect, ctx);
-      throw new BadRequest('This value for "redirect_uri" is not permitted.');
+      throw new UnsupportedGrantType('This value for "redirect_uri" is not permitted.');
     }
 
     if (ctx.state.session.user !== undefined) {
@@ -76,33 +82,38 @@ class AuthorizeController extends BaseController {
     let oauth2Client;
 
     if (!['token', 'code'].includes(ctx.request.body.response_type)) {
-      throw new BadRequest('The "response_type" parameter must be provided, and must be set to "token" or "code"');
+      throw new InvalidRequest('The "response_type" parameter must be provided, and must be set to "token" or "code"');
     }
     if (!ctx.request.body.client_id) {
-      throw new BadRequest('The "client_id" parameter must be provided');
+      throw new InvalidRequest('The "client_id" parameter must be provided');
     }
     if (!ctx.request.body.redirect_uri) {
-      throw new BadRequest('The "redirect_uri" parameter must be provided');
+      throw new InvalidRequest('The "redirect_uri" parameter must be provided');
     }
     const clientId = ctx.request.body.client_id;
     const state = ctx.request.body.state;
     const redirectUri = ctx.request.body.redirect_uri;
     const responseType = ctx.request.body.response_type;
+    const grantType = responseType === 'code' ? 'authorization_code' : 'implicit';
 
     try {
       oauth2Client = await oauth2Service.getClientByClientId(clientId);
     } catch (e) {
       if (e instanceof NotFound) {
-        throw new BadRequest('Client id incorrect');
+        throw new InvalidClient('Client id incorrect');
       } else {
         // Rethrow
         throw e;
       }
     }
 
+    if (!oauth2Client.allowedGrantTypes.includes(grantType)) {
+      throw new UnsupportedGrantType('The current client is not allowed to use the ' + grantType + ' grant_type');
+    }
+
     if (!await oauth2Service.validateRedirectUri(oauth2Client, redirectUri)) {
       log(EventType.oauth2BadRedirect, ctx);
-      throw new BadRequest('This value for "redirect_uri" is not permitted.');
+      throw new InvalidRequest('This value for "redirect_uri" is not permitted.');
     }
 
     const params = {
@@ -114,17 +125,17 @@ class AuthorizeController extends BaseController {
 
     let user: User;
     try {
-      user = await UserService.findByIdentity('mailto:' + ctx.request.body.username);
+      user = await userService.findByIdentity('mailto:' + ctx.request.body.username);
     } catch (err) {
       return this.redirectToLogin(ctx, { ...params, msg: 'Incorrect username or password' });
     }
 
-    if (!await UserService.validatePassword(user, ctx.request.body.password)) {
+    if (!await userService.validatePassword(user, ctx.request.body.password)) {
       log(EventType.loginFailed, ctx.ip(), user.id);
       return this.redirectToLogin(ctx, { ...params, msg: 'Incorrect username or password'});
     }
 
-    if (!await UserService.validateTotp(user, ctx.request.body.totp)) {
+    if (!await userService.validateTotp(user, ctx.request.body.totp)) {
       log(EventType.totpFailed, ctx.ip(), user.id);
       return this.redirectToLogin(ctx, { ...params, msg: 'Incorrect TOTP code'});
     }
@@ -193,11 +204,25 @@ class AuthorizeController extends BaseController {
 
   }
 
+  /**
+   * We're overriding the default dipatcher to catch OAuth2 errors.
+   */
+  async dispatch(ctx: Context): Promise<void> {
+
+    try {
+      await super.dispatch(ctx);
+    } catch (err) {
+      if (err.errorCode) {
+        // tslint:disable-next-line:no-console
+        console.log(err);
+        serializeError(ctx, err);
+      } else {
+        throw err;
+      }
+    }
+
+  }
+
 }
 
-function mw(): Middleware {
-  const controller = new AuthorizeController();
-  return controller.dispatch.bind(controller);
-}
-
-export default mw();
+export default new AuthorizeController();

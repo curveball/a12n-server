@@ -3,6 +3,7 @@ export type OAuth2Client = {
   clientId: string,
   clientSecret: Buffer,
   userId: number,
+  allowedGrantTypes: string[],
 };
 
 export type OAuth2Token = {
@@ -11,6 +12,7 @@ export type OAuth2Token = {
   accessTokenExpires: number,
   tokenType: 'bearer',
   userId: number,
+  clientId: number,
 };
 
 export type OAuth2Code = {

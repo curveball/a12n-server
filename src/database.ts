@@ -1,6 +1,5 @@
 // @ts-ignore: No types for this yet
 import mysql from 'mysql2/promise';
-import process from 'process';
 
 let pool: any = null;
 

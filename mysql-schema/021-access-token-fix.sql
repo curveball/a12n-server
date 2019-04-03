@@ -1,0 +1,9 @@
+SET NAMES utf8mb4;
+START TRANSACTION;
+
+INSERT INTO changelog VALUES (21, UNIX_TIMESTAMP());
+
+ALTER TABLE oauth2_tokens 
+  CHANGE access_token access_token VARCHAR(2000) CHARACTER SET ascii;
+
+COMMIT;

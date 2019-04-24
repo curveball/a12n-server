@@ -1,12 +1,12 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
+import { NotFound } from '@curveball/http-errors';
 import querystring from 'querystring';
 import log from '../log/service';
 import { EventType } from '../log/types';
 import * as UserService from '../user/service';
 import { User } from '../user/types';
 import { loginForm } from './formats/html';
-import { NotFound } from '@curveball/http-errors';
 
 class LoginController extends Controller {
 

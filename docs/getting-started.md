@@ -78,7 +78,7 @@ Now comes the tricky part. To log a user in, they need 2 more bits of
 information, that are a bit harder to obtain.
 
 A password, which must be a bcrypt hash. For example, this is a bcrypt
-hash for the password 'admin'. You can use this for testing purposes, but
+hash for the password 'password'. You can use this for testing purposes, but
 you should really change it:
 
 ```sql
@@ -88,7 +88,7 @@ INSERT INTO user_passwords SET
 ```
 
 Lastly, a user needs a 2FA (TOTP) code. Enter the same code both in the
-database as well as an app such as Authy or Google Auhtenticator:
+database as well as an app such as Authy or Google Authenticator:
 
 ```sql
 INSERT INTO user_totp SET

@@ -6,6 +6,7 @@ import { EventType } from '../log/types';
 import * as UserService from '../user/service';
 import { User } from '../user/types';
 import { loginForm } from './formats/html';
+import { NotFound } from '@curveball/http-errors';
 
 class LoginController extends Controller {
 
@@ -22,8 +23,13 @@ class LoginController extends Controller {
     try {
       user = await UserService.findByIdentity('mailto:' + ctx.request.body.username);
     } catch (err) {
-      log(EventType.loginFailed, ctx);
-      return this.redirectToLogin(ctx, 'Incorrect username or password');
+      console.log('hello world', err)
+      if (err instanceof NotFound) {
+        log(EventType.loginFailed, ctx);
+        return this.redirectToLogin(ctx, 'Incorrect username or password');
+      } else {
+        throw err;
+      }
     }
 
     if (!await UserService.validatePassword(user, ctx.request.body.password)) {

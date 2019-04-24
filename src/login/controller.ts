@@ -23,7 +23,6 @@ class LoginController extends Controller {
     try {
       user = await UserService.findByIdentity('mailto:' + ctx.request.body.username);
     } catch (err) {
-      console.log('hello world', err)
       if (err instanceof NotFound) {
         log(EventType.loginFailed, ctx);
         return this.redirectToLogin(ctx, 'Incorrect username or password');

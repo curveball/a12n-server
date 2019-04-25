@@ -3,12 +3,17 @@ export enum UserType {
   app = 2,
 }
 
-export type User = {
+export type NewUser = {
+  identity: string,
+  nickname: string,
+  created: Date,
+  type: UserType,
+};
 
+export type User = {
   id: number,
   identity: string,
   nickname: string,
   created: Date,
   type: UserType,
-
 };

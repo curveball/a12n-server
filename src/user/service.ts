@@ -2,7 +2,7 @@ import { NotFound } from '@curveball/http-errors';
 import bcrypt from 'bcrypt';
 import * as otplib from 'otplib';
 import database from '../database';
-import { User } from './types';
+import { NewUser, User } from './types';
 
 const fieldNames = [
   'id',
@@ -49,6 +49,42 @@ export async function findByIdentity(identity: string): Promise<User> {
   return recordToModel(result[0][0]);
 
 }
+
+export async function save(user: User | NewUser): Promise<User> {
+
+  if (!isExistingUser(user)) {
+
+    // New user.
+    const query = 'INSERT INTO users SET ?, created = UNIX_TIMESTAMP()';
+
+    const newUserRecord = {
+      identity: user.identity,
+      nickname: user.nickname,
+      type: user.type,
+    };
+
+    const result = await database.query(query, [newUserRecord]);
+
+    return findById(result[0].userId);
+
+  } else {
+
+    // Update user
+    const query = 'UPDATE users SET ? WHERE id = ?';
+
+    const updateUserRecord = {
+      identity: user.identity,
+      nickname: user.nickname,
+    };
+
+    await database.query(query, [updateUserRecord, user.id]);
+
+    return user;
+
+  }
+
+}
+
 
 type PasswordRow = {
   password: Buffer;
@@ -115,5 +151,11 @@ function recordToModel(user: UserRecord): User {
     created: new Date(user.created * 1000),
     type: user.type,
   };
+
+}
+
+function isExistingUser(user: User | NewUser): user is User {
+
+  return (<User> user).id !== undefined;
 
 }

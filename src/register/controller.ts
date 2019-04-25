@@ -35,7 +35,7 @@ class RegistrationController extends Controller {
 
 
     ctx.status = 308;
-    ctx.response.headers.set('Location', '/login?msg=Registration+successful.+Please log in')
+    ctx.response.headers.set('Location', '/login?msg=Registration+successful.+Please log in');
 
   }
 

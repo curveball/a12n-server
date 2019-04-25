@@ -24,6 +24,19 @@ class RegistrationController extends Controller {
       }
     }
 
+    const user = await userService.save({
+      identity: 'mailto:' + ctx.request.body.emailaddress,
+      nickname: ctx.request.body.nickname,
+      created: new Date(),
+      type: 1
+    });
+
+    await userService.createPassword(user, ctx.request.body.password);
+
+
+    ctx.status = 308;
+    ctx.response.headers.set('Location', '/login?msg=Registration+successful.+Please log in')
+
   }
 
 }

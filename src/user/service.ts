@@ -65,7 +65,10 @@ export async function save(user: User | NewUser): Promise<User> {
 
     const result = await database.query(query, [newUserRecord]);
 
-    return findById(result[0].insertId);
+    return {
+      id: result[0].insertId,
+      ...user
+    };
 
   } else {
 

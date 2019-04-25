@@ -1,5 +1,6 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
+import { NotFound } from '@curveball/http-errors';
 import querystring from 'querystring';
 import log from '../log/service';
 import { EventType } from '../log/types';
@@ -22,8 +23,12 @@ class LoginController extends Controller {
     try {
       user = await UserService.findByIdentity('mailto:' + ctx.request.body.username);
     } catch (err) {
-      log(EventType.loginFailed, ctx);
-      return this.redirectToLogin(ctx, 'Incorrect username or password');
+      if (err instanceof NotFound) {
+        log(EventType.loginFailed, ctx);
+        return this.redirectToLogin(ctx, 'Incorrect username or password');
+      } else {
+        throw err;
+      }
     }
 
     if (!await UserService.validatePassword(user, ctx.request.body.password)) {

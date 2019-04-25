@@ -1,8 +1,8 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { registrationFrom } from './formats/html';
-import * as userService from '../user/service'
 import { NotFound } from '@curveball/http-errors';
+import * as userService from '../user/service';
+import { registrationFrom } from './formats/html';
 
 class RegistrationController extends Controller {
 

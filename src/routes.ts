@@ -5,12 +5,12 @@ import home from './home/controller';
 import userLog from './log/controller/user';
 import login from './login/controller';
 import logout from './logout/controller';
-import register from './register/controller';
 import oauth2Authorize from './oauth2/controller/authorize';
 import oauth2Metadata from './oauth2/controller/metadata';
 import oauth2Token from './oauth2/controller/token';
 import validateBearer from './oauth2/controller/validate-bearer';
 import validateTotp from './oauth2/controller/validate-totp';
+import register from './register/controller';
 import users from './user/controller/collection';
 import user from './user/controller/item';
 

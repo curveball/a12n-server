@@ -50,7 +50,7 @@ export async function findByIdentity(identity: string): Promise<User> {
 
 }
 
-export async function save(user: User | NewUser): Promise<void> {
+export async function save(user: User | NewUser): Promise<User> {
 
   if (!isExistingUser(user)) {
 
@@ -63,7 +63,9 @@ export async function save(user: User | NewUser): Promise<void> {
       type: user.type,
     };
 
-    await database.query(query, [newUserRecord]);
+    const result = await database.query(query, [newUserRecord]);
+
+    return findById(result[0].userId);
 
   } else {
 
@@ -76,6 +78,8 @@ export async function save(user: User | NewUser): Promise<void> {
     };
 
     await database.query(query, [updateUserRecord, user.id]);
+
+    return user;
 
   }
 

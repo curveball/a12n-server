@@ -1,12 +1,15 @@
 Changelog
 =========
 
-0.5.0 (????-??-??)
+0.5.0 (2019-05-02)
 ------------------
 
-* Added a user log with all login attempts/
+* Added a user log with all login attempts
 * Switched to `@curveball/controller` for all controllers, simplifying the
   source a bit.
+* Better installation documentation.
+* A database bug: not enough space for creating OAuth2 clients that have
+  access to many grant types.
 
 
 0.4.4 (2019-03-27)

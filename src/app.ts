@@ -1,23 +1,33 @@
+// tslint:disable no-console
 import { Application } from '@curveball/core';
 
 import process from 'process';
 import mainMw from './main-mw';
+import { load } from './server-settings';
 
-const app = new Application();
+(async () => {
 
-app.use( async (ctx, next) => {
-  // tslint:disable-next-line:no-console
-  console.log('=> %s %s', ctx.request.method, ctx.request.path);
-  await next();
-  // tslint:disable-next-line:no-console
-  console.log('<= %s', ctx.response.status);
-});
+  const pkgInfo = require('../package.json');
+  console.log('%s %s', pkgInfo.name, pkgInfo.version);
 
-app.use(mainMw());
+  console.log('Connecting to database');
+  console.log('Loading settings');
+  await load();
 
-const port = process.env.PORT ? parseInt(process.env.PORT, 10) :  8531;
+  const app = new Application();
 
-app.listen(port);
+  app.use( async (ctx, next) => {
+    console.log('=> %s %s', ctx.request.method, ctx.request.path);
+    await next();
+    console.log('<= %s', ctx.response.status);
+  });
 
-// tslint:disable-next-line:no-console
-console.log('Listening on port', port);
+  app.use(mainMw());
+
+  const port = process.env.PORT ? parseInt(process.env.PORT, 10) :  8531;
+
+  app.listen(port);
+
+  console.log('Listening on port', port);
+
+})();

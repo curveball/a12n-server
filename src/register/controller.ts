@@ -1,6 +1,7 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { NotFound } from '@curveball/http-errors';
+import { Forbidden, NotFound } from '@curveball/http-errors';
+import { getSetting } from '../server-settings';
 import * as userService from '../user/service';
 import { registrationFrom } from './formats/html';
 
@@ -38,6 +39,16 @@ class RegistrationController extends Controller {
     ctx.response.headers.set('Location', '/login?msg=Registration+successful.+Please log in');
 
   }
+
+  async dispatch(ctx: Context) {
+
+    if (!getSetting('registration.enabled')) {
+      throw new Forbidden('This feature is disabled');
+    }
+    return super.dispatch(ctx);
+
+  }
+
 
 }
 

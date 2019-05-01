@@ -28,7 +28,7 @@ export async function load(): Promise<void> {
   const query = 'SELECT setting, value FROM server_settings';
   const result = await db.query(query);
 
-  for(const row of result[0]) {
+  for (const row of result[0]) {
     settingsCache.set(row.setting, row.value);
   }
   settingsLoaded = true;

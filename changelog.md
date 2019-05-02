@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.5.1 (????-??-??)
+------------------
+
+* Added support for registration.
+* Added a simple settings system.
+
+
 0.5.0 (2019-05-02)
 ------------------
 

@@ -4,6 +4,7 @@ const whitelistPath = [
   '/login',
   '/assets',
   '/health',
+  '/register',
   '/authorize',
   '/token',
   '/validate-bearer',
@@ -12,7 +13,7 @@ const whitelistPath = [
 
 export default function(): Middleware {
 
-  return (ctx, next): void|Promise<void> => {
+return (ctx, next): void|Promise<void> => {
 
     if (ctx.state.session.user) {
       // User is logged in.

@@ -10,6 +10,7 @@ import oauth2Metadata from './oauth2/controller/metadata';
 import oauth2Token from './oauth2/controller/token';
 import validateBearer from './oauth2/controller/validate-bearer';
 import validateTotp from './oauth2/controller/validate-totp';
+import register from './register/controller';
 import users from './user/controller/collection';
 import user from './user/controller/item';
 
@@ -21,6 +22,7 @@ const routes = [
   router('/login', login),
   router('/assets/:filename', blob),
   router('/health', health),
+  router('/register', register),
   router('/authorize', oauth2Authorize),
   router('/validate-bearer', validateBearer),
   router('/validate-totp', validateTotp),

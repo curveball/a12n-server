@@ -93,12 +93,21 @@ type PasswordRow = {
   password: Buffer;
 };
 
+export async function createPassword(user: User, password: string): Promise<void> {
+
+  const query = 'INSERT INTO user_passwords SET user_id = ?, password = ?';
+  await database.query(query, [
+    user.id,
+    await bcrypt.hash(password, 12)
+  ]);
+
+}
 /**
  * Returns true or false if the password was correct.
  *
  * Calling this method multiple times might result in a block.
  */
-export async function validatePassword(user: User, password: string) {
+export async function validatePassword(user: User, password: string): Promise<boolean> {
 
   const query = 'SELECT password FROM user_passwords WHERE user_id = ?';
   const result = await database.query(query, [user.id]);

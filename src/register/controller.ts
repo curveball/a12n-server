@@ -3,14 +3,14 @@ import { Context } from '@curveball/core';
 import { Forbidden, NotFound } from '@curveball/http-errors';
 import { getSetting } from '../server-settings';
 import * as userService from '../user/service';
-import { registrationFrom } from './formats/html';
+import { registrationForm } from './formats/html';
 
 class RegistrationController extends Controller {
 
   async get(ctx: Context) {
 
     ctx.response.type = 'text/html';
-    ctx.response.body = registrationFrom(ctx.query.msg);
+    ctx.response.body = registrationForm(ctx.query.msg);
 
   }
 

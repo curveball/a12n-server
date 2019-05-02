@@ -1,6 +1,6 @@
 import { render } from '../../templates';
 
-export function registrationFrom(msg: string) {
+export function registrationForm(msg: string) {
 
   return render('register', {
     title: 'Register',

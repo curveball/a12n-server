@@ -3,7 +3,7 @@ import { invokeMiddlewares, Middleware } from '@curveball/core';
 import session from '@curveball/session';
 import halBrowser from 'hal-browser';
 import login from './middleware/login';
-import problem from './middleware/problem';
+import problem from '@curveball/problem';
 import routes from './routes';
 
 export default function(): Middleware {

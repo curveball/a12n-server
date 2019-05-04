@@ -6,6 +6,7 @@ Changelog
 
 * Added support for registration.
 * Added a simple settings system.
+* Now using `@curveball/problem` for error handling.
 
 
 0.5.0 (2019-05-02)

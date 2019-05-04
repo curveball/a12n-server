@@ -1,9 +1,9 @@
 import bodyParser from '@curveball/bodyparser';
 import { invokeMiddlewares, Middleware } from '@curveball/core';
+import problem from '@curveball/problem';
 import session from '@curveball/session';
 import halBrowser from 'hal-browser';
 import login from './middleware/login';
-import problem from './middleware/problem';
 import routes from './routes';
 
 export default function(): Middleware {

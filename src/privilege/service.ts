@@ -13,7 +13,7 @@ export async function getPrivilegesForUser(user: User): Promise<any> {
 
   return result[0].reduce( (currentPrivileges: any, row: PrivilegeRow) => {
 
-    let privileges = Object.assign({}, currentPrivileges);
+    const privileges = Object.assign({}, currentPrivileges);
 
     if (privileges.hasOwnProperty(row.resource)) {
       if (privileges[row.resource].indexOf(row.scope) === -1) {
@@ -24,7 +24,7 @@ export async function getPrivilegesForUser(user: User): Promise<any> {
     }
 
     return privileges;
-  
+
   }, {});
 
 }

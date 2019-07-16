@@ -1,5 +1,5 @@
-import { User, UserType } from '../types';
 import { PrivilegeMap } from '../../privilege/types';
+import { User, UserType } from '../types';
 
 const TypeMap = new Map<UserType, string>([
   [UserType.user, 'user'],

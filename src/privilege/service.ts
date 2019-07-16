@@ -1,12 +1,13 @@
 import db from '../database';
 import { User } from '../user/types';
+import { PrivilegeMap } from './types';
 
 type PrivilegeRow = {
   resource: string,
   scope: string,
 };
 
-export async function getPrivilegesForUser(user: User): Promise<any> {
+export async function getPrivilegesForUser(user: User): Promise<PrivilegeMap> {
 
   const query = 'SELECT resource, scope FROM user_privileges WHERE user_id = ?';
   const result = await db.query(query, [user.id]);

@@ -1,4 +1,5 @@
 import { User, UserType } from '../types';
+import { PrivilegeMap } from '../../privilege/types';
 
 const TypeMap = new Map<UserType, string>([
   [UserType.user, 'user'],
@@ -25,7 +26,7 @@ export function collection(users: User[]) {
 
 }
 
-export function item(user: User, privileges: string[]) {
+export function item(user: User, privileges: PrivilegeMap) {
 
   const hal: any = {
     _links: {

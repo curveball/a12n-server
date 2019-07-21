@@ -1,6 +1,8 @@
 Authentication API
 ==================
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/evert/a12n-server.svg)](https://greenkeeper.io/)
+
 This package aims to provide a simple authentication system. The goal is to
 provide something good enough for prototyping and in-house deployments.
 

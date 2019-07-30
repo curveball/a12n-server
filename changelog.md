@@ -1,12 +1,14 @@
 Changelog
 =========
 
-0.5.1 (????-??-??)
+0.6.0 (2019-07-30)
 ------------------
 
-* Added support for registration.
+* Added a registration form
 * Added a simple settings system.
 * Now using `@curveball/problem` for error handling.
+* Added support for resource-specific privileges, allowing users to store
+  privileges based on arbitrary urls.
 
 
 0.5.0 (2019-05-02)

@@ -1,11 +1,10 @@
-PATH:=./node_modules/.bin:$(PATH)
 SOURCE_FILES:=$(shell find src/ -type f -name '*.ts')
 
-PORT:=8531
-MYSQL_HOST:=127.0.0.1
-MYSQL_PASSWORD:=
-MYSQL_USER:=root
-MYSQL_DATABASE:=a12nserver
+PORT?=8531
+MYSQL_HOST?=127.0.0.1
+MYSQL_PASSWORD?=
+MYSQL_USER?=root
+MYSQL_DATABASE?=a12nserver
 
 DOCKER_IMAGE_NAME:=a12n-server
 
@@ -44,10 +43,10 @@ start-dev:
 	ts-node src/app.js
 
 watch:
-	tsc --watch
+	./node_modules/.bin/tsc --watch
 
 dist/build: $(SOURCE_FILES)
-	tsc
+	./node_modules/.bin/tsc
 	@# Touching this file so Makefile knows when it was last built.
 	touch dist/build
 

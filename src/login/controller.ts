@@ -42,7 +42,7 @@ class LoginController extends Controller {
           return this.redirectToLogin(ctx, 'Incorrect TOTP code');
         }
     } else if (await UserService.hasTotp(user)) {
-        return this.redirectToLogin(ctx, "TOTP token required");
+        return this.redirectToLogin(ctx, 'TOTP token required');
     }
 
     ctx.state.session = {

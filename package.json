@@ -48,7 +48,7 @@
   "dependencies": {
     "@curveball/bodyparser": "^0.4.1",
     "@curveball/controller": "^0.2.0",
-    "@curveball/core": "^0.8.6",
+    "@curveball/core": "^0.9.0",
     "@curveball/http-errors": "^0.3.0",
     "@curveball/problem": "^0.1.0",
     "@curveball/router": "^0.2.1",

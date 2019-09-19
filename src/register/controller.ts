@@ -24,7 +24,7 @@ class RegistrationController extends Controller {
       ctx.response.headers.set('Location', '/register?msg=Password+mismatch.+Please+try+again');
       return;
     }
-    
+
     try {
       await userService.findByIdentity('mailto:' + ctx.request.body.emailaddress);
       throw new Error('User already exists');
@@ -41,7 +41,7 @@ class RegistrationController extends Controller {
       type: 1
     });
 
-    await userService.createPassword(user, ctx.request.body.password);
+    await userService.createPassword(user, userPassword);
 
 
     ctx.status = 308;

@@ -32,10 +32,10 @@ test:
 	nyc mocha
 
 lint:
-	tslint -p .
+	./node_modules/.bin/tslint -p .
 
 fix:
-	tslint -p . --fix
+	./node_modules/.bin/tslint -p . --fix
 
 lint-fix: fix
 

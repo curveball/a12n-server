@@ -16,6 +16,15 @@ class RegistrationController extends Controller {
 
   async post(ctx: Context) {
 
+    const userPassword = ctx.request.body.password;
+    const confirmPassword = ctx.request.body.confirmPassword;
+
+    if (userPassword !== confirmPassword) {
+      ctx.status = 303;
+      ctx.response.headers.set('Location', '/register?msg=Password+mismatch.+Please+try+again');
+      return;
+    }
+
     try {
       await userService.findByIdentity('mailto:' + ctx.request.body.emailaddress);
       throw new Error('User already exists');
@@ -32,7 +41,7 @@ class RegistrationController extends Controller {
       type: 1
     });
 
-    await userService.createPassword(user, ctx.request.body.password);
+    await userService.createPassword(user, userPassword);
 
 
     ctx.status = 308;

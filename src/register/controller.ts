@@ -16,8 +16,8 @@ class RegistrationController extends Controller {
 
   async post(ctx: Context) {
 
-    let userPassword = ctx.request.body.password;
-    let confirmPassword = ctx.request.body.confirmPassword;
+    const userPassword = ctx.request.body.password;
+    const confirmPassword = ctx.request.body.confirmPassword;
 
     if (userPassword !== confirmPassword) {
       ctx.status = 303;

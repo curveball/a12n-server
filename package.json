@@ -25,19 +25,19 @@
   "homepage": "https://github.com/evert/auth-api#readme",
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",
-    "@types/chai": "^4.1.7",
+    "@types/chai": "^4.2.3",
     "@types/handlebars": "^4.1.0",
     "@types/mocha": "^5.2.7",
-    "@types/node": "^12.6.8",
+    "@types/node": "^12.7.5",
     "@types/otplib": "^7.0.0",
     "@types/sinon": "^7.0.13",
     "chai": "^4.2.0",
     "mocha": "^6.2.0",
     "nyc": "^14.1.1",
-    "sinon": "^7.3.2",
-    "ts-node": "^8.3.0",
-    "tslint": "^5.18.0",
-    "typescript": "^3.5.3"
+    "sinon": "^7.4.2",
+    "ts-node": "^8.4.1",
+    "tslint": "^5.20.0",
+    "typescript": "^3.6.3"
   },
   "types": "dist/",
   "nyc": {
@@ -46,17 +46,17 @@
     ]
   },
   "dependencies": {
-    "@curveball/bodyparser": "^0.4.1",
-    "@curveball/controller": "^0.2.0",
-    "@curveball/core": "^0.9.0",
+    "@curveball/bodyparser": "^0.4.3",
+    "@curveball/controller": "^0.2.1",
+    "@curveball/core": "^0.9.1",
     "@curveball/http-errors": "^0.3.0",
-    "@curveball/problem": "^0.1.0",
-    "@curveball/router": "^0.2.1",
-    "@curveball/session": "^0.3.2",
+    "@curveball/problem": "^0.1.1",
+    "@curveball/router": "^0.2.2",
+    "@curveball/session": "^0.3.3",
     "bcrypt": "^3.0.6",
-    "hal-browser": "^0.7.4",
-    "handlebars": "^4.1.2",
-    "mysql2": "^1.6.5",
+    "hal-browser": "^0.7.5",
+    "handlebars": "^4.2.1",
+    "mysql2": "^1.7.0",
     "otplib": "^11.0.1"
   }
 }

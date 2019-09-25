@@ -28,13 +28,13 @@
     "@types/chai": "^4.2.3",
     "@types/handlebars": "^4.1.0",
     "@types/mocha": "^5.2.7",
-    "@types/node": "^12.7.5",
+    "@types/node": "^12.7.7",
     "@types/otplib": "^7.0.0",
     "@types/sinon": "^7.0.13",
     "chai": "^4.2.0",
     "mocha": "^6.2.0",
     "nyc": "^14.1.1",
-    "sinon": "^7.4.2",
+    "sinon": "^7.5.0",
     "ts-node": "^8.4.1",
     "tslint": "^5.20.0",
     "typescript": "^3.6.3"
@@ -55,7 +55,7 @@
     "@curveball/session": "^0.3.3",
     "bcrypt": "^3.0.6",
     "hal-browser": "^0.7.5",
-    "handlebars": "^4.2.1",
+    "handlebars": "^4.3.1",
     "mysql2": "^1.7.0",
     "otplib": "^11.0.1"
   }

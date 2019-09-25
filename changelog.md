@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.7.0 (2019-09-25)
+------------------
+
+* Update all dependencies.
+* Added a 'confirm password' field during registeration.
+* TOTP is now optional if no TOTP token was set for a user.
+
+
 0.6.0 (2019-07-30)
 ------------------
 

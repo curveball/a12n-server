@@ -35,3 +35,9 @@ form input {
   font-size: 150%;
   margin: 15px;
 }
+
+input.totp {
+  font-size: 150%;
+  max-width: 6ch;
+  font-family: monospace;
+}

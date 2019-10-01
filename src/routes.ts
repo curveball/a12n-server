@@ -2,6 +2,7 @@ import router from '@curveball/router';
 import blob from './blob/controller';
 import health from './health/controller';
 import home from './home/controller';
+import introspect from './introspect/controller';
 import userLog from './log/controller/user';
 import login from './login/controller';
 import logout from './logout/controller';
@@ -22,6 +23,7 @@ const routes = [
   router('/login', login),
   router('/assets/:filename', blob),
   router('/health', health),
+  router('/introspect', introspect),
   router('/register', register),
   router('/authorize', oauth2Authorize),
   router('/validate-bearer', validateBearer),

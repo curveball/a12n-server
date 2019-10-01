@@ -1,5 +1,5 @@
-import { getSetting } from '../../server-settings';
 import { HalResource } from 'hal-types';
+import { getSetting } from '../../server-settings';
 
 export default (version: string) => {
 
@@ -33,7 +33,7 @@ export default (version: string) => {
   };
 
   if (getSetting('registration.enabled')) {
-    result._links['registration'] = {
+    result._links.registration = {
       href: '/registration',
       title: 'Create a new user account',
       type: 'text/html'

@@ -5,6 +5,12 @@ import * as oauth2Service from '../oauth2/service';
 import { NotFound } from '@curveball/http-errors';
 import { accessToken, refreshToken, inactive } from './formats/json';
 
+/**
+ * The /introspect endpoint allows a client to get more information
+ * about an issued access or refresh token.
+ *
+ * This is an implementation of RFC7662: OAuth 2.0 Token Introspection
+ */
 class IntrospectionController extends Controller {
 
   async post(ctx: Context) {

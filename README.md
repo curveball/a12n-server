@@ -27,6 +27,7 @@ Features
   * Supported grants: `implicit`, `client_credentials`, `authorization_code` and `password`.
   * [OAuth2 discovery document][1].
 * Google Authenticator (TOTP).
+* [OAuth 2 Token Introspection][2].
 * A simple, flat, permission model.
 
 The state of this project
@@ -63,4 +64,5 @@ quality if you're looking for something polished. It's actively developed.
 My hope is that people will find this and decide that this project is a great
 starting point _instead_ of building something 100% from scratch.
 
-[1]: https://tools.ietf.org/html/draft-ietf-oauth-discovery-06
+[1]: https://tools.ietf.org/html/rfc8414 "OAuth 2.0 Authorization Server Metadata"
+[2]: https://tools.ietf.org/html/rfc7662 "OAuth 2 Token Introspection"

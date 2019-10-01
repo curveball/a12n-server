@@ -7,7 +7,6 @@ export default (version: string) => {
     _links: {
       'self': { href: '/', title: 'Auth API Home' },
       'authorize' : { href: '/authorize', title: 'OAuth2 authorize endpoint', type: 'text/html' },
-      /*
       'introspect' : {
         href: '/introspect',
         title: 'OAuth2 Token Introspection',
@@ -15,7 +14,6 @@ export default (version: string) => {
           allow: ['POST'],
         }
       },
-       */
       'logout': {
         href: '/logout',
         title: 'Expire tokens and sessions'
@@ -24,7 +22,13 @@ export default (version: string) => {
         href: '/token',
         title: 'OAuth2 protocol endpoint'
       },
-      'validate-bearer': { href: '/validate-bearer', title: 'Validate a OAuth2 bearer token'},
+      'validate-bearer': {
+        href: '/validate-bearer',
+        title: 'Validate a OAuth2 bearer token',
+        hints: {
+          status: 'deprecated',
+        }
+      },
       'validate-totp': { href: '/validate-totp', title: 'Validate a TOTP 2FA token + bearer token'},
       'user-collection': { href: '/user', title: 'List of users'},
       'oauth_server_metadata_uri' : { href: '/.well-known/oauth-authorization-server', title: 'OAuth 2.0 Authorization Server Metadata' }

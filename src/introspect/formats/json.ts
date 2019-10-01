@@ -1,6 +1,6 @@
 import { OAuth2Token } from '../../oauth2/types';
-import { User } from '../../user/types';
 import { PrivilegeMap } from '../../privilege/types';
+import { User } from '../../user/types';
 
 export function accessToken(token: OAuth2Token, user: User, privileges: PrivilegeMap) {
 
@@ -31,6 +31,6 @@ export function inactive() {
 
   return {
     active: false
-  }
+  };
 
 }

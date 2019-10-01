@@ -1,12 +1,12 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { UnsupportedMediaType, UnprocessableEntity } from '@curveball/http-errors';
-import * as oauth2Service from '../oauth2/service';
+import { UnprocessableEntity, UnsupportedMediaType } from '@curveball/http-errors';
 import { NotFound } from '@curveball/http-errors';
-import { accessToken, refreshToken, inactive } from './formats/json';
+import * as oauth2Service from '../oauth2/service';
 import { OAuth2Token } from '../oauth2/types';
 import * as privilegeService from '../privilege/service';
 import * as userService from '../user/service';
+import { accessToken, inactive, refreshToken } from './formats/json';
 
 /**
  * The /introspect endpoint allows a client to get more information
@@ -75,7 +75,7 @@ class IntrospectionController extends Controller {
       const user = await userService.findById(foundToken.userId);
       const privileges = await privilegeService.getPrivilegesForUser(user);
 
-      switch(foundTokenType) {
+      switch (foundTokenType) {
 
         case 'accessToken' :
           ctx.response.body = accessToken(foundToken, user, privileges);

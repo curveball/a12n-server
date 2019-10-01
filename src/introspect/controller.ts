@@ -4,6 +4,9 @@ import { UnsupportedMediaType, UnprocessableEntity } from '@curveball/http-error
 import * as oauth2Service from '../oauth2/service';
 import { NotFound } from '@curveball/http-errors';
 import { accessToken, refreshToken, inactive } from './formats/json';
+import { OAuth2Token } from '../oauth2/types';
+import * as privilegeService from '../privilege/service';
+import * as userService from '../user/service';
 
 /**
  * The /introspect endpoint allows a client to get more information
@@ -27,11 +30,16 @@ class IntrospectionController extends Controller {
     const tokenTypeHint = ctx.request.body.token_type_hint || null;
 
     ctx.response.type = 'application/json';
+
+    let foundToken: OAuth2Token;
+    let foundTokenType: string;
+
     if (tokenTypeHint === null || tokenTypeHint === 'access_token') {
 
       try {
 
-        ctx.response.body = accessToken(await oauth2Service.getTokenByAccessToken(token));
+        foundToken = await oauth2Service.getTokenByAccessToken(token);
+        foundTokenType = 'accessToken';
         return;
 
       } catch (err) {
@@ -48,7 +56,8 @@ class IntrospectionController extends Controller {
 
       try {
 
-        ctx.response.body = refreshToken(await oauth2Service.getTokenByRefreshToken(token));
+        foundToken = await oauth2Service.getTokenByRefreshToken(token);
+        foundTokenType = 'refreshToken';
         return;
 
       } catch (err) {
@@ -62,7 +71,24 @@ class IntrospectionController extends Controller {
 
     }
 
-    ctx.response.body = inactive();
+    if (foundToken) {
+      const user = await userService.findById(foundToken.userId);
+      const privileges = await privilegeService.getPrivilegesForUser(user);
+
+      switch(foundTokenType) {
+
+        case 'accessToken' :
+          ctx.response.body = accessToken(foundToken, user, privileges);
+          break;
+        case 'refreshToken' :
+          ctx.response.body = refreshToken(foundToken, user, privileges);
+          break;
+      }
+    } else {
+
+      ctx.response.body = inactive();
+
+    }
 
   }
 

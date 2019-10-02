@@ -7,13 +7,17 @@ import { EventType } from '../log/types';
 import * as UserService from '../user/service';
 import { User } from '../user/types';
 import { loginForm } from './formats/html';
+import { getSetting } from '../server-settings';
 
 class LoginController extends Controller {
 
   async get(ctx: Context) {
 
     ctx.response.type = 'text/html';
-    ctx.response.body = loginForm(ctx.query.msg);
+    ctx.response.body = loginForm(
+      ctx.query.msg,
+      await getSetting('registration.enabled')
+    );
 
   }
 

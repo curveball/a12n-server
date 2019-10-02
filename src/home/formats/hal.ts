@@ -16,7 +16,7 @@ export default (version: string) => {
       },
       'logout': {
         href: '/logout',
-        title: 'Expire tokens and sessions'
+        title: 'Log out'
       },
       'token': {
         href: '/token',

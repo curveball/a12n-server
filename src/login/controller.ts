@@ -4,10 +4,10 @@ import { NotFound } from '@curveball/http-errors';
 import querystring from 'querystring';
 import log from '../log/service';
 import { EventType } from '../log/types';
+import { getSetting } from '../server-settings';
 import * as UserService from '../user/service';
 import { User } from '../user/types';
 import { loginForm } from './formats/html';
-import { getSetting } from '../server-settings';
 
 class LoginController extends Controller {
 

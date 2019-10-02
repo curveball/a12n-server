@@ -1,11 +1,13 @@
 import { HalResource } from 'hal-types';
 import { getSetting } from '../../server-settings';
+import { User } from '../../user/types';
 
-export default (version: string) => {
+export default (version: string, authenticatedUser: User) => {
 
   const result: HalResource = {
     _links: {
       'self': { href: '/', title: 'Auth API Home' },
+      'authenticated-as': { href: '/user/' + authenticatedUser.id, title: authenticatedUser.nickname },
       'authorize' : { href: '/authorize', title: 'OAuth2 authorize endpoint', type: 'text/html' },
       'introspect' : {
         href: '/introspect',

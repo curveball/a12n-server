@@ -7,7 +7,7 @@ class HomeController extends Controller {
   get(ctx: Context) {
 
     const version = require('../../package.json').version;
-    ctx.response.body = hal(version);
+    ctx.response.body = hal(version, ctx.state.session.user);
 
   }
 

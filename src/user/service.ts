@@ -102,6 +102,16 @@ export async function createPassword(user: User, password: string): Promise<void
   ]);
 
 }
+
+export async function updatePassword(user: User, password: string): Promise<void> {
+
+  const query = 'UPDATE user_passwords SET password = ? WHERE user_id = ?';
+  await database.query(query, [
+    await bcrypt.hash(password, 12),
+    user.id
+  ]);
+
+}
 /**
  * Returns true or false if the password was correct.
  *

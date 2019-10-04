@@ -1,5 +1,6 @@
 import router from '@curveball/router';
 import blob from './blob/controller';
+import changePassword from './changepassword/controller';
 import health from './health/controller';
 import home from './home/controller';
 import introspect from './introspect/controller';
@@ -30,6 +31,7 @@ const routes = [
   router('/validate-totp', validateTotp),
   router('/token', oauth2Token),
   router('/logout', logout),
+  router('/changepassword', changePassword),
   router('/.well-known/oauth-authorization-server', oauth2Metadata),
 ];
 

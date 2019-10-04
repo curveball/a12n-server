@@ -9,6 +9,7 @@ export default (version: string, authenticatedUser: User) => {
       'self': { href: '/', title: 'Auth API Home' },
       'authenticated-as': { href: '/user/' + authenticatedUser.id, title: authenticatedUser.nickname },
       'authorize' : { href: '/authorize', title: 'OAuth2 authorize endpoint', type: 'text/html' },
+      'change-password': { href: '/changepassword', title: 'Change user\'s password' },
       'introspect' : {
         href: '/introspect',
         title: 'OAuth2 Token Introspection',

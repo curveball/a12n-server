@@ -18,10 +18,9 @@ class ChangePasswordController extends Controller {
   }
 
   async post(ctx: Context) {
-    
-    console.log('--------------')
-    let user: User = ctx.state.session.user;
-    const currentPassword = ctx.request.body.currentpassword
+
+    const user: User = ctx.state.session.user;
+    const currentPassword = ctx.request.body.currentpassword;
     const userNewPassword = ctx.request.body.newpassword;
     const confirmNewPassword = ctx.request.body.confirmnewpassword;
 

@@ -1,7 +1,5 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-// import { NotFound } from '@curveball/http-errors';
-// import querystring from 'querystring';
 import log from '../log/service';
 import { EventType } from '../log/types';
 import * as UserService from '../user/service';
@@ -20,9 +18,9 @@ class ChangePasswordController extends Controller {
   async post(ctx: Context) {
 
     const user: User = ctx.state.session.user;
-    const currentPassword = ctx.request.body.currentpassword;
-    const userNewPassword = ctx.request.body.newpassword;
-    const confirmNewPassword = ctx.request.body.confirmnewpassword;
+    const currentPassword = ctx.request.body.currentPassword;
+    const userNewPassword = ctx.request.body.newPassword;
+    const confirmNewPassword = ctx.request.body.confirmNewPassword;
 
     if (!await UserService.validatePassword(user, currentPassword)) {
       ctx.status = 303;
@@ -41,7 +39,7 @@ class ChangePasswordController extends Controller {
     ctx.state.session = {
       user: user,
     };
-    log(EventType.loginSuccess, ctx);
+    log(EventType.changePassWordsucess, ctx);
     ctx.status = 303;
     ctx.response.headers.set('Location', '/');
 

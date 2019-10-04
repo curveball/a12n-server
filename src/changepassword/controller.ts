@@ -39,7 +39,7 @@ class ChangePasswordController extends Controller {
     ctx.state.session = {
       user: user,
     };
-    log(EventType.changePassWordsucess, ctx);
+    log(EventType.changePasswordSuccess, ctx);
     ctx.status = 303;
     ctx.response.headers.set('Location', '/');
 

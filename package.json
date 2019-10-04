@@ -21,7 +21,18 @@
     "assets",
     "templates"
   ],
-  "author": "Evert Pot (https://evertpot.com/)",
+  "contributors": [
+    {
+      "name": "Evert Pot",
+      "email": "me@evertpot.com",
+      "url": "https://evertpot.com"
+    },
+    {
+      "name": "Ju-Hang Sin",
+      "email": "juhangsin@gmail.com",
+      "url": "https://github.com/juhangsin"
+    }
+  ],
   "homepage": "https://github.com/evert/auth-api#readme",
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",

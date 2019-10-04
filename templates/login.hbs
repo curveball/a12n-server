@@ -11,7 +11,7 @@
   <input type="password" name="password" required="required" />
 
   <label for="totp">TOTP code (if set)</label>
-  <input type="text" name="totp" />
+  <input type="text" name="totp" class="totp" placeholder="000000" />
 
   <input type="submit" value="Login" />
 
@@ -19,4 +19,9 @@
     <input type="hidden" name="{{@key}}" value="{{this}}" />
   {{/each}}
 
+  {{#if registrationEnabled}}
+  <p class="login-options">
+    <a href="/register">Register</a>
+  </p>
+  {{/if}}
 </form>

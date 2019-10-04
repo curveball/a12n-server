@@ -1,6 +1,19 @@
 Changelog
 =========
 
+0.8.0 (2019-10-02)
+------------------
+
+* Support for RFC7662 Token Introspection.
+* Login form will now have a link to the registration screen, if registration
+  was enabled.
+* Small design tweaks in Login screen.
+* BC break: Links such as `sa:logout`, `sa:token`, `sa:validate-bearer` now
+  all have their `sa:` prefix dropped.
+* The 'validate-bearer' endpont is now deprecated, as the the token
+  introspection endpoint has the same features.
+
+
 0.7.0 (2019-09-25)
 ------------------
 

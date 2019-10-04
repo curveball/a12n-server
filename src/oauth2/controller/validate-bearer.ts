@@ -6,6 +6,13 @@ import * as userHal from '../../user/formats/hal';
 import * as userService from '../../user/service';
 import * as oauth2Service from '../service';
 
+/**
+ * The /validate-bearer endpoint can check if a bearer token
+ * is valid and return some information about it.
+ *
+ * It is superseded by the standard /introspect endpoint
+ * and should no longer be used
+ */
 class ValidateBearerController extends Controller {
 
   async post(ctx: Context) {

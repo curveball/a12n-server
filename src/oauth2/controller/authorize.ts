@@ -125,7 +125,7 @@ class AuthorizeController extends Controller {
 
     let user: User;
     try {
-      user = await userService.findByIdentity('mailto:' + ctx.request.body.username);
+      user = await userService.findByIdentity('mailto:' + ctx.request.body.userName);
     } catch (err) {
       return this.redirectToLogin(ctx, { ...params, msg: 'Incorrect username or password' });
     }

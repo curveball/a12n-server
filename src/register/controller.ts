@@ -17,7 +17,7 @@ class RegistrationController extends Controller {
   async post(ctx: Context) {
 
     const userPassword = ctx.request.body.password;
-    const confirmPassword = ctx.request.body.confirmpassword;
+    const confirmPassword = ctx.request.body.confirmPassword;
 
     if (userPassword !== confirmPassword) {
       ctx.status = 303;
@@ -26,7 +26,7 @@ class RegistrationController extends Controller {
     }
 
     try {
-      await userService.findByIdentity('mailto:' + ctx.request.body.emailaddress);
+      await userService.findByIdentity('mailto:' + ctx.request.body.emailAddress);
       throw new Error('User already exists');
     } catch (err) {
       if (!(err instanceof NotFound)) {
@@ -35,7 +35,7 @@ class RegistrationController extends Controller {
     }
 
     const user = await userService.save({
-      identity: 'mailto:' + ctx.request.body.emailaddress,
+      identity: 'mailto:' + ctx.request.body.emailAddress,
       nickname: ctx.request.body.nickname,
       created: new Date(),
       type: 1

@@ -51,7 +51,6 @@ built yet:
 * Middlewares for other frameworks and languages that can validate Bearer
   tokens by calling this API.
 * JWT. Maybe.
-* Configuration to turn certain things off, like TOTP.
 * Documentation and tutorials.
 
 So currently, there's definitely still a lot to do. If you need any of the

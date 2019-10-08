@@ -43,8 +43,7 @@ class RegistrationController extends Controller {
 
     await userService.createPassword(user, userPassword);
 
-
-    ctx.status = 308;
+    ctx.status = 303;
     ctx.response.headers.set('Location', '/login?msg=Registration+successful.+Please log in');
 
   }

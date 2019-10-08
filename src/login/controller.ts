@@ -60,7 +60,7 @@ class LoginController extends Controller {
 
   async redirectToLogin(ctx: Context, msg: string) {
 
-    ctx.response.status = 302;
+    ctx.response.status = 303;
     ctx.response.headers.set('Location', '/login?' + querystring.stringify({ msg }));
 
   }

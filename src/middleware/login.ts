@@ -6,6 +6,7 @@ const whitelistPath = [
   '/health',
   '/register',
   '/authorize',
+  '/reset-password',
   '/token',
   '/validate-bearer',
   '/validate-totp',

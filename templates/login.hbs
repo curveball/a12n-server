@@ -1,27 +1,36 @@
-{{# if msg}}
-<div class="msg">{{ msg }}</div>
-{{/if}}
 
 <form action="{{ action }}" method="post">
+  {{# if msg}}
+  <div class="msg">{{ msg }}</div>
+  {{/if}}
+  <fieldset>
+    <label for="username">
+      <span>Username</span>
+      <input type="text" name="userName" id="username" required="required" placeholder="Enter username" />
+    </label>
 
-  <label for="username">User</label>
-  <input type="text" name="userName" required="required" />
+    <label for="password">
+      <span>Password</span>
+      <input type="password" name="password" id="password" required="required" placeholder="Enter password"  />
+    </label>
 
-  <label for="password">Password</label>
-  <input type="password" name="password" required="required" />
-
-  <label for="totp">TOTP code (if set)</label>
-  <input type="text" name="totp" class="totp" placeholder="000000" />
-
-  <input type="submit" value="Login" />
-
-  {{#each hiddenFields}}
-    <input type="hidden" name="{{@key}}" value="{{this}}" />
-  {{/each}}
-
-  {{#if registrationEnabled}}
+    <label for="totp">
+      <span>TOTP code  <em>(if set)</em></span>
+      <input type="text" name="totp" class="totp" id="totp" placeholder="Enter TOTP code" />
+    </label>
+  </fieldset>
+  <fieldset>
+    <label>
+      <button type="submit">Login</button>
+    </label>
+    {{#if registrationEnabled}}
   <p class="login-options">
     <a href="/register">Register</a>
   </p>
   {{/if}}
+  </fieldset>
+
+  {{#each hiddenFields}}
+    <input type="hidden" name="{{@key}}" value="{{this}}" />
+  {{/each}}
 </form>

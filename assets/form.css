@@ -1,48 +1,107 @@
+body {
+  background: #ECEFF1;
+}
+
+header {
+  border-color: transparent;
+  background-color: transparent;
+  box-shadow: none;
+  color: #1e88e5;
+}
+
+header h1 {
+  max-width: 17em;
+  margin: 0 auto;
+}
+
 form {
-  display: grid;
-  grid-template-columns: max-content 1fr;
-  grid-gap: 20px;
   font-size: 18px;
-  max-width: 400px;
-  padding: 20px;
-  margin: 10px;
-  border-radius: 2px;
+  margin: 2em  auto;
+  padding: 0;
+  border-radius: .5ex;
+  background: white;
+  max-width: 25em;
+  box-shadow: 0 1ex 7em -3ex #b0c4d5;
+}
+
+input, button, select {
+  font: inherit;
+}
+
+form fieldset {
+  border:none;
+  padding: 2em;
+  margin: 0 auto;
+  grid-template-rows: 3em 2em 2em;
 }
 
 form label {
-  grid-column: 1;
-  text-align: right;
+  display: flex;
+  flex-direction: column;
 }
 
-form input, form button {
-  grid-column: 2;
+form label:not(:last-child) {
+  margin-bottom: 1em;
+}
+
+form input,
+form button {
+  line-height: 3;
+  padding: 0;
+  border-radius: .25ex;
 }
 
 form input {
   background: rgba(0,0,0,.04);
-  border-width: 0 0 1px 0;
+  border-width: 0 0 2px 0;
   border-style: solid;
+  border-color: #CcCcCc;
+  text-indent: 1ex;
+  transition: border-color .5s cubic-bezier(0.075, 0.82, 0.165, 1);
+  margin-top: 1ex;
+}
+
+form input:hover {
   border-color: #8c8c8c;
-  padding: 10px;
-  border-radius: 4px 4px 0 0;
+}
+
+form input:focus {
+  outline-color: transparent;
+  border-color: #1E88E5;
+}
+
+form button {
+  border: none;
+  background: #1E88E5;
+  color: white;
 }
 
 .msg {
-  border: 1px solid #f00;
-  background: #ddd;
-  border-radius: 4px;
-  padding: 5px;
-  font-size: 150%;
-  margin: 15px;
+  border: 2px solid #9d0b00;
+  border-radius: .5ex .5ex 0 0;
+  padding: 1em;
+  margin: 1em auto;
+  max-width: 33em;
+  font-weight: 800;
+  background: #F44336;
+  color: white;
 }
 
 input.totp {
-  font-size: 150%;
-  max-width: 6ch;
   font-family: monospace;
 }
 
-.login-options {
-  grid-column: 2;
-  font-size: 80%;
+form p {
+  text-align: center;
+}
+
+form a {
+  color: #1e88e5;  
+  text-decoration-color: #1e88e5;
+  transition: all .5s;
+}
+
+form a:hover {
+  text-decoration-color: transparent; 
+  
 }

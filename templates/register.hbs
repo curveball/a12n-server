@@ -3,20 +3,32 @@
 {{/if}}
 
 <form action="{{ action }}" method="post">
+  <fieldset>
+    <label for="nickname">
+      <span>Nickname</span>
+      <input type="text" name="nickname" id="nickname" required="required" />
+    </label>
 
-  <label for="nickname">Nickname</label>
-  <input type="text" name="nickname" required="required" />
+    <label for="emailaddress">
+      <span>Email</span>
+    <input type="email" name="emailAddress" id="emailaddress" required="required" />
+    </label>
 
-  <label for="emailaddress">Email</label>
-  <input type="email" name="emailAddress" required="required" />
+      <label for="password">
+        <span>Password</span>
+        <input type="password" name="password" id="password" required="required" />
+      </label>
 
-  <label for="password">Password</label>
-  <input type="password" name="password" required="required" />
-
-  <label for="confirmpassword-">Confirm Password</label>
-  <input type="password" name="confirmPassword" required="required" />
-
-  <input type="submit" value="Register" />
+      <label for="confirmpassword">
+        <span>Confirm Password</span>
+        <input type="password" name="confirmPassword" id="confirmpassword" required="required" />
+      </label>
+    </fieldset>
+    <fieldset>
+      <label>
+        <button type="submit">Register</button>
+      </label>
+    </fieldset>
 
   {{#each hiddenFields}}
   <input type="hidden" name="{{@key}}" value="{{this}}" />

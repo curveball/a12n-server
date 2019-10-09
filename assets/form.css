@@ -10,7 +10,7 @@ header {
 }
 
 header h1 {
-  max-width: 17em;
+  max-width: 14em;
   margin: 0 auto;
 }
 
@@ -74,6 +74,7 @@ form button {
   border: none;
   background: #1E88E5;
   color: white;
+  cursor: pointer;
 }
 
 .msg {

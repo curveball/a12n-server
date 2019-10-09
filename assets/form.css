@@ -22,7 +22,9 @@ form {
   background: white;
   max-width: 25em;
   box-shadow: 0 1ex 7em -3ex #b0c4d5;
+  overflow: hidden;
 }
+
 
 input, button, select {
   font: inherit;
@@ -70,22 +72,58 @@ form input:focus {
   border-color: #1E88E5;
 }
 
+
+form input:invalid {
+  box-shadow: none;
+  outline: none;
+  outline-color: transparent;
+  border-color: #F44336;
+}
+
+form input:invalid:focus {
+  border-color: #EF9A9A;
+}
+
+:focus {outline:none;}
+::-moz-focus-inner {border:0;}
+
 form button {
   border: none;
   background: #1E88E5;
   color: white;
   cursor: pointer;
+  transition: transform .15s;
+}
+
+form button:hover {
+  transform: translateY(-2px) scale(1.02);
 }
 
 .msg {
-  border: 2px solid #9d0b00;
-  border-radius: .5ex .5ex 0 0;
-  padding: 1em;
-  margin: 1em auto;
+  padding: 1em 2em;
+  margin: 0 auto 1em;
   max-width: 33em;
   font-weight: 800;
   background: #F44336;
   color: white;
+  position: relative;
+  text-indent: -2.6ex;
+}
+
+.msg::before {
+  content: '\26A0';
+  margin-right: 1ex;
+}
+
+.msg::after {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 1em;
+  height: 1em;
+  top: 100%;
+  transform: rotate(45deg) translateY(-1.5ex);
+  background: #F44336;
 }
 
 input.totp {

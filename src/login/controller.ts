@@ -5,7 +5,7 @@ import querystring from 'querystring';
 import log from '../log/service';
 import { EventType } from '../log/types';
 import { getSetting } from '../server-settings';
-import * as UserService from '../user/service';
+import * as userService from '../user/service';
 import { User } from '../user/types';
 import { loginForm } from './formats/html';
 
@@ -25,7 +25,7 @@ class LoginController extends Controller {
 
     let user: User;
     try {
-      user = await UserService.findByIdentity('mailto:' + ctx.request.body.userName);
+      user = await userService.findByIdentity('mailto:' + ctx.request.body.userName);
     } catch (err) {
       if (err instanceof NotFound) {
         log(EventType.loginFailed, ctx);
@@ -35,17 +35,17 @@ class LoginController extends Controller {
       }
     }
 
-    if (!await UserService.validatePassword(user, ctx.request.body.password)) {
+    if (!await userService.validatePassword(user, ctx.request.body.password)) {
       log(EventType.loginFailed, ctx.ip(), user.id);
       return this.redirectToLogin(ctx, 'Incorrect username or password');
     }
 
     if (ctx.request.body.totp) {
-        if (!await UserService.validateTotp(user, ctx.request.body.totp)) {
+        if (!await userService.validateTotp(user, ctx.request.body.totp)) {
           log(EventType.totpFailed, ctx.ip(), user.id);
           return this.redirectToLogin(ctx, 'Incorrect TOTP code');
         }
-    } else if (await UserService.hasTotp(user)) {
+    } else if (await userService.hasTotp(user)) {
         return this.redirectToLogin(ctx, 'TOTP token required');
     }
 

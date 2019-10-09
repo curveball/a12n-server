@@ -18,10 +18,11 @@
   {{#each hiddenFields}}
     <input type="hidden" name="{{@key}}" value="{{this}}" />
   {{/each}}
-
+  
   {{#if registrationEnabled}}
   <p class="login-options">
     <a href="/register">Register</a>
+    <a href="/reset-password">Forgot Password</a>
   </p>
   {{/if}}
 </form>

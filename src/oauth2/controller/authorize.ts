@@ -138,7 +138,7 @@ class AuthorizeController extends Controller {
     if (ctx.request.body.totp) {
       if (!await userService.validateTotp(user, ctx.request.body.totp)) {
           log(EventType.totpFailed, ctx.ip(), user.id);
-        return this.redirectToLogin(ctx, {...params, msg: 'Incorrect TOTP code'});
+          return this.redirectToLogin(ctx, {...params, msg: 'Incorrect TOTP code'});
         }
     } else if (await userService.hasTotp(user)) {
       return this.redirectToLogin(ctx, {...params, msg: 'TOTP token required'});

@@ -1,6 +1,21 @@
 Changelog
 =========
 
+0.9.1 (2019-10-09)
+------------------
+
+* Fixed a bug in authenticating via OAuth2
+
+
+0.9.0 (2019-10-09)
+------------------
+
+* New design! Thank you @ikbensiep
+* Change password feature
+* TOTP is now also no longer a requirement for OAuth2 sign-ins. It's only
+  optional if TOTP was not set up by a user.
+
+
 0.8.0 (2019-10-02)
 ------------------
 

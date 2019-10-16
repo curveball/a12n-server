@@ -1,6 +1,6 @@
 {
   "name": "a12n-server",
-  "version": "0.8.0",
+  "version": "0.9.1",
   "main": "dist/index.js",
   "description": "A ready-to-launch User and Authentication system for those that don't want to build it",
   "scripts": {
@@ -66,7 +66,7 @@
     "@curveball/router": "^0.2.2",
     "@curveball/session": "^0.3.3",
     "bcrypt": "^3.0.6",
-    "hal-browser": "^0.7.6",
+    "hal-browser": "^0.8.0",
     "handlebars": "^4.4.0",
     "mysql2": "^1.7.0",
     "otplib": "^11.0.1"

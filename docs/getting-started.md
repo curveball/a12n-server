@@ -77,7 +77,7 @@ Optional
 To use any email related feature, such as 'reset password', the following environment variables are also required.
 
 ```sh
-export SMTP_URL="smtps://[Username]:[Password]@[Host]:[Port]/"
+export SMTP_URL="smtps://[username]:[password]@[host]:[port]/"
 export SMTP_EMAIL_FROM='"[Name]" <[Username]@example.org>'
 ```
 

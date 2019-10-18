@@ -1,5 +1,8 @@
 import nodemailer from 'nodemailer';
 import { User } from '../user/types';
+import database from '../database';
+import bcrypt from 'bcrypt';
+import crypto from 'crypto';
 
 export async function sendResetPasswordEmail(user: User) {
 
@@ -24,4 +27,29 @@ export async function sendResetPasswordEmail(user: User) {
     });
 
     nodemailer.getTestMessageUrl(info);
+}
+
+export async function createToken(user: User): Promise<string> {
+    const token = crypto.randomBytes(32).toString('base64url').replace('=', '');
+    const query = 'INSERT INTO reset_password_token SET user_id = ?, token = ?, created_at = UNIX_TIMESTAMP()';
+    await database.query(query, [
+        user.id,
+        await bcrypt.hash(token, 12),
+    ]);
+    return token;
+}
+
+export async function validateToken(user: User, token: string): Promise<boolean> {
+    const query = 'SELECT token FROM reset_password_token WHERE user_id = ?';
+    const result = await database.query(query, [user.id]);
+
+    const hashes: string[] = result[0].map( (row: { token: string }) => row.token );
+
+    for (const hash of hashes) {
+        if (await bcrypt.compare(token, hash)) {
+            return true;
+        }
+    }
+
+    return false;
 }

@@ -78,7 +78,7 @@ If reset password is enabled, you need these environment variables
 
 ```sh
 export SMTP_URL="smtps://[Username]:[Password]@[Host]:[Port]/"
-export SMTP_EMAIL_FROM='"[Name]" <[Username]@pegasi.badgateway.net>'
+export SMTP_EMAIL_FROM='"[Name]" <[Username]@example.org>'
 ```
 
 

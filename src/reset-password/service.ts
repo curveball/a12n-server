@@ -7,7 +7,7 @@ export async function sendResetPasswordEmail(user: User) {
         throw new Error('The environment variable SMTP_EMAIL_FROM must be set');
     }
 
-    if (!process.env.SMPT_URL) {
+    if (!process.env.SMTP_URL) {
         throw new Error('The environment variable SMTP_URL must be set. Needs to contain "smtps://[Username]:[Password]@[Host]:[Port]"');
     }
 
@@ -16,7 +16,7 @@ export async function sendResetPasswordEmail(user: User) {
 
     // send mail with defined transport object
     const info = await transporter.sendMail({
-        from: '"Admin" <' + process.env.SMTP_EMAIL_FROM + '>', // sender address
+        from: process.env.SMTP_EMAIL_FROM, // sender address
         to: user.identity.substring(7), // list of receivers
         subject: 'Reset Password Link', // Subject line
         text: 'Please click link below to reset your password.', // plain text body

@@ -74,7 +74,7 @@ UPDATE users SET active = 1 WHERE id = 1`.
 Optional
 --------
 
-If reset password is enabled, you need these environment variables
+To use any email related feature, such as 'reset password', the following environment variables are also required.
 
 ```sh
 export SMTP_URL="smtps://[Username]:[Password]@[Host]:[Port]/"

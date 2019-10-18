@@ -71,5 +71,15 @@ Instead, run the following query:
 UPDATE users SET active = 1 WHERE id = 1`.
 ```
 
+Optional
+--------
+
+If reset password is enabled, you need these environment variables
+
+```sh
+export SMTP_URL="smtps://[Username]:[Password]@[Host]:[Port]/"
+export SMTP_EMAIL_FROM='"[Name]" <[Username]@pegasi.badgateway.net>'
+```
+
 
 [1]: https://www.docker.com/

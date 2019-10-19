@@ -1,8 +1,8 @@
-import nodemailer from 'nodemailer';
-import { User } from '../user/types';
-import database from '../database';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
+import nodemailer from 'nodemailer';
+import database from '../database';
+import { User } from '../user/types';
 
 export async function sendResetPasswordEmail(user: User) {
 

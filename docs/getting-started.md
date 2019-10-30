@@ -2,7 +2,7 @@ Getting started
 ===============
 
 To set up a new a12n-server from scratch, start by obtaining the following
-prequisites:
+prerequisites:
 
 1. A working `nodejs` and `npm` binary.
 2. `git`.

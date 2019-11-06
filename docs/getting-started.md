@@ -71,5 +71,15 @@ Instead, run the following query:
 UPDATE users SET active = 1 WHERE id = 1`.
 ```
 
+Optional
+--------
+
+To use any email related feature, such as 'reset password', the following environment variables are also required.
+
+```sh
+export SMTP_URL="smtps://[username]:[password]@[host]:[port]/"
+export SMTP_EMAIL_FROM='"[Name]" <[Username]@example.org>'
+```
+The SMTP_URL takes any format that that [Nodemailer](https://nodemailer.com/smtp/) takes.
 
 [1]: https://www.docker.com/

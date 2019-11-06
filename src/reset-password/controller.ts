@@ -1,11 +1,11 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { NotFound } from '@curveball/http-errors';
+import log from '../log/service';
+import { EventType } from '../log/types';
 import * as userService from '../user/service';
 import { resetPasswordForm } from './formats/html';
 import { sendResetPasswordEmail } from './service';
-import log from '../log/service';
-import { EventType } from '../log/types';
 
 class ResetPasswordController extends Controller {
 
@@ -40,5 +40,3 @@ class ResetPasswordController extends Controller {
 }
 
 export default new ResetPasswordController();
-
-// log(EventType.resetPasswordSuccess, ctx);

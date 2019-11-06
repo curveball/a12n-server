@@ -8,7 +8,7 @@ CREATE TABLE reset_password_token (
   user_id INT UNSIGNED NOT NULL,
   token VARCHAR(50) NOT NULL UNIQUE,
   expires_at INT UNSIGNED NOT NULL,
-  created_at INT UNSIGNED NOT NULL,
+  created_at INT UNSIGNED NOT NULL
 );
 
 COMMIT;

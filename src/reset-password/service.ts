@@ -2,8 +2,8 @@ import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import database from '../database';
-import { User } from '../user/types';
 import { render } from '../templates';
+import { User } from '../user/types';
 
 const tokenTTL = 7200;
 
@@ -24,7 +24,7 @@ export async function sendResetPasswordEmail(user: User) {
         name: user.nickname,
         url: 'https://auth-server.example/reset-password/token/' + token,
         expiryHours: tokenTTL / 60 / 60
-    })
+    });
 
     // send mail with defined transport object
     const info = await transporter.sendMail({

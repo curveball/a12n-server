@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import database from '../database';
 import { User } from '../user/types';
+import { render } from '../templates';
 
 const tokenTTL = 7200;
 
@@ -17,22 +18,28 @@ export async function sendResetPasswordEmail(user: User) {
     }
 
     const transporter = nodemailer.createTransport(process.env.SMTP_URL);
-
+    const token = await createToken(user);
+    const emailTemplate =
+    render('emails/reset-password-email', {
+        name: user.nickname,
+        url: 'https://auth-server.example/reset-password/token/' + token,
+        expiryHours: tokenTTL / 60 / 60
+    })
 
     // send mail with defined transport object
     const info = await transporter.sendMail({
         from: process.env.SMTP_EMAIL_FROM, // sender address
         to: user.identity.substring(7), // list of receivers
-        subject: 'Reset Password Link', // Subject line
-        text: 'Please click link below to reset your password.', // plain text body
-        html: '<b>Please click link below to reset your password!</b>' // html body
+        subject: 'Password reset request', // Subject line
+        html: emailTemplate
+        // html: '<b>Please click link below to reset your password!</b>' // html body
     });
 
     nodemailer.getTestMessageUrl(info);
 }
 
 export async function createToken(user: User): Promise<string> {
-    const token = crypto.randomBytes(32).toString('base64url').replace('=', '');
+    const token = crypto.randomBytes(32).toString('base64').replace('+', '-').replace('/', '_').replace(/=+$/, '');
     const query = 'INSERT INTO reset_password_token SET user_id = ?, token = ?, expires_at = UNIX_TIMESTAMP() + ?, created_at = UNIX_TIMESTAMP()';
 
     await database.query(query, [

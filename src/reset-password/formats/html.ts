@@ -1,6 +1,6 @@
 import { render } from '../../templates';
 
-export function resetPasswordForm(msg: string) {
+export function resetPasswordRequestForm(msg: string) {
 
   return render('reset-password', {
     title: 'Reset Password',

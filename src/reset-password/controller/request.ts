@@ -1,18 +1,18 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { NotFound } from '@curveball/http-errors';
-import log from '../log/service';
-import { EventType } from '../log/types';
-import * as userService from '../user/service';
-import { resetPasswordForm } from './formats/html';
-import { sendResetPasswordEmail } from './service';
+import log from '../../log/service';
+import { EventType } from '../../log/types';
+import * as userService from '../../user/service';
+import { resetPasswordRequestForm } from '../formats/html';
+import { sendResetPasswordEmail } from '../service';
 
-class ResetPasswordController extends Controller {
+class ResetPasswordRequestController extends Controller {
 
   async get(ctx: Context) {
 
     ctx.response.type = 'text/html';
-    ctx.response.body = resetPasswordForm(ctx.query.msg);
+    ctx.response.body = resetPasswordRequestForm(ctx.query.msg);
 
   }
 
@@ -39,4 +39,4 @@ class ResetPasswordController extends Controller {
   }
 }
 
-export default new ResetPasswordController();
+export default new ResetPasswordRequestController();

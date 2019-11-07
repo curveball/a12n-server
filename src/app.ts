@@ -30,4 +30,8 @@ import { load } from './server-settings';
 
   console.log('Listening on port', port);
 
+  if (!process.env.PUBLIC_URI) {
+    process.env.PUBLIC_URI = 'http://localhost:' + port + '/';
+  }
+
 })();

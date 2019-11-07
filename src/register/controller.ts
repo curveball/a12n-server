@@ -28,7 +28,7 @@ class RegistrationController extends Controller {
     try {
       if (await userService.findByIdentity('mailto:' + ctx.request.body.emailAddress)) {
         ctx.status = 303;
-        ctx.response.headers.set('Location', '/register?msg=User+already+exists.+Please+use+a+different+email');
+        ctx.response.headers.set('Location', '/register?msg=User+already+exists,+did+you+forget+your+password?');
         return;
       }
     } catch (err) {

@@ -19,8 +19,7 @@ export async function sendResetPasswordEmail(user: User) {
 
     const transporter = nodemailer.createTransport(process.env.SMTP_URL);
     const token = await createToken(user);
-    const emailTemplate =
-    render('emails/reset-password-email', {
+    const emailTemplate = render('emails/reset-password-email', {
         name: user.nickname,
         url: 'https://auth-server.example/reset-password/token/' + token,
         expiryHours: tokenTTL / 60 / 60

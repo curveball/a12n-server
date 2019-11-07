@@ -1,9 +1,9 @@
-import crypto from 'crypto';
 import { BadRequest } from '@curveball/http-errors';
+import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import database from '../database';
-import * as userService from '../user/service';
 import { render } from '../templates';
+import * as userService from '../user/service';
 import { User } from '../user/types';
 
 const tokenTTL = 7200;
@@ -55,9 +55,9 @@ export async function validateToken(token: string): Promise<User> {
     const result = await database.query(query, [token]);
 
     if (result[0].length !== 1) {
-      throw new BadRequest ('Invaild Token')
+      throw new BadRequest ('Invaild Token');
     } else {
-      return userService.findById(result[0][0].user_id)
+      return userService.findById(result[0][0].user_id);
     }
 
 }

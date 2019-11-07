@@ -13,11 +13,11 @@ import oauth2Token from './oauth2/controller/token';
 import validateBearer from './oauth2/controller/validate-bearer';
 import validateTotp from './oauth2/controller/validate-totp';
 import register from './register/controller';
+import resetPasswordRedirect from './reset-password/controller/redirect';
 import resetPassword from './reset-password/controller/request';
-import resetPasswordRedirect from './reset-password/controller/redirect'
+import passwordToken from './reset-password/controller/token';
 import users from './user/controller/collection';
 import user from './user/controller/item';
-import passwordToken from './reset-password/controller/token';
 
 const routes = [
   router('/', home),

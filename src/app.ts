@@ -28,7 +28,7 @@ import { load } from './server-settings';
 
   if (!process.env.PUBLIC_URI) {
     process.env.PUBLIC_URI = 'http://localhost:' + port + '/';
-    console.log('PUBLIC_URI environment variable was not set, defaulting to http://localhost:' + port + '/')
+    console.log('PUBLIC_URI environment variable was not set, defaulting to http://localhost:' + port + '/');
   }
 
   app.listen(port);

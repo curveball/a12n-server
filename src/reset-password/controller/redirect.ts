@@ -1,10 +1,10 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { resetPasswordForm } from '../formats/redirect';
-import { User } from '../../user/types';
-import * as UserService from '../../user/service';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
+import * as UserService from '../../user/service';
+import { User } from '../../user/types';
+import { resetPasswordForm } from '../formats/redirect';
 
 class ResetPasswordController extends Controller {
 
@@ -20,8 +20,6 @@ class ResetPasswordController extends Controller {
     const user: User = ctx.state.session.resetPasswordUser.user;
     const resetNewPassword = ctx.request.body.newPassword;
     const confirmNewPassword = ctx.request.body.confirmNewPassword;
-
-    console.log(user);
 
     if (resetNewPassword !== confirmNewPassword) {
       ctx.status = 303;

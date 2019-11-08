@@ -2,7 +2,7 @@ import { render } from '../../templates';
 
 export function resetPasswordRequestForm(msg: string) {
 
-  return render('reset-password', {
+  return render('resetpasswordrequest', {
     title: 'Reset Password',
     msg: msg,
     action: '/reset-password',

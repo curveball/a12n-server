@@ -9,13 +9,18 @@ import { resetPasswordForm } from '../formats/redirect';
 class ResetPasswordController extends Controller {
 
   async get(ctx: Context) {
-
+    if (!ctx.state.session.resetPasswordUser) {
+      throw new Error('The "resetPasswordUser" property must be provided');
+    }
     ctx.response.type = 'text/html';
     ctx.response.body = resetPasswordForm(ctx.query.msg);
 
   }
 
   async post(ctx: Context) {
+    if (!ctx.state.session.resetPasswordUser) {
+      throw new Error('The "resetPasswordUser" property must be provided');
+    }
 
     const user: User = ctx.state.session.resetPasswordUser.user;
     const resetNewPassword = ctx.request.body.newPassword;
@@ -28,7 +33,7 @@ class ResetPasswordController extends Controller {
     }
 
     await UserService.updatePassword(user, resetNewPassword);
-
+    ctx.state.session.resetPasswordUser.clear()
     ctx.state.session = {
       user: user,
     };

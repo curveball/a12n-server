@@ -55,7 +55,7 @@ export async function validateToken(token: string): Promise<User> {
     const result = await database.query(query, [token]);
 
     if (result[0].length !== 1) {
-      throw new BadRequest ('Invaild Token');
+      throw new BadRequest ('Failed to validate token');
     } else {
       await database.query('DELETE FROM reset_password_token WHERE token = ?', [token]);
       return userService.findById(result[0][0].user_id);

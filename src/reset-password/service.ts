@@ -1,8 +1,9 @@
-import bcrypt from 'bcrypt';
+import { BadRequest } from '@curveball/http-errors';
 import crypto from 'crypto';
 import nodemailer from 'nodemailer';
 import database from '../database';
 import { render } from '../templates';
+import * as userService from '../user/service';
 import { User } from '../user/types';
 
 const tokenTTL = 7200;
@@ -21,7 +22,7 @@ export async function sendResetPasswordEmail(user: User) {
     const token = await createToken(user);
     const emailTemplate = render('emails/reset-password-email', {
         name: user.nickname,
-        url: 'https://auth-server.example/reset-password/token/' + token,
+        url: process.env.PUBLIC_URI + 'reset-password/token/' + token,
         expiryHours: tokenTTL / 60 / 60
     });
 
@@ -31,7 +32,6 @@ export async function sendResetPasswordEmail(user: User) {
         to: user.identity.substring(7), // list of receivers
         subject: 'Password reset request', // Subject line
         html: emailTemplate
-        // html: '<b>Please click link below to reset your password!</b>' // html body
     });
 
     nodemailer.getTestMessageUrl(info);
@@ -43,24 +43,22 @@ export async function createToken(user: User): Promise<string> {
 
     await database.query(query, [
         user.id,
-        await bcrypt.hash(token, 12),
+        token,
         tokenTTL
     ]);
     return token;
 }
 
-export async function validateToken(user: User, token: string): Promise<boolean> {
-    const query = 'SELECT token FROM reset_password_token WHERE user_id = ? AND token = ? AND expires_at > UNIX_TIMESTAMP()';
-    const result = await database.query(query, [user.id]);
+export async function validateToken(token: string): Promise<User> {
 
+    const query = 'SELECT token, user_id FROM reset_password_token WHERE token = ? AND expires_at > UNIX_TIMESTAMP()';
+    const result = await database.query(query, [token]);
 
-    const hashes: string[] = result[0].map( (row: { token: string }) => row.token );
-
-    for (const hash of hashes) {
-        if (await bcrypt.compare(token, hash)) {
-            return true;
-        }
+    if (result[0].length !== 1) {
+      throw new BadRequest ('Failed to validate token');
+    } else {
+      await database.query('DELETE FROM reset_password_token WHERE token = ?', [token]);
+      return userService.findById(result[0][0].user_id);
     }
 
-    return false;
 }

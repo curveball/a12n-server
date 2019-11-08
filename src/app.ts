@@ -26,8 +26,14 @@ import { load } from './server-settings';
 
   const port = process.env.PORT ? parseInt(process.env.PORT, 10) :  8531;
 
+  if (!process.env.PUBLIC_URI) {
+    process.env.PUBLIC_URI = 'http://localhost:' + port + '/';
+    console.log('PUBLIC_URI environment variable was not set, defaulting to *localhost*');
+  }
+
   app.listen(port);
 
   console.log('Listening on port', port);
+
 
 })();

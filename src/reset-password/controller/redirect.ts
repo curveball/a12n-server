@@ -28,6 +28,10 @@ class ResetPasswordController extends Controller {
     }
 
     await UserService.updatePassword(user, resetNewPassword);
+
+    ctx.state.session = {
+      user: user,
+    };
     log(EventType.resetPasswordSuccess, ctx);
     ctx.status = 303;
     ctx.response.headers.set('Location', '/login?msg=Your+new+password+has+been+saved');

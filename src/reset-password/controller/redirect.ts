@@ -10,7 +10,10 @@ import { resetPasswordForm } from '../formats/redirect';
 class ResetPasswordController extends Controller {
 
   async get(ctx: Context) {
-    console.log('~~~~get~~~~', ctx.state.session.resetPasswordUser)
+
+    if (!ctx.state.session.resetPasswordUser) {
+      throw new Forbidden('You can only use this endpoint after you went through the \'forgot password\' flow');
+    }
     ctx.response.type = 'text/html';
     ctx.response.body = resetPasswordForm(ctx.query.msg);
 

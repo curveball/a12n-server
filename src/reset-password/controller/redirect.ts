@@ -2,6 +2,7 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
+import { Forbidden } from '@curveball/http-errors';
 import * as UserService from '../../user/service';
 import { User } from '../../user/types';
 import { resetPasswordForm } from '../formats/redirect';
@@ -9,20 +10,19 @@ import { resetPasswordForm } from '../formats/redirect';
 class ResetPasswordController extends Controller {
 
   async get(ctx: Context) {
-    if (!ctx.state.session.resetPasswordUser) {
-      throw new Error('The "resetPasswordUser" property must be provided');
-    }
+    console.log('~~~~get~~~~', ctx.state.session.resetPasswordUser)
     ctx.response.type = 'text/html';
     ctx.response.body = resetPasswordForm(ctx.query.msg);
 
   }
 
   async post(ctx: Context) {
+
     if (!ctx.state.session.resetPasswordUser) {
-      throw new Error('The "resetPasswordUser" property must be provided');
+      throw new Forbidden('You can only use this endpoint after you went to the \'forgot password\' flow');
     }
 
-    const user: User = ctx.state.session.resetPasswordUser.user;
+    const user: User = ctx.state.session.resetPasswordUser;
     const resetNewPassword = ctx.request.body.newPassword;
     const confirmNewPassword = ctx.request.body.confirmNewPassword;
 
@@ -33,11 +33,9 @@ class ResetPasswordController extends Controller {
     }
 
     await UserService.updatePassword(user, resetNewPassword);
-    ctx.state.session.resetPasswordUser.clear()
-    ctx.state.session = {
-      user: user,
-    };
-    log(EventType.resetPasswordSuccess, ctx);
+
+    delete ctx.state.session.resetPasswordUser;
+    log(EventType.resetPasswordSuccess, ctx.ip(), user.id);
     ctx.status = 303;
     ctx.response.headers.set('Location', '/login?msg=Your+new+password+has+been+saved');
 

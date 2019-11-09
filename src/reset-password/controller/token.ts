@@ -9,7 +9,7 @@ class ResetPasswordTokenController extends Controller {
     const user = await validateToken(urlToken);
     ctx.state.session.resetPasswordUser = user;
     ctx.response.status = 303;
-    ctx.response.headers.set('location', '/reset-password/change-password');
+    ctx.response.headers.set('Location', '/reset-password/change-password');
   }
 
 }

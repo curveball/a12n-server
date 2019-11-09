@@ -19,7 +19,7 @@ class ResetPasswordController extends Controller {
   async post(ctx: Context) {
 
     if (!ctx.state.session.resetPasswordUser) {
-      throw new Forbidden('You can only use this endpoint after you went to the \'forgot password\' flow');
+      throw new Forbidden('You can only use this endpoint after you went through the \'forgot password\' flow');
     }
 
     const user: User = ctx.state.session.resetPasswordUser;

@@ -1,8 +1,8 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
+import { Forbidden } from '@curveball/http-errors';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
-import { Forbidden } from '@curveball/http-errors';
 import * as UserService from '../../user/service';
 import { User } from '../../user/types';
 import { resetPasswordForm } from '../formats/redirect';

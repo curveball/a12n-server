@@ -4,31 +4,34 @@ import { User } from '../user/types';
 import { EventType, LogEntry } from './types';
 
 export function log(eventType: EventType, ctx: Context): Promise<void>;
-export function log(eventType: EventType, ip: string, userId: number): Promise<void>;
+export function log(eventType: EventType, ip: string, userId: number, userAgent: string): Promise<void>;
 export default async function log(
   eventType: EventType,
   arg1: string | Context,
   arg2?: number,
+  arg3?: string
 ) {
 
   if (isContext(arg1)) {
-    addLogEntry(
+    await addLogEntry(
       eventType,
       arg1.ip(),
-      arg1.state.session.user && arg1.state.session.user.id ? arg1.state.session.user.id : null
+      arg1.state.session.user && arg1.state.session.user.id ? arg1.state.session.user.id : null,
+      arg1.request.headers.get('User-Agent'),
     );
   } else {
-    addLogEntry(eventType, arg1, arg2);
+    await addLogEntry(eventType, arg1, arg2, arg3);
   }
 
 }
 
-export async function addLogEntry(eventType: EventType, ip: string, userId: number): Promise<void> {
+export async function addLogEntry(eventType: EventType, ip: string, userId: number, userAgent: string): Promise<void> {
 
   await db.query('INSERT INTO user_log SET time = UNIX_TIMESTAMP(), ?', {
     user_id: userId,
     event_type: eventType,
-    ip: ip
+    ip: ip,
+    user_agent: userAgent
   });
 
 }
@@ -39,6 +42,7 @@ type LogRow = {
   ip: string,
   time: number,
   event_type: EventType,
+  user_agent: string
 };
 
 export async function findByUser(user: User): Promise<LogEntry[]> {
@@ -52,6 +56,7 @@ export async function findByUser(user: User): Promise<LogEntry[]> {
       time: new Date(row.time * 1000),
       ip: row.ip,
       eventType: row.event_type,
+      userAgent: row.user_agent
     };
   });
 

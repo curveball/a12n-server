@@ -9,6 +9,10 @@ import { resetPasswordForm } from '../formats/redirect';
 
 class ResetPasswordController extends Controller {
 
+  /**
+   * If passwords provided didn't match for new and confirm passwords, it will
+   * render this reset password form.
+   */
   async get(ctx: Context) {
 
     if (!ctx.state.session.resetPasswordUser) {
@@ -19,6 +23,10 @@ class ResetPasswordController extends Controller {
 
   }
 
+  /**
+   * This request checks if provided 2 passwords, new password and confirm password, is identical
+   * and updates database with the new password.
+   */
   async post(ctx: Context) {
 
     if (!ctx.state.session.resetPasswordUser) {

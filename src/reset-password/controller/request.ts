@@ -7,6 +7,13 @@ import * as userService from '../../user/service';
 import { resetPasswordRequestForm } from '../formats/html';
 import { sendResetPasswordEmail } from '../service';
 
+
+/**
+ * This controller is used for requesting change password when the user forgot the pasword.
+ *
+ * In this flow a user first submits the email address and if the email exists in the database,
+ * server will send an email.
+ */
 class ResetPasswordRequestController extends Controller {
 
   async get(ctx: Context) {

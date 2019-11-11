@@ -28,6 +28,12 @@ class ChangePasswordController extends Controller {
       return;
     }
 
+    if (currentPassword === userNewPassword) {
+      ctx.status = 303;
+      ctx.response.headers.set('Location', '/changepassword?msg=New+password+and+old+password+can\'t+be+the+same.+Please+try+again');
+      return;
+    }
+
     if (userNewPassword !== confirmNewPassword) {
       ctx.status = 303;
       ctx.response.headers.set('Location', '/changepassword?msg=New+password+mismatch.+Please+try+again');

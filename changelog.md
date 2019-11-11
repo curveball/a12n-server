@@ -1,6 +1,16 @@
 Changelog
 =========
 
+0.10.0 (2019-11-11)
+-------------------
+
+* Added a 'lost password' feature that uses email for validating using
+  accounts.
+* The audit log now tracks the 'User agent'.
+* Better autocomplete hints on the login and registration form for password
+  managers.
+
+
 0.9.1 (2019-10-09)
 ------------------
 

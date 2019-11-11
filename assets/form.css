@@ -144,3 +144,7 @@ form a {
 form a:hover {
   text-decoration-color: transparent; 
 }
+
+.login-options {
+  text-align: center;
+}

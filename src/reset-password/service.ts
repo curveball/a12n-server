@@ -6,8 +6,18 @@ import { render } from '../templates';
 import * as userService from '../user/service';
 import { User } from '../user/types';
 
+/**
+ * 2 hour token timeout
+ */
 const tokenTTL = 7200;
 
+/**
+ * This function is for sending reset password email with validated token
+ *
+ * This flow, it will first check if email and URL environment variable has been set.
+ *
+ * Renders an email with provided from, to, subject, html template.
+ */
 export async function sendResetPasswordEmail(user: User) {
 
     if (!process.env.SMTP_EMAIL_FROM) {
@@ -37,6 +47,9 @@ export async function sendResetPasswordEmail(user: User) {
     nodemailer.getTestMessageUrl(info);
 }
 
+/**
+ * Create unique token and stores in the reset_password_token table
+ */
 export async function createToken(user: User): Promise<string> {
     const token = crypto.randomBytes(32).toString('base64').replace('+', '-').replace('/', '_').replace(/=+$/, '');
     const query = 'INSERT INTO reset_password_token SET user_id = ?, token = ?, expires_at = UNIX_TIMESTAMP() + ?, created_at = UNIX_TIMESTAMP()';
@@ -49,6 +62,9 @@ export async function createToken(user: User): Promise<string> {
     return token;
 }
 
+/**
+ * Checks if the token provided is valid based on the time provided
+ */
 export async function validateToken(token: string): Promise<User> {
 
     const query = 'SELECT token, user_id FROM reset_password_token WHERE token = ? AND expires_at > UNIX_TIMESTAMP()';

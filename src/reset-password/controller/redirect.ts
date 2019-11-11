@@ -9,6 +9,12 @@ import { resetPasswordForm } from '../formats/redirect';
 
 class ResetPasswordController extends Controller {
 
+  /**
+   * Currently, this GET request isn't being used since there is a browser issue where
+   * it gets redirected from the email link, the browser clears the cookie
+   *
+   * This checks if the session storage has data, and if it's empty, it will throw an error
+   */
   async get(ctx: Context) {
 
     if (!ctx.state.session.resetPasswordUser) {
@@ -19,6 +25,10 @@ class ResetPasswordController extends Controller {
 
   }
 
+  /**
+   * This request checks if provided 2 passwords, new password and confirm password, is identical
+   * and updates database with the new password.
+   */
   async post(ctx: Context) {
 
     if (!ctx.state.session.resetPasswordUser) {

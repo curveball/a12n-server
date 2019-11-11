@@ -4,6 +4,14 @@ import { Forbidden } from '@curveball/http-errors';
 import { resetPasswordForm } from '../formats/redirect';
 import { validateToken } from '../service';
 
+/**
+ * This controller is used for validating token and rendering reset password form.
+ *
+ * After a user gets redirected from the reset password request email,
+ * the controller will check if the provided token is validated it will render the
+ * reset password form.
+ */
+
 class ResetPasswordTokenController extends Controller {
 
   async get(ctx: Context) {

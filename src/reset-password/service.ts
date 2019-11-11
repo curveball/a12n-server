@@ -48,7 +48,7 @@ export async function sendResetPasswordEmail(user: User) {
 }
 
 /**
- * Create unique token and stores in the reset_password_token table
+ * This function will create a unique token then store it in the databse
  */
 export async function createToken(user: User): Promise<string> {
     const token = crypto.randomBytes(32).toString('base64').replace('+', '-').replace('/', '_').replace(/=+$/, '');
@@ -63,7 +63,9 @@ export async function createToken(user: User): Promise<string> {
 }
 
 /**
- * Checks if the token provided is valid based on the time provided
+ * Checks if a 'password reset token' is valid, and returns the associated user.
+ * This function only works once for every token.
+ * After calling this function, the token automatically gets deleted.
  */
 export async function validateToken(token: string): Promise<User> {
 

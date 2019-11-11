@@ -7,6 +7,7 @@ header {
   background-color: transparent;
   box-shadow: none;
   color: #1e88e5;
+  position: relative;
 }
 
 header h1 {
@@ -131,7 +132,7 @@ input.totp {
 }
 
 form p {
-  text-align: center;
+  margin-bottom: 10px;
 }
 
 form a {
@@ -142,5 +143,4 @@ form a {
 
 form a:hover {
   text-decoration-color: transparent; 
-  
 }

@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.10.2 (2019-11-11)
+-------------------
+
+* Fix a small bug in the `/introspect` endpoint. Successful responses were not
+  returning.
+
+
 0.10.1 (2019-11-11)
 -------------------
 

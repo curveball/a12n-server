@@ -4,6 +4,6 @@ START TRANSACTION;
 INSERT INTO changelog VALUES (27, UNIX_TIMESTAMP());
 
 ALTER TABLE user_log ADD
-  user_agent TEXT NOT NULL;
+  user_agent TEXT NULL;
 
 COMMIT;

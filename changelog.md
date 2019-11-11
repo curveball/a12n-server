@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.10.1 (2019-11-11)
+-------------------
+
+* Fixed a small CSS layout bug on login.
+* /introspect endpoint now doesn't require login.
+
+
 0.10.0 (2019-11-11)
 -------------------
 

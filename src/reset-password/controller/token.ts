@@ -1,7 +1,7 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { validateToken } from '../service';
 import { resetPasswordForm } from '../formats/redirect';
+import { validateToken } from '../service';
 
 class ResetPasswordTokenController extends Controller {
 

@@ -1,6 +1,7 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { validateToken } from '../service';
+import { resetPasswordForm } from '../formats/redirect';
 
 class ResetPasswordTokenController extends Controller {
 
@@ -8,8 +9,8 @@ class ResetPasswordTokenController extends Controller {
     const urlToken = ctx.state.params.token;
     const user = await validateToken(urlToken);
     ctx.state.session.resetPasswordUser = user;
-    ctx.response.status = 303;
-    ctx.response.headers.set('Location', '/reset-password/change-password');
+    ctx.response.type = 'text/html';
+    ctx.response.body = resetPasswordForm(ctx.query.msg);
   }
 
 }

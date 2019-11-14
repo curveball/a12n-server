@@ -1,8 +1,7 @@
-{{# if msg}}
-<div class="msg">{{ msg }}</div>
-{{/if}}
-
 <form action="{{ action }}" method="post">
+  {{# if msg}}
+  <div class="msg">{{ msg }}</div>
+  {{/if}}
   <fieldset>
     <label for="nickname">
       <span>Nickname</span>

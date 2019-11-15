@@ -40,7 +40,6 @@ class IntrospectionController extends Controller {
 
         foundToken = await oauth2Service.getTokenByAccessToken(token);
         foundTokenType = 'accessToken';
-        return;
 
       } catch (err) {
 
@@ -58,7 +57,6 @@ class IntrospectionController extends Controller {
 
         foundToken = await oauth2Service.getTokenByRefreshToken(token);
         foundTokenType = 'refreshToken';
-        return;
 
       } catch (err) {
 

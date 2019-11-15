@@ -40,6 +40,11 @@ class LoginController extends Controller {
       return this.redirectToLogin(ctx, 'Incorrect username or password');
     }
 
+    if (!user.active) {
+      log(EventType.loginFailedInactive, ctx.ip(), user.id, ctx.request.headers.get('User-Agent'))
+      return this.redirectToLogin(ctx, 'This account is inactiviated. Please contact Admin')
+    }
+
     if (ctx.request.body.totp) {
         if (!await userService.validateTotp(user, ctx.request.body.totp)) {
           log(EventType.totpFailed, ctx.ip(), user.id);

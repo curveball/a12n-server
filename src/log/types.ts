@@ -5,6 +5,7 @@ export enum EventType {
   changePasswordSuccess,
   resetPasswordRequest,
   resetPasswordSuccess,
+  loginFailedInactive,
   oauth2BadRedirect = 11,
 }
 
@@ -23,5 +24,6 @@ export const eventTypeString = new Map<EventType, string>([
   [EventType.changePasswordSuccess, 'change-password-success'],
   [EventType.resetPasswordRequest, 'reset-password-request'],
   [EventType.resetPasswordSuccess, 'reset-password-success'],
+  [EventType.loginFailedInactive, 'login-failed-inactive'],
   [EventType.oauth2BadRedirect, 'oauth2-badredirect'],
 ]);

@@ -8,6 +8,7 @@ export type NewUser = {
   nickname: string,
   created: Date,
   type: UserType,
+  active: boolean
 };
 
 export type User = {
@@ -16,4 +17,5 @@ export type User = {
   nickname: string,
   created: Date,
   type: UserType,
+  active: boolean
 };

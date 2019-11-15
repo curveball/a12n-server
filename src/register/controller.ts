@@ -41,7 +41,8 @@ class RegistrationController extends Controller {
       identity: 'mailto:' + ctx.request.body.emailAddress,
       nickname: ctx.request.body.nickname,
       created: new Date(),
-      type: 1
+      type: 1,
+      active: false
     });
 
     await userService.createPassword(user, userPassword);

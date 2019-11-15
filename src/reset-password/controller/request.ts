@@ -38,6 +38,11 @@ class ResetPasswordRequestController extends Controller {
         }
     }
 
+    if (!user.active) {
+      ctx.status = 303;
+      ctx.response.headers.set('location', '/reset-password?msg=User+account+is+inactive,+please+contact+admin');
+      return;
+    }
     await sendResetPasswordEmail(user);
     await log(EventType.resetPasswordRequest, ctx.ip(), user.id);
 

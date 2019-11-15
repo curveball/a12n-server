@@ -10,11 +10,12 @@ const fieldNames = [
   'nickname',
   'created',
   'type',
+  'active'
 ];
 
 export async function findAll(): Promise<User[]> {
 
-  const query = `SELECT ${fieldNames.join(', ')} FROM users WHERE active = 1`;
+  const query = `SELECT ${fieldNames.join(', ')} FROM users`;
   const result = await database.query(query);
 
   const users: User[] = [];
@@ -27,7 +28,7 @@ export async function findAll(): Promise<User[]> {
 
 export async function findById(id: number): Promise<User> {
 
-  const query = `SELECT ${fieldNames.join(', ')} FROM users WHERE active = 1 AND id = ?`;
+  const query = `SELECT ${fieldNames.join(', ')} FROM users WHERE id = ?`;
   const result = await database.query(query, [id]);
 
   if (result[0].length !== 1) {
@@ -39,7 +40,7 @@ export async function findById(id: number): Promise<User> {
 }
 export async function findByIdentity(identity: string): Promise<User> {
 
-  const query = `SELECT ${fieldNames.join(', ')} FROM users WHERE active = 1 AND identity = ?`;
+  const query = `SELECT ${fieldNames.join(', ')} FROM users WHERE identity = ?`;
   const result = await database.query(query, [identity]);
 
   if (result[0].length !== 1) {
@@ -176,7 +177,9 @@ type UserRecord = {
   nickname: string,
   created: number,
   type: number,
+  active: number
 };
+
 
 function recordToModel(user: UserRecord): User {
 
@@ -186,6 +189,7 @@ function recordToModel(user: UserRecord): User {
     nickname: user.nickname,
     created: new Date(user.created * 1000),
     type: user.type,
+    active: !!user.active
   };
 
 }

@@ -57,7 +57,7 @@ export async function validateRedirectUri(client: OAuth2Client, redirectUrl: str
  */
 export async function generateTokenForUser(client: OAuth2Client, user: User): Promise<OAuth2Token> {
   if (!user.active) {
-    throw new Error ('Cannot generate token for inactive user')
+    throw new Error ('Cannot generate token for inactive user');
   }
   const accessToken = crypto.randomBytes(32).toString('base64').replace('=', '');
   const refreshToken = crypto.randomBytes(32).toString('base64').replace('=', '');

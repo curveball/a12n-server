@@ -1,6 +1,9 @@
 <form action="{{ action }}" method="post">
   {{# if msg}}
-  <div class="msg">{{ msg }}</div>
+  <div class="msg info">{{ msg }}</div>
+  {{/if}}
+  {{# if error}}
+  <div class="msg error">{{ error }}</div>
   {{/if}}
   <fieldset>
     <label for="nickname">

@@ -66,12 +66,13 @@ class AuthorizeController extends Controller {
     } else {
       ctx.response.body = loginForm(
         ctx.query.msg,
+        ctx.query.error,
         {
           client_id: clientId,
           state: state,
           redirect_uri: redirectUri,
           response_type: responseType,
-        },
+        }
       );
     }
 
@@ -127,26 +128,26 @@ class AuthorizeController extends Controller {
     try {
       user = await userService.findByIdentity('mailto:' + ctx.request.body.userName);
     } catch (err) {
-      return this.redirectToLogin(ctx, { ...params, msg: 'Incorrect username or password' });
+      return this.redirectToLogin(ctx, { ...params, error: 'Incorrect username or password' });
     }
 
     if (!await userService.validatePassword(user, ctx.request.body.password)) {
       log(EventType.loginFailed, ctx.ip(), user.id);
-      return this.redirectToLogin(ctx, { ...params, msg: 'Incorrect username or password'});
+      return this.redirectToLogin(ctx, { ...params, error: 'Incorrect username or password'});
     }
 
     if (!user.active) {
       log(EventType.loginFailedInactive, ctx.ip(), user.id, ctx.request.headers.get('User-Agent'));
-      return this.redirectToLogin(ctx, { ...params, msg: 'This account is inactiviated. Please contact Admin'});
+      return this.redirectToLogin(ctx, { ...params, error: 'This account is inactiviated. Please contact Admin'});
     }
 
     if (ctx.request.body.totp) {
       if (!await userService.validateTotp(user, ctx.request.body.totp)) {
           log(EventType.totpFailed, ctx.ip(), user.id);
-          return this.redirectToLogin(ctx, {...params, msg: 'Incorrect TOTP code'});
+          return this.redirectToLogin(ctx, {...params, error: 'Incorrect TOTP code'});
         }
     } else if (await userService.hasTotp(user)) {
-      return this.redirectToLogin(ctx, {...params, msg: 'TOTP token required'});
+      return this.redirectToLogin(ctx, {...params, error: 'TOTP token required'});
     }
 
     ctx.state.session = {

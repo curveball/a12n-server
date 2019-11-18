@@ -100,7 +100,34 @@ form button:hover {
   transform: translateY(-2px) scale(1.02);
 }
 
-.msg {
+.msg.info {
+  padding: 1em 2em;
+  margin: 0 auto 1em;
+  max-width: 33em;
+  font-weight: 800;
+  background: #1e88e5;
+  color: white;
+  position: relative;
+  text-indent: -2.6ex;
+}
+
+.msg.info::before {
+  content: '\2713';
+  margin-right: 1ex;
+}
+
+.msg.info::after {
+  content: '';
+  display: block;
+  position: absolute;
+  width: 1em;
+  height: 1em;
+  top: 100%;
+  transform: rotate(45deg) translateY(-1.5ex);
+  background: #1e88e5;
+}
+
+.msg.error {
   padding: 1em 2em;
   margin: 0 auto 1em;
   max-width: 33em;
@@ -111,12 +138,12 @@ form button:hover {
   text-indent: -2.6ex;
 }
 
-.msg::before {
+.msg.error::before {
   content: '\26A0';
   margin-right: 1ex;
 }
 
-.msg::after {
+.msg.error::after {
   content: '';
   display: block;
   position: absolute;
@@ -136,13 +163,13 @@ form p {
 }
 
 form a {
-  color: #1e88e5;  
+  color: #1e88e5;
   text-decoration-color: #1e88e5;
   transition: all .5s;
 }
 
 form a:hover {
-  text-decoration-color: transparent; 
+  text-decoration-color: transparent;
 }
 
 .login-options {

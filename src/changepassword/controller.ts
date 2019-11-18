@@ -11,7 +11,7 @@ class ChangePasswordController extends Controller {
   async get(ctx: Context) {
 
     ctx.response.type = 'text/html';
-    ctx.response.body = changePasswordForm(ctx.query.msg);
+    ctx.response.body = changePasswordForm(ctx.query.msg, ctx.query.error);
 
   }
 
@@ -24,19 +24,19 @@ class ChangePasswordController extends Controller {
 
     if (!await UserService.validatePassword(user, currentPassword)) {
       ctx.status = 303;
-      ctx.response.headers.set('Location', '/changepassword?msg=Current+password+isn\'t+correct.+Please+try+again');
+      ctx.response.headers.set('Location', '/changepassword?error=Current+password+isn\'t+correct.+Please+try+again');
       return;
     }
 
     if (currentPassword === userNewPassword) {
       ctx.status = 303;
-      ctx.response.headers.set('Location', '/changepassword?msg=New+password+and+old+password+can\'t+be+the+same.+Please+try+again');
+      ctx.response.headers.set('Location', '/changepassword?error=New+password+and+old+password+can\'t+be+the+same.+Please+try+again');
       return;
     }
 
     if (userNewPassword !== confirmNewPassword) {
       ctx.status = 303;
-      ctx.response.headers.set('Location', '/changepassword?msg=New+password+mismatch.+Please+try+again');
+      ctx.response.headers.set('Location', '/changepassword?error=New+password+mismatch.+Please+try+again');
       return;
     }
 

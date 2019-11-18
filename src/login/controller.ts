@@ -16,7 +16,8 @@ class LoginController extends Controller {
     ctx.response.type = 'text/html';
     ctx.response.body = loginForm(
       ctx.query.msg,
-      await getSetting('registration.enabled')
+      ctx.query.error,
+      await getSetting('registration.enabled'),
     );
 
   }
@@ -29,7 +30,7 @@ class LoginController extends Controller {
     } catch (err) {
       if (err instanceof NotFound) {
         log(EventType.loginFailed, ctx);
-        return this.redirectToLogin(ctx, 'Incorrect username or password');
+        return this.redirectToLogin(ctx, '', 'Incorrect username or password');
       } else {
         throw err;
       }
@@ -37,21 +38,21 @@ class LoginController extends Controller {
 
     if (!await userService.validatePassword(user, ctx.request.body.password)) {
       log(EventType.loginFailed, ctx.ip(), user.id);
-      return this.redirectToLogin(ctx, 'Incorrect username or password');
+      return this.redirectToLogin(ctx, '', 'Incorrect username or password');
     }
 
     if (!user.active) {
       log(EventType.loginFailedInactive, ctx.ip(), user.id, ctx.request.headers.get('User-Agent'));
-      return this.redirectToLogin(ctx, 'This account is inactiviated. Please contact Admin');
+      return this.redirectToLogin(ctx, '', 'This account is inactiviated. Please contact Admin');
     }
 
     if (ctx.request.body.totp) {
         if (!await userService.validateTotp(user, ctx.request.body.totp)) {
           log(EventType.totpFailed, ctx.ip(), user.id);
-          return this.redirectToLogin(ctx, 'Incorrect TOTP code');
+          return this.redirectToLogin(ctx, '', 'Incorrect TOTP code');
         }
     } else if (await userService.hasTotp(user)) {
-        return this.redirectToLogin(ctx, 'TOTP token required');
+        return this.redirectToLogin(ctx, '', 'TOTP token required');
     }
 
     ctx.state.session = {
@@ -63,10 +64,10 @@ class LoginController extends Controller {
 
   }
 
-  async redirectToLogin(ctx: Context, msg: string) {
+  async redirectToLogin(ctx: Context, msg: string, error: string) {
 
     ctx.response.status = 303;
-    ctx.response.headers.set('Location', '/login?' + querystring.stringify({ msg }));
+    ctx.response.headers.set('Location', '/login?' + querystring.stringify({ msg, error }));
 
   }
 

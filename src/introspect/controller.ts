@@ -68,25 +68,26 @@ class IntrospectionController extends Controller {
       }
 
     }
-
     if (foundToken) {
       const user = await userService.findById(foundToken.userId);
-      const privileges = await privilegeService.getPrivilegesForUser(user);
 
-      switch (foundTokenType) {
+      if (user.active) {
+        const privileges = await privilegeService.getPrivilegesForUser(user);
 
-        case 'accessToken' :
-          ctx.response.body = accessToken(foundToken, user, privileges);
-          break;
-        case 'refreshToken' :
-          ctx.response.body = refreshToken(foundToken, user, privileges);
-          break;
+        switch (foundTokenType) {
+
+          case 'accessToken' :
+            ctx.response.body = accessToken(foundToken, user, privileges);
+            break;
+          case 'refreshToken' :
+            ctx.response.body = refreshToken(foundToken, user, privileges);
+            break;
+        }
+        return;
       }
-    } else {
-
-      ctx.response.body = inactive();
-
     }
+
+    ctx.response.body = inactive();
 
   }
 

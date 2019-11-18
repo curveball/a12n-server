@@ -113,6 +113,11 @@ class TokenController extends Controller {
       throw new InvalidGrant('Unknown username or password');
     }
 
+    if (!user.active) {
+      log(EventType.loginFailedInactive, ctx.ip(), user.id, ctx.request.headers.get('User-Agent'));
+      throw new InvalidGrant('User Inactive');
+    }
+
     log(EventType.loginSuccess, ctx);
 
     const token = await oauth2Service.generateTokenForUser(

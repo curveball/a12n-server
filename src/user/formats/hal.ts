@@ -4,6 +4,7 @@ import { User, UserType } from '../types';
 const TypeMap = new Map<UserType, string>([
   [UserType.user, 'user'],
   [UserType.app, 'app'],
+  [UserType.group, 'group']
 ]);
 
 export function collection(users: User[]) {

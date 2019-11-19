@@ -24,7 +24,7 @@ class ResetPasswordTokenController extends Controller {
     }
 
     ctx.response.type = 'text/html';
-    ctx.response.body = resetPasswordForm(ctx.query.msg);
+    ctx.response.body = resetPasswordForm(ctx.query.msg, ctx.query.error);
   }
 
 }

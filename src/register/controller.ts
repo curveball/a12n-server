@@ -10,7 +10,7 @@ class RegistrationController extends Controller {
   async get(ctx: Context) {
 
     ctx.response.type = 'text/html';
-    ctx.response.body = registrationForm(ctx.query.msg);
+    ctx.response.body = registrationForm(ctx.query.msg, ctx.query.error);
 
   }
 
@@ -21,14 +21,14 @@ class RegistrationController extends Controller {
 
     if (userPassword !== confirmPassword) {
       ctx.status = 303;
-      ctx.response.headers.set('Location', '/register?msg=Password+mismatch.+Please+try+again');
+      ctx.response.headers.set('Location', '/register?error=Password+mismatch.+Please+try+again');
       return;
     }
 
     try {
       if (await userService.findByIdentity('mailto:' + ctx.request.body.emailAddress)) {
         ctx.status = 303;
-        ctx.response.headers.set('Location', '/register?msg=User+already+exists,+did+you+forget+your+password?');
+        ctx.response.headers.set('Location', '/register?error=User+already+exists,+did+you+forget+your+password?');
         return;
       }
     } catch (err) {

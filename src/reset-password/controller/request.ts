@@ -19,7 +19,7 @@ class ResetPasswordRequestController extends Controller {
   async get(ctx: Context) {
 
     ctx.response.type = 'text/html';
-    ctx.response.body = resetPasswordRequestForm(ctx.query.msg);
+    ctx.response.body = resetPasswordRequestForm(ctx.query.msg, ctx.query.error);
 
   }
 
@@ -31,7 +31,7 @@ class ResetPasswordRequestController extends Controller {
     } catch (err) {
         if (err instanceof NotFound) {
             ctx.status = 303;
-            ctx.response.headers.set('location', '/reset-password?msg=We+can\'t+seem+to+find+your+record.+Please+try+gain');
+            ctx.response.headers.set('location', '/reset-password?error=We+can\'t+seem+to+find+your+record.+Please+try+gain');
             return;
         } else {
             throw err;
@@ -40,7 +40,7 @@ class ResetPasswordRequestController extends Controller {
 
     if (!user.active) {
       ctx.status = 303;
-      ctx.response.headers.set('location', '/reset-password?msg=User+account+is+inactive,+please+contact+admin');
+      ctx.response.headers.set('location', '/reset-password?error=User+account+is+inactive,+please+contact+admin');
       return;
     }
     await sendResetPasswordEmail(user);

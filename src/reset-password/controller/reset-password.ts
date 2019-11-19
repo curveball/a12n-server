@@ -19,7 +19,7 @@ class ResetPasswordController extends Controller {
       throw new Forbidden('You can only use this endpoint after you went through the \'forgot password\' flow');
     }
     ctx.response.type = 'text/html';
-    ctx.response.body = resetPasswordForm(ctx.query.msg);
+    ctx.response.body = resetPasswordForm(ctx.query.msg, ctx.query.error);
 
   }
 
@@ -39,7 +39,7 @@ class ResetPasswordController extends Controller {
 
     if (resetNewPassword !== confirmNewPassword) {
       ctx.status = 303;
-      ctx.response.headers.set('Location', '/reset-password/change-password?msg=New+password+mismatch.+Please+try+again');
+      ctx.response.headers.set('Location', '/reset-password/change-password?error=New+password+mismatch.+Please+try+again');
       return;
     }
 

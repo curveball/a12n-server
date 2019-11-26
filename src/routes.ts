@@ -1,6 +1,7 @@
 import router from '@curveball/router';
 import blob from './blob/controller';
 import changePassword from './changepassword/controller';
+import group from './group/controller/collection';
 import health from './health/controller';
 import home from './home/controller';
 import introspect from './introspect/controller';
@@ -24,6 +25,7 @@ const routes = [
   router('/user', users),
   router('/user/:id', user),
   router('/user/:id/log', userLog),
+  router('/user/:id/member', group),
   router('/login', login),
   router('/assets/:filename', blob),
   router('/health', health),

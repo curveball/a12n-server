@@ -44,7 +44,7 @@ export function item(user: User, privileges: PrivilegeMap) {
     hal._links.members = {
       href: '/user/' + user.id + '/member',
       title: 'Group Memebers'
-    }
+    };
   }
   return hal;
 

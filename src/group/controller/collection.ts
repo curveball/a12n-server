@@ -19,8 +19,8 @@ class GroupMemberCollectionControlller extends Controller {
       throw new BadRequest('User must be a group to gain access');
     }
 
-    const groupMemebers = await groupService.findAllGroupMemebers(user);
-    ctx.response.body = hal.collection(user, groupMemebers);
+    const members = await groupService.findAllGroupMembers(user);
+    ctx.response.body = hal.collection(user, members);
   }
 
 }

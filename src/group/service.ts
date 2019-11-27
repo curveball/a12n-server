@@ -1,8 +1,7 @@
 import database from '../database';
 import { User } from '../user/types';
-import { GroupMember } from './types';
 
-type GroupMemberRecord = {
+type GroupRecord = {
   id: number,
   identity: string,
   nickname: string,
@@ -25,7 +24,7 @@ const fieldNames = [
  */
 export async function isGroup(user: User): Promise<boolean> {
 
-  const query = 'SELECT type FROM users WHERE id = ? AND type = 3';
+  const query = `SELECT ${fieldNames.join(', ')} FROM users WHERE id = ? AND type = 3`;
   const result = await database.query(query, [user.id]);
 
   if (!result[0].length) {
@@ -39,15 +38,15 @@ export async function isGroup(user: User): Promise<boolean> {
  * Finding group memeber
  */
 
-export async function findAllGroupMemebers(group: GroupMember): Promise<GroupMember[]> {
+export async function findAllGroupMembers(user: User): Promise<User[]> {
 
   const query = `SELECT ${fieldNames.join(', ')} FROM users INNER JOIN group_members ON users.id = group_members.user_id WHERE group_id = ?`;
-  const result = await database.query(query, [group.id]);
+  const result = await database.query(query, [user.id]);
 
   const models = [];
 
   for (const record of result[0]) {
-    const model = recordToModel(group, record);
+    const model = recordToModel(user, record);
     models.push(model);
   }
 
@@ -56,7 +55,7 @@ export async function findAllGroupMemebers(group: GroupMember): Promise<GroupMem
 }
 
 
-function recordToModel(group: GroupMember, record: GroupMemberRecord): GroupMember {
+function recordToModel(user: User, record: GroupRecord): User {
 
   return {
     id: record.id,

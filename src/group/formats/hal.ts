@@ -1,7 +1,6 @@
 import { User } from '../../user/types';
-import { GroupMember } from '../types';
 
-export function collection(user: User, group: GroupMember[]) {
+export function collection(user: User, members: User[] ) {
 
   const hal: any = {
     _links: {
@@ -9,13 +8,13 @@ export function collection(user: User, group: GroupMember[]) {
         href: '/user/' + user.id + '/member',
         title: user.nickname + ' members'
       },
-      members: [],
+      item: [],
     },
-    total: group.length,
+    total: members.length,
   };
 
-  for (const member of group) {
-    hal._links.members.push({
+  for (const member of members) {
+    hal._links.item.push({
       href: '/user/' + member.id,
       title: member.nickname,
     });

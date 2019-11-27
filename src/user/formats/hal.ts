@@ -28,7 +28,6 @@ export function collection(users: User[]) {
 }
 
 export function item(user: User, privileges: PrivilegeMap) {
-
   const hal: any = {
     _links: {
       'self': { href: '/user/' + user.id, title: user.nickname },
@@ -40,6 +39,13 @@ export function item(user: User, privileges: PrivilegeMap) {
     type: TypeMap.get(user.type),
     privileges
   };
+
+  if (user.type === 3) {
+    hal._links.members = {
+      href: '/user/' + user.id + '/member',
+      title: 'Group Memebers'
+    }
+  }
   return hal;
 
 }

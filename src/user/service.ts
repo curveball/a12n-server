@@ -4,7 +4,7 @@ import * as otplib from 'otplib';
 import database from '../database';
 import { NewUser, User } from './types';
 
-const fieldNames = [
+export const fieldNames = [
   'id',
   'identity',
   'nickname',
@@ -171,7 +171,7 @@ export async function hasTotp(user: User): Promise<boolean> {
 
 }
 
-type UserRecord = {
+export type UserRecord = {
   id: number,
   identity: string,
   nickname: string,

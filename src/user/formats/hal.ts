@@ -40,12 +40,13 @@ export function item(user: User, privileges: PrivilegeMap) {
     privileges
   };
 
-  if (user.type === 3) {
-    hal._links.members = {
+  if (user.type === UserType.group) {
+    hal._links['member-collection'] = {
       href: '/user/' + user.id + '/member',
-      title: 'Group Memebers'
+      title: 'Group Members'
     };
   }
+
   return hal;
 
 }

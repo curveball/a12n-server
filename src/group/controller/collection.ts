@@ -11,11 +11,11 @@ class GroupMemberCollectionControlller extends Controller {
     const user = await userService.findById(parseInt(ctx.state.params.id, 10));
 
     /**
-     * Cheks if user type is a group
+     * Checks if user type is a group
      */
-    const groupUser = await groupService.isGroup(user);
+    const group = await groupService.isGroup(user);
 
-    if (!groupUser) {
+    if (!group) {
       throw new BadRequest('User must be a group to gain access');
     }
 

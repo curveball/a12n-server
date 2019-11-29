@@ -13,10 +13,8 @@ class GroupMemberCollectionControlller extends Controller {
     /**
      * Checks if user type is a group
      */
-    const group = await groupService.isGroup(user);
-
-    if (!group) {
-      throw new BadRequest('User must be a group to gain access');
+    if (!groupService.isGroup(user)) {
+      throw new BadRequest('User must be a group to gain access!!');
     }
 
     const members = await groupService.findAllGroupMembers(user);

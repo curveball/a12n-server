@@ -5,13 +5,9 @@ import { User, UserType } from '../user/types';
 /**
  *  Checks if the user is a type group and returns true or false
  */
-export async function isGroup(user: User): Promise<boolean> {
+export function isGroup(user: User): boolean {
 
-  if (user.type !== UserType.group) {
-    return false;
-  }
-
-  return true;
+  return user.type === UserType.group;
 
 }
 

@@ -1,0 +1,11 @@
+SET NAMES utf8mb4;
+START TRANSACTION;
+
+INSERT INTO changelog VALUES (28, UNIX_TIMESTAMP());
+
+CREATE TABLE group_members (
+  user_id INT UNSIGNED NOT NULL,
+  group_id INT UNSIGNED NULL
+);
+
+COMMIT;

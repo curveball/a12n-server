@@ -1,0 +1,11 @@
+SET NAMES utf8mb4;
+START TRANSACTION;
+
+INSERT INTO changelog VALUES (29, UNIX_TIMESTAMP());
+
+ALTER TABLE group_members
+  CHANGE user_id user_id INT UNSIGNED NOT NULL,
+  CHANGE group_id group_id INT UNSIGNED NOT NULL,
+  ADD PRIMARY KEY (user_id, group_id);
+
+COMMIT;

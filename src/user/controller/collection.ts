@@ -12,6 +12,17 @@ class UserCollectionController extends Controller {
 
   }
 
+  async post(ctx: Context) {
+
+    const user = await usersService.save(
+      hal.halToModel(ctx.request.body)
+    );
+
+    ctx.response.status = 201;
+    ctx.response.headers.set('Location', `/user/${user.id}`);
+
+  }
+
 }
 
 export default new UserCollectionController();

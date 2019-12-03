@@ -55,7 +55,7 @@ export async function save(user: User | NewUser): Promise<User> {
 
   if (!isExistingUser(user)) {
 
-    // New user.
+    // New user
     const query = 'INSERT INTO users SET ?, created = UNIX_TIMESTAMP()';
 
     const newUserRecord = {

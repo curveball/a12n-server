@@ -1,11 +1,17 @@
 import { PrivilegeMap } from '../../privilege/types';
-import { User, UserType } from '../types';
+import { User, NewUser, UserType } from '../types';
 
 const TypeMap = new Map<UserType, string>([
   [UserType.user, 'user'],
   [UserType.app, 'app'],
   [UserType.group, 'group'],
 ]);
+
+const TypeMapInt = new Map<string, UserType>([
+  ['user', UserType.user],
+  ['app', UserType.app],
+  ['group', UserType.group],
+])
 
 export function collection(users: User[]) {
 
@@ -34,7 +40,7 @@ export function item(user: User, privileges: PrivilegeMap) {
       'me': { href: user.identity, title: user.nickname },
       'auth-log': { href: '/user/' + user.id + '/log', title: 'Authentication log', type: 'text/csv' },
     },
-    nickName: user.nickname,
+    nickname: user.nickname,
     created: user.created,
     type: TypeMap.get(user.type),
     privileges
@@ -48,5 +54,17 @@ export function item(user: User, privileges: PrivilegeMap) {
   }
 
   return hal;
+
+}
+
+export function halToModel(body: any): NewUser {
+
+  return {
+    identity: body._links.me.href,
+    nickname: body.nickname,
+    created: new Date(),
+    type: TypeMapInt.get(body.type),
+    active: body.active
+  }
 
 }

@@ -17,6 +17,7 @@ class UserCollectionController extends Controller {
 
     try {
       await usersService.findByIdentity(ctx.request.body._links.me.href);
+      throw new Conflict
     } catch (err) {
       if (!(err instanceof NotFound)) {
         throw new Conflict('User alreadyt exists');

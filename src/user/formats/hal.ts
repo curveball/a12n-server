@@ -1,5 +1,5 @@
 import { PrivilegeMap } from '../../privilege/types';
-import { User, NewUser, UserType } from '../types';
+import { NewUser, User, UserType } from '../types';
 
 const TypeMap = new Map<UserType, string>([
   [UserType.user, 'user'],
@@ -11,7 +11,7 @@ const TypeMapInt = new Map<string, UserType>([
   ['user', UserType.user],
   ['app', UserType.app],
   ['group', UserType.group],
-])
+]);
 
 export function collection(users: User[]) {
 
@@ -65,6 +65,6 @@ export function halToModel(body: any): NewUser {
     created: new Date(),
     type: TypeMapInt.get(body.type),
     active: body.active
-  }
+  };
 
 }

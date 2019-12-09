@@ -35,7 +35,7 @@ class UserCollectionController extends Controller {
     }
 
     if (!hal.TypeMapReverse.has(userBody.type)) {
-      throw new UnprocessableEntity('"type must be one of ' + Array.from(hal.TypeMapReverse.keys()).join(', '));
+      throw new UnprocessableEntity('type must be one of ' + Array.from(hal.TypeMapReverse.keys()).join(', '));
     }
 
     const user = await usersService.save(

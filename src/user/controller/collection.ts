@@ -35,7 +35,7 @@ class UserCollectionController extends Controller {
     }
 
     if (!hal.TypeMapInt.has(userBody.type)) {
-      throw new UnprocessableEntity('User type needs to to be either user, group or app');
+      throw new UnprocessableEntity('"type must be one of ' + Array.from(hal.TypeMapInt.keys()).join(', '));
     }
 
     const user = await usersService.save(

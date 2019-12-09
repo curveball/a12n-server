@@ -1,8 +1,6 @@
-export enum UserType {
-  user = 1,
-  app = 2,
-  group = 3,
-}
+export type UserType = 'user' | 'app' | 'group';
+
+export const UserTypeList: UserType[] = ['user', 'app', 'group'];
 
 export type User = {
   id: number,

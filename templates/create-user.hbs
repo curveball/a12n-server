@@ -1,0 +1,46 @@
+<form action="{{ action }}" method="post">
+
+  {{# if msg}}
+  <div class="msg info">{{ msg }}</div>
+  {{/if}}
+  {{# if error}}
+  <div class="msg error">{{ error }}</div>
+  {{/if}}
+
+  <fieldset>
+    <label for="nickname">
+      <span>Nickname</span>
+      <input type="text" name="nickname" id="nickname" required="required" autocomplete="nickname" />
+    </label>
+
+    <label for="identity">
+      <span>Identity (unique URL identifying this user)</span>
+      <input type="url" name="identity" id="identity" required="required" autocomplete="url" />
+    </label>
+
+    <label for="type">
+      <span>User Type</span>
+      <select name="type" id="type" required="required">
+        {{#each type}}
+        <option value="{{this}}">{{this}}</option>
+        {{/each}}
+      </select>
+    </label>
+
+    <label for="active">
+      <span>Make user active</span>
+      <input type="checkbox" name="active" value="1">
+    </label>
+  </fieldset>
+
+  <fieldset>
+    <label>
+      <button type="submit">Create User</button>
+    </label>
+  </fieldset>
+
+  {{#each hiddenFields}}
+  <input type="hidden" name="{{@key}}" value="{{this}}"/>
+  {{/each}}
+
+</form>

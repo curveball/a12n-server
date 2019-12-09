@@ -5,8 +5,9 @@ export function collection(users: User[]) {
 
   const hal: any = {
     _links: {
-      self: { href: '/user' },
-      item: [],
+      'self': { href: '/user' },
+      'item': [],
+      'create-form': { href: '/create-user', title: 'Create New User'}
     },
     total: users.length,
   };

@@ -1,6 +1,7 @@
 import router from '@curveball/router';
 import blob from './blob/controller';
 import changePassword from './changepassword/controller';
+import createUser from './create-user/controller';
 import group from './group/controller/collection';
 import health from './health/controller';
 import home from './home/controller';
@@ -23,6 +24,7 @@ import user from './user/controller/item';
 const routes = [
   router('/', home),
   router('/user', users),
+  router('/create-user', createUser),
   router('/user/:id', user),
   router('/user/:id/log', userLog),
   router('/user/:id/member', group),

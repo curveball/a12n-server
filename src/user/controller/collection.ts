@@ -27,7 +27,7 @@ class UserCollectionController extends Controller {
     }
 
     if (typeof userBody.nickname !== 'string') {
-      throw new UnprocessableEntity('User nickname needs to be a string');
+      throw new UnprocessableEntity('nickname must be a string');
     }
 
     if (typeof userBody.active !== 'boolean') {

@@ -1,13 +1,13 @@
 import database from '../database';
 import * as UserService from '../user/service';
-import { User, UserType } from '../user/types';
+import { User } from '../user/types';
 
 /**
  *  Checks if the user is a type group and returns true or false
  */
 export function isGroup(user: User): boolean {
 
-  return user.type === UserType.group;
+  return user.type === 'group';
 
 }
 
@@ -23,24 +23,10 @@ export async function findAllGroupMembers(user: User): Promise<User[]> {
   const models = [];
 
   for (const record of result[0]) {
-    const model = recordToModel(user, record);
+    const model = UserService.recordToModel(record);
     models.push(model);
   }
 
   return models;
-
-}
-
-
-function recordToModel(user: User, record: UserService.UserRecord): User {
-
-  return {
-    id: record.id,
-    identity: record.identity,
-    nickname: record.nickname,
-    created: new Date(record.created * 1000),
-    active: !!record.active,
-    type: record.type
-  };
 
 }

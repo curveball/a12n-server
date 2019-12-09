@@ -1,17 +1,5 @@
 import { PrivilegeMap } from '../../privilege/types';
-import { NewUser, User, UserType } from '../types';
-
-const TypeMap = new Map<UserType, string>([
-  [UserType.user, 'user'],
-  [UserType.app, 'app'],
-  [UserType.group, 'group'],
-]);
-
-export const TypeMapReverse = new Map<string, UserType>([
-  ['user', UserType.user],
-  ['app', UserType.app],
-  ['group', UserType.group],
-]);
+import { NewUser, User } from '../types';
 
 export function collection(users: User[]) {
 
@@ -36,17 +24,17 @@ export function collection(users: User[]) {
 export function item(user: User, privileges: PrivilegeMap) {
   const hal: any = {
     _links: {
-      'self': { href: '/user/' + user.id, title: user.nickname },
+      'self': {href: '/user/' + user.id, title: user.nickname },
       'me': { href: user.identity, title: user.nickname },
-      'auth-log': { href: '/user/' + user.id + '/log', title: 'Authentication log', type: 'text/csv' },
+      'auth-log': { href: '/user/' + user.id + '/log', title: 'Authentication log', type: 'text/csv' }
     },
     nickname: user.nickname,
     created: user.created,
-    type: TypeMap.get(user.type),
+    type: user.type,
     privileges
   };
 
-  if (user.type === UserType.group) {
+  if (user.type === 'group') {
     hal._links['member-collection'] = {
       href: '/user/' + user.id + '/member',
       title: 'Group Members'
@@ -63,7 +51,7 @@ export function halToModel(body: any): NewUser {
     identity: body._links.me.href,
     nickname: body.nickname,
     created: new Date(),
-    type: TypeMapReverse.get(body.type),
+    type: body.type,
     active: body.active
   };
 

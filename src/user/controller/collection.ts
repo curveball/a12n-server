@@ -3,6 +3,7 @@ import { Context } from '@curveball/core';
 import { Conflict, NotFound, UnprocessableEntity } from '@curveball/http-errors';
 import * as hal from '../formats/hal';
 import * as usersService from '../service';
+import { UserTypeList } from '../types';
 
 class UserCollectionController extends Controller {
 
@@ -34,8 +35,8 @@ class UserCollectionController extends Controller {
       throw new UnprocessableEntity('active must be a boolean');
     }
 
-    if (!hal.TypeMapReverse.has(userBody.type)) {
-      throw new UnprocessableEntity('type must be one of ' + Array.from(hal.TypeMapReverse.keys()).join(', '));
+    if (!UserTypeList.includes(userBody.type)) {
+      throw new UnprocessableEntity('type must be one of ' + UserTypeList.join(', '));
     }
 
     const user = await usersService.save(

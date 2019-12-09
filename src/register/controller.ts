@@ -40,7 +40,7 @@ class RegistrationController extends Controller {
       identity: 'mailto:' + ctx.request.body.emailAddress,
       nickname: ctx.request.body.nickname,
       created: new Date(),
-      type: 1,
+      type: 'user',
       active: false
     });
 

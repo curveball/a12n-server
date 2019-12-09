@@ -2,7 +2,7 @@ import { NotFound } from '@curveball/http-errors';
 import bcrypt from 'bcrypt';
 import * as otplib from 'otplib';
 import database from '../database';
-import { NewUser, User } from './types';
+import { NewUser, User, UserType } from './types';
 
 export const fieldNames = [
   'id',
@@ -58,10 +58,11 @@ export async function save(user: User | NewUser): Promise<User> {
     // New user
     const query = 'INSERT INTO users SET ?, created = UNIX_TIMESTAMP()';
 
-    const newUserRecord = {
+    const newUserRecord: Partial<UserRecord> = {
       identity: user.identity,
       nickname: user.nickname,
-      type: user.type,
+      type: userTypeToInt(user.type),
+      active: user.active ? 1 : 0
     };
 
     const result = await database.query(query, [newUserRecord]);
@@ -76,7 +77,7 @@ export async function save(user: User | NewUser): Promise<User> {
     // Update user
     const query = 'UPDATE users SET ? WHERE id = ?';
 
-    const updateUserRecord = {
+    const updateUserRecord: Partial<UserRecord> = {
       identity: user.identity,
       nickname: user.nickname,
     };
@@ -180,15 +181,36 @@ export type UserRecord = {
   active: number
 };
 
+function userTypeIntToUserType(input: number): UserType {
 
-function recordToModel(user: UserRecord): User {
+  switch (input) {
+    case 1: return 'user';
+    case 2: return 'app';
+    case 3: return 'group';
+    default:
+      throw new Error('Unknown user type id: ' + input);
+  }
+
+}
+
+function userTypeToInt(input: UserType): number {
+
+  switch (input) {
+    case 'user': return 1;
+    case 'app': return 2;
+    case 'group': return 3;
+  }
+
+}
+
+export function recordToModel(user: UserRecord): User {
 
   return {
     id: user.id,
     identity: user.identity,
     nickname: user.nickname,
     created: new Date(user.created * 1000),
-    type: user.type,
+    type: userTypeIntToUserType(user.type),
     active: !!user.active
   };
 

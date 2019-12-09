@@ -58,7 +58,7 @@ export async function save(user: User | NewUser): Promise<User> {
     // New user
     const query = 'INSERT INTO users SET ?, created = UNIX_TIMESTAMP()';
 
-    const newUserRecord:Partial<UserRecord> = {
+    const newUserRecord: Partial<UserRecord> = {
       identity: user.identity,
       nickname: user.nickname,
       type: userTypeToInt(user.type),
@@ -77,7 +77,7 @@ export async function save(user: User | NewUser): Promise<User> {
     // Update user
     const query = 'UPDATE users SET ? WHERE id = ?';
 
-    const updateUserRecord:Partial<UserRecord> = {
+    const updateUserRecord: Partial<UserRecord> = {
       identity: user.identity,
       nickname: user.nickname,
     };
@@ -186,7 +186,7 @@ function userTypeIntToUserType(input: number): UserType {
   switch (input) {
     case 1: return 'user';
     case 2: return 'app';
-    case 3: return 'group'
+    case 3: return 'group';
     default:
       throw new Error('Unknown user type id: ' + input);
   }

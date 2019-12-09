@@ -7,7 +7,7 @@ const TypeMap = new Map<UserType, string>([
   [UserType.group, 'group'],
 ]);
 
-export const TypeMapInt = new Map<string, UserType>([
+export const TypeMapReverse = new Map<string, UserType>([
   ['user', UserType.user],
   ['app', UserType.app],
   ['group', UserType.group],
@@ -63,7 +63,7 @@ export function halToModel(body: any): NewUser {
     identity: body._links.me.href,
     nickname: body.nickname,
     created: new Date(),
-    type: TypeMapInt.get(body.type),
+    type: TypeMapReverse.get(body.type),
     active: body.active
   };
 

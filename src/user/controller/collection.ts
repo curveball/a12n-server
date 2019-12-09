@@ -34,8 +34,8 @@ class UserCollectionController extends Controller {
       throw new UnprocessableEntity('active must be a boolean');
     }
 
-    if (!hal.TypeMapInt.has(userBody.type)) {
-      throw new UnprocessableEntity('"type must be one of ' + Array.from(hal.TypeMapInt.keys()).join(', '));
+    if (!hal.TypeMapReverse.has(userBody.type)) {
+      throw new UnprocessableEntity('"type must be one of ' + Array.from(hal.TypeMapReverse.keys()).join(', '));
     }
 
     const user = await usersService.save(

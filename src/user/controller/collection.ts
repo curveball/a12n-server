@@ -27,15 +27,15 @@ class UserCollectionController extends Controller {
     }
 
     if (typeof userBody.nickname !== 'string') {
-      throw new UnprocessableEntity('User nickname needs to be a string')
+      throw new UnprocessableEntity('User nickname needs to be a string');
     }
 
     if (typeof userBody.active !== 'boolean') {
-      throw new UnprocessableEntity('User active needs to be a boolean')
+      throw new UnprocessableEntity('User active needs to be a boolean');
     }
 
     if (!hal.TypeMapInt.has(userBody.type)) {
-      throw new UnprocessableEntity('User type needs to to be either user, group or app')
+      throw new UnprocessableEntity('User type needs to to be either user, group or app');
     }
 
     const user = await usersService.save(

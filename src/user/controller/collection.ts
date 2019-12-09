@@ -31,7 +31,7 @@ class UserCollectionController extends Controller {
     }
 
     if (typeof userBody.active !== 'boolean') {
-      throw new UnprocessableEntity('User active needs to be a boolean');
+      throw new UnprocessableEntity('active must be a boolean');
     }
 
     if (!hal.TypeMapInt.has(userBody.type)) {

@@ -17,7 +17,7 @@ class LoginController extends Controller {
     ctx.response.body = loginForm(
       ctx.query.msg,
       ctx.query.error,
-      await getSetting('registration.enabled'),
+      (await getSetting('registration.enabled') === 'true'),
     );
 
   }

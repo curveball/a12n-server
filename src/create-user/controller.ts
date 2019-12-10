@@ -20,7 +20,7 @@ class CreateUserController extends Controller {
     const type = ctx.request.body.type;
 
 
-    if (!identity || !identity.contains(':') || identity.contains(' ')) {
+    if (!identity || !identity.includes(':') || identity.includes(' ')) {
       throw new UnprocessableEntity('Identity must exist and must be a url');
     }
     if (nickname.length < 1) {

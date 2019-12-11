@@ -8,14 +8,14 @@ export function getSetting(setting: string, deflt?: any): any {
     throw new Error('Settings have not been loaded. Call load() first');
   }
 
-  const value = settingsCache.get(setting);
+  const value = JSON.parse(settingsCache.get(setting));
   if (value === undefined) {
     if (deflt === undefined) {
       throw new Error('Setting not found');
     }
     return deflt;
   } else {
-    return JSON.parse(value);
+    return value;
   }
 
 }

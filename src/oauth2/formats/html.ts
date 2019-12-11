@@ -8,6 +8,7 @@ export function loginForm(msg: string, error: string, hiddenFields: KeyValue, re
     msg: msg,
     error: error,
     hiddenFields: hiddenFields,
+    registrationEnabled,
     action: '/authorize',
   });
 

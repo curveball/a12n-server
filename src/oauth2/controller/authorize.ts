@@ -4,6 +4,7 @@ import { NotFound } from '@curveball/http-errors';
 import querystring from 'querystring';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
+import { getSetting } from '../../server-settings';
 import * as userService from '../../user/service';
 import { User } from '../../user/types';
 import { InvalidClient, InvalidRequest, serializeError, UnsupportedGrantType } from '../errors';
@@ -72,7 +73,8 @@ class AuthorizeController extends Controller {
           state: state,
           redirect_uri: redirectUri,
           response_type: responseType,
-        }
+        },
+        await getSetting('registration.enabled')
       );
     }
 

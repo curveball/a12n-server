@@ -8,7 +8,7 @@ export function getSetting(setting: string, deflt?: any): any {
     throw new Error('Settings have not been loaded. Call load() first');
   }
 
-  const value = JSON.parse(settingsCache.get(setting));
+  const value = settingsCache.get(setting);
   if (value === undefined) {
     if (deflt === undefined) {
       throw new Error('Setting not found');
@@ -29,7 +29,7 @@ export async function load(): Promise<void> {
   const result = await db.query(query);
 
   for (const row of result[0]) {
-    settingsCache.set(row.setting, row.value);
+    settingsCache.set(row.setting, JSON.parse(row.value));
   }
   settingsLoaded = true;
 

@@ -10,6 +10,7 @@ import { InvalidClient, InvalidRequest, serializeError, UnsupportedGrantType } f
 import { loginForm } from '../formats/html';
 import * as oauth2Service from '../service';
 import { OAuth2Client } from '../types';
+import { getSetting } from '../../server-settings';
 
 class AuthorizeController extends Controller {
 
@@ -72,7 +73,8 @@ class AuthorizeController extends Controller {
           state: state,
           redirect_uri: redirectUri,
           response_type: responseType,
-        }
+        },
+        await getSetting('registration.enabled')
       );
     }
 

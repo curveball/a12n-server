@@ -54,7 +54,8 @@ form button {
   border-radius: .25ex;
 }
 
-form input {
+form input,
+form select {
   background: rgba(0,0,0,.04);
   border-width: 0 0 2px 0;
   border-style: solid;
@@ -62,6 +63,10 @@ form input {
   text-indent: 1ex;
   transition: border-color .5s cubic-bezier(0.075, 0.82, 0.165, 1);
   margin-top: 1ex;
+}
+
+form select {
+  height: 56px;
 }
 
 form input:hover {
@@ -74,14 +79,16 @@ form input:focus {
 }
 
 
-form input:invalid {
+form input:invalid,
+form select {
   box-shadow: none;
   outline: none;
   outline-color: transparent;
   border-color: #F44336;
 }
 
-form input:invalid:focus {
+form input:invalid:focus,
+form select:focus {
   border-color: #EF9A9A;
 }
 
@@ -156,6 +163,14 @@ form button:hover {
 
 input.totp {
   font-family: monospace;
+}
+
+.active {
+  flex-direction: row;
+}
+
+.active input {
+  margin: 0 0 0px 5px;
 }
 
 form p {

@@ -165,11 +165,14 @@ input.totp {
   font-family: monospace;
 }
 
-.active {
+.checkbox {
   flex-direction: row;
 }
 
-.active input {
+.checkbox :nth-child(1) { order: 2; }
+.checkbox :nth-child(2) { order: 1; }
+
+.checkbox input {
   margin: 0 5px 0 0;
 }
 

@@ -25,12 +25,12 @@
     <label>
       <button type="submit">Login</button>
     </label>
-    {{#if registrationEnabled}}
     <p class="login-options">
+    {{#if registrationEnabled}}
       <a href="/register">Register</a>
+    {{/if}}
       <a href="/reset-password">Forgot Password</a>
     </p>
-    {{/if}}
   </fieldset>
 
   {{#each hiddenFields}}

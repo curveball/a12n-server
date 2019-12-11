@@ -29,7 +29,7 @@ export async function load(): Promise<void> {
   const result = await db.query(query);
 
   for (const row of result[0]) {
-    settingsCache.set(row.setting, row.value);
+    settingsCache.set(row.setting, JSON.parse(row.value));
   }
   settingsLoaded = true;
 

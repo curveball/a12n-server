@@ -12,12 +12,11 @@ import { loginForm } from './formats/html';
 class LoginController extends Controller {
 
   async get(ctx: Context) {
-
     ctx.response.type = 'text/html';
     ctx.response.body = loginForm(
       ctx.query.msg,
       ctx.query.error,
-      (await getSetting('registration.enabled') === 'true'),
+      await getSetting('registration.enabled'),
     );
 
   }

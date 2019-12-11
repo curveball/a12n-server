@@ -15,7 +15,7 @@ export function getSetting(setting: string, deflt?: any): any {
     }
     return deflt;
   } else {
-    return value;
+    return JSON.parse(value);
   }
 
 }

@@ -94,8 +94,15 @@ form input[type=radio] {
   width: 2ex;
   height: 2ex;
   cursor: pointer;
-  border: 2px solid
-  #ccc;
+  border: 2px solid #ccc;
+}
+
+form input[type=checkbox] {
+  border-radius: .2ex;
+}
+
+form input[type=radio] {
+  border-radius: 50%;
 }
 
 form input[type=checkbox]:checked,

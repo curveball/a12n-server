@@ -16,10 +16,18 @@
       <input type="password" name="password" id="password" required="required" placeholder="Enter password" autocomplete="current-password" />
     </label>
 
+    {{#if totpEnabled}}
     <label for="totp">
+      {{#if totpRequired}}
+      <span>TOTP code  <em>(required)</em></span>
+      {{else}}
       <span>TOTP code  <em>(if set)</em></span>
+      {{/if}}
       <input type="text" name="totp" class="totp" id="totp" placeholder="Enter TOTP code" autocomplete="one-time-code" />
     </label>
+    {{else}}
+    {{/if}}
+
   </fieldset>
   <fieldset>
     <label>

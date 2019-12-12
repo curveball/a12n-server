@@ -17,6 +17,7 @@ class LoginController extends Controller {
       ctx.query.msg,
       ctx.query.error,
       await getSetting('registration.enabled'),
+      await getSetting('totp')
     );
 
   }

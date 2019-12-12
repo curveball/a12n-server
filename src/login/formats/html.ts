@@ -6,15 +6,15 @@ export function loginForm(msg: string, error: string, registrationEnabled: boole
   let totpEnabled;
 
   switch (totp) {
-    case "required":
+    case 'required':
       totpRequired = true;
       totpEnabled = true;
       break;
-    case "optional":
+    case 'optional':
       totpRequired = false;
       totpEnabled = true;
       break;
-    case "disabled":
+    case 'disabled':
       totpRequired = false;
       totpEnabled = false;
       break;

@@ -150,6 +150,8 @@ class AuthorizeController extends Controller {
         }
     } else if (await userService.hasTotp(user)) {
       return this.redirectToLogin(ctx, {...params, error: 'TOTP token required'});
+    } else if (!ctx.request.body.totp && await getSetting('totp') === 'required') {
+      return this.redirectToLogin(ctx, {...params, error: 'TOTP code is required'});
     }
 
     ctx.state.session = {

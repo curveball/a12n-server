@@ -53,8 +53,8 @@ class LoginController extends Controller {
       }
     } else if (await userService.hasTotp(user)) {
       return this.redirectToLogin(ctx, '', 'TOTP token required');
-    } else if (!ctx.request.body.totp && await getSetting('totp') === "required") {
-      return this.redirectToLogin(ctx, '', 'TOTP code is required')
+    } else if (!ctx.request.body.totp && await getSetting('totp') === 'required') {
+      return this.redirectToLogin(ctx, '', 'TOTP code is required');
     }
 
     ctx.state.session = {

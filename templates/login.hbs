@@ -20,10 +20,11 @@
     <label for="totp">
       {{#if totpRequired}}
       <span>TOTP code  <em>(required)</em></span>
+      <input type="text" name="totp" class="totp" id="totp" placeholder="Enter TOTP code (required)" required="required" autocomplete="one-time-code" />
       {{else}}
       <span>TOTP code  <em>(if set)</em></span>
-      {{/if}}
       <input type="text" name="totp" class="totp" id="totp" placeholder="Enter TOTP code" autocomplete="one-time-code" />
+      {{/if}}
     </label>
     {{else}}
     {{/if}}

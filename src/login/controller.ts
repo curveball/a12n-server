@@ -53,8 +53,8 @@ class LoginController extends Controller {
       }
     } else if (await userService.hasTotp(user)) {
       return this.redirectToLogin(ctx, '', 'TOTP token required');
-    } else if (!ctx.request.body.totp && await getSetting('totp') === 'required') {
-      return this.redirectToLogin(ctx, '', 'TOTP code is required');
+    } else if (await getSetting('totp') === 'required') {
+      return this.redirectToLogin(ctx, '', 'The system administrator has made TOTP tokens mandatory, but this user did not have a TOTP configured. Login is disabled');
     }
 
     ctx.state.session = {

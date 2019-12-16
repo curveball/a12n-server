@@ -41,7 +41,7 @@ export default (version: string, authenticatedUser: User) => {
 
   if (getSetting('registration.enabled')) {
     result._links.registration = {
-      href: '/registration',
+      href: '/register',
       title: 'Create a new user account',
       type: 'text/html'
     };

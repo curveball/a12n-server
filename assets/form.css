@@ -44,17 +44,20 @@ form label {
 }
 
 form label:not(:last-child) {
-  margin-bottom: 1em;
+  margin-bottom: 3em;
 }
 
-form input,
-form button {
+form input:not([type='checkbox']):not([type='radio']),
+form button,
+form select {
+  min-height: 3em;
   line-height: 3;
   padding: 0;
   border-radius: .25ex;
 }
 
-form input {
+form input,
+form select {
   background: rgba(0,0,0,.04);
   border-width: 0 0 2px 0;
   border-style: solid;
@@ -73,16 +76,55 @@ form input:focus {
   border-color: #1E88E5;
 }
 
-
 form input:invalid {
   box-shadow: none;
   outline: none;
   outline-color: transparent;
-  border-color: #F44336;
+  border-color: transparent;
 }
 
 form input:invalid:focus {
-  border-color: #EF9A9A;
+  border-color: #F44336;
+}
+
+form input[type=checkbox],
+form input[type=radio] {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  width: 2ex;
+  height: 2ex;
+  cursor: pointer;
+  border: 2px solid #ccc;
+}
+
+form input[type=checkbox] {
+  border-radius: .2ex;
+}
+
+form input[type=radio] {
+  border-radius: 50%;
+}
+
+form input[type=checkbox]:checked,
+form input[type=radio]:checked {
+  background:#1e88e5;
+  border-color:#1e88e5 !important;
+  box-shadow: inset 0 0 0 3px white;
+}
+
+form input[type=checkbox]:focus,
+form input[type=radio]:focus {
+  border-color: #1e88e5
+}
+
+
+form input[type=checkbox]:hover:not(:focus),
+form input[type=radio]:hover:not(:focus) {
+  border-color: #8c8c8c;
+}
+
+form select:focus {
+  border-color: #1e88e5;
 }
 
 :focus {outline:none;}
@@ -98,6 +140,12 @@ form button {
 
 form button:hover {
   transform: translateY(-2px) scale(1.02);
+}
+
+form:invalid button[type=submit] {
+  background-color: #CCC;
+  transform: none;
+  pointer-events: none;
 }
 
 .msg.info {
@@ -156,6 +204,21 @@ form button:hover {
 
 input.totp {
   font-family: monospace;
+}
+
+.checkbox {
+  flex-direction: row;
+}
+
+.checkbox :nth-child(1) { order: 2; }
+.checkbox :nth-child(2) { order: 1; }
+
+.checkbox input {
+  margin: 0 1ex 0 0;
+}
+
+.checkbox span {
+  cursor: pointer;
 }
 
 form p {

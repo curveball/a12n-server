@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.11.1 (2019-12-17)
+-------------------
+
+* Last release broke the OAuth2 authorization endpoint.
+
+
 0.11.0 (2019-12-17)
 -------------------
 

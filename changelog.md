@@ -1,6 +1,24 @@
 Changelog
 =========
 
+0.11.0 (2019-12-17)
+-------------------
+
+* Support for a new user type: 'group'. Groups can contain users and will in a
+  future release allow roles to be created with privileges that can be applied
+  to entire groups.
+* TOTP can now be set to 'required', 'optional' and 'disabled' via a server-
+  wide flag.
+* OAuth2 access, refresh and authorization code expiry times are now
+  configurable.
+* Better design for notifications vs. error messages.
+* It's now possible for an admin to create new users via an API or form.
+* It's now possible to authenticate with the a12nserver via a Bearer token,
+  allowing clients to directly call a12nserver APIs.
+* The OAuth2 login flow now also shows the lost password and registration
+  links, if they were enabled.
+
+
 0.10.2 (2019-11-11)
 -------------------
 

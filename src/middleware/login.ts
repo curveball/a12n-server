@@ -24,7 +24,17 @@ export default function(): Middleware {
 
   return async (ctx, next): Promise<void> => {
 
-    if (ctx.request.headers.has('Authorization')) {
+    let inWhitelist = false;
+    for (const path of whitelistPath) {
+
+      if (ctx.path === path || ctx.path.startsWith(path + '/')) {
+        inWhitelist = true;
+        break;
+      }
+    }
+
+
+    if (!inWhitelist && ctx.request.headers.has('Authorization')) {
       // We had an authorization header, lets validate it
       const authHeader = ctx.request.headers.get('Authorization');
 
@@ -60,16 +70,12 @@ export default function(): Middleware {
 
     }
 
-    for (const path of whitelistPath) {
-
-      if (ctx.path === path || ctx.path.startsWith(path + '/')) {
-        // In whitelist
-        return next();
-      }
+    if (inWhitelist) {
+      return next();
     }
 
     // Not logged in.
-    ctx.status = 302;
+    ctx.status = 303;
     ctx.response.headers.set('Location', '/login');
 
   };

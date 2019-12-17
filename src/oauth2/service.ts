@@ -2,11 +2,11 @@ import { NotFound } from '@curveball/http-errors';
 import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import db from '../database';
+import { getSetting } from '../server-settings';
 import * as UserService from '../user/service';
 import { User } from '../user/types';
 import { InvalidGrant, InvalidRequest, UnauthorizedClient} from './errors';
 import { OAuth2Client, OAuth2Code, OAuth2Token } from './types';
-import { getSetting } from '../server-settings';
 
 export async function getClientByClientId(clientId: string): Promise<OAuth2Client> {
 
@@ -59,7 +59,7 @@ export async function generateTokenForUser(client: OAuth2Client, user: User): Pr
   const expirySettings = getTokenExpiry();
 
   const accessTokenExpires = Math.floor(Date.now() / 1000) + expirySettings.accessToken;
-  const refreshTokenExpires = Math.floor(Date.now() / 1000) + expirySettings.refreshToken; 
+  const refreshTokenExpires = Math.floor(Date.now() / 1000) + expirySettings.refreshToken;
 
   await db.query(query, {
     oauth2_client_id: client.id,
@@ -328,7 +328,7 @@ function getTokenExpiry(): TokenExpiry {
 
   return {
     accessToken: getSetting('oauth2.accessToken.expiry', 600),
-    refreshToken: getSetting('oauth2.refreshToken.expiry', 3600*6),
+    refreshToken: getSetting('oauth2.refreshToken.expiry', 3600 * 6),
     code: getSetting('oauth2.code.expiry', 600),
   };
 

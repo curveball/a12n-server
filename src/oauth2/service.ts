@@ -6,15 +6,7 @@ import * as UserService from '../user/service';
 import { User } from '../user/types';
 import { InvalidGrant, InvalidRequest, UnauthorizedClient} from './errors';
 import { OAuth2Client, OAuth2Code, OAuth2Token } from './types';
-
-// 10 minutes
-const ACCESS_TOKEN_EXPIRY = 600;
-
-// 6 hours
-const REFRESH_TOKEN_EXPIRY = 3600 * 6;
-
-// 10 minutes
-const CODE_EXPIRY = 600;
+import { getSetting } from '../server-settings';
 
 export async function getClientByClientId(clientId: string): Promise<OAuth2Client> {
 
@@ -64,8 +56,10 @@ export async function generateTokenForUser(client: OAuth2Client, user: User): Pr
 
   const query = 'INSERT INTO oauth2_tokens SET created = UNIX_TIMESTAMP(), ?';
 
-  const accessTokenExpires = Math.floor(Date.now() / 1000) + ACCESS_TOKEN_EXPIRY;
-  const refreshTokenExpires = Math.floor(Date.now() / 1000) + REFRESH_TOKEN_EXPIRY;
+  const expirySettings = getTokenExpiry();
+
+  const accessTokenExpires = Math.floor(Date.now() / 1000) + expirySettings.accessToken;
+  const refreshTokenExpires = Math.floor(Date.now() / 1000) + expirySettings.refreshToken; 
 
   await db.query(query, {
     oauth2_client_id: client.id,
@@ -102,8 +96,10 @@ export async function generateTokenForClient(client: OAuth2Client): Promise<OAut
 
   const query = 'INSERT INTO oauth2_tokens SET created = UNIX_TIMESTAMP(), ?';
 
-  const accessTokenExpires = Math.floor(Date.now() / 1000) + ACCESS_TOKEN_EXPIRY;
-  const refreshTokenExpires = Math.floor(Date.now() / 1000) + REFRESH_TOKEN_EXPIRY;
+  const expirySettings = getTokenExpiry();
+
+  const accessTokenExpires = Math.floor(Date.now() / 1000) + expirySettings.accessToken;
+  const refreshTokenExpires = Math.floor(Date.now() / 1000) + expirySettings.refreshToken;
 
   await db.query(query, {
     oauth2_client_id: client.id,
@@ -144,11 +140,12 @@ export async function generateTokenFromCode(client: OAuth2Client, code: string):
   }
 
   const codeRecord: OAuth2CodeRecord = codeResult[0][0];
+  const expirySettings = getTokenExpiry();
 
   // Delete immediately.
   await db.query('DELETE FROM oauth2_codes WHERE id = ?', [codeRecord.id]);
 
-  if (codeRecord.created + CODE_EXPIRY < Math.floor(Date.now() / 1000)) {
+  if (codeRecord.created + expirySettings.code < Math.floor(Date.now() / 1000)) {
     throw new InvalidRequest('The supplied code has expired');
   }
   if (codeRecord.client_id !== client.id) {
@@ -317,6 +314,22 @@ export async function getTokenByRefreshToken(refreshToken: string): Promise<OAut
     tokenType: 'bearer',
     userId: row.user_id,
     clientId: row.oauth2_client_id,
+  };
+
+}
+
+type TokenExpiry = {
+  accessToken: number,
+  refreshToken: number,
+  code: number,
+};
+
+function getTokenExpiry(): TokenExpiry {
+
+  return {
+    accessToken: getSetting('oauth2.accessToken.expiry', 600),
+    refreshToken: getSetting('oauth2.refreshToken.expiry', 3600*6),
+    code: getSetting('oauth2.code.expiry', 600),
   };
 
 }

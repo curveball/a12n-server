@@ -20,6 +20,7 @@ import resetPasswordRedirect from './reset-password/controller/reset-password';
 import passwordToken from './reset-password/controller/token';
 import users from './user/controller/collection';
 import user from './user/controller/item';
+import changePasswordRedirect from './well-known/controller/change-password';
 
 const routes = [
   router('/', home),
@@ -43,6 +44,7 @@ const routes = [
   router('/reset-password/token/:token', passwordToken),
   router('/reset-password/change-password', resetPasswordRedirect),
   router('/.well-known/oauth-authorization-server', oauth2Metadata),
+  router('/.well-known/change-password', changePasswordRedirect),
 ];
 
 export default routes;

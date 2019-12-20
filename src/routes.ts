@@ -20,7 +20,7 @@ import passwordToken from './reset-password/controller/token';
 import users from './user/controller/collection';
 import user from './user/controller/item';
 import changePasswordRedirect from './well-known/controller/change-password';
-import oauth2Metadata from './well-known/controller/metadata';
+import oauth2Metadata from './well-known/controller/oauth2-metadata';
 
 const routes = [
   router('/', home),

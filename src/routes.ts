@@ -10,7 +10,6 @@ import userLog from './log/controller/user';
 import login from './login/controller';
 import logout from './logout/controller';
 import oauth2Authorize from './oauth2/controller/authorize';
-import oauth2Metadata from './oauth2/controller/metadata';
 import oauth2Token from './oauth2/controller/token';
 import validateBearer from './oauth2/controller/validate-bearer';
 import validateTotp from './oauth2/controller/validate-totp';
@@ -21,6 +20,7 @@ import passwordToken from './reset-password/controller/token';
 import users from './user/controller/collection';
 import user from './user/controller/item';
 import changePasswordRedirect from './well-known/controller/change-password';
+import oauth2Metadata from './well-known/controller/metadata';
 
 const routes = [
   router('/', home),

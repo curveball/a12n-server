@@ -46,7 +46,7 @@ class CreateUserController extends Controller {
       nickname: nickname,
       created: new Date(),
       type: type,
-      active: 'activate' in ctx.request.body
+      active: 'active' in ctx.request.body
     });
 
     ctx.response.status = 303;

@@ -1,5 +1,7 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
+import { Forbidden } from '@curveball/http-errors';
+import * as privilegeService from '../../privilege/service';
 import * as userService from '../../user/service';
 import csv from '../formats/csv';
 import * as logService from '../service';
@@ -10,6 +12,12 @@ class UserLogController extends Controller {
 
     const user = await userService.findById(ctx.state.params.id);
     const log = await logService.findByUser(user);
+
+    if (user.id !== ctx.state.user.id) {
+      if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
+        throw new Forbidden('Only users with the "admin" privilege may inspect other users\' logs');
+      }
+    }
 
     ctx.response.type = 'text/csv';
     ctx.response.headers.append(

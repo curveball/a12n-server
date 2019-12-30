@@ -45,6 +45,10 @@ start-dev:
 watch:
 	./node_modules/.bin/tsc --watch
 
+.PHONY:clean
+clean:
+	rm -r node_modules dist
+
 dist/build: $(SOURCE_FILES)
 	./node_modules/.bin/tsc
 	@# Touching this file so Makefile knows when it was last built.

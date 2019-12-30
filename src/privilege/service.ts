@@ -31,8 +31,6 @@ export async function getPrivilegesForUser(user: User): Promise<PrivilegeMap> {
 
 }
 
-export function hasPrivilege(ctx: Context, privilege: string, resource?: string): Promise<boolean>;
-export function hasPrivilege(user: User, privilege: string, resource?: string): Promise<boolean>;
 export async function hasPrivilege(who: User | Context, privilege: string, resource: string = '*'): Promise<boolean> {
 
   let user;

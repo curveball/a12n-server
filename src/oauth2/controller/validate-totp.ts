@@ -41,15 +41,13 @@ class ValidateTotpController extends Controller {
 
     }
 
-    const user = await userService.findById(token.userId);
-
-    if (!await userService.validateTotp(user, totp)) {
+    if (!await userService.validateTotp(token.user, totp)) {
       throw new BadRequest('The one time password was incorrect');
     }
 
-    const privileges = await privilegeService.getPrivilegesForUser(user);
+    const privileges = await privilegeService.getPrivilegesForUser(token.user);
 
-    ctx.response.body = userHal.item(user, privileges);
+    ctx.response.body = userHal.item(token.user, privileges);
 
   }
 

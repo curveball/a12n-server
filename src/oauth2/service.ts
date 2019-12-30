@@ -3,10 +3,18 @@ import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import db from '../database';
 import { getSetting } from '../server-settings';
-import * as UserService from '../user/service';
+import * as userService from '../user/service';
 import { User } from '../user/types';
 import { InvalidGrant, InvalidRequest, UnauthorizedClient} from './errors';
 import { OAuth2Client, OAuth2Code, OAuth2Token } from './types';
+
+type OAuth2ClientRecord = {
+  id: number,
+  client_id: string,
+  client_secret: Buffer,
+  user_id: number,
+  allowed_grant_types: string
+};
 
 export async function getClientByClientId(clientId: string): Promise<OAuth2Client> {
 
@@ -17,12 +25,16 @@ export async function getClientByClientId(clientId: string): Promise<OAuth2Clien
     throw new NotFound('OAuth2 client_id not recognized');
   }
 
+  const record: OAuth2ClientRecord = result[0][0];
+
+  const user = await userService.findActiveById(record.user_id);
+
   return {
-    id: result[0][0].id,
-    clientId: result[0][0].client_id,
-    clientSecret: result[0][0].client_secret,
-    userId: result[0][0].user_id,
-    allowedGrantTypes: result[0][0].allowed_grant_types.split(' '),
+    id: record.id,
+    clientId: record.client_id,
+    clientSecret: record.client_secret,
+    user,
+    allowedGrantTypes: record.allowed_grant_types.split(' '),
   };
 
 }
@@ -75,7 +87,7 @@ export async function generateTokenForUser(client: OAuth2Client, user: User): Pr
     refreshToken: refreshToken,
     accessTokenExpires: accessTokenExpires,
     tokenType: 'bearer',
-    userId: user.id,
+    user,
     clientId: client.id,
   };
 
@@ -105,7 +117,7 @@ export async function generateTokenForClient(client: OAuth2Client): Promise<OAut
     oauth2_client_id: client.id,
     access_token: accessToken,
     refresh_token: refreshToken,
-    user_id: client.userId,
+    user_id: client.user.id,
     access_token_expires: accessTokenExpires,
     refresh_token_expires: refreshTokenExpires,
   });
@@ -115,7 +127,7 @@ export async function generateTokenForClient(client: OAuth2Client): Promise<OAut
     refreshToken: refreshToken,
     accessTokenExpires: accessTokenExpires,
     tokenType: 'bearer',
-    userId: client.userId,
+    user: client.user,
     clientId: client.id,
   };
 
@@ -152,7 +164,7 @@ export async function generateTokenFromCode(client: OAuth2Client, code: string):
     throw new UnauthorizedClient('The client_id associated with the token did not match with the authenticated client credentials');
   }
 
-  const user = await UserService.findById(codeRecord.user_id);
+  const user = await userService.findById(codeRecord.user_id);
   return generateTokenForUser(client, user);
 
 }
@@ -181,8 +193,7 @@ export async function generateTokenFromRefreshToken(client: OAuth2Client, refres
   }
 
   await revokeToken(oldToken);
-  const user = await UserService.findById(oldToken.userId);
-  return generateTokenForUser(client, user);
+  return generateTokenForUser(client, oldToken.user);
 
 }
 
@@ -269,12 +280,14 @@ export async function getTokenByAccessToken(accessToken: string): Promise<OAuth2
   }
 
   const row: OAuth2TokenRecord = result[0][0];
+  const user = await userService.findActiveById(row.user_id);
+
   return {
     accessToken: row.access_token,
     refreshToken: row.refresh_token,
     accessTokenExpires: row.access_token_expires,
     tokenType: 'bearer',
-    userId: row.user_id,
+    user,
     clientId: row.oauth2_client_id,
   };
 
@@ -307,12 +320,15 @@ export async function getTokenByRefreshToken(refreshToken: string): Promise<OAut
   }
 
   const row: OAuth2TokenRecord = result[0][0];
+
+  const user = await userService.findActiveById(row.user_id);
+
   return {
     accessToken: row.access_token,
     refreshToken: row.refresh_token,
     accessTokenExpires: row.access_token_expires,
     tokenType: 'bearer',
-    userId: row.user_id,
+    user,
     clientId: row.oauth2_client_id,
   };
 

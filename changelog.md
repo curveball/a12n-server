@@ -1,6 +1,15 @@
 Changelog
 =========
 
+0.11.2 (2019-12-30)
+-------------------
+
+* Support for the `/.well-known/change-password` endpoint, as defined in
+  RFC8615.
+* Fixed a bug that could cause the TOTP field to not be rendered, even if it's
+  required.
+
+
 0.11.1 (2019-12-17)
 -------------------
 

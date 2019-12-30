@@ -3,7 +3,6 @@ import { Context } from '@curveball/core';
 import { BadRequest, NotFound } from '@curveball/http-errors';
 import * as privilegeService from '../../privilege/service';
 import * as userHal from '../../user/formats/hal';
-import * as userService from '../../user/service';
 import * as oauth2Service from '../service';
 
 /**
@@ -41,10 +40,9 @@ class ValidateBearerController extends Controller {
 
     }
 
-    const user = await userService.findById(token.userId);
-    const privileges = await privilegeService.getPrivilegesForUser(user);
+    const privileges = await privilegeService.getPrivilegesForUser(token.user);
 
-    ctx.response.body = userHal.item(user, privileges);
+    ctx.response.body = userHal.item(token.user, privileges);
 
   }
 

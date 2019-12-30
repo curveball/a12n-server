@@ -1,6 +1,5 @@
 import { Middleware } from '@curveball/core';
 import { NotFound, Unauthorized } from '@curveball/http-errors';
-import * as userService from '../user/service';
 import * as oauth2Service from './../oauth2/service';
 
 const whitelistPath = [
@@ -53,10 +52,8 @@ export default function(): Middleware {
           throw e;
         }
       }
-      const user = await userService.findById(token.userId);
-
       // We are logged in!
-      ctx.state.user = user;
+      ctx.state.user = token.user;
 
       return next();
 

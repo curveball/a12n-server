@@ -4,6 +4,8 @@ import * as otplib from 'otplib';
 import database from '../database';
 import { NewUser, User, UserType } from './types';
 
+export class InactiveUser extends Error { }
+
 export const fieldNames = [
   'id',
   'identity',
@@ -38,6 +40,16 @@ export async function findById(id: number): Promise<User> {
   return recordToModel(result[0][0]);
 
 }
+export async function findActiveById(id: number): Promise<User> {
+
+  const user = await findById(id);
+  if (!user.active) {
+    throw new InactiveUser('User with identity ' + user.identity + ' is not active');
+  }
+  return user;
+
+}
+
 export async function findByIdentity(identity: string): Promise<User> {
 
   const query = `SELECT ${fieldNames.join(', ')} FROM users WHERE identity = ?`;

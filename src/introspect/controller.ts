@@ -5,7 +5,6 @@ import { NotFound } from '@curveball/http-errors';
 import * as oauth2Service from '../oauth2/service';
 import { OAuth2Token } from '../oauth2/types';
 import * as privilegeService from '../privilege/service';
-import * as userService from '../user/service';
 import { accessToken, inactive, refreshToken } from './formats/json';
 
 /**
@@ -69,22 +68,18 @@ class IntrospectionController extends Controller {
 
     }
     if (foundToken) {
-      const user = await userService.findById(foundToken.userId);
+      const privileges = await privilegeService.getPrivilegesForUser(foundToken.user);
 
-      if (user.active) {
-        const privileges = await privilegeService.getPrivilegesForUser(user);
+      switch (foundTokenType) {
 
-        switch (foundTokenType) {
-
-          case 'accessToken' :
-            ctx.response.body = accessToken(foundToken, user, privileges);
-            break;
-          case 'refreshToken' :
-            ctx.response.body = refreshToken(foundToken, user, privileges);
-            break;
-        }
-        return;
+        case 'accessToken' :
+          ctx.response.body = accessToken(foundToken, privileges);
+          break;
+        case 'refreshToken' :
+          ctx.response.body = refreshToken(foundToken, privileges);
+          break;
       }
+      return;
     }
 
     ctx.response.body = inactive();

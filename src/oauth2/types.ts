@@ -1,8 +1,10 @@
+import { User } from '../user/types';
+
 export type OAuth2Client = {
   id: number,
   clientId: string,
   clientSecret: Buffer,
-  userId: number,
+  user: User,
   allowedGrantTypes: string[],
 };
 
@@ -11,7 +13,7 @@ export type OAuth2Token = {
   refreshToken: string,
   accessTokenExpires: number,
   tokenType: 'bearer',
-  userId: number,
+  user: User,
   clientId: number,
 };
 

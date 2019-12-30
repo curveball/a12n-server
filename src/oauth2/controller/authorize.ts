@@ -74,7 +74,8 @@ class AuthorizeController extends Controller {
           redirect_uri: redirectUri,
           response_type: responseType,
         },
-        await getSetting('registration.enabled')
+        await getSetting('registration.enabled'),
+        await getSetting('totp')
       );
     }
 

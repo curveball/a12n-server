@@ -8,6 +8,8 @@ Changelog
   RFC8615.
 * Fixed a bug that could cause the TOTP field to not be rendered, even if it's
   required.
+* Fixed a bug where users weren't getting activated using the "Create user"
+  form.
 
 
 0.11.1 (2019-12-17)

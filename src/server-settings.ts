@@ -2,7 +2,7 @@ const settingsCache = new Map<string, any>();
 let settingsLoaded = false;
 import db from './database';
 
-export function getSetting(setting: string, deflt?: any): any {
+export function getSetting<T = any>(setting: string, deflt?: T): T {
 
   if (!settingsLoaded) {
     throw new Error('Settings have not been loaded. Call load() first');

@@ -4,8 +4,8 @@ export function collection(privileges: Privilege[]) {
 
   const hal: any = {
     _links: {
-      'self': { href: '/privilege' },
-      'item': [],
+      self: { href: '/privilege' },
+      item: [],
     },
   };
 
@@ -13,7 +13,7 @@ export function collection(privileges: Privilege[]) {
     hal._links.item.push({
       href: '/privilege/' + privilege.privilege,
       title: privilege.description
-    })
+    });
   }
   return hal;
 }
@@ -21,8 +21,8 @@ export function collection(privileges: Privilege[]) {
 export function item(privilege: Privilege) {
   const hal: any = {
     _links: {
-      'self': {href: '/privilege/' + privilege.privilege},
-      'collection': {href: '/privilege', title: 'Privilege Collection'}
+      self: {href: '/privilege/' + privilege.privilege},
+      collection: {href: '/privilege', title: 'Privilege Collection'}
     },
     privilege: privilege.privilege,
     description: privilege.description

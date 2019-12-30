@@ -5,4 +5,4 @@ export type PrivilegeMap = {
 export type Privilege = {
   privilege: string,
   description: string
-}
+};

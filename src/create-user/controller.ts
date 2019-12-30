@@ -1,6 +1,7 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { NotFound, UnprocessableEntity } from '@curveball/http-errors';
+import { Forbidden, NotFound, UnprocessableEntity } from '@curveball/http-errors';
+import * as privilegeService from '../privilege/service';
 import * as userService from '../user/service';
 import { UserTypeList } from '../user/types';
 import { createUserForm } from './formats/html';
@@ -9,11 +10,18 @@ class CreateUserController extends Controller {
 
   async get(ctx: Context) {
 
+    if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
+      throw new Forbidden('Only users with the "admin" privilege can create new users');
+    }
     ctx.response.type = 'text/html';
     ctx.response.body = createUserForm(ctx.query.msg, ctx.query.error);
   }
 
   async post(ctx: Context) {
+
+    if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
+      throw new Forbidden('Only users with the "admin" privilege can create new users');
+    }
 
     const identity = ctx.request.body.identity;
     const nickname = ctx.request.body.nickname;

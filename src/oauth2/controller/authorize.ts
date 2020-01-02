@@ -141,7 +141,7 @@ class AuthorizeController extends Controller {
 
     if (!user.active) {
       log(EventType.loginFailedInactive, ctx.ip(), user.id, ctx.request.headers.get('User-Agent'));
-      return this.redirectToLogin(ctx, { ...params, error: 'This account is inactiviated. Please contact Admin'});
+      return this.redirectToLogin(ctx, { ...params, error: 'This account is inactivated. Please contact Admin'});
     }
 
     if (ctx.request.body.totp) {

@@ -43,7 +43,7 @@ class LoginController extends Controller {
 
     if (!user.active) {
       log(EventType.loginFailedInactive, ctx.ip(), user.id, ctx.request.headers.get('User-Agent'));
-      return this.redirectToLogin(ctx, '', 'This account is inactivated. Please contact Admin');
+      return this.redirectToLogin(ctx, '', 'This account is inactive. Please contact Admin');
     }
 
     if (ctx.request.body.totp) {

@@ -68,7 +68,7 @@ export async function findPrivilege(privilege: string): Promise<Privilege> {
     return {
       privilege: privilege,
       description: ''
-    }
+    };
   }
 
   return result[0][0];

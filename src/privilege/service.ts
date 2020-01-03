@@ -53,7 +53,15 @@ export async function hasPrivilege(who: User | Context, privilege: string, resou
 
 export async function findPrivileges(): Promise<Privilege[]> {
 
-  const query = 'SELECT privilege, description FROM privileges UNION ALL SELECT DISTINCT scope, null FROM user_privileges LEFT JOIN privileges ON scope = privilege WHERE privilege IS NULL';
+  const query = `
+  SELECT privilege, description FROM privileges
+  UNION ALL
+  SELECT DISTINCT scope, null FROM user_privileges
+  LEFT JOIN privileges
+  ON scope = privilege
+  WHERE privilege IS NULL
+  `;
+
   const result = await database.query(query);
 
   return result[0];

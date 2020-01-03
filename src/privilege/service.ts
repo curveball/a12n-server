@@ -6,12 +6,12 @@ import { Privilege, PrivilegeMap } from './types';
 
 type PrivilegeRow = {
   resource: string,
-  scope: string,
+  privilege: string,
 };
 
 export async function getPrivilegesForUser(user: User): Promise<PrivilegeMap> {
 
-  const query = 'SELECT resource, scope FROM user_privileges WHERE user_id = ?';
+  const query = 'SELECT resource, privilege FROM user_privileges WHERE user_id = ?';
   const result = await db.query(query, [user.id]);
 
   return result[0].reduce( (currentPrivileges: any, row: PrivilegeRow) => {
@@ -19,11 +19,11 @@ export async function getPrivilegesForUser(user: User): Promise<PrivilegeMap> {
     const privileges = Object.assign({}, currentPrivileges);
 
     if (privileges.hasOwnProperty(row.resource)) {
-      if (privileges[row.resource].indexOf(row.scope) === -1) {
-        privileges[row.resource].push(row.scope);
+      if (privileges[row.resource].indexOf(row.privilege) === -1) {
+        privileges[row.resource].push(row.privilege);
       }
     } else {
-      privileges[row.resource] = [row.scope];
+      privileges[row.resource] = [row.privilege];
     }
 
     return privileges;
@@ -44,7 +44,7 @@ export async function hasPrivilege(who: User | Context, privilege: string, resou
     user = who;
   }
 
-  const query = 'SELECT id FROM user_privileges WHERE user_id = ? AND scope = ? AND (resource = ? OR resource = "*")';
+  const query = 'SELECT id FROM user_privileges WHERE user_id = ? AND privilege = ? AND (resource = ? OR resource = "*")';
   const result = await db.query(query, [user.id, privilege, resource]);
 
   return result[0].length === 1;
@@ -54,12 +54,12 @@ export async function hasPrivilege(who: User | Context, privilege: string, resou
 export async function findPrivileges(): Promise<Privilege[]> {
 
   const query = `
-  SELECT privilege, description FROM privileges
+  SELECT privileges.privilege, privileges.description FROM privileges
   UNION ALL
-  SELECT DISTINCT scope, null FROM user_privileges
+  SELECT DISTINCT user_privileges.privilege, null FROM user_privileges
   LEFT JOIN privileges
-  ON scope = privilege
-  WHERE privilege IS NULL
+  ON privileges.privilege = user_privileges.privilege
+  WHERE privileges.privilege IS NULL
   `;
 
   const result = await database.query(query);

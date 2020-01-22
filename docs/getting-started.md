@@ -32,6 +32,13 @@ repository. The easiest is to just run:
 cat mysql-schema/*.sql | mysql -u username -p -h hostname databasename 
 ```
 
+While running the application, it is possible to run into privileges issues.
+You need to enable the GRANT statement to grant privileges and roles.
+
+```sh
+GRANT ALL ON dbname.* TO 'username'@'localhost';
+```
+
 Running the server
 ------------------
 

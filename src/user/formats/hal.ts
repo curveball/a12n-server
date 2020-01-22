@@ -30,6 +30,7 @@ export function item(user: User, privileges: PrivilegeMap) {
       'auth-log': { href: '/user/' + user.id + '/log', title: 'Authentication log', type: 'text/csv' }
     },
     nickname: user.nickname,
+    active: user.active,
     created: user.created,
     type: user.type,
     privileges

@@ -36,7 +36,7 @@ While running the application, it is possible to run into privileges issues.
 You need to enable the GRANT statement to grant privileges and roles.
 
 ```sh
-GRANT ALL ON dbname.* TO 'username'@'localhost';
+GRANT SELECT, INSERT, UPDATE, DELETE ON dbname.* TO 'username'@'localhost';
 ```
 
 Running the server

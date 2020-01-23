@@ -1,6 +1,19 @@
 Changelog
 =========
 
+0.12.0 (2020-01-22)
+-------------------
+
+* Added a `/privileges` endpoint to easily find out what kind of privileges
+  are used in the system.
+* The server now has an `admin` privilege, which is required to create new
+  users or find information about other users.
+* Users that are not yet marked `active` now show up in the `/users`
+  collection, but still can't log in.
+* The session cookie now uses `SameSite: Lax`, which means that users will see
+  login screens less often.
+
+
 0.11.2 (2019-12-30)
 -------------------
 

@@ -35,7 +35,6 @@
   ],
   "homepage": "https://github.com/evert/auth-api#readme",
   "devDependencies": {
-    "@curveball/session": "^0.5.0",
     "@types/bcrypt": "^3.0.0",
     "@types/chai": "^4.2.7",
     "@types/handlebars": "^4.1.0",
@@ -60,6 +59,7 @@
     ]
   },
   "dependencies": {
+    "@curveball/session": "^0.5.0",
     "@curveball/bodyparser": "^0.4.4",
     "@curveball/controller": "^0.2.2",
     "@curveball/core": "^0.10.0",

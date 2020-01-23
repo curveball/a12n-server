@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.12.1 (2020-01-22)
+-------------------
+
+* Bug fix. For curveball-session shouldn't have been dev dependency.
+
+
 0.12.0 (2020-01-22)
 -------------------
 

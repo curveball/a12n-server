@@ -14,7 +14,8 @@ export type LogEntry = {
   userId: number,
   ip: string,
   eventType: EventType,
-  userAgent: string
+  userAgent: string,
+  country: string
 };
 
 export const eventTypeString = new Map<EventType, string>([

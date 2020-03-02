@@ -2,6 +2,8 @@ import { Context } from '@curveball/core';
 import db from '../database';
 import { User } from '../user/types';
 import { EventType, LogEntry } from './types';
+// @ts-ignore: No types for this yet
+import * as geoip from 'geoip-lite';
 
 export function log(eventType: EventType, ctx: Context): Promise<void>;
 export function log(eventType: EventType, ip: string, userId: number, userAgent: string): Promise<void>;
@@ -26,12 +28,12 @@ export default async function log(
 }
 
 export async function addLogEntry(eventType: EventType, ip: string, userId: number, userAgent: string): Promise<void> {
-
   await db.query('INSERT INTO user_log SET time = UNIX_TIMESTAMP(), ?', {
     user_id: userId,
     event_type: eventType,
     ip: ip,
-    user_agent: userAgent
+    user_agent: userAgent,
+    country: getCountryByIp(ip)
   });
 
 }
@@ -42,7 +44,8 @@ type LogRow = {
   ip: string,
   time: number,
   event_type: EventType,
-  user_agent: string
+  user_agent: string,
+  country: string
 };
 
 export async function findByUser(user: User): Promise<LogEntry[]> {
@@ -56,7 +59,8 @@ export async function findByUser(user: User): Promise<LogEntry[]> {
       time: new Date(row.time * 1000),
       ip: row.ip,
       eventType: row.event_type,
-      userAgent: row.user_agent
+      userAgent: row.user_agent,
+      country: row.country
     };
   });
 
@@ -65,5 +69,11 @@ export async function findByUser(user: User): Promise<LogEntry[]> {
 function isContext(ctx: any): ctx is Context {
 
   return ((<Context> ctx).ip !== undefined);
+
+}
+
+function getCountryByIp(ip: string): string|null {
+
+  return geoip.lookup(ip)?.country;
 
 }

@@ -59,14 +59,15 @@
     ]
   },
   "dependencies": {
-    "@curveball/session": "^0.5.0",
     "@curveball/bodyparser": "^0.4.4",
     "@curveball/controller": "^0.2.2",
     "@curveball/core": "^0.10.0",
     "@curveball/http-errors": "^0.3.0",
     "@curveball/problem": "^0.2.1",
     "@curveball/router": "^0.2.4",
+    "@curveball/session": "^0.5.0",
     "bcrypt": "^3.0.7",
+    "geoip-lite": "^1.4.0",
     "hal-browser": "^0.8.6",
     "handlebars": "^4.7.2",
     "mysql2": "^2.1.0",

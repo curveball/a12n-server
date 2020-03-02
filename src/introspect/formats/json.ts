@@ -11,6 +11,11 @@ export function accessToken(token: OAuth2Token, privileges: PrivilegeMap) {
     username: token.user.nickname,
     token_type: 'bearer',
     exp: token.accessTokenExpires,
+    _links: {
+      'authenticated-as': {
+        href: url.resolve(process.env.PUBLIC_URI!, '/user/' + token.user.id),
+      }
+    }
   };
 
 }

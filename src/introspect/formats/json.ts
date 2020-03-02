@@ -26,7 +26,7 @@ export function refreshToken(token: OAuth2Token, privileges: PrivilegeMap) {
     _links: {
       'authenticated-as': {
         href: url.resolve(process.env.PUBLIC_URI!, '/user/' + token.user.id),
-      } 
+      }
     }
   };
 

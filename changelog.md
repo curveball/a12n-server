@@ -5,7 +5,8 @@ Changelog
 0.12.5 (?)
 ----------
 
-* Changing target to es2019 to support optional chaining
+* Typescript target is now `es2019` instead of `esnext` to ensure that older
+  Node.js versions are supported.
 
 0.12.4 (2020-03-02)
 -------------------

@@ -59,6 +59,7 @@
     ]
   },
   "dependencies": {
+    "@curveball/accesslog": "^0.2.0",
     "@curveball/bodyparser": "^0.4.6",
     "@curveball/controller": "^0.2.2",
     "@curveball/core": "^0.11.0",

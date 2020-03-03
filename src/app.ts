@@ -3,6 +3,8 @@ import { Application } from '@curveball/core';
 
 import process from 'process';
 import mainMw from './main-mw';
+import accessLog from '@curveball/accesslog';
+
 import { load } from './server-settings';
 
 (async () => {
@@ -16,11 +18,7 @@ import { load } from './server-settings';
 
   const app = new Application();
 
-  app.use( async (ctx, next) => {
-    console.log('=> %s %s', ctx.request.method, ctx.request.path);
-    await next();
-    console.log('<= %s', ctx.response.status);
-  });
+  app.use(accessLog())
 
   app.use(mainMw());
 

@@ -7,6 +7,7 @@ export function accessToken(token: OAuth2Token, privileges: PrivilegeMap) {
   return {
     active: true,
     scope: Object.values(privileges).join(' '),
+    privileges: privileges,
     client_id: token.clientId,
     username: token.user.nickname,
     token_type: 'bearer',
@@ -25,6 +26,7 @@ export function refreshToken(token: OAuth2Token, privileges: PrivilegeMap) {
   return {
     active: true,
     scope: Object.values(privileges).join(' '),
+    privileges: privileges,
     client_id: token.clientId,
     username: token.user.nickname,
     token_type: 'refresh_token',

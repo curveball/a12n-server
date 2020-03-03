@@ -8,6 +8,10 @@ import routes from './routes';
 
 export default function(): Middleware {
 
+  if (process.env.PUBLIC_URI === undefined) {
+    throw new Error('A PUBLIC_URI environment variable');
+  }
+
   const middlewares = [
     halBrowser({
       title: 'a12n-server',

@@ -1,6 +1,6 @@
 {
   "name": "a12n-server",
-  "version": "0.12.3",
+  "version": "0.12.5",
   "main": "dist/index.js",
   "description": "A ready-to-launch User and Authentication system for those that don't want to build it",
   "scripts": {
@@ -38,7 +38,7 @@
     "@types/bcrypt": "^3.0.0",
     "@types/chai": "^4.2.10",
     "@types/handlebars": "^4.1.0",
-    "@types/mocha": "^7.0.1",
+    "@types/mocha": "^7.0.2",
     "@types/node": "^10.17.17",
     "@types/nodemailer": "^6.4.0",
     "@types/otplib": "^10.0.0",
@@ -62,7 +62,7 @@
     "@curveball/accesslog": "^0.2.0",
     "@curveball/bodyparser": "^0.4.6",
     "@curveball/controller": "^0.2.2",
-    "@curveball/core": "^0.11.0",
+    "@curveball/core": "^0.11.1",
     "@curveball/http-errors": "^0.3.0",
     "@curveball/problem": "^0.2.1",
     "@curveball/router": "^0.2.4",

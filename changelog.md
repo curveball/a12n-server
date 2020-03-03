@@ -1,6 +1,15 @@
 Changelog
 =========
 
+0.12.5 (2020-03-03)
+-------------------
+
+* Now using `@curveball/accesslog`, which also colorizes CLI output when
+  viewed on a terminal.
+* A list of privileges are now returned from the 'introspect' endpoint.
+* An error will be thrown when the server is used as a middleware (instead
+  of standalone) and no `PUBLIC_URI` environment variable is set.
+
 
 0.12.4 (2020-03-02)
 -------------------

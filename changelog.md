@@ -1,6 +1,17 @@
 Changelog
 =========
 
+0.12.3 (2020-03-02)
+-------------------
+
+* Added user links URL to introspect for 'authenticated-as' link
+
+0.12.2 (2020-03-02)
+-------------------
+
+* bad release, please ignore
+
+
 0.12.1 (2020-01-22)
 -------------------
 

@@ -35,7 +35,7 @@ export async function getPrivilegesForUser(user: User): Promise<PrivilegeMap> {
 export async function hasPrivilege(who: User | Context, privilege: string, resource: string = '*'): Promise<boolean> {
 
   let user;
-  if (who instanceof Context) {
+  if (isContext(who)) {
     if (!who.state.user) {
       throw new Error('Cannot check privilege for unauthenticated user');
     }
@@ -49,6 +49,10 @@ export async function hasPrivilege(who: User | Context, privilege: string, resou
 
   return result[0].length === 1;
 
+}
+
+function isContext(input: Context| User): input is Context {
+  return (input as any).request !== undefined && (input as any).response !== undefined;
 }
 
 export async function findPrivileges(): Promise<Privilege[]> {

@@ -2,6 +2,11 @@ Changelog
 =========
 
 
+0.12.5 (?)
+----------
+
+* Changing target to es2019 to support optional chaining
+
 0.12.4 (2020-03-02)
 -------------------
 

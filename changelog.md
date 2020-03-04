@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.12.6 (2020-03-04)
+-------------------
+
+* `PUBLIC_URI` is now correctly being auto-detected if it was not set in the
+  environment in standalone mode.
+* Improved error messaging when the server fails to start.
+
+
 0.12.5 (2020-03-03)
 -------------------
 

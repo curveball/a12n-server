@@ -9,7 +9,7 @@ import routes from './routes';
 export default function(): Middleware {
 
   if (process.env.PUBLIC_URI === undefined) {
-    throw new Error('A PUBLIC_URI environment variable');
+    throw new Error('PUBLIC_URI environment variable must be set.');
   }
 
   const middlewares = [

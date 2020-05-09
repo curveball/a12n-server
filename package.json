@@ -68,6 +68,7 @@
     "@curveball/router": "^0.2.4",
     "@curveball/session": "^0.5.0",
     "bcrypt": "^4.0.1",
+    "csv-stringify": "^5.5.0",
     "hal-browser": "^0.8.6",
     "handlebars": "^4.7.6",
     "mysql2": "^2.1.0",

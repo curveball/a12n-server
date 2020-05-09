@@ -75,7 +75,7 @@ activated, and there's no automated facility yet to do this.
 Instead, run the following query:
 
 ```sql
-UPDATE users SET active = 1 WHERE id = 1`.
+UPDATE users SET active = 1 WHERE id = 1;
 ```
 
 Optional

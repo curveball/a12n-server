@@ -9,7 +9,7 @@ export default function csv(log: LogEntry[]): string {
       entry.time.toISOString(),
       eventTypeString.get(entry.eventType),
       entry.ip,
-      entry.userAgent
+      `"${entry.userAgent}"`
     ];
 
   }).join('\n');

@@ -11,7 +11,6 @@ export enum EventType {
 
 export type LogEntry = {
   time: Date,
-  userId: number,
   ip: string,
   eventType: EventType,
   userAgent: string

@@ -83,11 +83,12 @@ class TokenController extends Controller {
     if (!ctx.request.body.redirect_uri) {
       throw new InvalidRequest('The "redirect_uri" property is required');
     }
+
     if (!await oauth2Service.validateRedirectUri(oauth2Client, ctx.request.body.redirect_uri)) {
       log(EventType.oauth2BadRedirect, ctx);
       throw new InvalidRequest('This value for "redirect_uri" is not recognized.');
     }
-    const token = await oauth2Service.generateTokenFromCode(oauth2Client, ctx.request.body.code);
+    const token = await oauth2Service.generateTokenFromCode(oauth2Client, ctx.request.body.code, ctx.request.body.code_verifier);
 
     ctx.response.type = 'application/json';
     ctx.response.body = {

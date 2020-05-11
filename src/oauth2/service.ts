@@ -142,7 +142,7 @@ export async function generateTokenForClient(client: OAuth2Client): Promise<OAut
  *
  * The resource owner then exchanges that code for an access and refresh token.
  */
-export async function generateTokenFromCode(client: OAuth2Client, code: string): Promise<OAuth2Token> {
+export async function generateTokenFromCode(client: OAuth2Client, code: string, codeVerifier: string|undefined): Promise<OAuth2Token> {
 
   const query = 'SELECT * FROM oauth2_codes WHERE code = ?';
   const codeResult = await db.query(query, [code]);
@@ -153,6 +153,8 @@ export async function generateTokenFromCode(client: OAuth2Client, code: string):
 
   const codeRecord: OAuth2CodeRecord = codeResult[0][0];
   const expirySettings = getTokenExpiry();
+
+  console.log(encodeURIComponent(crypto.createHash('sha256').update(codeVerifier).digest('base64')))
 
   // Delete immediately.
   await db.query('DELETE FROM oauth2_codes WHERE id = ?', [codeRecord.id]);
@@ -215,7 +217,12 @@ export async function revokeToken(token: OAuth2Token) {
  * This function creates an code for a user. The code is later exchanged for
  * a oauth2 access token.
  */
-export async function generateCodeForUser(client: OAuth2Client, user: User): Promise<OAuth2Code> {
+export async function generateCodeForUser(
+  client: OAuth2Client,
+  user: User,
+  codeChallenge: string|undefined,
+  codeChallengeMethod: string|undefined,
+): Promise<OAuth2Code> {
 
   const code = crypto.randomBytes(32).toString('base64').replace('=', '');
 
@@ -225,6 +232,8 @@ export async function generateCodeForUser(client: OAuth2Client, user: User): Pro
     client_id: client.id,
     user_id: user.id,
     code: code,
+    code_challenge: codeChallenge,
+    code_challenge_method: codeChallengeMethod
   });
 
   return {
@@ -247,6 +256,8 @@ type OAuth2CodeRecord = {
   client_id: number,
   code: string,
   user_id: number,
+  code_challenge: string|undefined,
+  codeChallengeMethod: string|undefined,
   created: number,
 };
 

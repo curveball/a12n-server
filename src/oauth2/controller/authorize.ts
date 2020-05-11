@@ -34,6 +34,8 @@ class AuthorizeController extends Controller {
     // const scope = ctx.query.scope;
     const responseType = ctx.query.response_type;
     const redirectUri = ctx.query.redirect_uri;
+    const codeChallenge = ctx.query.code_challenge;
+    const codeChallengeMethod = ctx.query.code_challenge_method;
     const grantType = responseType === 'code' ? 'authorization_code' : 'implicit';
 
     try {
@@ -61,7 +63,7 @@ class AuthorizeController extends Controller {
       if (responseType === 'token') {
         return this.tokenRedirect(ctx, oauth2Client, redirectUri, state);
       } else {
-        return this.codeRedirect(ctx, oauth2Client, redirectUri, state);
+        return this.codeRedirect(ctx, oauth2Client, redirectUri, state, codeChallenge, codeChallengeMethod);
       }
 
     } else {
@@ -73,6 +75,8 @@ class AuthorizeController extends Controller {
           state: state,
           redirect_uri: redirectUri,
           response_type: responseType,
+          code_challenge: codeChallenge,
+          code_challenge_method: codeChallengeMethod,
         },
         await getSetting('registration.enabled'),
         await getSetting('totp')
@@ -98,6 +102,8 @@ class AuthorizeController extends Controller {
     const state = ctx.request.body.state;
     const redirectUri = ctx.request.body.redirect_uri;
     const responseType = ctx.request.body.response_type;
+    const codeChallenge = ctx.request.body.code_challenge;
+    const codeChallengeMethod = ctx.request.body.code_challenge_method;
     const grantType = responseType === 'code' ? 'authorization_code' : 'implicit';
 
     try {
@@ -163,7 +169,7 @@ class AuthorizeController extends Controller {
     if (responseType === 'token') {
       return this.tokenRedirect(ctx, oauth2Client, params.redirect_uri, params.state);
     } else {
-      return this.codeRedirect(ctx, oauth2Client, params.redirect_uri, params.state);
+      return this.codeRedirect(ctx, oauth2Client, params.redirect_uri, params.state, codeChallenge, codeChallengeMethod);
     }
 
 
@@ -190,11 +196,20 @@ class AuthorizeController extends Controller {
 
   }
 
-  async codeRedirect(ctx: Context, oauth2Client: OAuth2Client, redirectUri: string, state: string|undefined) {
+  async codeRedirect(
+    ctx: Context,
+    oauth2Client: OAuth2Client,
+    redirectUri: string,
+    state: string|undefined,
+    codeChallenge: string|undefined,
+    codeChallengeMethod: string|undefined,
+  ) {
 
     const code = await oauth2Service.generateCodeForUser(
       oauth2Client,
-      ctx.state.session.user
+      ctx.state.session.user,
+      codeChallenge,
+      codeChallengeMethod,
     );
 
     ctx.status = 302;

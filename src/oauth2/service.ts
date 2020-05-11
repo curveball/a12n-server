@@ -154,10 +154,10 @@ export async function generateTokenFromCode(client: OAuth2Client, code: string, 
   const codeRecord: OAuth2CodeRecord = codeResult[0][0];
   const expirySettings = getTokenExpiry();
 
-  console.log(encodeURIComponent(crypto.createHash('sha256').update(codeVerifier).digest('base64')))
-
   // Delete immediately.
   await db.query('DELETE FROM oauth2_codes WHERE id = ?', [codeRecord.id]);
+
+  validatePKCE(codeVerifier, codeRecord.code_challenge, codeRecord.code_challenge_method);
 
   if (codeRecord.created + expirySettings.code < Math.floor(Date.now() / 1000)) {
     throw new InvalidRequest('The supplied code has expired');
@@ -168,6 +168,22 @@ export async function generateTokenFromCode(client: OAuth2Client, code: string, 
 
   const user = await userService.findById(codeRecord.user_id);
   return generateTokenForUser(client, user);
+
+}
+
+export function validatePKCE(codeVerifier: string|undefined, codeChallenge: string|any, codeChallengeMethod: string|any) {
+  let derivedCodeChallenge = codeVerifier;
+
+  if (codeChallengeMethod === 'sha256') {
+    derivedCodeChallenge = crypto.createHash('sha256').update(codeVerifier).digest('base64')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=/g, '');
+  }
+
+  if (codeChallenge !== derivedCodeChallenge) {
+    throw new InvalidGrant('The code verifier does not match the code challenge');
+  }
 
 }
 
@@ -257,7 +273,7 @@ type OAuth2CodeRecord = {
   code: string,
   user_id: number,
   code_challenge: string|undefined,
-  codeChallengeMethod: string|undefined,
+  code_challenge_method: string|undefined,
   created: number,
 };
 

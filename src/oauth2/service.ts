@@ -171,10 +171,21 @@ export async function generateTokenFromCode(client: OAuth2Client, code: string, 
 
 }
 
-export function validatePKCE(codeVerifier: string|undefined, codeChallenge: string|any, codeChallengeMethod: string|any) {
+export function validatePKCE(codeVerifier: string|undefined, codeChallenge: string|undefined, codeChallengeMethod: string|undefined) {
+  if (!codeChallenge && !codeVerifier) {
+    // This request was not initiated with PKCE support, so ignore the validation
+    return;
+  }
+
+  if (codeChallenge && !codeVerifier) {
+    // The authorization request started with PKCE, but the token request did not follow through
+    throw new InvalidRequest('The code verifier was not supplied');
+  }
+
+  // For the plain method, the derived code and the code verifier are the same
   let derivedCodeChallenge = codeVerifier;
 
-  if (codeChallengeMethod === 'sha256') {
+  if (codeChallengeMethod === 'S256') {
     derivedCodeChallenge = crypto.createHash('sha256').update(codeVerifier).digest('base64')
       .replace(/\+/g, '-')
       .replace(/\//g, '_')

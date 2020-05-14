@@ -106,6 +106,14 @@ class AuthorizeController extends Controller {
     if (!ctx.request.body.redirect_uri) {
       throw new InvalidRequest('The "redirect_uri" parameter must be provided');
     }
+    if (ctx.request.body.response_type === 'code') {
+      if (ctx.request.body.code_challenge_method && !['plain', 'S256'].includes(ctx.request.body.code_challenge_method)) {
+        throw new InvalidRequest('The "code_challenge_method" must be "plain" or "S256"');
+      }
+      if (!ctx.request.body.code_challenge && ctx.request.body.code_challenge_method) {
+        throw new InvalidRequest('The "code_challenge" must be provided');
+      }
+    }
     const clientId = ctx.request.body.client_id;
     const state = ctx.request.body.state;
     const redirectUri = ctx.request.body.redirect_uri;
@@ -149,7 +157,7 @@ class AuthorizeController extends Controller {
     }
 
     if (!await userService.validatePassword(user, ctx.request.body.password)) {
-      log(EventType.loginFailed, ctx.ip(), user.id);
+      log(EventType.loginFailed, ctx.ip(), user.id, ctx.request.headers.get('User-Agent'));
       return this.redirectToLogin(ctx, { ...params, error: 'Incorrect username or password'});
     }
 
@@ -160,7 +168,7 @@ class AuthorizeController extends Controller {
 
     if (ctx.request.body.totp) {
       if (!await userService.validateTotp(user, ctx.request.body.totp)) {
-          log(EventType.totpFailed, ctx.ip(), user.id);
+        log(EventType.totpFailed, ctx.ip(), user.id, ctx.request.headers.get('User-Agent'));
           return this.redirectToLogin(ctx, {...params, error: 'Incorrect TOTP code'});
         }
     } else if (await userService.hasTotp(user)) {

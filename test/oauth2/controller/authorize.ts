@@ -1,10 +1,17 @@
+import { URLSearchParams } from 'url';
+
 import { MemoryRequest, BaseContext, MemoryResponse } from '@curveball/core';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 
+import { EventType } from '../../../src/log/types';
+import * as logService from '../../../src/log/service';
 import { InvalidRequest } from '../../../src/oauth2/errors';
 import * as oauth2Service from '../../../src/oauth2/service';
+import * as userService from '../../../src/user/service';
+import * as serverSettings from '../../../src/server-settings';
+import { User } from '../../../src/user/types';
 import { OAuth2Client } from '../../../src/oauth2/types';
 import authorize from '../../../src/oauth2/controller/authorize'
 
@@ -13,36 +20,35 @@ const expect = chai.expect;
 
 describe('AuthorizeController', () => {
     const sandbox = sinon.createSandbox();
-    let codeRedirectMock: sinon.SinonStub;
+
+    const user: User = {
+        id: 1,
+        identity: 'identity',
+        nickname: 'nickname',
+        created: new Date(1),
+        type: 'user',
+        active: true
+    };
     const oauth2Client: OAuth2Client = {
         id: 1,
         clientId: 'client-id',
         clientSecret: Buffer.from('client-secret', 'utf-8'),
-        user: {
-            id: 1,
-            identity: 'identity',
-            nickname: 'nickname',
-            created: new Date(1),
-            type: 'user',
-            active: true
-        },
+        user: user,
         allowedGrantTypes: ['authorization_code'],
     };
-    let params: URLSearchParams;
+
+
+    let codeRedirectMock: sinon.SinonStub;
+    let logServiceMock: sinon.SinonStub;
 
     beforeEach(function () {
         sandbox.stub(oauth2Service, 'getClientByClientId').returns(Promise.resolve(oauth2Client));
         sandbox.stub(oauth2Service, 'validateRedirectUri').returns(Promise.resolve(true));
         codeRedirectMock = sandbox.stub(authorize, 'codeRedirect');
-
-        params = new URLSearchParams({
-            response_type: 'code',
-            client_id: 'client-id',
-            redirect_uri: 'redirect-uri',
-            code_challenge: 'challenge-code',
-            code_challenge_method: 'plain',
-            state: 'state',
-          });
+        sandbox.stub(userService, 'findByIdentity').returns(Promise.resolve(user));
+        sandbox.stub(userService, 'validatePassword').returns(Promise.resolve(true));
+        sandbox.stub(serverSettings, 'getSetting').returns(Promise.resolve(false));
+        logServiceMock = sandbox.stub(logService, 'default');
     });
 
     afterEach(() => {
@@ -50,6 +56,19 @@ describe('AuthorizeController', () => {
     });
 
     describe('get', () => {
+        let params: URLSearchParams;
+
+        beforeEach(function () {
+            params = new URLSearchParams({
+                response_type: 'code',
+                client_id: 'client-id',
+                redirect_uri: 'redirect-uri',
+                code_challenge: 'challenge-code',
+                code_challenge_method: 'plain',
+                state: 'state',
+              });
+        });
+
         it('should pass valid parameters and call code redirect', async() => {
             const request = new MemoryRequest('GET', '?' + params);
             const context = new BaseContext(request, new MemoryResponse());
@@ -93,6 +112,38 @@ describe('AuthorizeController', () => {
 
 
             await expect(authorize.get(context)).to.be.rejectedWith(InvalidRequest, 'The "code_challenge" must be provided')
+        });
+    });
+
+    describe('post', () => {
+        let body: any;
+
+        beforeEach(function () {
+            body = {
+                response_type: 'code',
+                client_id: 'client-id',
+                redirect_uri: 'redirect-uri',
+                code_challenge: 'challenge-code',
+                code_challenge_method: 'plain',
+                state: 'state',
+              };
+        });
+
+        it('should pass valid parameters and call code redirect', async() => {
+            const request = new MemoryRequest('POST', '/');
+            request.body = body;
+            const context = new BaseContext(request, new MemoryResponse());
+            context.state = {
+                session: {
+                    user: {}
+                }
+            };
+
+            await authorize.post(context);
+            expect(logServiceMock.calledOnceWithExactly(EventType.loginSuccess, context)).to.be.true
+            expect(codeRedirectMock.calledOnceWithExactly(
+                context, oauth2Client, 'redirect-uri', 'state', 'challenge-code', 'plain'
+            )).to.be.true
         });
     });
 });

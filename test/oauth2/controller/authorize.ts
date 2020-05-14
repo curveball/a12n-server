@@ -47,6 +47,7 @@ describe('AuthorizeController', () => {
         codeRedirectMock = sandbox.stub(authorize, 'codeRedirect');
         sandbox.stub(userService, 'findByIdentity').returns(Promise.resolve(user));
         sandbox.stub(userService, 'validatePassword').returns(Promise.resolve(true));
+        sandbox.stub(userService, 'hasTotp').returns(Promise.resolve(false));
         sandbox.stub(serverSettings, 'getSetting').returns(Promise.resolve(false));
         logServiceMock = sandbox.stub(logService, 'default');
     });
@@ -95,7 +96,6 @@ describe('AuthorizeController', () => {
                 }
             };
 
-
             await expect(authorize.get(context)).to.be.rejectedWith(InvalidRequest, 'The "code_challenge_method" must be "plain" or "S256"')
         });
 
@@ -109,7 +109,6 @@ describe('AuthorizeController', () => {
                     user: {}
                 }
             };
-
 
             await expect(authorize.get(context)).to.be.rejectedWith(InvalidRequest, 'The "code_challenge" must be provided')
         });
@@ -144,6 +143,34 @@ describe('AuthorizeController', () => {
             expect(codeRedirectMock.calledOnceWithExactly(
                 context, oauth2Client, 'redirect-uri', 'state', 'challenge-code', 'plain'
             )).to.be.true
+        });
+
+        it('should fail code challenge validation', async() => {
+            const request = new MemoryRequest('POST', '/');
+            body.code_challenge_method = 'bogus-method';
+            request.body = body;
+            const context = new BaseContext(request, new MemoryResponse());
+            context.state = {
+                session: {
+                    user: {}
+                }
+            };
+
+            await expect(authorize.post(context)).to.be.rejectedWith(InvalidRequest, 'The "code_challenge_method" must be "plain" or "S256"')
+        });
+
+        it('should fail when code method is provided but not challenge', async() => {
+            const request = new MemoryRequest('POST', '/');
+            delete body.code_challenge;
+            request.body = body;
+            const context = new BaseContext(request, new MemoryResponse());
+            context.state = {
+                session: {
+                    user: {}
+                }
+            };
+
+            await expect(authorize.post(context)).to.be.rejectedWith(InvalidRequest, 'The "code_challenge" must be provided')
         });
     });
 });

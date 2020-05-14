@@ -6,7 +6,7 @@ import { getSetting } from '../server-settings';
 import * as userService from '../user/service';
 import { User } from '../user/types';
 import { InvalidGrant, InvalidRequest, UnauthorizedClient} from './errors';
-import { OAuth2Client, OAuth2Code, OAuth2Token } from './types';
+import { CodeChallengeMethod, OAuth2Client, OAuth2Code, OAuth2Token } from './types';
 
 type OAuth2ClientRecord = {
   id: number,
@@ -171,7 +171,7 @@ export async function generateTokenFromCode(client: OAuth2Client, code: string, 
 
 }
 
-export function validatePKCE(codeVerifier: string|undefined, codeChallenge: string|undefined, codeChallengeMethod: string|undefined) {
+export function validatePKCE(codeVerifier: string|undefined, codeChallenge: string|undefined, codeChallengeMethod: CodeChallengeMethod) {
   if (!codeChallenge && !codeVerifier) {
     // This request was not initiated with PKCE support, so ignore the validation
     return;
@@ -284,7 +284,7 @@ type OAuth2CodeRecord = {
   code: string,
   user_id: number,
   code_challenge: string|undefined,
-  code_challenge_method: string|undefined,
+  code_challenge_method: CodeChallengeMethod
   created: number,
 };
 

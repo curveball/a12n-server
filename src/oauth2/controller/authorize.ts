@@ -10,7 +10,7 @@ import { User } from '../../user/types';
 import { InvalidClient, InvalidRequest, serializeError, UnsupportedGrantType } from '../errors';
 import { loginForm } from '../formats/html';
 import * as oauth2Service from '../service';
-import { OAuth2Client } from '../types';
+import { CodeChallengeMethod, OAuth2Client } from '../types';
 
 class AuthorizeController extends Controller {
 
@@ -19,6 +19,7 @@ class AuthorizeController extends Controller {
     ctx.response.type = 'text/html';
 
     let oauth2Client;
+    let codeChallengeMethod: CodeChallengeMethod;
 
     if (!['token', 'code'].includes(ctx.query.response_type)) {
       throw new InvalidRequest('The "response_type" parameter must be provided, and must be "token" or "code"');
@@ -30,11 +31,20 @@ class AuthorizeController extends Controller {
       throw new InvalidRequest('The "redirect_uri" parameter must be provided');
     }
     if (ctx.query.response_type === 'code') {
-      if (ctx.query.code_challenge_method && !['plain', 'S256'].includes(ctx.query.code_challenge_method)) {
-        throw new InvalidRequest('The "code_challenge_method" must be "plain" or "S256"');
-      }
       if (!ctx.query.code_challenge && ctx.query.code_challenge_method) {
         throw new InvalidRequest('The "code_challenge" must be provided');
+      }
+      if (ctx.query.code_challenge_method) {
+        switch(ctx.query.code_challenge_method) {
+          case 'S256':
+          case 'plain':
+            codeChallengeMethod = ctx.query.code_challenge_method
+            break;
+          default:
+            throw new InvalidRequest('The "code_challenge_method" must be "plain" or "S256"');
+        }
+      } else {
+        codeChallengeMethod = ctx.query.code_challenge ? 'plain' : undefined;
       }
     }
     const clientId = ctx.query.client_id;
@@ -43,7 +53,6 @@ class AuthorizeController extends Controller {
     const responseType = ctx.query.response_type;
     const redirectUri = ctx.query.redirect_uri;
     const codeChallenge = ctx.query.code_challenge;
-    const codeChallengeMethod = ctx.query.code_challenge_method ? (<'S256'>ctx.query.code_challenge_method) : 'plain';
     const grantType = responseType === 'code' ? 'authorization_code' : 'implicit';
 
     try {
@@ -96,6 +105,7 @@ class AuthorizeController extends Controller {
   async post(ctx: Context) {
 
     let oauth2Client;
+    let codeChallengeMethod: CodeChallengeMethod;
 
     if (!['token', 'code'].includes(ctx.request.body.response_type)) {
       throw new InvalidRequest('The "response_type" parameter must be provided, and must be set to "token" or "code"');
@@ -107,11 +117,20 @@ class AuthorizeController extends Controller {
       throw new InvalidRequest('The "redirect_uri" parameter must be provided');
     }
     if (ctx.request.body.response_type === 'code') {
-      if (ctx.request.body.code_challenge_method && !['plain', 'S256'].includes(ctx.request.body.code_challenge_method)) {
-        throw new InvalidRequest('The "code_challenge_method" must be "plain" or "S256"');
-      }
       if (!ctx.request.body.code_challenge && ctx.request.body.code_challenge_method) {
         throw new InvalidRequest('The "code_challenge" must be provided');
+      }
+      if (ctx.request.body.code_challenge_method) {
+        switch(ctx.request.body.code_challenge_method) {
+          case 'S256':
+          case 'plain':
+            codeChallengeMethod = ctx.request.body.code_challenge_method;
+            break;
+          default:
+            throw new InvalidRequest('The "code_challenge_method" must be "plain" or "S256"');
+        }
+      } else {
+        codeChallengeMethod = ctx.request.body.code_challenge ? 'plain' : undefined;
       }
     }
     const clientId = ctx.request.body.client_id;
@@ -119,7 +138,6 @@ class AuthorizeController extends Controller {
     const redirectUri = ctx.request.body.redirect_uri;
     const responseType = ctx.request.body.response_type;
     const codeChallenge = ctx.request.body.code_challenge;
-    const codeChallengeMethod = ctx.request.body.code_challenge_method ? (<'S256'>ctx.request.body.code_challenge_method) : 'plain';
     const grantType = responseType === 'code' ? 'authorization_code' : 'implicit';
 
     try {

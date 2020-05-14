@@ -20,3 +20,5 @@ export type OAuth2Token = {
 export type OAuth2Code = {
   code: string;
 };
+
+export type CodeChallengeMethod = 'plain' | 'S256';

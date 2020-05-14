@@ -65,12 +65,29 @@ describe('AuthorizeController', () => {
                 client_id: 'client-id',
                 redirect_uri: 'redirect-uri',
                 code_challenge: 'challenge-code',
-                code_challenge_method: 'plain',
+                code_challenge_method: 'S256',
                 state: 'state',
               });
         });
 
         it('should pass valid parameters and call code redirect', async() => {
+            const request = new MemoryRequest('GET', '?' + params);
+            const context = new BaseContext(request, new MemoryResponse());
+            context.state = {
+                session: {
+                    user: {}
+                }
+            };
+
+            await authorize.get(context);
+            expect(codeRedirectMock.calledOnceWithExactly(
+                context, oauth2Client, 'redirect-uri', 'state', 'challenge-code', 'S256'
+            )).to.be.true
+        });
+
+        it('should set challenge code method to plain if not provided', async() => {
+            params.delete('code_challenge_method');
+
             const request = new MemoryRequest('GET', '?' + params);
             const context = new BaseContext(request, new MemoryResponse());
             context.state = {
@@ -123,7 +140,7 @@ describe('AuthorizeController', () => {
                 client_id: 'client-id',
                 redirect_uri: 'redirect-uri',
                 code_challenge: 'challenge-code',
-                code_challenge_method: 'plain',
+                code_challenge_method: 'S256',
                 state: 'state',
               };
         });
@@ -140,6 +157,23 @@ describe('AuthorizeController', () => {
 
             await authorize.post(context);
             expect(logServiceMock.calledOnceWithExactly(EventType.loginSuccess, context)).to.be.true
+            expect(codeRedirectMock.calledOnceWithExactly(
+                context, oauth2Client, 'redirect-uri', 'state', 'challenge-code', 'S256'
+            )).to.be.true
+        });
+
+        it('should set challenge code method to plain if not provided', async() => {
+            const request = new MemoryRequest('POST', '/');
+            delete body.code_challenge_method;
+            request.body = body;
+            const context = new BaseContext(request, new MemoryResponse());
+            context.state = {
+                session: {
+                    user: {}
+                }
+            };
+
+            await authorize.post(context);
             expect(codeRedirectMock.calledOnceWithExactly(
                 context, oauth2Client, 'redirect-uri', 'state', 'challenge-code', 'plain'
             )).to.be.true

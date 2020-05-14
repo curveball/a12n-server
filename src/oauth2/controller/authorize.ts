@@ -43,7 +43,7 @@ class AuthorizeController extends Controller {
     const responseType = ctx.query.response_type;
     const redirectUri = ctx.query.redirect_uri;
     const codeChallenge = ctx.query.code_challenge;
-    const codeChallengeMethod = ctx.query.code_challenge_method ? ctx.query.code_challenge_method : 'plain';
+    const codeChallengeMethod = ctx.query.code_challenge_method ? (<'S256'>ctx.query.code_challenge_method) : 'plain';
     const grantType = responseType === 'code' ? 'authorization_code' : 'implicit';
 
     try {
@@ -119,7 +119,7 @@ class AuthorizeController extends Controller {
     const redirectUri = ctx.request.body.redirect_uri;
     const responseType = ctx.request.body.response_type;
     const codeChallenge = ctx.request.body.code_challenge;
-    const codeChallengeMethod = ctx.request.body.code_challenge_method;
+    const codeChallengeMethod = ctx.request.body.code_challenge_method ? (<'S256'>ctx.request.body.code_challenge_method) : 'plain';
     const grantType = responseType === 'code' ? 'authorization_code' : 'implicit';
 
     try {
@@ -218,7 +218,7 @@ class AuthorizeController extends Controller {
     redirectUri: string,
     state: string|undefined,
     codeChallenge: string|undefined,
-    codeChallengeMethod: string|undefined,
+    codeChallengeMethod: 'S256' | 'plain' | undefined
   ) {
 
     const code = await oauth2Service.generateCodeForUser(

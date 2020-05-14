@@ -102,6 +102,24 @@ describe('AuthorizeController', () => {
             )).to.be.true
         });
 
+        it('should pass valid parameters and call code redirect without PKCE', async() => {
+            params.delete('code_challenge');
+            params.delete('code_challenge_method');
+
+            const request = new MemoryRequest('GET', '?' + params);
+            const context = new BaseContext(request, new MemoryResponse());
+            context.state = {
+                session: {
+                    user: {}
+                }
+            };
+
+            await authorize.get(context);
+            expect(codeRedirectMock.calledOnceWithExactly(
+                context, oauth2Client, 'redirect-uri', 'state', undefined, undefined
+            )).to.be.true
+        });
+
         it('should fail code challenge validation', async() => {
             params.set('code_challenge_method', 'bogus-method');
 
@@ -176,6 +194,24 @@ describe('AuthorizeController', () => {
             await authorize.post(context);
             expect(codeRedirectMock.calledOnceWithExactly(
                 context, oauth2Client, 'redirect-uri', 'state', 'challenge-code', 'plain'
+            )).to.be.true
+        });
+
+        it('should pass valid parameters and call code redirect without PKCE', async() => {
+            const request = new MemoryRequest('POST', '/');
+            delete body.code_challenge;
+            delete body.code_challenge_method;
+            request.body = body;
+            const context = new BaseContext(request, new MemoryResponse());
+            context.state = {
+                session: {
+                    user: {}
+                }
+            };
+
+            await authorize.post(context);
+            expect(codeRedirectMock.calledOnceWithExactly(
+                context, oauth2Client, 'redirect-uri', 'state', undefined, undefined
             )).to.be.true
         });
 

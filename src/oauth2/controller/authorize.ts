@@ -29,13 +29,21 @@ class AuthorizeController extends Controller {
     if (!ctx.query.redirect_uri) {
       throw new InvalidRequest('The "redirect_uri" parameter must be provided');
     }
+    if (ctx.query.response_type === 'code') {
+      if (ctx.query.code_challenge_method && !['plain', 'S256'].includes(ctx.query.code_challenge_method)) {
+        throw new InvalidRequest('The "code_challenge_method" must be "plain" or "S256"');
+      }
+      if (!ctx.query.code_challenge && ctx.query.code_challenge_method) {
+        throw new InvalidRequest('The "code_challenge" must be provided');
+      }
+    }
     const clientId = ctx.query.client_id;
     const state = ctx.query.state;
     // const scope = ctx.query.scope;
     const responseType = ctx.query.response_type;
     const redirectUri = ctx.query.redirect_uri;
     const codeChallenge = ctx.query.code_challenge;
-    const codeChallengeMethod = ctx.query.code_challenge_method;
+    const codeChallengeMethod = ctx.query.code_challenge_method ? ctx.query.code_challenge_method : 'plain';
     const grantType = responseType === 'code' ? 'authorization_code' : 'implicit';
 
     try {
@@ -235,7 +243,7 @@ class AuthorizeController extends Controller {
   }
 
   /**
-   * We're overriding the default dipatcher to catch OAuth2 errors.
+   * We're overriding the default dispatcher to catch OAuth2 errors.
    */
   async dispatch(ctx: Context): Promise<void> {
 

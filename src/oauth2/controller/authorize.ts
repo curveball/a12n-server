@@ -10,7 +10,7 @@ import { User } from '../../user/types';
 import { InvalidClient, InvalidRequest, serializeError, UnsupportedGrantType } from '../errors';
 import { loginForm } from '../formats/html';
 import * as oauth2Service from '../service';
-import { OAuth2Client } from '../types';
+import { CodeChallengeMethod, OAuth2Client } from '../types';
 
 class AuthorizeController extends Controller {
 
@@ -19,6 +19,7 @@ class AuthorizeController extends Controller {
     ctx.response.type = 'text/html';
 
     let oauth2Client;
+    let codeChallengeMethod: CodeChallengeMethod;
 
     if (!['token', 'code'].includes(ctx.query.response_type)) {
       throw new InvalidRequest('The "response_type" parameter must be provided, and must be "token" or "code"');
@@ -29,11 +30,29 @@ class AuthorizeController extends Controller {
     if (!ctx.query.redirect_uri) {
       throw new InvalidRequest('The "redirect_uri" parameter must be provided');
     }
+    if (ctx.query.response_type === 'code') {
+      if (!ctx.query.code_challenge && ctx.query.code_challenge_method) {
+        throw new InvalidRequest('The "code_challenge" must be provided');
+      }
+      if (ctx.query.code_challenge_method) {
+        switch(ctx.query.code_challenge_method) {
+          case 'S256':
+          case 'plain':
+            codeChallengeMethod = ctx.query.code_challenge_method
+            break;
+          default:
+            throw new InvalidRequest('The "code_challenge_method" must be "plain" or "S256"');
+        }
+      } else {
+        codeChallengeMethod = ctx.query.code_challenge ? 'plain' : undefined;
+      }
+    }
     const clientId = ctx.query.client_id;
     const state = ctx.query.state;
     // const scope = ctx.query.scope;
     const responseType = ctx.query.response_type;
     const redirectUri = ctx.query.redirect_uri;
+    const codeChallenge = ctx.query.code_challenge;
     const grantType = responseType === 'code' ? 'authorization_code' : 'implicit';
 
     try {
@@ -61,7 +80,7 @@ class AuthorizeController extends Controller {
       if (responseType === 'token') {
         return this.tokenRedirect(ctx, oauth2Client, redirectUri, state);
       } else {
-        return this.codeRedirect(ctx, oauth2Client, redirectUri, state);
+        return this.codeRedirect(ctx, oauth2Client, redirectUri, state, codeChallenge, codeChallengeMethod);
       }
 
     } else {
@@ -73,6 +92,8 @@ class AuthorizeController extends Controller {
           state: state,
           redirect_uri: redirectUri,
           response_type: responseType,
+          code_challenge: codeChallenge,
+          code_challenge_method: codeChallengeMethod,
         },
         await getSetting('registration.enabled'),
         await getSetting('totp')
@@ -84,6 +105,7 @@ class AuthorizeController extends Controller {
   async post(ctx: Context) {
 
     let oauth2Client;
+    let codeChallengeMethod: CodeChallengeMethod;
 
     if (!['token', 'code'].includes(ctx.request.body.response_type)) {
       throw new InvalidRequest('The "response_type" parameter must be provided, and must be set to "token" or "code"');
@@ -94,10 +116,28 @@ class AuthorizeController extends Controller {
     if (!ctx.request.body.redirect_uri) {
       throw new InvalidRequest('The "redirect_uri" parameter must be provided');
     }
+    if (ctx.request.body.response_type === 'code') {
+      if (!ctx.request.body.code_challenge && ctx.request.body.code_challenge_method) {
+        throw new InvalidRequest('The "code_challenge" must be provided');
+      }
+      if (ctx.request.body.code_challenge_method) {
+        switch(ctx.request.body.code_challenge_method) {
+          case 'S256':
+          case 'plain':
+            codeChallengeMethod = ctx.request.body.code_challenge_method;
+            break;
+          default:
+            throw new InvalidRequest('The "code_challenge_method" must be "plain" or "S256"');
+        }
+      } else {
+        codeChallengeMethod = ctx.request.body.code_challenge ? 'plain' : undefined;
+      }
+    }
     const clientId = ctx.request.body.client_id;
     const state = ctx.request.body.state;
     const redirectUri = ctx.request.body.redirect_uri;
     const responseType = ctx.request.body.response_type;
+    const codeChallenge = ctx.request.body.code_challenge;
     const grantType = responseType === 'code' ? 'authorization_code' : 'implicit';
 
     try {
@@ -135,7 +175,7 @@ class AuthorizeController extends Controller {
     }
 
     if (!await userService.validatePassword(user, ctx.request.body.password)) {
-      log(EventType.loginFailed, ctx.ip(), user.id);
+      log(EventType.loginFailed, ctx.ip(), user.id, ctx.request.headers.get('User-Agent'));
       return this.redirectToLogin(ctx, { ...params, error: 'Incorrect username or password'});
     }
 
@@ -146,7 +186,7 @@ class AuthorizeController extends Controller {
 
     if (ctx.request.body.totp) {
       if (!await userService.validateTotp(user, ctx.request.body.totp)) {
-          log(EventType.totpFailed, ctx.ip(), user.id);
+        log(EventType.totpFailed, ctx.ip(), user.id, ctx.request.headers.get('User-Agent'));
           return this.redirectToLogin(ctx, {...params, error: 'Incorrect TOTP code'});
         }
     } else if (await userService.hasTotp(user)) {
@@ -163,7 +203,7 @@ class AuthorizeController extends Controller {
     if (responseType === 'token') {
       return this.tokenRedirect(ctx, oauth2Client, params.redirect_uri, params.state);
     } else {
-      return this.codeRedirect(ctx, oauth2Client, params.redirect_uri, params.state);
+      return this.codeRedirect(ctx, oauth2Client, params.redirect_uri, params.state, codeChallenge, codeChallengeMethod);
     }
 
 
@@ -190,11 +230,20 @@ class AuthorizeController extends Controller {
 
   }
 
-  async codeRedirect(ctx: Context, oauth2Client: OAuth2Client, redirectUri: string, state: string|undefined) {
+  async codeRedirect(
+    ctx: Context,
+    oauth2Client: OAuth2Client,
+    redirectUri: string,
+    state: string|undefined,
+    codeChallenge: string|undefined,
+    codeChallengeMethod: 'S256' | 'plain' | undefined
+  ) {
 
     const code = await oauth2Service.generateCodeForUser(
       oauth2Client,
-      ctx.state.session.user
+      ctx.state.session.user,
+      codeChallenge,
+      codeChallengeMethod,
     );
 
     ctx.status = 302;
@@ -220,7 +269,7 @@ class AuthorizeController extends Controller {
   }
 
   /**
-   * We're overriding the default dipatcher to catch OAuth2 errors.
+   * We're overriding the default dispatcher to catch OAuth2 errors.
    */
   async dispatch(ctx: Context): Promise<void> {
 

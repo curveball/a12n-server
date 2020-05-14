@@ -7,7 +7,8 @@
     "prepublishOnly": "make build",
     "test": "make lint test",
     "tsc": "tsc",
-    "start": "node ./dist/app.js"
+    "start": "node ./dist/app.js",
+    "start:watch": "tsc-watch --onSuccess 'node dist/app.js'"
   },
   "repository": {
     "type": "git",
@@ -37,6 +38,7 @@
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",
     "@types/chai": "^4.2.11",
+    "@types/chai-as-promised": "^7.1.2",
     "@types/handlebars": "^4.1.0",
     "@types/mocha": "^7.0.2",
     "@types/node": "^10.17.21",
@@ -44,6 +46,7 @@
     "@types/otplib": "^10.0.0",
     "@types/sinon": "^9.0.0",
     "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
     "hal-types": "^1.0.0",
     "mocha": "^7.1.2",
     "nyc": "^15.0.1",
@@ -73,6 +76,7 @@
     "handlebars": "^4.7.6",
     "mysql2": "^2.1.0",
     "nodemailer": "^6.4.6",
-    "otplib": "^12.0.1"
+    "otplib": "^12.0.1",
+    "tsc-watch": "^4.2.3"
   }
 }

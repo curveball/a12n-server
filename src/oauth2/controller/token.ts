@@ -87,7 +87,7 @@ class TokenController extends Controller {
       log(EventType.oauth2BadRedirect, ctx);
       throw new InvalidRequest('This value for "redirect_uri" is not recognized.');
     }
-    const token = await oauth2Service.generateTokenFromCode(oauth2Client, ctx.request.body.code);
+    const token = await oauth2Service.generateTokenFromCode(oauth2Client, ctx.request.body.code, ctx.request.body.code_verifier);
 
     ctx.response.type = 'application/json';
     ctx.response.body = {

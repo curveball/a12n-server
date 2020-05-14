@@ -6,7 +6,7 @@ import { getSetting } from '../server-settings';
 import * as userService from '../user/service';
 import { User } from '../user/types';
 import { InvalidGrant, InvalidRequest, UnauthorizedClient} from './errors';
-import { OAuth2Client, OAuth2Code, OAuth2Token } from './types';
+import { CodeChallengeMethod, OAuth2Client, OAuth2Code, OAuth2Token } from './types';
 
 type OAuth2ClientRecord = {
   id: number,
@@ -142,7 +142,7 @@ export async function generateTokenForClient(client: OAuth2Client): Promise<OAut
  *
  * The resource owner then exchanges that code for an access and refresh token.
  */
-export async function generateTokenFromCode(client: OAuth2Client, code: string): Promise<OAuth2Token> {
+export async function generateTokenFromCode(client: OAuth2Client, code: string, codeVerifier: string|undefined): Promise<OAuth2Token> {
 
   const query = 'SELECT * FROM oauth2_codes WHERE code = ?';
   const codeResult = await db.query(query, [code]);
@@ -157,6 +157,8 @@ export async function generateTokenFromCode(client: OAuth2Client, code: string):
   // Delete immediately.
   await db.query('DELETE FROM oauth2_codes WHERE id = ?', [codeRecord.id]);
 
+  validatePKCE(codeVerifier, codeRecord.code_challenge, codeRecord.code_challenge_method);
+
   if (codeRecord.created + expirySettings.code < Math.floor(Date.now() / 1000)) {
     throw new InvalidRequest('The supplied code has expired');
   }
@@ -166,6 +168,33 @@ export async function generateTokenFromCode(client: OAuth2Client, code: string):
 
   const user = await userService.findById(codeRecord.user_id);
   return generateTokenForUser(client, user);
+
+}
+
+export function validatePKCE(codeVerifier: string|undefined, codeChallenge: string|undefined, codeChallengeMethod: CodeChallengeMethod) {
+  if (!codeChallenge && !codeVerifier) {
+    // This request was not initiated with PKCE support, so ignore the validation
+    return;
+  }
+
+  if (codeChallenge && !codeVerifier) {
+    // The authorization request started with PKCE, but the token request did not follow through
+    throw new InvalidRequest('The code verifier was not supplied');
+  }
+
+  // For the plain method, the derived code and the code verifier are the same
+  let derivedCodeChallenge = codeVerifier;
+
+  if (codeChallengeMethod === 'S256') {
+    derivedCodeChallenge = crypto.createHash('sha256').update(codeVerifier).digest('base64')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=/g, '');
+  }
+
+  if (codeChallenge !== derivedCodeChallenge) {
+    throw new InvalidGrant('The code verifier does not match the code challenge');
+  }
 
 }
 
@@ -215,7 +244,12 @@ export async function revokeToken(token: OAuth2Token) {
  * This function creates an code for a user. The code is later exchanged for
  * a oauth2 access token.
  */
-export async function generateCodeForUser(client: OAuth2Client, user: User): Promise<OAuth2Code> {
+export async function generateCodeForUser(
+  client: OAuth2Client,
+  user: User,
+  codeChallenge: string|undefined,
+  codeChallengeMethod: string|undefined,
+): Promise<OAuth2Code> {
 
   const code = crypto.randomBytes(32).toString('base64').replace('=', '');
 
@@ -225,6 +259,8 @@ export async function generateCodeForUser(client: OAuth2Client, user: User): Pro
     client_id: client.id,
     user_id: user.id,
     code: code,
+    code_challenge: codeChallenge,
+    code_challenge_method: codeChallengeMethod
   });
 
   return {
@@ -247,6 +283,8 @@ type OAuth2CodeRecord = {
   client_id: number,
   code: string,
   user_id: number,
+  code_challenge: string|undefined,
+  code_challenge_method: CodeChallengeMethod
   created: number,
 };
 

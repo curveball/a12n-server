@@ -11,8 +11,6 @@ import login from './login/controller';
 import logout from './logout/controller';
 import oauth2Authorize from './oauth2/controller/authorize';
 import oauth2Token from './oauth2/controller/token';
-import validateBearer from './oauth2/controller/validate-bearer';
-import validateTotp from './oauth2/controller/validate-totp';
 import privilegeCollection from './privilege/controller/collection';
 import privilegeItem from './privilege/controller/item';
 import register from './register/controller';
@@ -54,9 +52,6 @@ const routes = [
   router('/reset-password', resetPassword),
   router('/reset-password/token/:token', passwordToken),
   router('/reset-password/change-password', resetPasswordRedirect),
-
-  router('/validate-bearer', validateBearer),
-  router('/validate-totp', validateTotp),
 
   router('/.well-known/oauth-authorization-server', oauth2Metadata),
   router('/.well-known/change-password', changePasswordRedirect),

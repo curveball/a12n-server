@@ -30,15 +30,7 @@ export default (version: string, authenticatedUser: User) => {
         title: 'List of available privileges',
       },
       'user-collection': { href: '/user', title: 'List of users'},
-      'validate-bearer': {
-        href: '/validate-bearer',
-        title: 'Validate a OAuth2 bearer token',
-        hints: {
-          status: 'deprecated',
-        }
-      },
 
-      'validate-totp': { href: '/validate-totp', title: 'Validate a TOTP 2FA token + bearer token'},
       'oauth_server_metadata_uri' : { href: '/.well-known/oauth-authorization-server', title: 'OAuth 2.0 Authorization Server Metadata' }
     },
     version: version,

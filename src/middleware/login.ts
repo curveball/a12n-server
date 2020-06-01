@@ -11,8 +11,6 @@ const whitelistPath = [
   '/reset-password',
   '/token',
   '/introspect',
-  '/validate-bearer',
-  '/validate-totp',
 ];
 
 

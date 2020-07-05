@@ -96,7 +96,6 @@ class AuthorizeController extends Controller {
           code_challenge_method: codeChallengeMethod,
         },
         await getSetting('registration.enabled'),
-        await getSetting('totp')
       );
     }
 
@@ -182,17 +181,6 @@ class AuthorizeController extends Controller {
     if (!user.active) {
       log(EventType.loginFailedInactive, ctx.ip(), user.id, ctx.request.headers.get('User-Agent'));
       return this.redirectToLogin(ctx, { ...params, error: 'This account is inactive. Please contact Admin'});
-    }
-
-    if (ctx.request.body.totp) {
-      if (!await userService.validateTotp(user, ctx.request.body.totp)) {
-        log(EventType.totpFailed, ctx.ip(), user.id, ctx.request.headers.get('User-Agent'));
-          return this.redirectToLogin(ctx, {...params, error: 'Incorrect TOTP code'});
-        }
-    } else if (await userService.hasTotp(user)) {
-      return this.redirectToLogin(ctx, {...params, error: 'TOTP token required'});
-    } else if (await getSetting('totp') === 'required') {
-      return this.redirectToLogin(ctx, {...params, error: 'The system administrator has made TOTP tokens mandatory, but this user did not have a TOTP configured. Login is disabled'});
     }
 
     ctx.state.session = {

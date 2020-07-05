@@ -1,0 +1,24 @@
+<form action="{{ action }}" method="post">
+  {{# if msg}}
+  <div class="msg info">{{ msg }}</div>
+  {{/if}}
+  {{# if error}}
+  <div class="msg error">{{ error }}</div>
+  {{/if}}
+  <fieldset>
+    <label for="totp">
+      <span>TOTP code</span>
+      <input type="text" name="totp" class="totp" id="totp" placeholder="Enter TOTP code" required="required" autocomplete="one-time-code" />
+    </label>
+
+  </fieldset>
+  <fieldset>
+    <label>
+      <button type="submit">Submit</button>
+    </label>
+  </fieldset>
+
+  {{#each hiddenFields}}
+    <input type="hidden" name="{{@key}}" value="{{this}}" />
+  {{/each}}
+</form>

@@ -8,6 +8,7 @@ import home from './home/controller';
 import introspect from './introspect/controller';
 import userLog from './log/controller/user';
 import login from './login/controller';
+import mfa from './mfa/controller';
 import logout from './logout/controller';
 import oauth2Authorize from './oauth2/controller/authorize';
 import oauth2Token from './oauth2/controller/token';
@@ -33,6 +34,7 @@ const routes = [
   router('/create-user', createUser),
 
   router('/login', login),
+  router('/mfa', mfa),
   router('/logout', logout),
 
   router('/health', health),

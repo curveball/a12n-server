@@ -45,6 +45,20 @@ class LoginController extends Controller {
       return this.redirectToLogin(ctx, '', 'This account is inactive. Please contact Admin');
     }
 
+    if (await getSetting('totp') !== 'disabled') {
+      if (await userService.hasTotp(user)) {
+        ctx.state.session = {
+          mfa_user: user,
+        };
+
+        return  this.redirectToMfa(ctx);
+      }
+
+      if (await getSetting('totp') === 'required') {
+        return this.redirectToLogin(ctx, '', 'The system administrator has made TOTP tokens mandatory, but this user did not have a TOTP configured. Login is disabled');
+      }
+    }
+
     ctx.state.session = {
       user: user,
     };
@@ -58,6 +72,13 @@ class LoginController extends Controller {
 
     ctx.response.status = 303;
     ctx.response.headers.set('Location', '/login?' + querystring.stringify({ msg, error }));
+
+  }
+
+  async redirectToMfa(ctx: Context) {
+
+    ctx.response.status = 303;
+    ctx.response.headers.set('Location', '/mfa');
 
   }
 

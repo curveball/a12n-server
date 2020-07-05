@@ -22,6 +22,9 @@ class MFAController extends Controller {
         ctx.response.body = mfaForm(
           ctx.query.msg,
           ctx.query.error,
+          {
+            continue: ctx.query.continue,
+          },
         );
 
       }
@@ -47,7 +50,12 @@ class MFAController extends Controller {
           user: user,
         };
         log(EventType.loginSuccess, ctx);
+
         ctx.status = 303;
+        if (ctx.request.body.continue) {
+          ctx.response.headers.set('Location', ctx.request.body.continue);
+          return;
+        }
         ctx.response.headers.set('Location', '/');
 
     }

@@ -4,11 +4,7 @@ import { NotFound } from '@curveball/http-errors';
 import querystring from 'querystring';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
-import { getSetting } from '../../server-settings';
-import * as userService from '../../user/service';
-import { User } from '../../user/types';
 import { InvalidClient, InvalidRequest, serializeError, UnsupportedGrantType } from '../errors';
-import { loginForm } from '../formats/html';
 import * as oauth2Service from '../service';
 import { CodeChallengeMethod, OAuth2Client } from '../types';
 
@@ -84,118 +80,10 @@ class AuthorizeController extends Controller {
       }
 
     } else {
-      ctx.response.body = loginForm(
-        ctx.query.msg,
-        ctx.query.error,
-        {
-          client_id: clientId,
-          state: state,
-          redirect_uri: redirectUri,
-          response_type: responseType,
-          code_challenge: codeChallenge,
-          code_challenge_method: codeChallengeMethod,
-        },
-        await getSetting('registration.enabled'),
-      );
+      return this.redirectToLogin(ctx, {'continue': ctx.request.requestTarget});
     }
 
   }
-
-  async post(ctx: Context) {
-
-    let oauth2Client;
-    let codeChallengeMethod: CodeChallengeMethod;
-
-    if (!['token', 'code'].includes(ctx.request.body.response_type)) {
-      throw new InvalidRequest('The "response_type" parameter must be provided, and must be set to "token" or "code"');
-    }
-    if (!ctx.request.body.client_id) {
-      throw new InvalidRequest('The "client_id" parameter must be provided');
-    }
-    if (!ctx.request.body.redirect_uri) {
-      throw new InvalidRequest('The "redirect_uri" parameter must be provided');
-    }
-    if (ctx.request.body.response_type === 'code') {
-      if (!ctx.request.body.code_challenge && ctx.request.body.code_challenge_method) {
-        throw new InvalidRequest('The "code_challenge" must be provided');
-      }
-      if (ctx.request.body.code_challenge_method) {
-        switch(ctx.request.body.code_challenge_method) {
-          case 'S256':
-          case 'plain':
-            codeChallengeMethod = ctx.request.body.code_challenge_method;
-            break;
-          default:
-            throw new InvalidRequest('The "code_challenge_method" must be "plain" or "S256"');
-        }
-      } else {
-        codeChallengeMethod = ctx.request.body.code_challenge ? 'plain' : undefined;
-      }
-    }
-    const clientId = ctx.request.body.client_id;
-    const state = ctx.request.body.state;
-    const redirectUri = ctx.request.body.redirect_uri;
-    const responseType = ctx.request.body.response_type;
-    const codeChallenge = ctx.request.body.code_challenge;
-    const grantType = responseType === 'code' ? 'authorization_code' : 'implicit';
-
-    try {
-      oauth2Client = await oauth2Service.getClientByClientId(clientId);
-    } catch (e) {
-      if (e instanceof NotFound) {
-        throw new InvalidClient('Client id incorrect');
-      } else {
-        // Rethrow
-        throw e;
-      }
-    }
-
-    if (!oauth2Client.allowedGrantTypes.includes(grantType)) {
-      throw new UnsupportedGrantType('The current client is not allowed to use the ' + grantType + ' grant_type');
-    }
-
-    if (!await oauth2Service.validateRedirectUri(oauth2Client, redirectUri)) {
-      log(EventType.oauth2BadRedirect, ctx);
-      throw new InvalidRequest('This value for "redirect_uri" is not permitted.');
-    }
-
-    const params = {
-      redirect_uri: redirectUri,
-      client_id: clientId,
-      state: state,
-      response_type: responseType,
-    };
-
-    let user: User;
-    try {
-      user = await userService.findByIdentity('mailto:' + ctx.request.body.userName);
-    } catch (err) {
-      return this.redirectToLogin(ctx, { ...params, error: 'Incorrect username or password' });
-    }
-
-    if (!await userService.validatePassword(user, ctx.request.body.password)) {
-      log(EventType.loginFailed, ctx.ip(), user.id, ctx.request.headers.get('User-Agent'));
-      return this.redirectToLogin(ctx, { ...params, error: 'Incorrect username or password'});
-    }
-
-    if (!user.active) {
-      log(EventType.loginFailedInactive, ctx.ip(), user.id, ctx.request.headers.get('User-Agent'));
-      return this.redirectToLogin(ctx, { ...params, error: 'This account is inactive. Please contact Admin'});
-    }
-
-    ctx.state.session = {
-      user: user,
-    };
-    log(EventType.loginSuccess, ctx);
-
-    if (responseType === 'token') {
-      return this.tokenRedirect(ctx, oauth2Client, params.redirect_uri, params.state);
-    } else {
-      return this.codeRedirect(ctx, oauth2Client, params.redirect_uri, params.state, codeChallenge, codeChallengeMethod);
-    }
-
-
- }
 
   async tokenRedirect(ctx: Context, oauth2Client: OAuth2Client, redirectUri: string, state: string|undefined) {
 
@@ -252,7 +140,7 @@ class AuthorizeController extends Controller {
   async redirectToLogin(ctx: Context, params: { [key: string]: string }) {
 
     ctx.response.status = 302;
-    ctx.response.headers.set('Location', '/authorize?' + querystring.stringify(params));
+    ctx.response.headers.set('Location', '/login?' + querystring.stringify(params));
 
   }
 

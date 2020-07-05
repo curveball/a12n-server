@@ -16,6 +16,9 @@ class LoginController extends Controller {
     ctx.response.body = loginForm(
       ctx.query.msg,
       ctx.query.error,
+      {
+        continue: ctx.query.continue,
+      },
       await getSetting('registration.enabled'),
     );
 
@@ -51,7 +54,7 @@ class LoginController extends Controller {
           mfa_user: user,
         };
 
-        return  this.redirectToMfa(ctx);
+        return  this.redirectToMfa(ctx, ctx.request.body.continue);
       }
 
       if (await getSetting('totp') === 'required') {
@@ -63,7 +66,13 @@ class LoginController extends Controller {
       user: user,
     };
     log(EventType.loginSuccess, ctx);
+
     ctx.status = 303;
+    if (ctx.request.body.continue) {
+      ctx.response.headers.set('Location', ctx.request.body.continue);
+      return;
+    }
+
     ctx.response.headers.set('Location', '/');
 
   }
@@ -75,10 +84,14 @@ class LoginController extends Controller {
 
   }
 
-  async redirectToMfa(ctx: Context) {
+  async redirectToMfa(ctx: Context, redirect_url: string) {
 
     ctx.response.status = 303;
-    ctx.response.headers.set('Location', '/mfa');
+    if (redirect_url) {
+      ctx.response.headers.set('Location', '/mfa?' + querystring.stringify({ 'continue': redirect_url }));
+    } else {
+      ctx.response.headers.set('Location', '/mfa');
+    }
 
   }
 

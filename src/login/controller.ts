@@ -17,7 +17,6 @@ class LoginController extends Controller {
       ctx.query.msg,
       ctx.query.error,
       await getSetting('registration.enabled'),
-      await getSetting('totp')
     );
 
   }
@@ -44,17 +43,6 @@ class LoginController extends Controller {
     if (!user.active) {
       log(EventType.loginFailedInactive, ctx.ip(), user.id, ctx.request.headers.get('User-Agent'));
       return this.redirectToLogin(ctx, '', 'This account is inactive. Please contact Admin');
-    }
-
-    if (ctx.request.body.totp) {
-      if (!await userService.validateTotp(user, ctx.request.body.totp)) {
-        log(EventType.totpFailed, ctx.ip(), user.id);
-        return this.redirectToLogin(ctx, '', 'Incorrect TOTP code');
-      }
-    } else if (await userService.hasTotp(user)) {
-      return this.redirectToLogin(ctx, '', 'TOTP token required');
-    } else if (await getSetting('totp') === 'required') {
-      return this.redirectToLogin(ctx, '', 'The system administrator has made TOTP tokens mandatory, but this user did not have a TOTP configured. Login is disabled');
     }
 
     ctx.state.session = {

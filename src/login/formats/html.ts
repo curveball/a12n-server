@@ -1,24 +1,6 @@
 import { render } from '../../templates';
 
-export function loginForm(msg: string, error: string, registrationEnabled: boolean, totp: 'required' | 'optional' | 'disabled') {
-
-  let totpRequired;
-  let totpEnabled;
-
-  switch (totp) {
-    case 'required':
-      totpRequired = true;
-      totpEnabled = true;
-      break;
-    case 'optional':
-      totpRequired = false;
-      totpEnabled = true;
-      break;
-    case 'disabled':
-      totpRequired = false;
-      totpEnabled = false;
-      break;
-  }
+export function loginForm(msg: string, error: string, registrationEnabled: boolean) {
 
   return render('login', {
     title: 'Login',
@@ -26,8 +8,6 @@ export function loginForm(msg: string, error: string, registrationEnabled: boole
     error: error,
     action: '/login',
     registrationEnabled,
-    totpRequired,
-    totpEnabled
   });
 
 }

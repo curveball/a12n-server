@@ -5,8 +5,6 @@ import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
 import sinon from 'sinon';
 
-import { EventType } from '../../../src/log/types';
-import * as logService from '../../../src/log/service';
 import { InvalidRequest } from '../../../src/oauth2/errors';
 import * as oauth2Service from '../../../src/oauth2/service';
 import * as userService from '../../../src/user/service';
@@ -39,7 +37,6 @@ describe('AuthorizeController', () => {
 
 
     let codeRedirectMock: sinon.SinonStub;
-    let logServiceMock: sinon.SinonStub;
 
     beforeEach(function () {
         sandbox.stub(oauth2Service, 'getClientByClientId').returns(Promise.resolve(oauth2Client));
@@ -49,7 +46,6 @@ describe('AuthorizeController', () => {
         sandbox.stub(userService, 'validatePassword').returns(Promise.resolve(true));
         sandbox.stub(userService, 'hasTotp').returns(Promise.resolve(false));
         sandbox.stub(serverSettings, 'getSetting').returns(Promise.resolve(false));
-        logServiceMock = sandbox.stub(logService, 'default');
     });
 
     afterEach(() => {
@@ -146,101 +142,6 @@ describe('AuthorizeController', () => {
             };
 
             await expect(authorize.get(context)).to.be.rejectedWith(InvalidRequest, 'The "code_challenge" must be provided')
-        });
-    });
-
-    describe('post', () => {
-        let body: any;
-
-        beforeEach(function () {
-            body = {
-                response_type: 'code',
-                client_id: 'client-id',
-                redirect_uri: 'redirect-uri',
-                code_challenge: 'challenge-code',
-                code_challenge_method: 'S256',
-                state: 'state',
-              };
-        });
-
-        it('should pass valid parameters and call code redirect', async() => {
-            const request = new MemoryRequest('POST', '/');
-            request.body = body;
-            const context = new BaseContext(request, new MemoryResponse());
-            context.state = {
-                session: {
-                    user: {}
-                }
-            };
-
-            await authorize.post(context);
-            expect(logServiceMock.calledOnceWithExactly(EventType.loginSuccess, context)).to.be.true
-            expect(codeRedirectMock.calledOnceWithExactly(
-                context, oauth2Client, 'redirect-uri', 'state', 'challenge-code', 'S256'
-            )).to.be.true
-        });
-
-        it('should set challenge code method to plain if not provided', async() => {
-            const request = new MemoryRequest('POST', '/');
-            delete body.code_challenge_method;
-            request.body = body;
-            const context = new BaseContext(request, new MemoryResponse());
-            context.state = {
-                session: {
-                    user: {}
-                }
-            };
-
-            await authorize.post(context);
-            expect(codeRedirectMock.calledOnceWithExactly(
-                context, oauth2Client, 'redirect-uri', 'state', 'challenge-code', 'plain'
-            )).to.be.true
-        });
-
-        it('should pass valid parameters and call code redirect without PKCE', async() => {
-            const request = new MemoryRequest('POST', '/');
-            delete body.code_challenge;
-            delete body.code_challenge_method;
-            request.body = body;
-            const context = new BaseContext(request, new MemoryResponse());
-            context.state = {
-                session: {
-                    user: {}
-                }
-            };
-
-            await authorize.post(context);
-            expect(codeRedirectMock.calledOnceWithExactly(
-                context, oauth2Client, 'redirect-uri', 'state', undefined, undefined
-            )).to.be.true
-        });
-
-        it('should fail code challenge validation', async() => {
-            const request = new MemoryRequest('POST', '/');
-            body.code_challenge_method = 'bogus-method';
-            request.body = body;
-            const context = new BaseContext(request, new MemoryResponse());
-            context.state = {
-                session: {
-                    user: {}
-                }
-            };
-
-            await expect(authorize.post(context)).to.be.rejectedWith(InvalidRequest, 'The "code_challenge_method" must be "plain" or "S256"')
-        });
-
-        it('should fail when code method is provided but not challenge', async() => {
-            const request = new MemoryRequest('POST', '/');
-            delete body.code_challenge;
-            request.body = body;
-            const context = new BaseContext(request, new MemoryResponse());
-            context.state = {
-                session: {
-                    user: {}
-                }
-            };
-
-            await expect(authorize.post(context)).to.be.rejectedWith(InvalidRequest, 'The "code_challenge" must be provided')
         });
     });
 });

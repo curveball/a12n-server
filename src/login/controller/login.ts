@@ -2,12 +2,13 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { NotFound } from '@curveball/http-errors';
 import querystring from 'querystring';
-import log from '../log/service';
-import { EventType } from '../log/types';
-import { getSetting } from '../server-settings';
-import * as userService from '../user/service';
-import { User } from '../user/types';
-import { loginForm } from './formats/html';
+import log from '../../log/service';
+import { EventType } from '../../log/types';
+import { getSetting } from '../../server-settings';
+import * as userService from '../../user/service';
+import { User } from '../../user/types';
+import { isValidateRedirect } from '../utilities';
+import { loginForm } from '../formats/html';
 
 class LoginController extends Controller {
 
@@ -50,6 +51,11 @@ class LoginController extends Controller {
 
     if (await getSetting('totp') !== 'disabled') {
       if (await userService.hasTotp(user)) {
+
+        if (ctx.request.body.continue && !isValidateRedirect(ctx.request.body.continue)) {
+          return this.redirectToLogin(ctx, '', 'Invalid continue URL provided');
+        }
+
         ctx.state.session = {
           mfa_user: user,
         };
@@ -84,11 +90,11 @@ class LoginController extends Controller {
 
   }
 
-  async redirectToMfa(ctx: Context, redirect_url: string) {
+  async redirectToMfa(ctx: Context, redirectUrl: string) {
 
     ctx.response.status = 303;
-    if (redirect_url) {
-      ctx.response.headers.set('Location', '/mfa?' + querystring.stringify({ 'continue': redirect_url }));
+    if (redirectUrl) {
+      ctx.response.headers.set('Location', '/mfa?' + querystring.stringify({ 'continue': redirectUrl }));
     } else {
       ctx.response.headers.set('Location', '/mfa');
     }

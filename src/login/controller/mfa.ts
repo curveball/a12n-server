@@ -1,7 +1,7 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import querystring from 'querystring';
-import { isValidateRedirect } from '../utilities';
+import { isValidRedirect } from '../utilities';
 import { mfaForm } from '../formats/html';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
@@ -46,7 +46,7 @@ class MFAController extends Controller {
           return this.redirectToMfa(ctx, 'TOTP token required');
         }
 
-        if (ctx.request.body.continue && !isValidateRedirect(ctx.request.body.continue)) {
+        if (ctx.request.body.continue && !isValidRedirect(ctx.request.body.continue)) {
           return this.redirectToMfa(ctx, 'Invalid continue URL provided');
         }
 

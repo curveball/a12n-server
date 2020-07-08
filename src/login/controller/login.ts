@@ -7,7 +7,7 @@ import { EventType } from '../../log/types';
 import { getSetting } from '../../server-settings';
 import * as userService from '../../user/service';
 import { User } from '../../user/types';
-import { isValidateRedirect } from '../utilities';
+import { isValidRedirect } from '../utilities';
 import { loginForm } from '../formats/html';
 
 class LoginController extends Controller {
@@ -52,7 +52,7 @@ class LoginController extends Controller {
     if (await getSetting('totp') !== 'disabled') {
       if (await userService.hasTotp(user)) {
 
-        if (ctx.request.body.continue && !isValidateRedirect(ctx.request.body.continue)) {
+        if (ctx.request.body.continue && !isValidRedirect(ctx.request.body.continue)) {
           return this.redirectToLogin(ctx, '', 'Invalid continue URL provided');
         }
 

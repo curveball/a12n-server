@@ -2,12 +2,13 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { NotFound } from '@curveball/http-errors';
 import querystring from 'querystring';
-import log from '../log/service';
-import { EventType } from '../log/types';
-import { getSetting } from '../server-settings';
-import * as userService from '../user/service';
-import { User } from '../user/types';
-import { loginForm } from './formats/html';
+import log from '../../log/service';
+import { EventType } from '../../log/types';
+import { getSetting } from '../../server-settings';
+import * as userService from '../../user/service';
+import { User } from '../../user/types';
+import { isValidRedirect } from '../utilities';
+import { loginForm } from '../formats/html';
 
 class LoginController extends Controller {
 
@@ -16,8 +17,10 @@ class LoginController extends Controller {
     ctx.response.body = loginForm(
       ctx.query.msg,
       ctx.query.error,
+      {
+        continue: ctx.query.continue,
+      },
       await getSetting('registration.enabled'),
-      await getSetting('totp')
     );
 
   }
@@ -46,22 +49,36 @@ class LoginController extends Controller {
       return this.redirectToLogin(ctx, '', 'This account is inactive. Please contact Admin');
     }
 
-    if (ctx.request.body.totp) {
-      if (!await userService.validateTotp(user, ctx.request.body.totp)) {
-        log(EventType.totpFailed, ctx.ip(), user.id);
-        return this.redirectToLogin(ctx, '', 'Incorrect TOTP code');
+    if (await getSetting('totp') !== 'disabled') {
+      if (await userService.hasTotp(user)) {
+
+        if (ctx.request.body.continue && !isValidRedirect(ctx.request.body.continue)) {
+          return this.redirectToLogin(ctx, '', 'Invalid continue URL provided');
+        }
+
+        ctx.state.session = {
+          mfa_user: user,
+        };
+
+        return  this.redirectToMfa(ctx, ctx.request.body.continue);
       }
-    } else if (await userService.hasTotp(user)) {
-      return this.redirectToLogin(ctx, '', 'TOTP token required');
-    } else if (await getSetting('totp') === 'required') {
-      return this.redirectToLogin(ctx, '', 'The system administrator has made TOTP tokens mandatory, but this user did not have a TOTP configured. Login is disabled');
+
+      if (await getSetting('totp') === 'required') {
+        return this.redirectToLogin(ctx, '', 'The system administrator has made TOTP tokens mandatory, but this user did not have a TOTP configured. Login is disabled');
+      }
     }
 
     ctx.state.session = {
       user: user,
     };
     log(EventType.loginSuccess, ctx);
+
     ctx.status = 303;
+    if (ctx.request.body.continue) {
+      ctx.response.headers.set('Location', ctx.request.body.continue);
+      return;
+    }
+
     ctx.response.headers.set('Location', '/');
 
   }
@@ -70,6 +87,17 @@ class LoginController extends Controller {
 
     ctx.response.status = 303;
     ctx.response.headers.set('Location', '/login?' + querystring.stringify({ msg, error }));
+
+  }
+
+  async redirectToMfa(ctx: Context, redirectUrl: string) {
+
+    ctx.response.status = 303;
+    if (redirectUrl) {
+      ctx.response.headers.set('Location', '/mfa?' + querystring.stringify({ 'continue': redirectUrl }));
+    } else {
+      ctx.response.headers.set('Location', '/mfa');
+    }
 
   }
 

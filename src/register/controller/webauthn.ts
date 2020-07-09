@@ -2,19 +2,31 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import {
     generateAttestationOptions,
+    verifyAttestationResponse,
   } from '@simplewebauthn/server';
 
+type Device = {
+    credentialID: string;
+    publicKey: string;
+    counter: number
+}
+
+type User = {
+    username: string;
+    devices: Device[];
+    currentChallenge?: string;
+}
 
 class WebAuthnRegistrationRequestController extends Controller {
 
     // WORKING THROUGH EXAMPLE
     // https://github.com/MasterKale/SimpleWebAuthn/blob/master/example/index.js
     async get(ctx: Context) {
-        const rpID = 'dev.yourdomain.com';
+        const rpID = 'localhost';
 
-        const user = {
+        const user: User = {
             username: 'Test',
-            devices: [{credentialID: '1'}],
+            devices: [],
         };
 
         const {
@@ -33,7 +45,7 @@ class WebAuthnRegistrationRequestController extends Controller {
         const challenge = 'totallyUniqueValueEveryAttestation';
         //inMemoryUserDeviceDB[loggedInUserId].currentChallenge = challenge;
 
-        const assestationOptions = generateAttestationOptions({
+        ctx.response.body = generateAttestationOptions({
             serviceName: 'SimpleWebAuthn Example',
             rpID,
             challenge,
@@ -58,51 +70,57 @@ class WebAuthnRegistrationRequestController extends Controller {
               requireResidentKey: false,
             },
           });
-
-        console.log(assestationOptions)
-        ctx.response.body = assestationOptions;
       }
 
       async post(ctx: Context) {
-        // const { body } = req;
+        const rpID = 'localhost';
+        const origin = 'http://localhost:8531'
 
-        // const user = inMemoryUserDeviceDB[loggedInUserId];
+        const body = ctx.request.body;
 
-        // const expectedChallenge = user.currentChallenge;
+        const user: User = {
+            username: 'Test',
+            devices: [],
+            currentChallenge: 'totallyUniqueValueEveryAttestation'
+        };
 
-        // let verification;
-        // try {
-        //   verification = verifyAttestationResponse({
-        //     credential: body,
-        //     expectedChallenge,
-        //     expectedOrigin: origin,
-        //     expectedRPID: rpID,
-        //   });
-        // } catch (error) {
-        //   console.error(error);
-        //   return res.status(400).send({ error: error.message });
-        // }
+        const expectedChallenge = user.currentChallenge;
 
-        // const { verified, authenticatorInfo } = verification;
+        let verification;
+        try {
+          verification = verifyAttestationResponse({
+            credential: body,
+            expectedChallenge,
+            expectedOrigin: origin,
+            expectedRPID: rpID,
+          });
+        } catch (error) {
+          console.error(error);
+          ctx.status = 400;
+          ctx.response.body = { error: error.message };
+          return
+        }
 
-        // if (verified) {
-        //   const { base64PublicKey, base64CredentialID, counter } = authenticatorInfo;
+        const { verified, authenticatorInfo } = verification;
 
-        //   const existingDevice = user.devices.find(device => device.credentialID === base64CredentialID);
+        if (verified) {
+          const { base64PublicKey, base64CredentialID, counter } = authenticatorInfo;
 
-        //   if (!existingDevice) {
-        //     /**
-        //      * Add the returned device to the user's list of devices
-        //      */
-        //     user.devices.push({
-        //       publicKey: base64PublicKey,
-        //       credentialID: base64CredentialID,
-        //       counter,
-        //     });
-        //   }
-        // }
+          const existingDevice = user.devices.find(device => device.credentialID === base64CredentialID);
 
-        // res.send({ verified });
+          if (!existingDevice) {
+            /**
+             * Add the returned device to the user's list of devices
+             */
+            user.devices.push({
+              publicKey: base64PublicKey,
+              credentialID: base64CredentialID,
+              counter,
+            });
+          }
+        }
+
+        ctx.response.body = { verified };
       }
 }
 

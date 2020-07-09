@@ -1,11 +1,11 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { Forbidden, NotFound } from '@curveball/http-errors';
-import { getSetting } from '../server-settings';
-import * as userService from '../user/service';
-import { registrationForm } from './formats/html';
+import { getSetting } from '../../server-settings';
+import * as userService from '../../user/service';
+import { registrationForm } from '../formats/html';
 
-class RegistrationController extends Controller {
+class UserRegistrationController extends Controller {
 
   async get(ctx: Context) {
 
@@ -63,4 +63,4 @@ class RegistrationController extends Controller {
 
 }
 
-export default new RegistrationController();
+export default new UserRegistrationController();

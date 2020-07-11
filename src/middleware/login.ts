@@ -8,7 +8,6 @@ const whitelistPath = [
   '/assets',
   '/health',
   '/register',
-  '/register-webauthn',
   '/authorize',
   '/reset-password',
   '/token',

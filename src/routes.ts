@@ -8,13 +8,14 @@ import home from './home/controller';
 import introspect from './introspect/controller';
 import userLog from './log/controller/user';
 import login from './login/controller/login';
-import mfa from './login/controller/mfa';
+import loginMfa from './login/controller/mfa';
 import logout from './logout/controller';
 import oauth2Authorize from './oauth2/controller/authorize';
 import oauth2Token from './oauth2/controller/token';
 import privilegeCollection from './privilege/controller/collection';
 import privilegeItem from './privilege/controller/item';
 import register from './register/controller/user';
+import registerMfa from './register/controller/mfa';
 import registerWebAuthn from './register/controller/webauthn';
 import resetPassword from './reset-password/controller/request';
 import resetPasswordRedirect from './reset-password/controller/reset-password';
@@ -35,7 +36,7 @@ const routes = [
   router('/create-user', createUser),
 
   router('/login', login),
-  router('/mfa', mfa),
+  router('/mfa', loginMfa),
   router('/logout', logout),
 
   router('/health', health),
@@ -45,7 +46,8 @@ const routes = [
   router('/privilege/:id', privilegeItem),
 
   router('/register', register),
-  router('/register-webauthn', registerWebAuthn),
+  router('/register/mfa', registerMfa),
+  router('/register/mfa/webauthn', registerWebAuthn),
 
   router('/user', users),
   router('/user/:id', user),

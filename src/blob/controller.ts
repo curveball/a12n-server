@@ -13,6 +13,10 @@ class BlobController extends Controller {
         ctx.response.body = fs.readFileSync(__dirname + '/../../assets/' + ctx.state.params.filename);
         ctx.response.type = 'text/css';
         break;
+      case 'webauthn.js' :
+        ctx.response.body = fs.readFileSync(__dirname + '/../../assets/' + ctx.state.params.filename);
+        ctx.response.type = 'application/javascript';
+        break;
       default:
         throw new errors.NotFound('File not found!');
         break;

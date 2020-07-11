@@ -81,7 +81,5 @@ export function recordToModel(userWebAuthn: UserWebAuthnRow, user: User): WebAut
 }
 
 function isExistingDevice(device: WebAuthnDevice | NewWebAuthnDevice): device is WebAuthnDevice {
-
   return (<WebAuthnDevice> device).id !== undefined;
-
 }

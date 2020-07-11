@@ -17,7 +17,6 @@ export function mfaRegistrationForm(msg: string, error: string) {
     title: 'MFA Register',
     msg: msg,
     error: error,
-    action: '/register-webauthn'
   });
 
 }

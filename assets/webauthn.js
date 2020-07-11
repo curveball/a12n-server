@@ -6,7 +6,6 @@ document.addEventListener("DOMContentLoaded", function(){
   const { startAttestation, startAssertion } = SimpleWebAuthnBrowser;
 
   elemBeginRegister && elemBeginRegister.addEventListener('click', async () => {
-    // Reset success/error messages
     elemError.innerHTML = '';
     elemError.classList.add('hidden');
     elemBeginRegister.disabled = true;
@@ -50,7 +49,6 @@ document.addEventListener("DOMContentLoaded", function(){
   });
 
   elemBeginLogin && elemBeginLogin.addEventListener('click', async () => {
-    // Reset success/error messages
     elemError.innerHTML = '';
     elemError.classList.add('hidden');
     elemBeginLogin.disabled = true;

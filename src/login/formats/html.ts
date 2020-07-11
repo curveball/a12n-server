@@ -27,7 +27,7 @@ export function mfaForm(
     useTotp,
     useWebAuthn,
     hiddenFields: hiddenFields,
-    action: '/mfa',
+    action: '/login/mfa',
   });
 
 }

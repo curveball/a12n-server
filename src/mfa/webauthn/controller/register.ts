@@ -2,14 +2,12 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { generateAttestationOptions, verifyAttestationResponse } from '@simplewebauthn/server';
 
-import * as webauthnService from '../../mfa/webauthn/service';
-import { User } from '../../user/types';
+import * as webauthnService from '../service';
+import { User } from '../../../user/types';
 
 
 class WebAuthnRegistrationRequestController extends Controller {
 
-    // WORKING THROUGH EXAMPLE
-    // https://github.com/MasterKale/SimpleWebAuthn/blob/master/example/index.js
     async get(ctx: Context) {
         const rpID = 'localhost';
 

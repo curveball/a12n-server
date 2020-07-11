@@ -163,9 +163,9 @@ class LoginController extends Controller {
 
     ctx.response.status = 303;
     if (redirectUrl) {
-      ctx.response.headers.set('Location', '/mfa?' + querystring.stringify({ 'continue': redirectUrl }));
+      ctx.response.headers.set('Location', '/login/mfa?' + querystring.stringify({ 'continue': redirectUrl }));
     } else {
-      ctx.response.headers.set('Location', '/mfa');
+      ctx.response.headers.set('Location', '/login/mfa');
     }
 
   }

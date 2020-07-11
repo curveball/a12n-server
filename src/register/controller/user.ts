@@ -10,7 +10,11 @@ class UserRegistrationController extends Controller {
   async get(ctx: Context) {
 
     ctx.response.type = 'text/html';
-    ctx.response.body = registrationForm(ctx.query.msg, ctx.query.error);
+    ctx.response.body = registrationForm(
+      ctx.query.msg,
+      ctx.query.error,
+      getSetting('registration.mfa.enabled', true)
+    );
 
   }
 
@@ -18,6 +22,7 @@ class UserRegistrationController extends Controller {
 
     const userPassword = ctx.request.body.password;
     const confirmPassword = ctx.request.body.confirmPassword;
+    const addMfa = 'addMfa' in ctx.request.body;
 
     if (userPassword !== confirmPassword) {
       ctx.status = 303;
@@ -45,6 +50,16 @@ class UserRegistrationController extends Controller {
     });
 
     await userService.createPassword(user, userPassword);
+
+    if (addMfa && getSetting('registration.mfa.enabled', true)) {
+      ctx.state.session = {
+        register_user: user,
+      };
+
+      ctx.response.status = 303;
+      ctx.response.headers.set('Location', '/register/mfa');
+      return;
+    }
 
     ctx.status = 303;
     ctx.response.headers.set('Location', '/login?msg=Registration+successful.+Please log in');

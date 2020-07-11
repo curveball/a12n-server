@@ -1,21 +1,13 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import {
-    generateAttestationOptions,
-    verifyAttestationResponse,
-  } from '@simplewebauthn/server';
+  generateAttestationOptions,
+  verifyAttestationResponse,
+} from '@simplewebauthn/server';
 
-type Device = {
-    credentialID: string;
-    publicKey: string;
-    counter: number
-}
+import * as webauthnService from '../../mfa/webauthn/service';
+import { User } from '../../user/types';
 
-type User = {
-    username: string;
-    devices: Device[];
-    currentChallenge?: string;
-}
 
 class WebAuthnRegistrationRequestController extends Controller {
 
@@ -24,18 +16,7 @@ class WebAuthnRegistrationRequestController extends Controller {
     async get(ctx: Context) {
         const rpID = 'localhost';
 
-        const user: User = {
-            username: 'Test',
-            devices: [],
-        };
-
-        const {
-          /**
-           * The username can be a human-readable name, email, etc... as it is intended only for display.
-           */
-          username,
-          devices,
-        } = user;
+        const user: User = ctx.state.session.register_user;
 
         /**
          * A new, random value needs to be generated every time an attestation is performed!
@@ -43,23 +24,16 @@ class WebAuthnRegistrationRequestController extends Controller {
          * after you verify an authenticator response.
          */
         const challenge = 'totallyUniqueValueEveryAttestation';
-        //inMemoryUserDeviceDB[loggedInUserId].currentChallenge = challenge;
 
         ctx.response.body = generateAttestationOptions({
             serviceName: 'SimpleWebAuthn Example',
             rpID,
             challenge,
-            userID: '1',
-            userName: username,
+            userID: user.id.toString(),
+            userName: user.nickname,
             timeout: 60000,
             attestationType: 'direct',
-            /**
-             * Passing in a user's list of already-registered authenticator IDs here prevents users from
-             * registering the same device multiple times. The authenticator will simply throw an error in
-             * the browser if it's asked to perform an attestation when one of these ID's already resides
-             * on it.
-             */
-            excludedCredentialIDs: devices.map(dev => dev.credentialID),
+            excludedCredentialIDs: (await webauthnService.findWebAuthnDevicesByUser(user)).map(device => device.credentialId),
             /**
              * The optional authenticatorSelection property allows for specifying more constraints around
              * the types of authenticators that users to can use for attestation
@@ -76,15 +50,9 @@ class WebAuthnRegistrationRequestController extends Controller {
         const rpID = 'localhost';
         const origin = 'http://localhost:8531'
 
+        const user: User = ctx.state.session.register_user;
         const body = ctx.request.body;
-
-        const user: User = {
-            username: 'Test',
-            devices: [],
-            currentChallenge: 'totallyUniqueValueEveryAttestation'
-        };
-
-        const expectedChallenge = user.currentChallenge;
+        const expectedChallenge = 'totallyUniqueValueEveryAttestation';
 
         let verification;
         try {
@@ -106,17 +74,17 @@ class WebAuthnRegistrationRequestController extends Controller {
         if (verified) {
           const { base64PublicKey, base64CredentialID, counter } = authenticatorInfo;
 
-          const existingDevice = user.devices.find(device => device.credentialID === base64CredentialID);
+          const existingDevice = (await webauthnService.findWebAuthnDevicesByUser(user)).find(device => device.credentialId === base64CredentialID);
 
           if (!existingDevice) {
-            /**
-             * Add the returned device to the user's list of devices
-             */
-            user.devices.push({
+            await webauthnService.save({
+              user,
+              credentialId: base64CredentialID,
               publicKey: base64PublicKey,
-              credentialID: base64CredentialID,
               counter,
             });
+
+            ctx.state.session.register_user = null;
           }
         }
 

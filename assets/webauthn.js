@@ -1,15 +1,11 @@
 document.addEventListener("DOMContentLoaded", function(){
   const elemBegin = document.getElementById('btnBegin');
-  const elemLogin = document.getElementById('btnLogin');
-  const elemSuccess = document.getElementById('success');
   const elemError = document.getElementById('error');
 
   const { startAttestation } = SimpleWebAuthnBrowser;
 
   elemBegin.addEventListener('click', async () => {
     // Reset success/error messages
-    elemSuccess.innerHTML = '';
-    elemSuccess.classList.add('hidden');
     elemError.innerHTML = '';
     elemError.classList.add('hidden');
     elemBegin.disabled = true;
@@ -40,10 +36,7 @@ document.addEventListener("DOMContentLoaded", function(){
     const verificationJSON = await verificationResp.json();
 
     if (verificationJSON && verificationJSON.verified) {
-      elemSuccess.classList.remove('hidden');
-      elemBegin.classList.add('hidden');
-      elemLogin.classList.remove('hidden');
-      elemSuccess.innerHTML = 'Success!';
+      window.location.href = '/login?msg=Registered+successfully.+Please log in';
     } else {
       elemBegin.disabled = false;
       elemError.classList.remove('hidden');
@@ -51,10 +44,5 @@ document.addEventListener("DOMContentLoaded", function(){
         verificationJSON,
       )}</pre>`;
     }
-  });
-
-  elemLogin.addEventListener('click', () => {
-    window.location.href = '/login';
-    return false;
   });
 });

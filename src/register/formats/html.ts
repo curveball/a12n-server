@@ -1,12 +1,13 @@
 import { render } from '../../templates';
 
-export function registrationForm(msg: string, error: string) {
+export function registrationForm(msg: string, error: string, mfaRegistrationEnabled: boolean) {
 
   return render('register', {
     title: 'Register',
     msg: msg,
     error: error,
     action: '/register',
+    mfaRegistrationEnabled,
   });
 
 }

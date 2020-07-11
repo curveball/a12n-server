@@ -13,11 +13,19 @@ export function loginForm(msg: string, error: string, hiddenFields: KeyValue, re
 
 }
 
-export function mfaForm(msg: string, error: string, hiddenFields: KeyValue) {
+export function mfaForm(
+  msg: string,
+  error: string,
+  useTotp: boolean,
+  useWebAuthn: boolean,
+  hiddenFields: KeyValue
+) {
   return render('mfa', {
     title: 'MFA',
     msg: msg,
     error: error,
+    useTotp,
+    useWebAuthn,
     hiddenFields: hiddenFields,
     action: '/mfa',
   });

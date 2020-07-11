@@ -13,7 +13,7 @@ class UserRegistrationController extends Controller {
     ctx.response.body = registrationForm(
       ctx.query.msg,
       ctx.query.error,
-      getSetting('registration.mfa.enabled', true)
+      getSetting('registration.mfa.enabled')
     );
 
   }
@@ -51,7 +51,7 @@ class UserRegistrationController extends Controller {
 
     await userService.createPassword(user, userPassword);
 
-    if (addMfa && getSetting('registration.mfa.enabled', true)) {
+    if (addMfa && getSetting('registration.mfa.enabled')) {
       ctx.state.session = {
         register_user: user,
       };

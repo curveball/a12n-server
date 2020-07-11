@@ -1,14 +1,15 @@
 document.addEventListener("DOMContentLoaded", function(){
-  const elemBegin = document.getElementById('btnBegin');
+  const elemBeginRegister = document.getElementById('btnBeginRegister');
+  const elemBeginLogin = document.getElementById('btnBeginLogin');
   const elemError = document.getElementById('error');
 
-  const { startAttestation } = SimpleWebAuthnBrowser;
+  const { startAttestation, startAssertion } = SimpleWebAuthnBrowser;
 
-  elemBegin.addEventListener('click', async () => {
+  elemBeginRegister && elemBeginRegister.addEventListener('click', async () => {
     // Reset success/error messages
     elemError.innerHTML = '';
     elemError.classList.add('hidden');
-    elemBegin.disabled = true;
+    elemBeginRegister.disabled = true;
 
     const resp = await fetch('/register/mfa/webauthn');
 
@@ -21,6 +22,8 @@ document.addEventListener("DOMContentLoaded", function(){
       } else {
         elemError.innerText = error;
       }
+      elemError.classList.remove('hidden');
+      elemBeginRegister.disabled = false;
 
       throw error;
     }
@@ -38,11 +41,56 @@ document.addEventListener("DOMContentLoaded", function(){
     if (verificationJSON && verificationJSON.verified) {
       window.location.href = '/login?msg=Registered+successfully.+Please log in';
     } else {
-      elemBegin.disabled = false;
+      elemBeginRegister.disabled = false;
       elemError.classList.remove('hidden');
-      elemError.innerHTML = `Oh no, something went wrong! Response: <pre>${JSON.stringify(
+      elemError.innerHTML = `Oh no, something went wrong! Response: ${JSON.stringify(
         verificationJSON,
-      )}</pre>`;
+      )}`;
+    }
+  });
+
+  elemBeginLogin && elemBeginLogin.addEventListener('click', async () => {
+    // Reset success/error messages
+    elemError.innerHTML = '';
+    elemError.classList.add('hidden');
+    elemBeginLogin.disabled = true;
+
+    let asseResp;
+    try {
+      const resp = await fetch('/login/mfa/webauthn');
+      const opts = await resp.json();
+      asseResp = await startAssertion(opts);
+    } catch (error) {
+      elemError.innerText = error;
+      elemError.classList.remove('hidden');
+      elemBeginLogin.disabled = false;
+      throw new Error(error);
+    }
+
+    const verificationResp = await fetch('/login/mfa/webauthn', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(asseResp),
+    });
+
+    let verificationJSON;
+    try {
+      verificationJSON = await verificationResp.json()
+    } catch (error) {
+      elemError.innerText = error;
+      elemError.classList.remove('hidden');
+      elemBeginLogin.disabled = false;
+      throw new Error(error);
+    }
+
+    if (verificationJSON && verificationJSON.verified) {
+      window.location.href = '/';
+    } else {
+      elemError.innerHTML = `Oh no, something went wrong! </br> Response: ${verificationJSON.error}`;
+      elemError.classList.remove('hidden');
+      elemBeginLogin.disabled = false;
     }
   });
 });

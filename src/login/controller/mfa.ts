@@ -2,6 +2,7 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import querystring from 'querystring';
 import { isValidRedirect } from '../utilities';
+import { MFALoginSession } from '../../mfa/types';
 import { mfaForm } from '../formats/html';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
@@ -12,16 +13,23 @@ class MFAController extends Controller {
 
     async get(ctx: Context) {
 
-      const user: User = ctx.state.session.mfa_user;
+      const { user, mfaType }: MFALoginSession = ctx.state.session.mfa || {};
+
+      console.log(ctx.state.session)
 
       if (!user) {
         return this.redirectToLogin(ctx);
       }
 
+      const useTotp = mfaType === 'totp';
+      const useWebAuthn = mfaType === 'webauthn';
+
       ctx.response.type = 'text/html';
       ctx.response.body = mfaForm(
         ctx.query.msg,
         ctx.query.error,
+        useTotp,
+        useWebAuthn,
         {
           continue: ctx.query.continue,
         },

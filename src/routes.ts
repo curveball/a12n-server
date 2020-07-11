@@ -9,6 +9,7 @@ import introspect from './introspect/controller';
 import userLog from './log/controller/user';
 import login from './login/controller/login';
 import loginMfa from './login/controller/mfa';
+import loginWebAuthn from './mfa/webauthn/controller/login';
 import logout from './logout/controller';
 import oauth2Authorize from './oauth2/controller/authorize';
 import oauth2Token from './oauth2/controller/token';
@@ -37,6 +38,7 @@ const routes = [
 
   router('/login', login),
   router('/mfa', loginMfa),
+  router('/login/mfa/webauthn', loginWebAuthn),
   router('/logout', logout),
 
   router('/health', health),

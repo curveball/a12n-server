@@ -3,7 +3,7 @@ import { User } from '../../user/types'
 export type WebAuthnDevice = {
     id: number,
     user: User,
-    credentialId: string,
+    credentialID: string,
     publicKey: string,
     counter: number
 }

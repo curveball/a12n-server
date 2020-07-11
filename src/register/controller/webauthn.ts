@@ -1,9 +1,6 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import {
-  generateAttestationOptions,
-  verifyAttestationResponse,
-} from '@simplewebauthn/server';
+import { generateAttestationOptions, verifyAttestationResponse } from '@simplewebauthn/server';
 
 import * as webauthnService from '../../mfa/webauthn/service';
 import { User } from '../../user/types';
@@ -33,7 +30,7 @@ class WebAuthnRegistrationRequestController extends Controller {
             userName: user.nickname,
             timeout: 60000,
             attestationType: 'direct',
-            excludedCredentialIDs: (await webauthnService.findWebAuthnDevicesByUser(user)).map(device => device.credentialId),
+            excludedCredentialIDs: (await webauthnService.findDevicesByUser(user)).map(device => device.credentialID),
             /**
              * The optional authenticatorSelection property allows for specifying more constraints around
              * the types of authenticators that users to can use for attestation
@@ -48,7 +45,7 @@ class WebAuthnRegistrationRequestController extends Controller {
 
       async post(ctx: Context) {
         const rpID = 'localhost';
-        const origin = 'http://localhost:8531'
+        const origin = 'http://localhost:8531';
 
         const user: User = ctx.state.session.register_user;
         const body = ctx.request.body;
@@ -74,12 +71,12 @@ class WebAuthnRegistrationRequestController extends Controller {
         if (verified) {
           const { base64PublicKey, base64CredentialID, counter } = authenticatorInfo;
 
-          const existingDevice = (await webauthnService.findWebAuthnDevicesByUser(user)).find(device => device.credentialId === base64CredentialID);
+          const existingDevice = (await webauthnService.findDevicesByUser(user)).find(device => device.credentialID === base64CredentialID);
 
           if (!existingDevice) {
             await webauthnService.save({
               user,
-              credentialId: base64CredentialID,
+              credentialID: base64CredentialID,
               publicKey: base64PublicKey,
               counter,
             });

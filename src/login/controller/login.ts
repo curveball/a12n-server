@@ -4,6 +4,8 @@ import { NotFound } from '@curveball/http-errors';
 import querystring from 'querystring';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
+import { MFALoginSession } from '../../mfa/types';
+import * as webAuthnService from '../../mfa/webauthn/service';
 import { getSetting } from '../../server-settings';
 import * as userService from '../../user/service';
 import { User } from '../../user/types';
@@ -49,23 +51,8 @@ class LoginController extends Controller {
       return this.redirectToLogin(ctx, '', 'This account is inactive. Please contact Admin');
     }
 
-    if (await getSetting('totp') !== 'disabled') {
-      if (await userService.hasTotp(user)) {
-
-        if (ctx.request.body.continue && !isValidRedirect(ctx.request.body.continue)) {
-          return this.redirectToLogin(ctx, '', 'Invalid continue URL provided');
-        }
-
-        ctx.state.session = {
-          mfa_user: user,
-        };
-
-        return  this.redirectToMfa(ctx, ctx.request.body.continue);
-      }
-
-      if (await getSetting('totp') === 'required') {
-        return this.redirectToLogin(ctx, '', 'The system administrator has made TOTP tokens mandatory, but this user did not have a TOTP configured. Login is disabled');
-      }
+    if (await this.shouldMfaRedirect(ctx, user)) {
+      return;
     }
 
     ctx.state.session = {
@@ -83,14 +70,96 @@ class LoginController extends Controller {
 
   }
 
-  async redirectToLogin(ctx: Context, msg: string, error: string) {
+  redirectToLogin(ctx: Context, msg: string, error: string) {
 
     ctx.response.status = 303;
     ctx.response.headers.set('Location', '/login?' + querystring.stringify({ msg, error }));
 
   }
 
-  async redirectToMfa(ctx: Context, redirectUrl: string) {
+  async shouldMfaRedirect(ctx: Context, user: User): Promise<boolean> {
+    if (!this.isMfaEnabled())  {
+      return false;
+    }
+
+    if (await this.shouldUseTotp(ctx, user)) {
+      return true;
+    }
+
+    if (await this.shouldUseWebauthn(ctx, user)) {
+      return true;
+    }
+
+    return false;
+  }
+
+  async shouldUseTotp(ctx: Context, user: User): Promise<boolean> {
+    if (getSetting('totp') !== 'disabled') {
+      if (await userService.hasTotp(user)) {
+
+        if (ctx.request.body.continue && !isValidRedirect(ctx.request.body.continue)) {
+          this.redirectToLogin(ctx, '', 'Invalid continue URL provided');
+          return true;
+        }
+
+        const mfaSession: MFALoginSession = {
+          user,
+          mfaType: 'totp'
+        };
+
+        ctx.state.session = {
+          mfa: mfaSession,
+        };
+
+        this.redirectToMfa(ctx, ctx.request.body.continue);
+        return true;
+      }
+
+      if (getSetting('totp') === 'required') {
+        this.redirectToLogin(ctx, '', 'The system administrator has made TOTP tokens mandatory, but this user did not have a TOTP configured. Login is disabled');
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  async shouldUseWebauthn(ctx: Context, user: User): Promise<boolean> {
+    if (getSetting('webauthn') !== 'disabled') {
+      if (await webAuthnService.hasWebauthn(user)) {
+
+        if (ctx.request.body.continue && !isValidRedirect(ctx.request.body.continue)) {
+          this.redirectToLogin(ctx, '', 'Invalid continue URL provided');
+          return true;
+        }
+
+        const mfaSession: MFALoginSession = {
+          user,
+          mfaType: 'webauthn'
+        };
+
+        ctx.state.session = {
+          mfa: mfaSession,
+        };
+
+        this.redirectToMfa(ctx, ctx.request.body.continue);
+        return true;
+      }
+
+      if (getSetting('webauthn') === 'required') {
+        this.redirectToLogin(ctx, '', 'The system administrator has made Webauthn mandatory, but this user did not have a Webauthn device configured. Login is disabled');
+        return true;
+      }
+    }
+
+    return false;
+  }
+
+  isMfaEnabled(): boolean {
+    return getSetting('totp') !== 'disabled' || getSetting('webauthn') !== 'disabled'
+  }
+
+  redirectToMfa(ctx: Context, redirectUrl: string) {
 
     ctx.response.status = 303;
     if (redirectUrl) {

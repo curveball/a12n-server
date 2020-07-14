@@ -1,4 +1,6 @@
 language: node_js
 node_js:
-  - 9
+  - stable
   - 10
+  - 12
+  - 14

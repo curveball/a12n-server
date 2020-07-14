@@ -38,6 +38,7 @@ describe('oauth2 services', () => {
     });
 
     it('should fail if the code verifier is not supplied', () => {
+      // @ts-expect-error this supposed to fail
       const codeVerifier = undefined;
       const codeChallenge = 'plain-code';
       const codeChallengeMethod = 'plain';

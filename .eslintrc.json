@@ -11,7 +11,8 @@
   ],
   "globals": {
       "Atomics": "readonly",
-      "SharedArrayBuffer": "readonly"
+      "SharedArrayBuffer": "readonly",
+      "SimpleWebAuthnBrowser": "readonly"
   },
   "parser": "@typescript-eslint/parser",
   "parserOptions": {

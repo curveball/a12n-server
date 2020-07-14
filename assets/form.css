@@ -238,3 +238,7 @@ form a:hover {
 .login-options {
   text-align: center;
 }
+
+.hidden {
+  display: none;
+}

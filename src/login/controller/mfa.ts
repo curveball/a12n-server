@@ -10,73 +10,73 @@ import { User } from '../../user/types';
 
 class MFAController extends Controller {
 
-    async get(ctx: Context) {
+  async get(ctx: Context) {
 
-      const user: User = ctx.state.session.mfa_user;
+    const user: User = ctx.state.session.mfa_user;
 
-      if (!user) {
-        return this.redirectToLogin(ctx);
+    if (!user) {
+      return this.redirectToLogin(ctx);
+    }
+
+    ctx.response.type = 'text/html';
+    ctx.response.body = mfaForm(
+      ctx.query.msg,
+      ctx.query.error,
+      {
+        continue: ctx.query.continue,
+      },
+    );
+
+  }
+
+  async post(ctx: Context) {
+
+    const user: User = ctx.state.session.mfa_user;
+
+    if (!user) {
+      return this.redirectToLogin(ctx);
+    }
+
+    if (ctx.request.body.totp) {
+      if (!await userService.validateTotp(user, ctx.request.body.totp)) {
+        log(EventType.totpFailed, ctx.ip(), user.id);
+        return this.redirectToMfa(ctx, 'Incorrect TOTP code');
       }
-
-      ctx.response.type = 'text/html';
-      ctx.response.body = mfaForm(
-        ctx.query.msg,
-        ctx.query.error,
-        {
-          continue: ctx.query.continue,
-        },
-      );
-
+    } else {
+      return this.redirectToMfa(ctx, 'TOTP token required');
     }
 
-    async post(ctx: Context) {
-
-      const user: User = ctx.state.session.mfa_user;
-
-        if (!user) {
-            return this.redirectToLogin(ctx);
-        }
-
-        if (ctx.request.body.totp) {
-          if (!await userService.validateTotp(user, ctx.request.body.totp)) {
-            log(EventType.totpFailed, ctx.ip(), user.id);
-            return this.redirectToMfa(ctx, 'Incorrect TOTP code');
-          }
-        } else {
-          return this.redirectToMfa(ctx, 'TOTP token required');
-        }
-
-        if (ctx.request.body.continue && !isValidRedirect(ctx.request.body.continue)) {
-          return this.redirectToMfa(ctx, 'Invalid continue URL provided');
-        }
-
-        ctx.state.session = {
-          user: user,
-        };
-        log(EventType.loginSuccess, ctx);
-
-        ctx.status = 303;
-        if (ctx.request.body.continue) {
-          ctx.response.headers.set('Location', ctx.request.body.continue);
-          return;
-        }
-        ctx.response.headers.set('Location', '/');
-
+    if (ctx.request.body.continue && !isValidRedirect(ctx.request.body.continue)) {
+      return this.redirectToMfa(ctx, 'Invalid continue URL provided');
     }
 
-    async redirectToMfa(ctx: Context, error: string) {
+    ctx.state.session = {
+      user: user,
+    };
+    log(EventType.loginSuccess, ctx);
 
-      ctx.response.status = 303;
-      ctx.response.headers.set('Location', '/mfa?' + querystring.stringify({ error }));
-
+    ctx.status = 303;
+    if (ctx.request.body.continue) {
+      ctx.response.headers.set('Location', ctx.request.body.continue);
+      return;
     }
+    ctx.response.headers.set('Location', '/');
 
-    async redirectToLogin(ctx: Context) {
+  }
 
-      ctx.response.status = 303;
-      ctx.response.headers.set('Location', '/login');
+  async redirectToMfa(ctx: Context, error: string) {
 
-    }
+    ctx.response.status = 303;
+    ctx.response.headers.set('Location', '/mfa?' + querystring.stringify({ error }));
+
+  }
+
+  async redirectToLogin(ctx: Context) {
+
+    ctx.response.status = 303;
+    ctx.response.headers.set('Location', '/login');
+
+  }
 }
 
 export default new MFAController();

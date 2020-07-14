@@ -27,15 +27,15 @@ class ResetPasswordRequestController extends Controller {
 
     let user;
     try {
-        user = await userService.findByIdentity('mailto:' + ctx.request.body.emailAddress);
+      user = await userService.findByIdentity('mailto:' + ctx.request.body.emailAddress);
     } catch (err) {
-        if (err instanceof NotFound) {
-            ctx.status = 303;
-            ctx.response.headers.set('location', '/reset-password?error=We+can\'t+seem+to+find+your+record.+Please+try+gain');
-            return;
-        } else {
-            throw err;
-        }
+      if (err instanceof NotFound) {
+        ctx.status = 303;
+        ctx.response.headers.set('location', '/reset-password?error=We+can\'t+seem+to+find+your+record.+Please+try+gain');
+        return;
+      } else {
+        throw err;
+      }
     }
 
     if (!user.active) {

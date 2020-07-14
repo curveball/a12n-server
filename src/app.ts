@@ -7,6 +7,7 @@ import accessLog from '@curveball/accesslog';
 
 import { load } from './server-settings';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const pkgInfo = require('../package.json');
 console.log('⚾ Curveball %s %s', pkgInfo.name, pkgInfo.version);
 
@@ -25,7 +26,7 @@ if (!process.env.PUBLIC_URI) {
 
   const app = new Application();
 
-  app.use(accessLog())
+  app.use(accessLog());
   app.use(mainMw());
 
   app.listen(port);

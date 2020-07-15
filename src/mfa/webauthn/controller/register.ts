@@ -15,7 +15,7 @@ class WebAuthnRegistrationRequestController extends Controller {
     const user: User = ctx.state.session.registerUser;
 
     const challenge = crypto.randomBytes(64).toString('hex');
-    ctx.state.session.webAuthnChallenge = challenge;
+    ctx.state.session.webAuthnChallengeRegister = challenge;
 
     ctx.response.body = generateAttestationOptions({
       serviceName: getSetting('webauthn.serviceName'),
@@ -42,8 +42,8 @@ class WebAuthnRegistrationRequestController extends Controller {
     const user: User = ctx.state.session.registerUser;
     const body = ctx.request.body;
 
-    const expectedChallenge = ctx.state.session.webAuthnChallenge;
-    ctx.state.session.webAuthnChallenge = null;
+    const expectedChallenge = ctx.state.session.webAuthnChallengeRegister;
+    ctx.state.session.webAuthnChallengeRegister = null;
 
     let verification;
     try {

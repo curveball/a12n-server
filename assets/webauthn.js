@@ -80,7 +80,12 @@ document.addEventListener('DOMContentLoaded', function(){
     }
 
     if (verificationJSON && verificationJSON.verified) {
-      window.location.href = '/';
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('continue')) {
+        window.location.href = urlParams.get('continue');
+      } else {
+        window.location.href = '/';
+      }
     } else {
       handleError(verificationJSON.error || verificationJSON.title, elemBeginLogin);
     }

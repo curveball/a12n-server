@@ -49,6 +49,7 @@ const routes = [
 
   router('/register', register),
   router('/register/mfa', registerMfa),
+  router('/register/mfa/totp', registerMfa),
   router('/register/mfa/webauthn', registerWebAuthn),
 
   router('/user', users),

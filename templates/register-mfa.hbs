@@ -1,0 +1,29 @@
+<form action="{{ action }}" method="post">
+  {{# if msg}}
+  <div class="msg info">{{ msg }}</div>
+  {{/if}}
+  {{# if error}}
+  <div class="msg error">{{ error }}</div>
+  {{/if}}
+  <fieldset class="radiogroup">
+    <label for="totp" class="radio">
+      <span>TOTP</span>
+      <input type="radio" name="mfadevice" id="totp" value="totp">
+    </label>
+
+    <label for="yubikey" class="radio">
+      <span>YubiKey</span>
+      <input type="radio" name="mfadevice" id="yubikey" value="yubikey">
+    </label>
+  </fieldset>
+
+  <fieldset>
+    <label>
+      <button type="submit">Setup Device</button>
+    </label>
+    <p class="login-options">
+      <a href="/login?msg=Registration+successful.+Please log in">Don't add device</a>
+    </p>
+  </fieldset>
+
+</form>

@@ -12,12 +12,15 @@ export function registrationForm(msg: string, error: string, mfaRegistrationEnab
 
 }
 
-export function mfaRegistrationForm(msg: string, error: string): string {
+export function mfaRegistrationForm(msg: string, error: string, totpEnabled: boolean, webAuthnEnabled: boolean): string {
 
-  return render('register-webauthn', {
+  return render('register-mfa', {
     title: 'MFA Register',
     msg: msg,
     error: error,
+    action: '/register/mfa',
+    totpEnabled,
+    webAuthnEnabled,
   });
 
 }

@@ -20,7 +20,7 @@ export function mfaForm(
   useWebAuthn: boolean,
   hiddenFields: KeyValue,
 ): string {
-  return render('mfa', {
+  return render('login-mfa', {
     title: 'MFA',
     msg: msg,
     error: error,

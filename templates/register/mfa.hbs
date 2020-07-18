@@ -6,15 +6,19 @@
   <div class="msg error">{{ error }}</div>
   {{/if}}
   <fieldset class="radiogroup">
-    <label for="totp" class="radio">
-      <span>TOTP</span>
-      <input type="radio" name="mfadevice" id="totp" value="totp">
-    </label>
+    {{#if totpEnabled}}
+      <label for="totp" class="radio">
+        <span>TOTP (Google Authenticator, Authy, etc.)</span>
+        <input type="radio" name="mfaDevice" id="totp" value="totp">
+      </label>
+    {{/if}}
 
-    <label for="yubikey" class="radio">
-      <span>YubiKey</span>
-      <input type="radio" name="mfadevice" id="yubikey" value="yubikey">
-    </label>
+    {{#if webAuthnEnabled}}
+      <label for="yubikey" class="radio">
+        <span>YubiKey</span>
+        <input type="radio" name="mfaDevice" id="yubikey" value="yubikey">
+      </label>
+    {{/if}}
   </fieldset>
 
   <fieldset>

@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function(){
     elemError.classList.add('hidden');
     elemBeginRegister.disabled = true;
 
-    const resp = await fetch('/register/mfa/webauthn');
+    const resp = await fetch('/register/mfa/webauthn/attestation');
 
     let attResp;
     try {
@@ -29,7 +29,7 @@ document.addEventListener('DOMContentLoaded', function(){
       handleError(errorText, elemBeginRegister);
     }
 
-    const verificationResp = await fetch('/register/mfa/webauthn', {
+    const verificationResp = await fetch('/register/mfa/webauthn/attestation', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

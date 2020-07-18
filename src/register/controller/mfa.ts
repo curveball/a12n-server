@@ -10,20 +10,10 @@ import { User } from '../../user/types';
 class MFAController extends Controller {
 
   async get(ctx: Context) {
-    //const user: User = ctx.state.session.registerUser;
-    const user: User = {
-      id: 25,
-      identity: 'mailto:b@b',
-      nickname: 'b',
-      created: new Date(1),
-      active: false,
-      type: 'user',
-    };
+    const user: User = ctx.state.session.registerUser;
 
     if (!user) {
-      ctx.response.status = 303;
-      ctx.response.headers.set('Location', '/login');
-      return;
+      return ctx.redirect(303, '/login');
     }
 
     ctx.response.type = 'text/html';
@@ -33,6 +23,18 @@ class MFAController extends Controller {
       getSetting('totp') !== 'disabled',
       getSetting('webauthn') !== 'disabled',
     );
+  }
+
+  async post(ctx: Context) {
+    const { mfaDevice } = ctx.request.body;
+
+    if (mfaDevice === 'totp') {
+      return ctx.redirect(303, '/register/mfa/totp');
+    } else if (mfaDevice === 'yubikey') {
+      return ctx.redirect(303, '/register/mfa/webauthn');
+    }
+
+    return ctx.redirect(303, '/register/mfa?error=Unknown MFA device');
   }
 
 }

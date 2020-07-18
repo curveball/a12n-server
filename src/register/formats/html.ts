@@ -2,7 +2,7 @@ import { render } from '../../templates';
 
 export function registrationForm(msg: string, error: string, mfaRegistrationEnabled: boolean): string {
 
-  return render('register', {
+  return render('register/user', {
     title: 'Register',
     msg: msg,
     error: error,
@@ -14,8 +14,8 @@ export function registrationForm(msg: string, error: string, mfaRegistrationEnab
 
 export function mfaRegistrationForm(msg: string, error: string, totpEnabled: boolean, webAuthnEnabled: boolean): string {
 
-  return render('register-mfa', {
-    title: 'MFA Register',
+  return render('register/mfa', {
+    title: 'Register MFA Device',
     msg: msg,
     error: error,
     action: '/register/mfa',

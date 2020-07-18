@@ -256,3 +256,20 @@ form a:hover {
 .hidden {
   display: none;
 }
+
+.qrcode {
+  text-align: center;
+}
+
+.qrcode img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.qrcode .secret {
+  font-family: monospace;
+  font-weight: bold;
+  background-color: #e0e0e0;
+  padding: 0.5em;
+}

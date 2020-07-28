@@ -37,25 +37,25 @@
   "homepage": "https://github.com/evert/auth-api#readme",
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",
-    "@types/chai": "^4.2.11",
+    "@types/chai": "^4.2.12",
     "@types/chai-as-promised": "^7.1.3",
     "@types/handlebars": "^4.1.0",
-    "@types/mocha": "^7.0.2",
-    "@types/node": "^10.17.27",
+    "@types/mocha": "^8.0.0",
+    "@types/node": "^10.17.28",
     "@types/nodemailer": "^6.4.0",
     "@types/otplib": "^10.0.0",
     "@types/sinon": "^9.0.4",
-    "@typescript-eslint/eslint-plugin": "^3.6.1",
-    "@typescript-eslint/parser": "^3.6.1",
+    "@typescript-eslint/eslint-plugin": "^3.7.1",
+    "@typescript-eslint/parser": "^3.7.1",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
-    "eslint": "^7.4.0",
+    "eslint": "^7.5.0",
     "hal-types": "^1.0.0",
-    "mocha": "^7.2.0",
+    "mocha": "^8.0.1",
     "nyc": "^15.1.0",
     "sinon": "^9.0.2",
     "ts-node": "^8.10.2",
-    "typescript": "^3.9.6"
+    "typescript": "^3.9.7"
   },
   "types": "dist/",
   "nyc": {
@@ -67,13 +67,13 @@
     "@curveball/accesslog": "^0.2.0",
     "@curveball/bodyparser": "^0.4.6",
     "@curveball/controller": "^0.2.2",
-    "@curveball/core": "^0.12.0",
+    "@curveball/core": "^0.14.2",
     "@curveball/http-errors": "^0.3.0",
     "@curveball/problem": "^0.2.2",
     "@curveball/router": "^0.2.4",
     "@curveball/session": "^0.5.0",
-    "@simplewebauthn/server": "^0.7.1",
-    "bcrypt": "^4.0.1",
+    "@simplewebauthn/server": "^0.7.2",
+    "bcrypt": "^5.0.0",
     "csv-stringify": "^5.5.0",
     "hal-browser": "^0.8.6",
     "handlebars": "^4.7.6",
@@ -81,5 +81,14 @@
     "nodemailer": "^6.4.10",
     "otplib": "^12.0.1",
     "tsc-watch": "^4.2.9"
+  },
+  "mocha": {
+    "require": "ts-node/register",
+    "recursive": true,
+    "extension": [
+      "ts",
+      "js",
+      "tsx"
+    ]
   }
 }

@@ -34,7 +34,7 @@ class AuthorizeController extends Controller {
         switch(ctx.query.code_challenge_method) {
           case 'S256':
           case 'plain':
-            codeChallengeMethod = ctx.query.code_challenge_method
+            codeChallengeMethod = ctx.query.code_challenge_method;
             break;
           default:
             throw new InvalidRequest('The "code_challenge_method" must be "plain" or "S256"');

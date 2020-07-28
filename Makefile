@@ -32,10 +32,10 @@ test:
 	nyc mocha
 
 lint:
-	./node_modules/.bin/tslint -p .
+	npx eslint --quiet 'src/**/*.ts' 'test/**/*.ts'
 
 fix:
-	./node_modules/.bin/tslint -p . --fix
+	npx eslint --quiet 'src/**/*.ts' 'test/**/*.ts' --fix
 
 lint-fix: fix
 

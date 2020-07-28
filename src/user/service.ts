@@ -177,10 +177,10 @@ export async function validateTotp(user: User, token: string): Promise<boolean> 
  */
 export async function hasTotp(user: User): Promise<boolean> {
 
-    const query = 'SELECT secret FROM user_totp WHERE user_id = ?';
-    const result = await database.query(query, [user.id]);
+  const query = 'SELECT secret FROM user_totp WHERE user_id = ?';
+  const result = await database.query(query, [user.id]);
 
-    return result[0].length !== 0;
+  return result[0].length !== 0;
 
 }
 

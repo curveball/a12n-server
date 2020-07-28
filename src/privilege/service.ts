@@ -18,6 +18,7 @@ export async function getPrivilegesForUser(user: User): Promise<PrivilegeMap> {
 
     const privileges = Object.assign({}, currentPrivileges);
 
+    // eslint-disable-next-line no-prototype-builtins
     if (privileges.hasOwnProperty(row.resource)) {
       if (privileges[row.resource].indexOf(row.privilege) === -1) {
         privileges[row.resource].push(row.privilege);

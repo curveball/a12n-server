@@ -17,6 +17,12 @@ class WebAuthnRegistrationRequestController extends Controller {
     const challenge = crypto.randomBytes(64).toString('hex');
     ctx.state.session.webAuthnChallenge = challenge;
 
+    if (!getSetting('webauthn.relyingPartyId')) {
+      console.error(`Error: The webauthn.relyingPartyId server-setting is not set. This should match the domain the page is served from (ex: login.example.com).
+See the Relying Party Identifier section of the WebAuthn W3C Recommendation here:
+https://www.w3.org/TR/webauthn/#rp-id`);
+    }
+
     ctx.response.body = generateAttestationOptions({
       serviceName: getSetting('webauthn.serviceName'),
       rpID: getSetting('webauthn.relyingPartyId'),
@@ -44,6 +50,12 @@ class WebAuthnRegistrationRequestController extends Controller {
 
     const expectedChallenge = ctx.state.session.webAuthnChallenge;
     ctx.state.session.webAuthnChallenge = null;
+
+    if (!getSetting('webauthn.expectedOrigin')) {
+      console.error(`Error: The webauthn.expectedOrigin server-setting is not set. This should match the origin the browser is making the request from (ex: https://login.example.com)
+See the Relying Party Identifier section of the WebAuthn W3C Recommendation here:
+https://www.w3.org/TR/webauthn/#rp-id`);
+    }
 
     let verification;
     try {

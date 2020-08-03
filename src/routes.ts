@@ -14,7 +14,9 @@ import oauth2Authorize from './oauth2/controller/authorize';
 import oauth2Token from './oauth2/controller/token';
 import privilegeCollection from './privilege/controller/collection';
 import privilegeItem from './privilege/controller/item';
-import register from './register/controller';
+import register from './register/controller/user';
+import registerMfa from './register/controller/mfa';
+import registerWebAuthn from './mfa/webauthn/controller/register';
 import resetPassword from './reset-password/controller/request';
 import resetPasswordRedirect from './reset-password/controller/reset-password';
 import passwordToken from './reset-password/controller/token';
@@ -44,6 +46,8 @@ const routes = [
   router('/privilege/:id', privilegeItem),
 
   router('/register', register),
+  router('/register/mfa', registerMfa),
+  router('/register/mfa/webauthn', registerWebAuthn),
 
   router('/user', users),
   router('/user/:id', user),

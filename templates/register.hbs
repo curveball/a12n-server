@@ -16,21 +16,28 @@
     <input type="email" name="emailAddress" id="emailaddress" required="required" autocomplete="email" />
     </label>
 
-      <label for="password">
-        <span>Password</span>
-        <input type="password" name="password" id="password" required="required" autocomplete="new-password" />
-      </label>
+    <label for="password">
+      <span>Password</span>
+      <input type="password" name="password" id="password" required="required" autocomplete="new-password" />
+    </label>
 
-      <label for="confirmpassword">
-        <span>Confirm Password</span>
-        <input type="password" name="confirmPassword" id="confirmpassword" required="required" autocomplete="new-password" />
+    <label for="confirmpassword">
+      <span>Confirm Password</span>
+      <input type="password" name="confirmPassword" id="confirmpassword" required="required" autocomplete="new-password" />
+    </label>
+
+    {{#if mfaRegistrationEnabled}}
+      <label for="addmfa" class="checkbox">
+        <span>Add MFA Device </span>
+        <input type="checkbox" name="addMfa" id="addmfa">
       </label>
-    </fieldset>
-    <fieldset>
-      <label>
-        <button type="submit">Register</button>
-      </label>
-    </fieldset>
+    {{/if}}
+  </fieldset>
+  <fieldset>
+    <label>
+      <button type="submit">Register</button>
+    </label>
+  </fieldset>
 
   {{#each hiddenFields}}
   <input type="hidden" name="{{@key}}" value="{{this}}" />

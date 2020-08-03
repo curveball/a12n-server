@@ -32,6 +32,7 @@ test:
 	nyc mocha
 
 lint:
+	npx tsc --noemit
 	npx eslint --quiet 'src/**/*.ts' 'test/**/*.ts'
 
 fix:

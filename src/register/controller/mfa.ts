@@ -12,8 +12,7 @@ class MFAController extends Controller {
     const user: User = ctx.state.session.registerUser;
 
     if (!user) {
-      ctx.response.status = 303;
-      ctx.response.headers.set('Location', '/login');
+      ctx.redirect(303, '/login');
       return;
     }
 

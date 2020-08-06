@@ -1,22 +1,39 @@
-<form action="{{ action }}" method="post">
-  {{# if msg}}
-  <div class="msg info">{{ msg }}</div>
-  {{/if}}
-  {{# if error}}
-  <div class="msg error">{{ error }}</div>
-  {{/if}}
-  <fieldset>
-    <label for="totp">
-      <span>TOTP code</span>
-      <input type="text" name="totp" class="totp" id="totp" placeholder="Enter TOTP code" required="required" autocomplete="one-time-code" />
-    </label>
+<script src="https://unpkg.com/@simplewebauthn/browser@0.8.0/dist/simplewebauthn-browser.min.js"></script>
+<script src="/assets/webauthn.js"></script>
 
-  </fieldset>
-  <fieldset>
-    <label>
-      <button type="submit">Submit</button>
-    </label>
-  </fieldset>
+<form action="{{ action }}" method="post">
+  {{# if useTotp}}
+    {{# if msg}}
+      <div class="msg info">{{ msg }}</div>
+    {{/if}}
+    {{# if error}}
+      <div class="msg error">{{ error }}</div>
+    {{/if}}
+
+    <fieldset>
+      <label for="totp">
+        <span>TOTP code</span>
+        <input type="text" name="totp" class="totp" id="totp" placeholder="Enter TOTP code" required="required" autocomplete="one-time-code" />
+      </label>
+
+    </fieldset>
+    <fieldset>
+      <label>
+        <button type="submit">Submit</button>
+      </label>
+    </fieldset>
+  {{/if}}
+
+  {{# if useWebAuthn}}
+    <div id="error" class="msg error hidden"></div>
+
+    </fieldset>
+    <fieldset>
+      <label>
+        <button id="btnBeginLogin" type="reset">Begin Device Verification</button>
+      </label>
+    </fieldset>
+  {{/if}}
 
   {{#each hiddenFields}}
     <input type="hidden" name="{{@key}}" value="{{this}}" />

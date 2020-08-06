@@ -1,5 +1,3 @@
-import crypto from 'crypto';
-
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { generateAttestationOptions, verifyAttestationResponse } from '@simplewebauthn/server';
@@ -14,13 +12,15 @@ class WebAuthnAttestationController extends Controller {
   async get(ctx: Context) {
     const user: User = ctx.state.session.registerUser;
 
-    const challenge = crypto.randomBytes(64).toString('hex');
-    ctx.state.session.webAuthnChallengeRegister = challenge;
+    if (!getSetting('webauthn.relyingPartyId')) {
+      console.error(`Error: The webauthn.relyingPartyId server-setting is not set. This should match the domain the page is served from (ex: login.example.com).
+See the Relying Party Identifier section of the WebAuthn W3C Recommendation here:
+https://www.w3.org/TR/webauthn/#rp-id`);
+    }
 
-    ctx.response.body = generateAttestationOptions({
+    const attestationOptions = generateAttestationOptions({
       serviceName: getSetting('webauthn.serviceName'),
       rpID: getSetting('webauthn.relyingPartyId'),
-      challenge,
       userID: user.id.toString(),
       userName: user.nickname,
       timeout: 60000,
@@ -36,6 +36,9 @@ class WebAuthnAttestationController extends Controller {
         requireResidentKey: false,
       },
     });
+
+    ctx.state.session.webAuthnChallengeRegister = attestationOptions.challenge;
+    ctx.response.body = attestationOptions;
   }
 
   async post(ctx: Context) {
@@ -44,6 +47,12 @@ class WebAuthnAttestationController extends Controller {
 
     const expectedChallenge = ctx.state.session.webAuthnChallengeRegister;
     ctx.state.session.webAuthnChallengeRegister = null;
+
+    if (!getSetting('webauthn.expectedOrigin')) {
+      console.error(`Error: The webauthn.expectedOrigin server-setting is not set. This should match the origin the browser is making the request from (ex: https://login.example.com)
+See the Relying Party Identifier section of the WebAuthn W3C Recommendation here:
+https://www.w3.org/TR/webauthn/#rp-id`);
+    }
 
     let verification;
     try {

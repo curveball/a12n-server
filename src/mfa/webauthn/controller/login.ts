@@ -1,5 +1,3 @@
-import crypto from 'crypto';
-
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { generateAssertionOptions, verifyAssertionResponse } from '@simplewebauthn/server';
@@ -16,11 +14,7 @@ class WebAuthnLoginRequestController extends Controller {
   async get(ctx: Context) {
     const { user }: MFALoginSession = ctx.state.session.mfa || {};
 
-    const challenge = crypto.randomBytes(64).toString('hex');
-    ctx.state.session.webAuthnChallengeLogin = challenge;
-
-    ctx.response.body = generateAssertionOptions({
-      challenge,
+    const assertionOptions = generateAssertionOptions({
       timeout: 60000,
       allowedCredentialIDs: (await webauthnService.findDevicesByUser(user)).map(device => device.credentialID),
       /**
@@ -29,6 +23,9 @@ class WebAuthnLoginRequestController extends Controller {
        */
       userVerification: 'preferred',
     });
+
+    ctx.state.session.webAuthnChallengeLogin = assertionOptions.challenge;
+    ctx.response.body = assertionOptions;
   }
 
   async post(ctx: Context) {

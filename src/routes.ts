@@ -13,6 +13,7 @@ import loginWebAuthn from './mfa/webauthn/controller/login';
 import logout from './logout/controller';
 import oauth2Authorize from './oauth2/controller/authorize';
 import oauth2Token from './oauth2/controller/token';
+import oauth2Revoke from './oauth2/controller/revoke';
 import privilegeCollection from './privilege/controller/collection';
 import privilegeItem from './privilege/controller/item';
 import register from './register/controller/user';
@@ -32,6 +33,7 @@ const routes = [
 
   router('/authorize', oauth2Authorize),
   router('/token', oauth2Token),
+  router('/revoke', oauth2Revoke),
 
 
   router('/create-user', createUser),

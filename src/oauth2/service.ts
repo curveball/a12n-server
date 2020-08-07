@@ -45,7 +45,7 @@ export async function validateSecret(oauth2Client: OAuth2Client, secret: string)
 
 }
 
-export async function validateRedirectUri(client: OAuth2Client, redirectUrl: string) {
+export async function validateRedirectUri(client: OAuth2Client, redirectUrl: string): Promise<boolean> {
 
   const query = 'SELECT id FROM oauth2_redirect_uris WHERE oauth2_client_id = ? AND uri = ?';
   const result = await db.query(query, [client.id, redirectUrl]);
@@ -171,7 +171,7 @@ export async function generateTokenFromCode(client: OAuth2Client, code: string, 
 
 }
 
-export function validatePKCE(codeVerifier: string|undefined, codeChallenge: string|undefined, codeChallengeMethod: CodeChallengeMethod) {
+export function validatePKCE(codeVerifier: string|undefined, codeChallenge: string|undefined, codeChallengeMethod: CodeChallengeMethod): void {
   if (!codeChallenge && !codeVerifier) {
     // This request was not initiated with PKCE support, so ignore the validation
     return;
@@ -226,12 +226,51 @@ export async function generateTokenFromRefreshToken(client: OAuth2Client, refres
 
 }
 
+export async function revokeByAccessRefreshToken(client: OAuth2Client, token: string): Promise<void> {
+
+  let oauth2Token: OAuth2Token;
+
+  try {
+    oauth2Token = await getTokenByAccessToken(token);
+  } catch (err) {
+    if (err instanceof NotFound) {
+      // Swallow since it's okay if the token has been revoked previously or is invalid (Section 2.2 of RFC7009)
+    } else {
+      throw err;
+    }
+  }
+
+  if (!oauth2Token) {
+    try {
+      oauth2Token = await getTokenByRefreshToken(token);
+    } catch (err) {
+      if (err instanceof NotFound) {
+        // Swallow since it's okay if the token has been revoked previously or is invalid (Section 2.2 of RFC7009)
+      } else {
+        throw err;
+      }
+    }
+  }
+
+  if (!oauth2Token) {
+    return;
+  }
+
+  if (oauth2Token.clientId !== client.id) {
+    // Treat this as an invalid token and don't do anything
+    return;
+  }
+
+  await revokeToken(oauth2Token);
+
+}
+
 /**
  * Removes a token.
  *
  * This function will not throw an error if the token was deleted before.
  */
-export async function revokeToken(token: OAuth2Token) {
+export async function revokeToken(token: OAuth2Token): Promise<void> {
 
   const query = 'DELETE FROM oauth2_tokens WHERE access_token = ?';
   await db.query(query, [token.accessToken]);

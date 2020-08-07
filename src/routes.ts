@@ -35,7 +35,6 @@ const routes = [
   router('/token', oauth2Token),
   router('/revoke', oauth2Revoke),
 
-
   router('/create-user', createUser),
 
   router('/login', login),

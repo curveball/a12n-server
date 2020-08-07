@@ -10,6 +10,8 @@ export function metadata() {
     service_documentation: 'https://evertpot.com/',
     ui_locales_supported: ['en'],
     introspection_endpoint: '/introspect',
+    revocation_endpoint: '/revoke',
+    revocation_endpoint_auth_methods_supported: ['client_secret_basic'],
   };
 
 }

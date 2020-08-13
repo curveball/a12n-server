@@ -11,6 +11,9 @@ import { load } from './server-settings';
 const pkgInfo = require('../package.json');
 console.log('⚾ Curveball %s %s', pkgInfo.name, pkgInfo.version);
 
+require('dotenv').config();
+require('dotenv-defaults').config();
+
 const port = process.env.PORT ? parseInt(process.env.PORT, 10) :  8531;
 if (!process.env.PUBLIC_URI) {
   process.env.PUBLIC_URI = 'http://localhost:' + port + '/';

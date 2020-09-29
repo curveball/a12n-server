@@ -1,6 +1,20 @@
 Changelog
 =========
 
+0.13.0 (2020-09-29)
+-------------------
+
+* Support for WebauthN / Yubikeys (@mhum)
+* Logging in is now a multi-step process, with 2FA (Webauthn/Yubikey/TOTP)
+  as the second step. (@mhum)
+* It's now possible to setup 2FA during registration. (@mhum)
+* `/validate-bearer` and `/validate-totp` endpoints have been removed.
+* Support for OAuth2 PKCE (@mhum)
+* tslint -> eslint
+* Typescript 4.
+* Compatible with Typescript strict mode.
+
+
 0.12.7 (2020-04-28)
 -------------------
 

@@ -16,7 +16,7 @@ time I need this.
 Requirements
 ------------
 
-* Node.js 8.x
+* Node.js 10.x
 * MySQL
 
 Features
@@ -26,8 +26,11 @@ Features
 * OAuth2
   * Supported grants: `implicit`, `client_credentials`, `authorization_code` and `password`.
   * [OAuth2 discovery document][1].
-* Google Authenticator (TOTP).
-* [OAuth 2 Token Introspection][2].
+  * [PKCE][3].
+  * [OAuth 2 Token Introspection][2].
+* MFA
+  * Google Authenticator (TOTP).
+  * WebauthN / Yubikeys
 * A simple, flat, permission model.
 
 The state of this project
@@ -65,3 +68,4 @@ starting point _instead_ of building something 100% from scratch.
 
 [1]: https://tools.ietf.org/html/rfc8414 "OAuth 2.0 Authorization Server Metadata"
 [2]: https://tools.ietf.org/html/rfc7662 "OAuth 2 Token Introspection"
+[3]: https://tools.ietf.org/html/rfc7636 "Proof Key for Code Exchange by OAuth Public Clients"

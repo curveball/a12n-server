@@ -15,7 +15,7 @@ class AuthorizeController extends Controller {
     ctx.response.type = 'text/html';
 
     let oauth2Client;
-    let codeChallengeMethod: CodeChallengeMethod;
+    let codeChallengeMethod: CodeChallengeMethod|undefined = undefined;
 
     if (!['token', 'code'].includes(ctx.query.response_type)) {
       throw new InvalidRequest('The "response_type" parameter must be provided, and must be "token" or "code"');

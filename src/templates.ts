@@ -36,7 +36,7 @@ export function getTemplate(name: string): Template {
     templates.set(name, loadTemplate(name));
   }
 
-  return templates.get(name);
+  return templates.get(name)!;
 
 }
 

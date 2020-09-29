@@ -172,14 +172,14 @@ export async function generateTokenFromCode(client: OAuth2Client, code: string, 
 }
 
 export function validatePKCE(codeVerifier: string|undefined, codeChallenge: string|undefined, codeChallengeMethod: CodeChallengeMethod): void {
-  if (!codeChallenge && !codeVerifier) {
-    // This request was not initiated with PKCE support, so ignore the validation
-    return;
-  }
-
-  if (codeChallenge && !codeVerifier) {
-    // The authorization request started with PKCE, but the token request did not follow through
-    throw new InvalidRequest('The code verifier was not supplied');
+  if (!codeVerifier) {
+    if (!codeChallenge) {
+      // This request was not initiated with PKCE support, so ignore the validation
+      return;
+    } else {
+      // The authorization request started with PKCE, but the token request did not follow through
+      throw new InvalidRequest('The code verifier was not supplied');
+    }
   }
 
   // For the plain method, the derived code and the code verifier are the same
@@ -228,7 +228,7 @@ export async function generateTokenFromRefreshToken(client: OAuth2Client, refres
 
 export async function revokeByAccessRefreshToken(client: OAuth2Client, token: string): Promise<void> {
 
-  let oauth2Token: OAuth2Token;
+  let oauth2Token: OAuth2Token|null = null;
 
   try {
     oauth2Token = await getTokenByAccessToken(token);

@@ -72,7 +72,7 @@ https://www.w3.org/TR/webauthn/#rp-id`);
     const { verified, authenticatorInfo } = verification;
 
     if (verified) {
-      const { base64PublicKey, base64CredentialID, counter } = authenticatorInfo;
+      const { base64PublicKey, base64CredentialID, counter } = authenticatorInfo!;
 
       const existingDevice = (await webAuthnService.findDevicesByUser(user)).find(device => device.credentialID === base64CredentialID);
 

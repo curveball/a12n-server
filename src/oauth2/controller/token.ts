@@ -114,7 +114,7 @@ class TokenController extends Controller {
     }
 
     if (!user.active) {
-      log(EventType.loginFailedInactive, ctx.ip(), user.id, ctx.request.headers.get('User-Agent'));
+      log(EventType.loginFailedInactive, ctx.ip(), user.id, ctx.request.headers.get('User-Agent')!);
       throw new InvalidGrant('User Inactive');
     }
 

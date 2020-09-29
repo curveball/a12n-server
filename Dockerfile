@@ -4,8 +4,7 @@ EXPOSE 8531
 RUN mkdir /opt/app
 WORKDIR /opt/app
 COPY package.json package.json
-COPY node_modules node_modules
-RUN npm rebuild bcrypt --update-binary
+RUN npm i --production
 
 COPY assets assets
 COPY templates templates

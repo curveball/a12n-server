@@ -1,4 +1,4 @@
-FROM node:8
+FROM node:12
 EXPOSE 8531
 
 RUN mkdir /opt/app

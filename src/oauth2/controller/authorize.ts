@@ -2,11 +2,11 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { NotFound } from '@curveball/http-errors';
 import querystring from 'querystring';
-import log from '../../log/service';
-import { EventType } from '../../log/types';
 import { InvalidClient, InvalidRequest, serializeError, UnsupportedGrantType } from '../errors';
 import * as oauth2Service from '../service';
 import { CodeChallengeMethod, OAuth2Client } from '../types';
+import log from '../../log/service';
+import { EventType } from '../../log/types';
 
 class AuthorizeController extends Controller {
 
@@ -66,9 +66,10 @@ class AuthorizeController extends Controller {
       throw new UnsupportedGrantType('The current client is not allowed to use the ' + grantType + ' grant_type');
     }
 
-    if (!await oauth2Service.validateRedirectUri(oauth2Client, redirectUri)) {
+    try {
+      await oauth2Service.requireRedirectUri(oauth2Client, redirectUri);
+    } catch (err) {
       log(EventType.oauth2BadRedirect, ctx);
-      throw new UnsupportedGrantType('This value for "redirect_uri" is not permitted.');
     }
 
     if (ctx.state.session.user !== undefined) {

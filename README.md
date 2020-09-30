@@ -33,6 +33,11 @@ Features
   * WebauthN / Yubikeys
 * A simple, flat, permission model.
 
+Documentation
+-------------
+
+Check out the [Docs folder](https://github.com/curveball/a12n-server/tree/master/docs)
+
 The state of this project
 -------------------------
 

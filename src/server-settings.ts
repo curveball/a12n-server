@@ -11,7 +11,7 @@ export function getSetting<T = any>(setting: string, deflt?: T): T {
   const value = settingsCache.get(setting);
   if (value === undefined) {
     if (deflt === undefined) {
-      throw new Error('Setting not found');
+      throw new Error(`Setting ${setting} not found`);
     }
     return deflt;
   } else {

@@ -2,9 +2,9 @@ SOURCE_FILES:=$(shell find src/ -type f -name '*.ts')
 
 PORT?=8531
 MYSQL_HOST?=127.0.0.1
-MYSQL_PASSWORD?=
-MYSQL_USER?=root
-MYSQL_DATABASE?=a12nserver
+MYSQL_PASSWORD?=password
+MYSQL_USER?=a12nserver
+MYSQL_DATABASE?=auth
 
 DOCKER_IMAGE_NAME:=a12n-server
 

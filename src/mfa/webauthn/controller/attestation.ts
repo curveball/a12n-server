@@ -12,15 +12,9 @@ class WebAuthnAttestationController extends Controller {
   async get(ctx: Context) {
     const user: User = ctx.state.session.registerUser;
 
-    if (!getSetting('webauthn.relyingPartyId')) {
-      console.error(`Error: The webauthn.relyingPartyId server-setting is not set. This should match the domain the page is served from (ex: login.example.com).
-See the Relying Party Identifier section of the WebAuthn W3C Recommendation here:
-https://www.w3.org/TR/webauthn/#rp-id`);
-    }
-
     const attestationOptions = generateAttestationOptions({
       serviceName: getSetting('webauthn.serviceName'),
-      rpID: getSetting('webauthn.relyingPartyId'),
+      rpID: getSetting('webauthn.relyingPartyId', new URL(process.env.PUBLIC_URI!).host),
       userID: user.id.toString(),
       userName: user.nickname,
       timeout: 60000,
@@ -48,19 +42,13 @@ https://www.w3.org/TR/webauthn/#rp-id`);
     const expectedChallenge = ctx.state.session.webAuthnChallengeRegister;
     ctx.state.session.webAuthnChallengeRegister = null;
 
-    if (!getSetting('webauthn.expectedOrigin')) {
-      console.error(`Error: The webauthn.expectedOrigin server-setting is not set. This should match the origin the browser is making the request from (ex: https://login.example.com)
-See the Relying Party Identifier section of the WebAuthn W3C Recommendation here:
-https://www.w3.org/TR/webauthn/#rp-id`);
-    }
-
     let verification;
     try {
       verification = await verifyAttestationResponse({
         credential: body,
         expectedChallenge,
-        expectedOrigin: getSetting('webauthn.expectedOrigin'),
-        expectedRPID: getSetting('webauthn.relyingPartyId'),
+        expectedOrigin: getSetting('webauthn.expectedOrigin', process.env.PUBLIC_URI),
+        expectedRPID: getSetting('webauthn.relyingPartyId', new URL(process.env.PUBLIC_URI!).host),
       });
     } catch (error) {
       console.error(error);

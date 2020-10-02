@@ -70,6 +70,7 @@ class AuthorizeController extends Controller {
       await oauth2Service.requireRedirectUri(oauth2Client, redirectUri);
     } catch (err) {
       log(EventType.oauth2BadRedirect, ctx);
+      throw err;
     }
 
     if (ctx.state.session.user !== undefined) {

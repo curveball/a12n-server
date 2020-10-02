@@ -47,7 +47,7 @@ class WebAuthnAttestationController extends Controller {
       verification = await verifyAttestationResponse({
         credential: body,
         expectedChallenge,
-        expectedOrigin: getSetting('webauthn.expectedOrigin', process.env.PUBLIC_URI),
+        expectedOrigin: getSetting('webauthn.expectedOrigin', new URL(process.env.PUBLIC_URI!).origin),
         expectedRPID: getSetting('webauthn.relyingPartyId', new URL(process.env.PUBLIC_URI!).host),
       });
     } catch (error) {

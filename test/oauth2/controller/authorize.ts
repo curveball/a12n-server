@@ -3,7 +3,7 @@ import { URLSearchParams } from 'url';
 import { MemoryRequest, BaseContext, MemoryResponse } from '@curveball/core';
 import chai from 'chai';
 import chaiAsPromised from 'chai-as-promised';
-import sinon from 'sinon';
+import * as sinon from 'sinon';
 
 import { InvalidRequest } from '../../../src/oauth2/errors';
 import * as oauth2Service from '../../../src/oauth2/service';
@@ -41,6 +41,7 @@ describe('AuthorizeController', () => {
   beforeEach(function () {
     sandbox.stub(oauth2Service, 'getClientByClientId').returns(Promise.resolve(oauth2Client));
     sandbox.stub(oauth2Service, 'validateRedirectUri').returns(Promise.resolve(true));
+    sandbox.stub(oauth2Service, 'requireRedirectUri').returns(Promise.resolve());
     codeRedirectMock = sandbox.stub(authorize, 'codeRedirect');
     sandbox.stub(userService, 'findByIdentity').returns(Promise.resolve(user));
     sandbox.stub(userService, 'validatePassword').returns(Promise.resolve(true));

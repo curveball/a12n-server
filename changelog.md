@@ -1,7 +1,13 @@
 Changelog
 =========
 
-0.13.1 (2020-09-29)
+0.13.2 (2020-10-02)
+-------------------
+
+* Fixed Webauthn origin/host auto-detect.
+
+
+0.13.1 (2020-10-02)
 -------------------
 
 * Docker build can now fully run without a pre-existing development

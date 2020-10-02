@@ -5,7 +5,9 @@ document.addEventListener('DOMContentLoaded', function(){
 
   const { startAttestation, startAssertion } = SimpleWebAuthnBrowser;
 
-  elemBeginRegister && elemBeginRegister.addEventListener('click', async () => {
+  elemBeginRegister && elemBeginRegister.addEventListener('click', async (ev) => {
+
+    ev.preventDefault();
     elemError.innerHTML = '';
     elemError.classList.add('hidden');
     elemBeginRegister.disabled = true;
@@ -71,6 +73,7 @@ document.addEventListener('DOMContentLoaded', function(){
     try {
       resp = await fetch(url, options);
     } catch (error) {
+      console.error(error, url);
       handleError('There was an error making the request.', button);
     }
 

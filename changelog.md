@@ -1,6 +1,17 @@
 Changelog
 =========
 
+0.13.1 (2020-09-29)
+-------------------
+
+* Docker build can now fully run without a pre-existing development
+  environment.
+* Public Docker Image: https://hub.docker.com/r/curveballjs/a12n-server
+* WebauthN and TOTP MFA are now enabled by default.
+* No longer using `unpkg` for browser dependencies.
+* Upgraded from `hal-browser` to `@curveball/browser`.
+
+
 0.13.0 (2020-09-29)
 -------------------
 

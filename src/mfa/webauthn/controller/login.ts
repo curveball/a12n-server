@@ -42,7 +42,7 @@ class WebAuthnLoginRequestController extends Controller {
       verification = verifyAssertionResponse({
         credential: body,
         expectedChallenge,
-        expectedOrigin: getSetting('webauthn.expectedOrigin'),
+        expectedOrigin: getSetting('webauthn.expectedOrigin', process.env.PUBLIC_URI!),
         expectedRPID: getSetting('webauthn.relyingPartyId'),
         authenticator: authenticatorDevice,
       });

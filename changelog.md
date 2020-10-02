@@ -10,6 +10,8 @@ Changelog
 * WebauthN and TOTP MFA are now enabled by default.
 * No longer using `unpkg` for browser dependencies.
 * Upgraded from `hal-browser` to `@curveball/browser`.
+* Better error messaging in the OAuth2 flow when a `redirect_uri` is
+  incorrect.
 
 
 0.13.0 (2020-09-29)

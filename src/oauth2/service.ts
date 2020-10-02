@@ -5,7 +5,7 @@ import db from '../database';
 import { getSetting } from '../server-settings';
 import * as userService from '../user/service';
 import { User } from '../user/types';
-import { InvalidGrant, InvalidRequest, UnauthorizedClient} from './errors';
+import { InvalidGrant, InvalidRequest, UnauthorizedClient } from './errors';
 import { CodeChallengeMethod, OAuth2Client, OAuth2Code, OAuth2Token } from './types';
 
 type OAuth2ClientRecord = {
@@ -51,6 +51,26 @@ export async function validateRedirectUri(client: OAuth2Client, redirectUrl: str
   const result = await db.query(query, [client.id, redirectUrl]);
 
   return result[0].length > 0;
+
+}
+
+/**
+ * Checks if a redirect_uri is permitted for the client.
+ *
+ * If not, it will emit an InvalidGrant error 
+ */
+export async function requireRedirectUri(client: OAuth2Client, redirectUrl: string): Promise<void> {
+
+  const query = 'SELECT id, uri FROM oauth2_redirect_uris WHERE oauth2_client_id = ?';
+  const result = await db.query(query, [client.id]);
+
+  const allowedUris = result[0].map((record: {id: number, uri: string}) => record.uri);
+  if (allowedUris.length===0) {
+    throw new InvalidGrant('No valid redirect_uri was setup for this OAuth2 client_id');
+  }
+  if (allowedUris.includes(redirectUrl)) {
+    throw new InvalidGrant(`Invalid value for redirect_uri. The redirect_uri you passed (${redirectUrl}) was not in the allowed list of redirect_uris`);
+  }
 
 }
 

@@ -8,6 +8,7 @@ Changelog
   environment.
 * Public Docker Image: https://hub.docker.com/r/curveballjs/a12n-server
 * WebauthN and TOTP MFA are now enabled by default.
+* No longer using `unpkg` for browser dependencies.
 * Upgraded from `hal-browser` to `@curveball/browser`.
 
 

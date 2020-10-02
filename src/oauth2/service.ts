@@ -62,7 +62,7 @@ export async function validateRedirectUri(client: OAuth2Client, redirectUrl: str
 export async function requireRedirectUri(client: OAuth2Client, redirectUrl: string): Promise<void> {
 
   const query = 'SELECT id, uri FROM oauth2_redirect_uris WHERE oauth2_client_id = ?';
-  const result = await db.query(query, [client.id, redirectUrl]);
+  const result = await db.query(query, [client.id]);
 
   const allowedUris = result[0].map((record: {id: number, uri: string}) => record.uri);
   if (allowedUris.length===0) {

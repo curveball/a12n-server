@@ -19,7 +19,6 @@ if (!process.env.PUBLIC_URI) {
 
 (async () => {
 
-
   console.log('Connecting to database');
   console.log('Loading settings');
   await load();

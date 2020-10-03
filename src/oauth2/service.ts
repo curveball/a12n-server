@@ -68,7 +68,7 @@ export async function requireRedirectUri(client: OAuth2Client, redirectUrl: stri
   if (allowedUris.length===0) {
     throw new InvalidGrant('No valid redirect_uri was setup for this OAuth2 client_id');
   }
-  if (allowedUris.includes(redirectUrl)) {
+  if (!allowedUris.includes(redirectUrl)) {
     throw new InvalidGrant(`Invalid value for redirect_uri. The redirect_uri you passed (${redirectUrl}) was not in the allowed list of redirect_uris`);
   }
 

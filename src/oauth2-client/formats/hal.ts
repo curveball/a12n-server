@@ -14,7 +14,7 @@ export function collection(user: User, clients: OAuth2Client[]): HalResource {
     },
     total: clients.length,
 
-  }
+  };
 
 }
 export function item(client: OAuth2Client, redirectUris: string[]): HalResource {
@@ -28,6 +28,6 @@ export function item(client: OAuth2Client, redirectUris: string[]): HalResource 
     allowedGrantTypes: client.allowedGrantTypes,
     redirectUris,
 
-  }
+  };
 
 }

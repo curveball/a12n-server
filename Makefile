@@ -1,18 +1,5 @@
 SOURCE_FILES:=$(shell find src/ -type f -name '*.ts')
-
-PORT?=8531
-MYSQL_HOST?=127.0.0.1
-MYSQL_PASSWORD?=password
-MYSQL_USER?=a12nserver
-MYSQL_DATABASE?=auth
-
 DOCKER_IMAGE_NAME:=a12n-server
-
-export PORT
-export MYSQL_HOST
-export MYSQL_USER
-export MYSQL_DATABASE
-export MYSQL_PASSWORD
 
 .PHONY:start run build test lint fix lint-fix start-dev watch inspect deploy
 start: build

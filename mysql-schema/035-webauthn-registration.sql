@@ -14,8 +14,8 @@ CREATE TABLE user_webauthn (
 
 INSERT INTO server_settings (setting, value) VALUES
 ('registration.mfa.enabled', 'false'),
-('webauthn.relyingPartyId', ''),
-('webauthn.expectedOrigin', ''),
+('webauthn.relyingPartyId', '""'),
+('webauthn.expectedOrigin', '""'),
 ('webauthn.serviceName', '"Authentication API"');
 
 COMMIT;

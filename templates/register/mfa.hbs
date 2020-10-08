@@ -1,0 +1,33 @@
+<form action="{{ action }}" method="post">
+  {{# if msg}}
+  <div class="msg info">{{ msg }}</div>
+  {{/if}}
+  {{# if error}}
+  <div class="msg error">{{ error }}</div>
+  {{/if}}
+  <fieldset class="radiogroup">
+    {{#if totpEnabled}}
+      <label for="totp" class="radio">
+        <span>TOTP (Google Authenticator, Authy, etc.)</span>
+        <input type="radio" name="mfaDevice" id="totp" value="totp">
+      </label>
+    {{/if}}
+
+    {{#if webAuthnEnabled}}
+      <label for="yubikey" class="radio">
+        <span>YubiKey</span>
+        <input type="radio" name="mfaDevice" id="yubikey" value="yubikey">
+      </label>
+    {{/if}}
+  </fieldset>
+
+  <fieldset>
+    <label>
+      <button type="submit">Setup Device</button>
+    </label>
+    <p class="login-options">
+      <a href="/login?msg=Registration+successful.+Please log in">Don't add device</a>
+    </p>
+  </fieldset>
+
+</form>

@@ -14,7 +14,7 @@ export default function csv(log: LogEntry[]): string {
     },
     cast: {
       date: (value) => value.toISOString(),
-      number: (value) => eventTypeString.get(value),
+      number: (value) => eventTypeString.get(value)!,
     }
   });
 

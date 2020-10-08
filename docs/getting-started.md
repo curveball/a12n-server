@@ -45,22 +45,36 @@ Running the server
 Docker:
 
 ```sh
-export MYSQL_HOST=127.0.0.1
 export MYSQL_PASSWORD=....
-export MYSQL_USER=root
-export MYSQL_DATABASE=a12nserver
-docker run -it --rm -p 8531:8531 --name a12n-server-01 a12n-server
+export MYSQL_USER=username
+export MYSQL_DATABASE=databasename
+docker run -it --rm -p 127.0.0.1:8531:8531 --name a12n-server-01 a12n-server
 ```
 
 Not docker:
 
 ```sh
-export MYSQL_HOST=127.0.0.1
 export MYSQL_PASSWORD=....
-export MYSQL_USER=root
-export MYSQL_DATABASE=a12nserver
+export MYSQL_USER=username
+export MYSQL_DATABASE=databasename
 make start
 ```
+
+Note: There are several environment variables available to modify the a12n-server
+behavior. See the table below.
+
+|                           Name | Required? |               Default | Description                                                   |
+|-------------------------------:|----------:|----------------------:|---------------------------------------------------------------|
+|                     MYSQL_HOST |           |             127.0.0.1 | IP address to connect to where the `mysql-schema` was applied |
+|                     MYSQL_USER |       Yes |                       | User to connect to MySQL with                                 |
+|                 MYSQL_PASSWORD |       Yes |                       | Password to authenticate to MySQL                             |
+|                 MYSQL_DATABASE |       Yes |                       | Database where the `mysql-schema` was applied                 |
+| MYSQL_INSTANCE_CONNECTION_NAME |           |                       |                                                               |
+|                     PUBLIC_URI |           | http://localhost:8531 |                                                               |
+|                           PORT |           |                  8531 | Port to host the API on.                                      |
+|                       SMTP_URL |           |                       | See below section, [Optional](#Optional)                      |
+|                SMTP_EMAIL_FROM |           |                       | See below section, [Optional](#Optional)                      |
+
 
 Creating the first user
 -----------------------

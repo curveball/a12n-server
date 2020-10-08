@@ -10,6 +10,9 @@ export async function getOAuth2ClientFromBasicAuth(ctx: Context): Promise<OAuth2
   let oauth2Client: OAuth2Client;
 
   const basicAuth = parseBasicAuth(ctx);
+  if (!basicAuth) {
+    throw new Unauthorized('Invalid Basic Auth header');
+  }
 
   try {
     oauth2Client = await oauth2Service.getClientByClientId(basicAuth[0]);

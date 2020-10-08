@@ -5,12 +5,14 @@ document.addEventListener('DOMContentLoaded', function(){
 
   const { startAttestation, startAssertion } = SimpleWebAuthnBrowser;
 
-  elemBeginRegister && elemBeginRegister.addEventListener('click', async () => {
+  elemBeginRegister && elemBeginRegister.addEventListener('click', async (ev) => {
+
+    ev.preventDefault();
     elemError.innerHTML = '';
     elemError.classList.add('hidden');
     elemBeginRegister.disabled = true;
 
-    const jsonResponse = await makeRequest('/register/mfa/webauthn', {}, elemBeginRegister);
+    const jsonResponse = await makeRequest('/register/mfa/webauthn/attestation', {}, elemBeginRegister);
 
     let attResp;
     try {
@@ -25,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function(){
       handleError(errorText, elemBeginRegister);
     }
 
-    await makeRequest('/register/mfa/webauthn', {
+    await makeRequest('/register/mfa/webauthn/attestation', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -71,6 +73,7 @@ document.addEventListener('DOMContentLoaded', function(){
     try {
       resp = await fetch(url, options);
     } catch (error) {
+      console.error(error, url);
       handleError('There was an error making the request.', button);
     }
 

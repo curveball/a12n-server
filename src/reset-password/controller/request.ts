@@ -44,7 +44,7 @@ class ResetPasswordRequestController extends Controller {
       return;
     }
     await sendResetPasswordEmail(user);
-    await log(EventType.resetPasswordRequest, ctx.ip(), user.id);
+    await log(EventType.resetPasswordRequest, ctx.ip()!, user.id);
 
     ctx.status = 303;
     ctx.response.headers.set('location', '/reset-password?msg=We\'ve+sent+you+a+link+to+your+email+for+changing+password');

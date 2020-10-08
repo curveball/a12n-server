@@ -4,28 +4,28 @@ import { User } from '../user/types';
 import { EventType, LogEntry } from './types';
 
 export function log(eventType: EventType, ctx: Context): Promise<void>;
-export function log(eventType: EventType, ip: string, userId: number, userAgent: string): Promise<void>;
+export function log(eventType: EventType, ip: string|null, userId: number, userAgent: string|null): Promise<void>;
 export default async function log(
   eventType: EventType,
-  arg1: string | Context,
+  arg1: string | Context | null,
   arg2?: number,
-  arg3?: string
+  arg3?: string|null
 ) {
 
   if (isContext(arg1)) {
     await addLogEntry(
       eventType,
-      arg1.ip(),
+      arg1.ip()!,
       arg1.state.session.user && arg1.state.session.user.id ? arg1.state.session.user.id : null,
       arg1.request.headers.get('User-Agent'),
     );
   } else {
-    await addLogEntry(eventType, arg1, arg2, arg3);
+    await addLogEntry(eventType, arg1, arg2!, arg3!);
   }
 
 }
 
-export async function addLogEntry(eventType: EventType, ip: string, userId: number, userAgent: string): Promise<void> {
+export async function addLogEntry(eventType: EventType, ip: string|null, userId: number, userAgent: string|null): Promise<void> {
 
   await db.query('INSERT INTO user_log SET time = UNIX_TIMESTAMP(), ?', {
     user_id: userId,

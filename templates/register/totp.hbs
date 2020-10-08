@@ -1,0 +1,34 @@
+<form action="{{ action }}" method="post">
+  {{# if msg}}
+  <div class="msg info">{{ msg }}</div>
+  {{/if}}
+  {{# if error}}
+  <div class="msg error">{{ error }}</div>
+  {{/if}}
+
+  <fieldset>
+    <div class="qrcode">
+      <div>
+        Scan QR code with authenticator app
+      </div>
+      <img src="{{qrCode}}"/>
+      <div>Or manually enter secret</div>
+      <div class="secret">{{secret}}</div>
+    </div>
+  </fieldset>
+
+  <fieldset>
+    <label for="code">
+      <span>Enter generated code</span>
+      <input name="code" id="code" required="required" minlength="6" maxlength="6" size="6" />
+    </label>
+
+    <label>
+      <button type="submit">Setup Device</button>
+    </label>
+    <p class="login-options">
+      <a href="/login?msg=Registration+successful.+Please log in">Don't add device</a>
+    </p>
+  </fieldset>
+
+</form>

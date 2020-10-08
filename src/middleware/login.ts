@@ -34,7 +34,7 @@ export default function(): Middleware {
 
     if (!inWhitelist && ctx.request.headers.has('Authorization')) {
       // We had an authorization header, lets validate it
-      const authHeader = ctx.request.headers.get('Authorization');
+      const authHeader = ctx.request.headers.get('Authorization')!;
 
       const [authType, accessToken] = authHeader.split(' ');
       if (authType.toLowerCase() !== 'bearer') {

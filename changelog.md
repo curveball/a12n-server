@@ -1,6 +1,45 @@
 Changelog
 =========
 
+0.13.3 (2020-10-03)
+-------------------
+
+* Redirect check was broken.
+
+
+0.13.2 (2020-10-02)
+-------------------
+
+* Fixed Webauthn origin/host auto-detect.
+
+
+0.13.1 (2020-10-02)
+-------------------
+
+* Docker build can now fully run without a pre-existing development
+  environment.
+* Public Docker Image: https://hub.docker.com/r/curveballjs/a12n-server
+* WebauthN and TOTP MFA are now enabled by default.
+* No longer using `unpkg` for browser dependencies.
+* Upgraded from `hal-browser` to `@curveball/browser`.
+* Better error messaging in the OAuth2 flow when a `redirect_uri` is
+  incorrect.
+
+
+0.13.0 (2020-09-29)
+-------------------
+
+* Support for WebauthN / Yubikeys (@mhum)
+* Logging in is now a multi-step process, with 2FA (Webauthn/Yubikey/TOTP)
+  as the second step. (@mhum)
+* It's now possible to setup 2FA during registration. (@mhum)
+* `/validate-bearer` and `/validate-totp` endpoints have been removed.
+* Support for OAuth2 PKCE (@mhum)
+* tslint -> eslint
+* Typescript 4.
+* Compatible with Typescript strict mode.
+
+
 0.12.7 (2020-04-28)
 -------------------
 

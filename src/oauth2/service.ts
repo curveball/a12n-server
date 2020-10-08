@@ -1,56 +1,26 @@
 import { NotFound } from '@curveball/http-errors';
-import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import db from '../database';
 import { getSetting } from '../server-settings';
 import * as userService from '../user/service';
 import { User } from '../user/types';
 import { InvalidGrant, InvalidRequest, UnauthorizedClient } from './errors';
-import { CodeChallengeMethod, OAuth2Client, OAuth2Code, OAuth2Token } from './types';
+import { CodeChallengeMethod, OAuth2Code, OAuth2Token } from './types';
+import { OAuth2Client } from '../oauth2-client/types';
 
-type OAuth2ClientRecord = {
-  id: number,
-  client_id: string,
-  client_secret: Buffer,
-  user_id: number,
-  allowed_grant_types: string
-};
+export async function getRedirectUris(client: OAuth2Client): Promise<string[]> {
 
-export async function getClientByClientId(clientId: string): Promise<OAuth2Client> {
+  const query = 'SELECT uri FROM oauth2_redirect_uris WHERE oauth2_client_id = ?';
+  const result = await db.query(query, [client.id]);
 
-  const query = 'SELECT id, client_id, client_secret, user_id, allowed_grant_types FROM oauth2_clients WHERE client_id = ?';
-  const result = await db.query(query, [clientId]);
-
-  if (!result[0].length) {
-    throw new NotFound('OAuth2 client_id not recognized');
-  }
-
-  const record: OAuth2ClientRecord = result[0][0];
-
-  const user = await userService.findActiveById(record.user_id);
-
-  return {
-    id: record.id,
-    clientId: record.client_id,
-    clientSecret: record.client_secret,
-    user,
-    allowedGrantTypes: record.allowed_grant_types.split(' '),
-  };
+  return result[0].map((record: {uri:string}) => record.uri);
 
 }
 
-export async function validateSecret(oauth2Client: OAuth2Client, secret: string): Promise<boolean> {
+export async function validateRedirectUri(client: OAuth2Client, redirectUri: string): Promise<boolean> {
 
-  return await bcrypt.compare(secret, oauth2Client.clientSecret.toString('utf-8'));
-
-}
-
-export async function validateRedirectUri(client: OAuth2Client, redirectUrl: string): Promise<boolean> {
-
-  const query = 'SELECT id FROM oauth2_redirect_uris WHERE oauth2_client_id = ? AND uri = ?';
-  const result = await db.query(query, [client.id, redirectUrl]);
-
-  return result[0].length > 0;
+  const uris = await getRedirectUris(client);
+  return uris.includes(redirectUri);
 
 }
 
@@ -61,14 +31,11 @@ export async function validateRedirectUri(client: OAuth2Client, redirectUrl: str
  */
 export async function requireRedirectUri(client: OAuth2Client, redirectUrl: string): Promise<void> {
 
-  const query = 'SELECT id, uri FROM oauth2_redirect_uris WHERE oauth2_client_id = ?';
-  const result = await db.query(query, [client.id]);
-
-  const allowedUris = result[0].map((record: {id: number, uri: string}) => record.uri);
-  if (allowedUris.length===0) {
+  const uris = await getRedirectUris(client);
+  if (uris.length===0) {
     throw new InvalidGrant('No valid redirect_uri was setup for this OAuth2 client_id');
   }
-  if (!allowedUris.includes(redirectUrl)) {
+  if (!uris.includes(redirectUrl)) {
     throw new InvalidGrant(`Invalid value for redirect_uri. The redirect_uri you passed (${redirectUrl}) was not in the allowed list of redirect_uris`);
   }
 

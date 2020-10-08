@@ -4,9 +4,11 @@ import { NotFound } from '@curveball/http-errors';
 import querystring from 'querystring';
 import { InvalidClient, InvalidRequest, serializeError, UnsupportedGrantType } from '../errors';
 import * as oauth2Service from '../service';
-import { CodeChallengeMethod, OAuth2Client } from '../types';
+import { CodeChallengeMethod } from '../types';
+import { OAuth2Client } from '../../oauth2-client/types';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
+import { getClientByClientId } from '../../oauth2-client/service';
 
 class AuthorizeController extends Controller {
 
@@ -52,7 +54,7 @@ class AuthorizeController extends Controller {
     const grantType = responseType === 'code' ? 'authorization_code' : 'implicit';
 
     try {
-      oauth2Client = await oauth2Service.getClientByClientId(clientId);
+      oauth2Client = await getClientByClientId(clientId);
     } catch (e) {
       if (e instanceof NotFound) {
         throw new InvalidClient('Client id incorrect');

@@ -28,6 +28,8 @@ import users from './user/controller/collection';
 import user from './user/controller/item';
 import changePasswordRedirect from './well-known/controller/change-password';
 import oauth2Metadata from './well-known/controller/oauth2-metadata';
+import clients from './oauth2-client/controller/collection';
+import client from './oauth2-client/controller/item';
 
 const routes = [
   router('/', home),
@@ -60,6 +62,8 @@ const routes = [
   router('/user/:id', user),
   router('/user/:id/log', userLog),
   router('/user/:id/member', group),
+  router('/user/:id/client', clients),
+  router('/user/:id/client/:clientId', client),
 
   router('/changepassword', changePassword),
   router('/reset-password', resetPassword),

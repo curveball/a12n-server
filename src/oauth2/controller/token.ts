@@ -6,11 +6,11 @@ import * as userService from '../../user/service';
 import { User } from '../../user/types';
 import { InvalidGrant, InvalidRequest, serializeError, UnsupportedGrantType } from '../errors';
 import * as oauth2Service from '../service';
-import { OAuth2Client } from '../types';
+import { OAuth2Client } from '../../oauth2-client/types';
 import {
   getOAuth2ClientFromBasicAuth,
   getOAuth2ClientFromBody,
-} from '../utilities';
+} from '../../oauth2-client/service';
 
 class TokenController extends Controller {
 

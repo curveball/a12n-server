@@ -3,11 +3,11 @@ import { Context } from '@curveball/core';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
 import { revokeByAccessRefreshToken } from '../service';
-import { OAuth2Client } from '../types';
+import { OAuth2Client } from '../../oauth2-client/types';
 import {
   getOAuth2ClientFromBasicAuth,
   getOAuth2ClientFromBody,
-} from '../utilities';
+} from '../../oauth2-client/service';
 
 
 class RevokeController extends Controller {

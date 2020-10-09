@@ -42,6 +42,12 @@ export function item(user: User, privileges: PrivilegeMap) {
       title: 'Group Members'
     };
   }
+  if (user.type === 'app') {
+    hal._links['client-collection'] = {
+      href: '/user/' + user.id + '/client',
+      title: 'List of OAuth2 client credentials'
+    };
+  }
 
   return hal;
 

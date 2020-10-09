@@ -7,10 +7,11 @@ import * as sinon from 'sinon';
 
 import { InvalidRequest } from '../../../src/oauth2/errors';
 import * as oauth2Service from '../../../src/oauth2/service';
+import * as oauth2ClientService from '../../../src/oauth2-client/service';
 import * as userService from '../../../src/user/service';
 import * as serverSettings from '../../../src/server-settings';
 import { User } from '../../../src/user/types';
-import { OAuth2Client } from '../../../src/oauth2/types';
+import { OAuth2Client } from '../../../src/oauth2-client/types';
 import authorize from '../../../src/oauth2/controller/authorize';
 
 chai.use(chaiAsPromised);
@@ -39,7 +40,7 @@ describe('AuthorizeController', () => {
   let codeRedirectMock: sinon.SinonStub;
 
   beforeEach(function () {
-    sandbox.stub(oauth2Service, 'getClientByClientId').returns(Promise.resolve(oauth2Client));
+    sandbox.stub(oauth2ClientService, 'getClientByClientId').returns(Promise.resolve(oauth2Client));
     sandbox.stub(oauth2Service, 'validateRedirectUri').returns(Promise.resolve(true));
     sandbox.stub(oauth2Service, 'requireRedirectUri').returns(Promise.resolve());
     codeRedirectMock = sandbox.stub(authorize, 'codeRedirect');

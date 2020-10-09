@@ -18,7 +18,6 @@ class ClientCollectionController extends Controller {
     }
 
     const clients = await findClientsByUser(user);
-    console.log(clients);
     ctx.response.body = hal.collection(user, clients);
 
   }

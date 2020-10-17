@@ -14,6 +14,28 @@ export function collection(user: User, clients: OAuth2Client[]): HalResource {
     },
     total: clients.length,
 
+    _templates: {
+      default: {
+        title: 'Add new client',
+        method: 'POST',
+        contentType: 'application/x-www-form-urlencoded',
+        properties: [
+          {
+            name: 'clientId',
+          },
+          {
+            name: 'allowedGrantTypes',
+            prompt: 'Allowed grant types (space separated)',
+            required: true,
+          },
+          {
+            name: 'redirectUris',
+            prompt: 'Redirect uris (space separated)',
+          },
+        ],
+      }
+    },
+
   };
 
 }

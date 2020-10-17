@@ -23,11 +23,7 @@ export type OAuth2Client = {
 
   /**
    * A secret string. This is hashed using bcrypt2
-   */
-  clientSecret: Buffer,
-
-  /**
-   * In a12nserver, each Client is associated to a single 'user'.
+   *
    */
   user: User,
 

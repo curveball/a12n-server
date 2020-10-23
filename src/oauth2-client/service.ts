@@ -38,10 +38,6 @@ export async function findByUser(user: User): Promise<OAuth2Client[]> {
   const query = 'SELECT id, client_id, client_secret, user_id, allowed_grant_types FROM oauth2_clients WHERE user_id = ?';
   const result = await db.query(query, [user.id]);
 
-  if (!result[0].length) {
-    throw new NotFound('OAuth2 client_id not recognized');
-  }
-
   return result[0].map( (record: OAuth2ClientRecord) => mapRecordToModel(record, user));
 
 }

@@ -1,4 +1,4 @@
-// tslint:disable no-console
+/* eslint no-console: 0 */
 import { Application } from '@curveball/core';
 
 import process from 'process';

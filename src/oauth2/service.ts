@@ -27,7 +27,7 @@ export async function validateRedirectUri(client: OAuth2Client, redirectUri: str
 /**
  * Checks if a redirect_uri is permitted for the client.
  *
- * If not, it will emit an InvalidGrant error 
+ * If not, it will emit an InvalidGrant error
  */
 export async function requireRedirectUri(client: OAuth2Client, redirectUrl: string): Promise<void> {
 
@@ -37,6 +37,15 @@ export async function requireRedirectUri(client: OAuth2Client, redirectUrl: stri
   }
   if (!uris.includes(redirectUrl)) {
     throw new InvalidGrant(`Invalid value for redirect_uri. The redirect_uri you passed (${redirectUrl}) was not in the allowed list of redirect_uris`);
+  }
+
+}
+
+export async function addRedirectUris(client: OAuth2Client, redirectUris: string[]): Promise<void> {
+
+  const query = 'INSERT INTO oauth2_redirect_uris SET oauth2_client_id = ?, uri = ?';
+  for(const uri of redirectUris) {
+    await db.query(query, [client.id, uri]);
   }
 
 }

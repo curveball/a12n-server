@@ -51,6 +51,7 @@ class WebAuthnAttestationController extends Controller {
         expectedRPID: getSetting('webauthn.relyingPartyId', new URL(process.env.PUBLIC_URI!).host),
       });
     } catch (error) {
+      /* eslint-disable-next-line no-console */
       console.error(error);
       ctx.status = 400;
       ctx.response.body = { error: error.message };

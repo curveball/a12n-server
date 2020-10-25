@@ -108,12 +108,12 @@ export async function create(client: Omit<OAuth2Client, 'id'>, clientSecret: str
     client_secret: await bcrypt.hash(clientSecret, 12),
     user_id: client.user.id,
     allowed_grant_types: client.allowedGrantTypes.join(' '),
-  }
-  const result = await db.query(query, [params]); 
+  };
+  const result = await db.query(query, [params]);
 
   const realClient = {
     ...client,
-    id: result[0].insert_id
+    id: result[0].insertId
   };
 
   for(const uri of redirectUris) {

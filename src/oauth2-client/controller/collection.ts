@@ -7,6 +7,7 @@ import { findByUser, create } from '../service';
 import * as userService from '../../user/service';
 import crypto from 'crypto';
 import { GrantType, OAuth2Client } from '../types';
+import bcrypt from 'bcrypt';
 
 class ClientCollectionController extends Controller {
 
@@ -36,7 +37,7 @@ class ClientCollectionController extends Controller {
     const redirectUris = ctx.request.body.redirectUris.split(' ');
 
     if (!clientId) {
-      clientId = randomId(10); 
+      clientId = randomId(10);
     } else if (clientId.length < 6) {
       throw new UnprocessableEntity('clientId must be at least 6 characters or left empty');
     }
@@ -65,10 +66,11 @@ class ClientCollectionController extends Controller {
       clientId,
       user,
       allowedGrantTypes: allowedGrantTypesArr,
-    }
+      clientSecret: await bcrypt.hash(clientSecret, 12),
+    };
 
-    await create(newClient, clientSecret, redirectUris);
-
+    const client = await create(newClient, clientSecret, redirectUris);
+    ctx.response.body = hal.newClientSuccess(client, redirectUris, clientSecret);
 
   }
 
@@ -76,7 +78,7 @@ class ClientCollectionController extends Controller {
 
 function randomId(bytes: number): string {
   const buff = crypto.randomBytes(bytes);
-  return buff.toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/\=/g, '');
+  return buff.toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 }
 
 export default new ClientCollectionController();

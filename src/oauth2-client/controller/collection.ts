@@ -42,11 +42,10 @@ class ClientCollectionController extends Controller {
       throw new UnprocessableEntity('clientId must be at least 6 characters or left empty');
     }
 
-    const clientSecret = randomId(20);
     if (!allowedGrantTypes) {
       throw new UnprocessableEntity('You must specify the allowedGrantTypes property');
     }
-    const allowedGrantTypesArr = allowedGrantTypes.split(' ');
+    const allowedGrantTypesArr:GrantType[] = allowedGrantTypes.split(' ');
 
     const allowedAllowedGrantTypes: GrantType[] = [
       'password',
@@ -56,12 +55,11 @@ class ClientCollectionController extends Controller {
       'authorization_code'
     ];
 
-    for(const agt of allowedGrantTypesArr) {
-      if (!allowedAllowedGrantTypes.includes(agt)) {
-        throw new UnprocessableEntity('allowedGrantTypes can only contain supported grant types as a space-delimited string. Possible supported options are: ' + allowedAllowedGrantTypes.join(' '));
-      }
+    if (!allowedGrantTypesArr.every(agt => allowedAllowedGrantTypes.includes(agt))) {
+      throw new UnprocessableEntity('allowedGrantTypes can only contain supported grant types as a space-delimited string. Possible supported options are: ' + allowedAllowedGrantTypes.join(' '));
     }
 
+    const clientSecret = randomId(20);
     const newClient: Omit<OAuth2Client,'id'> = {
       clientId,
       user,
@@ -69,7 +67,7 @@ class ClientCollectionController extends Controller {
       clientSecret: await bcrypt.hash(clientSecret, 12),
     };
 
-    const client = await create(newClient, clientSecret, redirectUris);
+    const client = await create(newClient, redirectUris);
     ctx.response.body = hal.newClientSuccess(client, redirectUris, clientSecret);
 
   }

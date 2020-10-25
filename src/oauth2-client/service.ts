@@ -100,12 +100,12 @@ export async function getOAuth2ClientFromBody(ctx: Context): Promise<OAuth2Clien
 
 }
 
-export async function create(client: Omit<OAuth2Client, 'id'>, clientSecret: string, redirectUris: string[]): Promise<OAuth2Client> {
+export async function create(client: Omit<OAuth2Client, 'id'>, redirectUris: string[]): Promise<OAuth2Client> {
 
   const query = 'INSERT INTO oauth2_clients SET ?';
   const params = {
     client_id: client.clientId,
-    client_secret: await bcrypt.hash(clientSecret, 12),
+    client_secret: client.clientSecret,
     user_id: client.user.id,
     allowed_grant_types: client.allowedGrantTypes.join(' '),
   };

@@ -28,7 +28,7 @@ fix:
 lint-fix: fix
 
 start-dev:
-	ts-node src/app.js
+	npx tsc-watch --onSuccess 'node dist/app.js'
 
 watch:
 	./node_modules/.bin/tsc --watch

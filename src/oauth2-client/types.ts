@@ -10,7 +10,7 @@ export type GrantType = 'refresh_token' | 'client_credentials' | 'password' | 'i
  * OAuth2 clients.
  */
 export type OAuth2Client = {
-  
+
   /**
    * Unique, internal id.
    */
@@ -21,14 +21,12 @@ export type OAuth2Client = {
    */
   clientId: string,
 
+
   /**
    * A secret string. This is hashed using bcrypt2
    */
-  clientSecret: Buffer,
+  clientSecret: string;
 
-  /**
-   * In a12nserver, each Client is associated to a single 'user'.
-   */
   user: User,
 
   /**

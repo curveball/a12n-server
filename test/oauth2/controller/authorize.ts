@@ -31,7 +31,7 @@ describe('AuthorizeController', () => {
   const oauth2Client: OAuth2Client = {
     id: 1,
     clientId: 'client-id',
-    clientSecret: Buffer.from('client-secret', 'utf-8'),
+    clientSecret: 'client-secret',
     user: user,
     allowedGrantTypes: ['authorization_code'],
   };

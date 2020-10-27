@@ -157,7 +157,7 @@ class AuthorizeController extends Controller {
       await super.dispatch(ctx);
     } catch (err) {
       if (err.errorCode) {
-        // tslint:disable-next-line:no-console
+        /* eslint-disable-next-line no-console */
         console.log(err);
         serializeError(ctx, err);
       } else {

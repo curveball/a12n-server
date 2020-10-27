@@ -1,6 +1,17 @@
 Changelog
 =========
 
+0.13.4 (2020-10-27)
+-------------------
+
+* `dotenv` is used for setting environment variables in development
+  environments.
+* Added an API and simple interface for seeing OAuth2 clients and adding new
+  ones.
+* Fixed a bug related to the OAuth2 `authorization_code` flow that prevented
+  completing the process if the user used an incorrect password the first time.
+
+
 0.13.3 (2020-10-03)
 -------------------
 

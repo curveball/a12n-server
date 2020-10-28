@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.13.5 (2020-10-27)
+-------------------
+
+* `dotenv` and `dotenv-defaults` were incorrectly marked as dev dependencies.
+
+
 0.13.4 (2020-10-27)
 -------------------
 

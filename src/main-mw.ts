@@ -19,6 +19,8 @@ export default function(): Middleware {
     problem(),
     session({
       store: 'memory',
+      cookieName: 'A12N',
+      expiry: 60*60*24*7,
     }),
     login(),
     bodyParser(),

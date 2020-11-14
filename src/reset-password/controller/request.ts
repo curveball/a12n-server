@@ -30,8 +30,7 @@ class ResetPasswordRequestController extends Controller {
       user = await userService.findByIdentity('mailto:' + ctx.request.body.emailAddress);
     } catch (err) {
       if (err instanceof NotFound) {
-        ctx.status = 303;
-        ctx.response.headers.set('location', '/reset-password?error=We+can\'t+seem+to+find+your+record.+Please+try+gain');
+        ctx.redirect(303, '/reset-password?error=Account+not+found.+Please+try+again');
         return;
       } else {
         throw err;
@@ -39,15 +38,13 @@ class ResetPasswordRequestController extends Controller {
     }
 
     if (!user.active) {
-      ctx.status = 303;
-      ctx.response.headers.set('location', '/reset-password?error=User+account+is+inactive,+please+contact+admin');
+      ctx.redirect(303, '/reset-password?error=User+account+is+inactive,+please+contact+administrator.');
       return;
     }
     await sendResetPasswordEmail(user);
     await log(EventType.resetPasswordRequest, ctx.ip()!, user.id);
 
-    ctx.status = 303;
-    ctx.response.headers.set('location', '/reset-password?msg=We\'ve+sent+you+a+link+to+your+email+for+changing+password');
+    ctx.redirect(303, '/reset-password?msg=Password+reset+request+submitted.+Please+check+your+email+for+further+instructions.');
   }
 }
 

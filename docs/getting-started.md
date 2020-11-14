@@ -75,22 +75,6 @@ behavior. See the table below.
 |                       SMTP_URL |           |                       | See below section, [Optional](#Optional)                      |
 |                SMTP_EMAIL_FROM |           |                       | See below section, [Optional](#Optional)                      |
 
-Loading environment varibles
-----------------------------
-
-For development & production purposes, `a12nserver` uses `.env` & `.env.defaults` files. These files will store environemnt varibles into `proccess.env`.
-
-For development, create `.env` file and add values to environemnt varibles. By default, git will ignore this file.
-```
-PORT=8531
-MYSQL_HOST=127.0.0.1
-MYSQL_PASSWORD=password
-MYSQL_USER=a12nserver
-MYSQL_DATABASE=a12nserver
-SMTP_URL=""
-SMTP_EMAIL_FROM='"Example" <email@example.com>'
-PUBLIC_URI="http://localhost:8531/"
-```
 
 Creating the first user
 -----------------------

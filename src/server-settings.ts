@@ -1,8 +1,22 @@
+type Settings = {
+  'oauth2.code.expiry': number,
+  'oauth2.accessToken.expiry': number,
+  'oauth2.refreshToken.expiry': number,
+  'registration.enabled': boolean,
+  'registration.mfa.enabled': boolean,
+  'totp': 'enabled' | 'required' | 'disabled',
+  'totp.serviceName': string,
+  'webauthn': 'enabled' | 'disabled' | 'required',
+  'webauthn.expectedOrigin': string,
+  'webauthn.relyingPartyId': string,
+  'webauthn.serviceName': string,
+}
+
 const settingsCache = new Map<string, any>();
 let settingsLoaded = false;
 import db from './database';
 
-export function getSetting<T = any>(setting: string, deflt?: T): T {
+export function getSetting<T extends keyof Settings>(setting: T, deflt?: Settings[T]): Settings[T] {
 
   if (!settingsLoaded) {
     throw new Error('Settings have not been loaded. Call load() first');

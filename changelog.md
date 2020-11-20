@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.13.6 (2020-11-20)
+-------------------
+
+* New tags for semver versions on hub.docker.io.
+* Ability to specify a 'continue' URI when logging out.
+
+
 0.13.5 (2020-10-27)
 -------------------
 

@@ -47,7 +47,7 @@ describe('AuthorizeController', () => {
     sandbox.stub(userService, 'findByIdentity').returns(Promise.resolve(user));
     sandbox.stub(userService, 'validatePassword').returns(Promise.resolve(true));
     sandbox.stub(userService, 'hasTotp').returns(Promise.resolve(false));
-    sandbox.stub(serverSettings, 'getSetting').returns(Promise.resolve(false));
+    sandbox.stub(serverSettings, 'getSetting').returns(true);
   });
 
   afterEach(() => {

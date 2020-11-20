@@ -16,7 +16,7 @@ time I need this.
 Requirements
 ------------
 
-* Node.js 10.x
+* Node.js 14.x
 * MySQL
 
 Features

@@ -1,10 +1,11 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { logoutForm } from './formats/html';
+import * as oauth2Service from '../oauth2/service';
 
 class LogoutController extends Controller {
 
-  async get(ctx: Context) {
+  get(ctx: Context) {
 
     ctx.response.type = 'text/html';
     ctx.response.body = logoutForm(
@@ -17,6 +18,9 @@ class LogoutController extends Controller {
 
   async post(ctx: Context) {
 
+    await oauth2Service.invalidateTokensByBrowserSessionId(
+      ctx.state.sessionId
+    );
     ctx.state.session = null;
     ctx.state.sessionId = null;
     ctx.status = 303;

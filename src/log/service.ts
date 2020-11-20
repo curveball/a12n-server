@@ -27,7 +27,7 @@ export default async function log(
 }
 
 export async function addLogEntry(eventType: EventType, ip: string|null, userId: number, userAgent: string|null): Promise<void> {
-  
+
   await db.query('INSERT INTO user_log SET time = UNIX_TIMESTAMP(), ?', {
     user_id: userId,
     event_type: eventType,

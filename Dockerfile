@@ -1,4 +1,4 @@
-FROM node:12
+FROM node:14
 EXPOSE 8531
 
 RUN mkdir /opt/app
@@ -8,6 +8,7 @@ COPY package.json package.json Makefile tsconfig.json ./
 COPY assets assets
 COPY templates templates
 COPY src src
+COPY mysql-schema mysql-schema
 
 RUN npm i --environment=dev && make build && npm prune --production
 

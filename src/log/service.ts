@@ -2,6 +2,7 @@ import { Context } from '@curveball/core';
 import db from '../database';
 import { User } from '../user/types';
 import { EventType, LogEntry } from './types';
+import * as geoip from 'geoip-lite';
 
 export function log(eventType: EventType, ctx: Context): Promise<void>;
 export function log(eventType: EventType, ip: string|null, userId: number, userAgent: string|null): Promise<void>;
@@ -31,7 +32,8 @@ export async function addLogEntry(eventType: EventType, ip: string|null, userId:
     user_id: userId,
     event_type: eventType,
     ip: ip,
-    user_agent: userAgent
+    user_agent: userAgent,
+    country: ip ? getCountryByIp(ip) : null,
   });
 
 }
@@ -42,7 +44,8 @@ type LogRow = {
   ip: string,
   time: number,
   event_type: EventType,
-  user_agent: string
+  user_agent: string,
+  country: string
 };
 
 export async function findByUser(user: User): Promise<LogEntry[]> {
@@ -56,7 +59,8 @@ export async function findByUser(user: User): Promise<LogEntry[]> {
       time: new Date(row.time * 1000),
       ip: row.ip,
       eventType: row.event_type,
-      userAgent: row.user_agent
+      userAgent: row.user_agent,
+      country: row.country
     };
   });
 
@@ -65,5 +69,11 @@ export async function findByUser(user: User): Promise<LogEntry[]> {
 function isContext(ctx: any): ctx is Context {
 
   return ((<Context> ctx).ip !== undefined);
+
+}
+
+function getCountryByIp(ip: string): string|undefined {
+
+  return geoip.lookup(ip)?.country;
 
 }

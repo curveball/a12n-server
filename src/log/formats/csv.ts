@@ -1,5 +1,4 @@
 import { eventTypeString, LogEntry } from '../types';
-
 import stringify from 'csv-stringify/lib/sync';
 
 export default function csv(log: LogEntry[]): string {
@@ -11,6 +10,7 @@ export default function csv(log: LogEntry[]): string {
       eventType: 'eventType',
       ip: 'ip',
       userAgent: 'userAgent',
+      country: 'country',
     },
     cast: {
       date: (value) => value.toISOString(),

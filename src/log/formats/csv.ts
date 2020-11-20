@@ -1,18 +1,21 @@
 import { eventTypeString, LogEntry } from '../types';
+import stringify from 'csv-stringify/lib/sync';
 
 export default function csv(log: LogEntry[]): string {
 
-  const header = 'time,eventType,ip,userAgent,country\n';
-  return header + log.map( entry => {
-    return [
-      entry.time.toISOString(),
-      eventTypeString.get(entry.eventType),
-      entry.ip,
-      // can contains commas
-      `"${entry.userAgent}"`,
-      entry.country,
-    ];
-
-  }).join('\n');
+  return stringify(log, {
+    header: true,
+    columns: {
+      time: 'time',
+      eventType: 'eventType',
+      ip: 'ip',
+      userAgent: 'userAgent',
+      country: 'country',
+    },
+    cast: {
+      date: (value) => value.toISOString(),
+      number: (value) => eventTypeString.get(value)!,
+    }
+  });
 
 }

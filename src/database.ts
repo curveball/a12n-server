@@ -1,4 +1,3 @@
-// @ts-ignore: No types for this yet
 import mysql from 'mysql2/promise';
 
 let pool: any = null;

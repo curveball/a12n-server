@@ -47,6 +47,11 @@ form label:not(:last-child) {
   margin-bottom: 3em;
 }
 
+
+form fieldset.radiogroup label:not(:last-child) {
+  margin-bottom: 1em;
+}
+
 form input:not([type='checkbox']):not([type='radio']),
 form button,
 form select {
@@ -206,18 +211,27 @@ input.totp {
   font-family: monospace;
 }
 
-.checkbox {
+.checkbox,
+.radio {
   flex-direction: row;
 }
 
-.checkbox :nth-child(1) { order: 2; }
-.checkbox :nth-child(2) { order: 1; }
+.checkbox :nth-child(1),
+.radio :nth-child(1) {
+  order: 2;
+}
+.checkbox :nth-child(2),
+.radio :nth-child(2) {
+  order: 1;
+}
 
-.checkbox input {
+.checkbox input,
+.radio input  {
   margin: 0 1ex 0 0;
 }
 
-.checkbox span {
+.checkbox span,
+.radio span {
   cursor: pointer;
 }
 
@@ -237,4 +251,25 @@ form a:hover {
 
 .login-options {
   text-align: center;
+}
+
+.hidden {
+  display: none;
+}
+
+.qrcode {
+  text-align: center;
+}
+
+.qrcode img {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.qrcode .secret {
+  font-family: monospace;
+  font-weight: bold;
+  background-color: #e0e0e0;
+  padding: 0.5em;
 }

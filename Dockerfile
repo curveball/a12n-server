@@ -1,14 +1,14 @@
-FROM node:8
+FROM node:12
 EXPOSE 8531
 
 RUN mkdir /opt/app
 WORKDIR /opt/app
-COPY package.json package.json
-COPY node_modules node_modules
-RUN npm rebuild bcrypt --update-binary
 
+COPY package.json package.json Makefile tsconfig.json ./
 COPY assets assets
 COPY templates templates
-COPY dist dist
+COPY src src
 
-CMD node dist/app.js 
+RUN npm i --environment=dev && make build && npm prune --production
+
+CMD node dist/app.js

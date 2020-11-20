@@ -1,14 +1,30 @@
-// tslint:disable no-console
+/* eslint no-console: 0 */
 import { Application } from '@curveball/core';
 
 import process from 'process';
 import mainMw from './main-mw';
+import accessLog from '@curveball/accesslog';
+
 import { load } from './server-settings';
 
-(async () => {
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const pkgInfo = require('../package.json');
+console.log('⚾ Curveball %s %s', pkgInfo.name, pkgInfo.version);
 
-  const pkgInfo = require('../package.json');
-  console.log('%s %s', pkgInfo.name, pkgInfo.version);
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+require('dotenv').config();
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+require('dotenv-defaults').config();
+
+const port = process.env.PORT ? parseInt(process.env.PORT, 10) :  8531;
+if (!process.env.PUBLIC_URI) {
+  process.env.PUBLIC_URI = 'http://localhost:' + port + '/';
+  console.log('PUBLIC_URI environment variable was not set, defaulting to http://localhost:' + port + '/');
+}
+
+(async () => {
 
   console.log('Connecting to database');
   console.log('Loading settings');
@@ -16,24 +32,18 @@ import { load } from './server-settings';
 
   const app = new Application();
 
-  app.use( async (ctx, next) => {
-    console.log('=> %s %s', ctx.request.method, ctx.request.path);
-    await next();
-    console.log('<= %s', ctx.response.status);
-  });
-
+  app.use(accessLog());
   app.use(mainMw());
-
-  const port = process.env.PORT ? parseInt(process.env.PORT, 10) :  8531;
-
-  if (!process.env.PUBLIC_URI) {
-    process.env.PUBLIC_URI = 'http://localhost:' + port + '/';
-    console.log('PUBLIC_URI environment variable was not set, defaulting to http://localhost:' + port + '/');
-  }
 
   app.listen(port);
 
   console.log('Listening on port', port);
 
 
-})();
+})().catch( (err) => {
+
+  console.error('Could not start a12n-server');
+  console.error(err);
+  process.exit(2);
+
+});

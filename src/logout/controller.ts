@@ -7,7 +7,11 @@ class LogoutController extends Controller {
   async get(ctx: Context) {
 
     ctx.response.type = 'text/html';
-    ctx.response.body = logoutForm(ctx.query.msg, ctx.query.error);
+    ctx.response.body = logoutForm(
+      ctx.query.msg,
+      ctx.query.error,
+      ctx.query.continue,
+    );
 
   }
 
@@ -16,7 +20,10 @@ class LogoutController extends Controller {
     ctx.state.session = null;
     ctx.state.sessionId = null;
     ctx.status = 303;
-    ctx.response.headers.set('Location', '/');
+    ctx.redirect(
+      303,
+      ctx.query.continue || '/'
+    );
 
   }
 

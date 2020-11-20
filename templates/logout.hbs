@@ -10,4 +10,7 @@
       <button type="submit">Logout</button>
     </label>
   </fieldset>
+  {{#each hiddenFields}}
+    <input type="hidden" name="{{@key}}" value="{{this}}" />
+  {{/each}}
 </form>

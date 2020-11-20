@@ -6,12 +6,13 @@ export enum EventType {
   resetPasswordRequest,
   resetPasswordSuccess,
   loginFailedInactive,
+  webAuthnFailed,
+  tokenRevoked,
   oauth2BadRedirect = 11,
 }
 
 export type LogEntry = {
   time: Date,
-  userId: number,
   ip: string,
   eventType: EventType,
   userAgent: string,
@@ -19,12 +20,14 @@ export type LogEntry = {
 };
 
 export const eventTypeString = new Map<EventType, string>([
-  [EventType.loginSuccess,      'login-success'],
-  [EventType.loginFailed,       'login-failed'],
-  [EventType.totpFailed,        'totp-failed'],
+  [EventType.loginSuccess,          'login-success'],
+  [EventType.loginFailed,           'login-failed'],
+  [EventType.totpFailed,            'totp-failed'],
+  [EventType.webAuthnFailed,        'webauthn-failed'],
   [EventType.changePasswordSuccess, 'change-password-success'],
-  [EventType.resetPasswordRequest, 'reset-password-request'],
-  [EventType.resetPasswordSuccess, 'reset-password-success'],
-  [EventType.loginFailedInactive, 'login-failed-inactive'],
-  [EventType.oauth2BadRedirect, 'oauth2-badredirect'],
+  [EventType.resetPasswordRequest,  'reset-password-request'],
+  [EventType.resetPasswordSuccess,  'reset-password-success'],
+  [EventType.loginFailedInactive,   'login-failed-inactive'],
+  [EventType.tokenRevoked,          'token-revoked'],
+  [EventType.oauth2BadRedirect,     'oauth2-badredirect'],
 ]);

@@ -1,56 +1,52 @@
 import { NotFound } from '@curveball/http-errors';
-import bcrypt from 'bcrypt';
 import crypto from 'crypto';
 import db from '../database';
 import { getSetting } from '../server-settings';
 import * as userService from '../user/service';
 import { User } from '../user/types';
-import { InvalidGrant, InvalidRequest, UnauthorizedClient} from './errors';
-import { OAuth2Client, OAuth2Code, OAuth2Token } from './types';
+import { InvalidGrant, InvalidRequest, UnauthorizedClient } from './errors';
+import { CodeChallengeMethod, OAuth2Code, OAuth2Token } from './types';
+import { OAuth2Client } from '../oauth2-client/types';
 
-type OAuth2ClientRecord = {
-  id: number,
-  client_id: string,
-  client_secret: Buffer,
-  user_id: number,
-  allowed_grant_types: string
-};
+export async function getRedirectUris(client: OAuth2Client): Promise<string[]> {
 
-export async function getClientByClientId(clientId: string): Promise<OAuth2Client> {
+  const query = 'SELECT uri FROM oauth2_redirect_uris WHERE oauth2_client_id = ?';
+  const result = await db.query(query, [client.id]);
 
-  const query = 'SELECT id, client_id, client_secret, user_id, allowed_grant_types FROM oauth2_clients WHERE client_id = ?';
-  const result = await db.query(query, [clientId]);
+  return result[0].map((record: {uri:string}) => record.uri);
 
-  if (!result[0].length) {
-    throw new NotFound('OAuth2 client_id not recognized');
+}
+
+export async function validateRedirectUri(client: OAuth2Client, redirectUri: string): Promise<boolean> {
+
+  const uris = await getRedirectUris(client);
+  return uris.includes(redirectUri);
+
+}
+
+/**
+ * Checks if a redirect_uri is permitted for the client.
+ *
+ * If not, it will emit an InvalidGrant error
+ */
+export async function requireRedirectUri(client: OAuth2Client, redirectUrl: string): Promise<void> {
+
+  const uris = await getRedirectUris(client);
+  if (uris.length===0) {
+    throw new InvalidGrant('No valid redirect_uri was setup for this OAuth2 client_id');
+  }
+  if (!uris.includes(redirectUrl)) {
+    throw new InvalidGrant(`Invalid value for redirect_uri. The redirect_uri you passed (${redirectUrl}) was not in the allowed list of redirect_uris`);
   }
 
-  const record: OAuth2ClientRecord = result[0][0];
-
-  const user = await userService.findActiveById(record.user_id);
-
-  return {
-    id: record.id,
-    clientId: record.client_id,
-    clientSecret: record.client_secret,
-    user,
-    allowedGrantTypes: record.allowed_grant_types.split(' '),
-  };
-
 }
 
-export async function validateSecret(oauth2Client: OAuth2Client, secret: string): Promise<boolean> {
+export async function addRedirectUris(client: OAuth2Client, redirectUris: string[]): Promise<void> {
 
-  return await bcrypt.compare(secret, oauth2Client.clientSecret.toString('utf-8'));
-
-}
-
-export async function validateRedirectUri(client: OAuth2Client, redirectUrl: string) {
-
-  const query = 'SELECT id FROM oauth2_redirect_uris WHERE oauth2_client_id = ? AND uri = ?';
-  const result = await db.query(query, [client.id, redirectUrl]);
-
-  return result[0].length > 0;
+  const query = 'INSERT INTO oauth2_redirect_uris SET oauth2_client_id = ?, uri = ?';
+  for(const uri of redirectUris) {
+    await db.query(query, [client.id, uri]);
+  }
 
 }
 
@@ -142,7 +138,7 @@ export async function generateTokenForClient(client: OAuth2Client): Promise<OAut
  *
  * The resource owner then exchanges that code for an access and refresh token.
  */
-export async function generateTokenFromCode(client: OAuth2Client, code: string): Promise<OAuth2Token> {
+export async function generateTokenFromCode(client: OAuth2Client, code: string, codeVerifier: string|undefined): Promise<OAuth2Token> {
 
   const query = 'SELECT * FROM oauth2_codes WHERE code = ?';
   const codeResult = await db.query(query, [code]);
@@ -157,6 +153,8 @@ export async function generateTokenFromCode(client: OAuth2Client, code: string):
   // Delete immediately.
   await db.query('DELETE FROM oauth2_codes WHERE id = ?', [codeRecord.id]);
 
+  validatePKCE(codeVerifier, codeRecord.code_challenge, codeRecord.code_challenge_method);
+
   if (codeRecord.created + expirySettings.code < Math.floor(Date.now() / 1000)) {
     throw new InvalidRequest('The supplied code has expired');
   }
@@ -166,6 +164,33 @@ export async function generateTokenFromCode(client: OAuth2Client, code: string):
 
   const user = await userService.findById(codeRecord.user_id);
   return generateTokenForUser(client, user);
+
+}
+
+export function validatePKCE(codeVerifier: string|undefined, codeChallenge: string|undefined, codeChallengeMethod: CodeChallengeMethod): void {
+  if (!codeVerifier) {
+    if (!codeChallenge) {
+      // This request was not initiated with PKCE support, so ignore the validation
+      return;
+    } else {
+      // The authorization request started with PKCE, but the token request did not follow through
+      throw new InvalidRequest('The code verifier was not supplied');
+    }
+  }
+
+  // For the plain method, the derived code and the code verifier are the same
+  let derivedCodeChallenge = codeVerifier;
+
+  if (codeChallengeMethod === 'S256') {
+    derivedCodeChallenge = crypto.createHash('sha256').update(codeVerifier).digest('base64')
+      .replace(/\+/g, '-')
+      .replace(/\//g, '_')
+      .replace(/=/g, '');
+  }
+
+  if (codeChallenge !== derivedCodeChallenge) {
+    throw new InvalidGrant('The code verifier does not match the code challenge');
+  }
 
 }
 
@@ -197,12 +222,51 @@ export async function generateTokenFromRefreshToken(client: OAuth2Client, refres
 
 }
 
+export async function revokeByAccessRefreshToken(client: OAuth2Client, token: string): Promise<void> {
+
+  let oauth2Token: OAuth2Token|null = null;
+
+  try {
+    oauth2Token = await getTokenByAccessToken(token);
+  } catch (err) {
+    if (err instanceof NotFound) {
+      // Swallow since it's okay if the token has been revoked previously or is invalid (Section 2.2 of RFC7009)
+    } else {
+      throw err;
+    }
+  }
+
+  if (!oauth2Token) {
+    try {
+      oauth2Token = await getTokenByRefreshToken(token);
+    } catch (err) {
+      if (err instanceof NotFound) {
+        // Swallow since it's okay if the token has been revoked previously or is invalid (Section 2.2 of RFC7009)
+      } else {
+        throw err;
+      }
+    }
+  }
+
+  if (!oauth2Token) {
+    return;
+  }
+
+  if (oauth2Token.clientId !== client.id) {
+    // Treat this as an invalid token and don't do anything
+    return;
+  }
+
+  await revokeToken(oauth2Token);
+
+}
+
 /**
  * Removes a token.
  *
  * This function will not throw an error if the token was deleted before.
  */
-export async function revokeToken(token: OAuth2Token) {
+export async function revokeToken(token: OAuth2Token): Promise<void> {
 
   const query = 'DELETE FROM oauth2_tokens WHERE access_token = ?';
   await db.query(query, [token.accessToken]);
@@ -215,7 +279,12 @@ export async function revokeToken(token: OAuth2Token) {
  * This function creates an code for a user. The code is later exchanged for
  * a oauth2 access token.
  */
-export async function generateCodeForUser(client: OAuth2Client, user: User): Promise<OAuth2Code> {
+export async function generateCodeForUser(
+  client: OAuth2Client,
+  user: User,
+  codeChallenge: string|undefined,
+  codeChallengeMethod: string|undefined,
+): Promise<OAuth2Code> {
 
   const code = crypto.randomBytes(32).toString('base64').replace('=', '');
 
@@ -225,6 +294,8 @@ export async function generateCodeForUser(client: OAuth2Client, user: User): Pro
     client_id: client.id,
     user_id: user.id,
     code: code,
+    code_challenge: codeChallenge,
+    code_challenge_method: codeChallengeMethod
   });
 
   return {
@@ -247,6 +318,8 @@ type OAuth2CodeRecord = {
   client_id: number,
   code: string,
   user_id: number,
+  code_challenge: string|undefined,
+  code_challenge_method: CodeChallengeMethod
   created: number,
 };
 
@@ -343,9 +416,9 @@ type TokenExpiry = {
 function getTokenExpiry(): TokenExpiry {
 
   return {
-    accessToken: getSetting<number>('oauth2.accessToken.expiry', 600),
-    refreshToken: getSetting<number>('oauth2.refreshToken.expiry', 3600 * 6),
-    code: getSetting<number>('oauth2.code.expiry', 600),
+    accessToken: getSetting('oauth2.accessToken.expiry', 600),
+    refreshToken: getSetting('oauth2.refreshToken.expiry', 3600 * 6),
+    code: getSetting('oauth2.code.expiry', 600),
   };
 
 }

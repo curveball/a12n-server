@@ -1,6 +1,98 @@
 Changelog
 =========
 
+0.13.6 (2020-11-20)
+-------------------
+
+* New tags for semver versions on hub.docker.io.
+* Ability to specify a 'continue' URI when logging out.
+
+
+0.13.5 (2020-10-27)
+-------------------
+
+* `dotenv` and `dotenv-defaults` were incorrectly marked as dev dependencies.
+
+
+0.13.4 (2020-10-27)
+-------------------
+
+* `dotenv` is used for setting environment variables in development
+  environments.
+* Added an API and simple interface for seeing OAuth2 clients and adding new
+  ones.
+* Fixed a bug related to the OAuth2 `authorization_code` flow that prevented
+  completing the process if the user used an incorrect password the first time.
+
+
+0.13.3 (2020-10-03)
+-------------------
+
+* Redirect check was broken.
+
+
+0.13.2 (2020-10-02)
+-------------------
+
+* Fixed Webauthn origin/host auto-detect.
+
+
+0.13.1 (2020-10-02)
+-------------------
+
+* Docker build can now fully run without a pre-existing development
+  environment.
+* Public Docker Image: https://hub.docker.com/r/curveballjs/a12n-server
+* WebauthN and TOTP MFA are now enabled by default.
+* No longer using `unpkg` for browser dependencies.
+* Upgraded from `hal-browser` to `@curveball/browser`.
+* Better error messaging in the OAuth2 flow when a `redirect_uri` is
+  incorrect.
+
+
+0.13.0 (2020-09-29)
+-------------------
+
+* Support for WebauthN / Yubikeys (@mhum)
+* Logging in is now a multi-step process, with 2FA (Webauthn/Yubikey/TOTP)
+  as the second step. (@mhum)
+* It's now possible to setup 2FA during registration. (@mhum)
+* `/validate-bearer` and `/validate-totp` endpoints have been removed.
+* Support for OAuth2 PKCE (@mhum)
+* tslint -> eslint
+* Typescript 4.
+* Compatible with Typescript strict mode.
+
+
+0.12.7 (2020-04-28)
+-------------------
+
+* Update all dependencies
+
+
+0.12.6 (2020-03-04)
+-------------------
+
+* `PUBLIC_URI` is now correctly being auto-detected if it was not set in the
+  environment in standalone mode.
+* Improved error messaging when the server fails to start.
+
+
+0.12.5 (2020-03-03)
+-------------------
+
+* Now using `@curveball/accesslog`, which also colorizes CLI output when
+  viewed on a terminal.
+* A list of privileges are now returned from the 'introspect' endpoint.
+* An error will be thrown when the server is used as a middleware (instead
+  of standalone) and no `PUBLIC_URI` environment variable is set.
+
+
+0.12.4 (2020-03-02)
+-------------------
+
+* Added user links to accessToken
+
 0.12.3 (2020-03-02)
 -------------------
 

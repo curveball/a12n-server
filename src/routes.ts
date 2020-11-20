@@ -7,15 +7,20 @@ import health from './health/controller';
 import home from './home/controller';
 import introspect from './introspect/controller';
 import userLog from './log/controller/user';
-import login from './login/controller';
+import login from './login/controller/login';
+import loginMfa from './login/controller/mfa';
+import loginWebAuthn from './mfa/webauthn/controller/login';
 import logout from './logout/controller';
 import oauth2Authorize from './oauth2/controller/authorize';
 import oauth2Token from './oauth2/controller/token';
-import validateBearer from './oauth2/controller/validate-bearer';
-import validateTotp from './oauth2/controller/validate-totp';
+import oauth2Revoke from './oauth2/controller/revoke';
 import privilegeCollection from './privilege/controller/collection';
 import privilegeItem from './privilege/controller/item';
-import register from './register/controller';
+import register from './register/controller/user';
+import registerMfa from './register/controller/mfa';
+import registerTotp from './mfa/totp/controller/register';
+import registerWebAuthn from './mfa/webauthn/controller/register';
+import registerWebAuthnAttestation from './mfa/webauthn/controller/attestation';
 import resetPassword from './reset-password/controller/request';
 import resetPasswordRedirect from './reset-password/controller/reset-password';
 import passwordToken from './reset-password/controller/token';
@@ -23,6 +28,9 @@ import users from './user/controller/collection';
 import user from './user/controller/item';
 import changePasswordRedirect from './well-known/controller/change-password';
 import oauth2Metadata from './well-known/controller/oauth2-metadata';
+import clients from './oauth2-client/controller/collection';
+import client from './oauth2-client/controller/item';
+import clientNew from './oauth2-client/controller/new';
 
 const routes = [
   router('/', home),
@@ -30,11 +38,13 @@ const routes = [
 
   router('/authorize', oauth2Authorize),
   router('/token', oauth2Token),
-
+  router('/revoke', oauth2Revoke),
 
   router('/create-user', createUser),
 
   router('/login', login),
+  router('/login/mfa', loginMfa),
+  router('/login/mfa/webauthn', loginWebAuthn),
   router('/logout', logout),
 
   router('/health', health),
@@ -44,19 +54,23 @@ const routes = [
   router('/privilege/:id', privilegeItem),
 
   router('/register', register),
+  router('/register/mfa', registerMfa),
+  router('/register/mfa/totp', registerTotp),
+  router('/register/mfa/webauthn', registerWebAuthn),
+  router('/register/mfa/webauthn/attestation', registerWebAuthnAttestation),
 
   router('/user', users),
   router('/user/:id', user),
   router('/user/:id/log', userLog),
   router('/user/:id/member', group),
+  router('/user/:id/client', clients),
+  router('/user/:id/client/new', clientNew),
+  router('/user/:id/client/:clientId', client),
 
   router('/changepassword', changePassword),
   router('/reset-password', resetPassword),
   router('/reset-password/token/:token', passwordToken),
   router('/reset-password/change-password', resetPasswordRedirect),
-
-  router('/validate-bearer', validateBearer),
-  router('/validate-totp', validateTotp),
 
   router('/.well-known/oauth-authorization-server', oauth2Metadata),
   router('/.well-known/change-password', changePasswordRedirect),

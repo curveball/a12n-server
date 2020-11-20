@@ -1,13 +1,5 @@
 import { User } from '../user/types';
 
-export type OAuth2Client = {
-  id: number,
-  clientId: string,
-  clientSecret: Buffer,
-  user: User,
-  allowedGrantTypes: string[],
-};
-
 export type OAuth2Token = {
   accessToken: string,
   refreshToken: string,
@@ -20,3 +12,5 @@ export type OAuth2Token = {
 export type OAuth2Code = {
   code: string;
 };
+
+export type CodeChallengeMethod = 'plain' | 'S256';

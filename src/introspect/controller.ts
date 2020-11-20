@@ -30,7 +30,7 @@ class IntrospectionController extends Controller {
 
     ctx.response.type = 'application/json';
 
-    let foundToken: OAuth2Token;
+    let foundToken: OAuth2Token|null = null;
     let foundTokenType: string;
 
     if (tokenTypeHint === null || tokenTypeHint === 'access_token') {
@@ -70,7 +70,7 @@ class IntrospectionController extends Controller {
     if (foundToken) {
       const privileges = await privilegeService.getPrivilegesForUser(foundToken.user);
 
-      switch (foundTokenType) {
+      switch (foundTokenType!) {
 
         case 'accessToken' :
           ctx.response.body = accessToken(foundToken, privileges);

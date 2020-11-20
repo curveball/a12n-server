@@ -6,11 +6,11 @@ import * as userService from '../../user/service';
 import { User } from '../../user/types';
 import { InvalidGrant, InvalidRequest, serializeError, UnsupportedGrantType } from '../errors';
 import * as oauth2Service from '../service';
-import { OAuth2Client } from '../types';
+import { OAuth2Client } from '../../oauth2-client/types';
 import {
   getOAuth2ClientFromBasicAuth,
   getOAuth2ClientFromBody,
-} from '../utilities';
+} from '../../oauth2-client/service';
 
 class TokenController extends Controller {
 
@@ -87,7 +87,7 @@ class TokenController extends Controller {
       log(EventType.oauth2BadRedirect, ctx);
       throw new InvalidRequest('This value for "redirect_uri" is not recognized.');
     }
-    const token = await oauth2Service.generateTokenFromCode(oauth2Client, ctx.request.body.code);
+    const token = await oauth2Service.generateTokenFromCode(oauth2Client, ctx.request.body.code, ctx.request.body.code_verifier);
 
     ctx.response.type = 'application/json';
     ctx.response.body = {
@@ -114,7 +114,7 @@ class TokenController extends Controller {
     }
 
     if (!user.active) {
-      log(EventType.loginFailedInactive, ctx.ip(), user.id, ctx.request.headers.get('User-Agent'));
+      log(EventType.loginFailedInactive, ctx.ip(), user.id, ctx.request.headers.get('User-Agent')!);
       throw new InvalidGrant('User Inactive');
     }
 
@@ -175,7 +175,7 @@ class TokenController extends Controller {
       await super.dispatch(ctx);
     } catch (err) {
       if (err.errorCode) {
-        // tslint:disable-next-line:no-console
+        /* eslint-disable-next-line no-console */
         console.log(err);
         serializeError(ctx, err);
       } else {

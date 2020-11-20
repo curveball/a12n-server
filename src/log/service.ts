@@ -2,38 +2,38 @@ import { Context } from '@curveball/core';
 import db from '../database';
 import { User } from '../user/types';
 import { EventType, LogEntry } from './types';
-// @ts-ignore: No types for this yet
 import * as geoip from 'geoip-lite';
 
 export function log(eventType: EventType, ctx: Context): Promise<void>;
-export function log(eventType: EventType, ip: string, userId: number, userAgent: string): Promise<void>;
+export function log(eventType: EventType, ip: string|null, userId: number, userAgent: string|null): Promise<void>;
 export default async function log(
   eventType: EventType,
-  arg1: string | Context,
+  arg1: string | Context | null,
   arg2?: number,
-  arg3?: string
+  arg3?: string|null
 ) {
 
   if (isContext(arg1)) {
     await addLogEntry(
       eventType,
-      arg1.ip(),
+      arg1.ip()!,
       arg1.state.session.user && arg1.state.session.user.id ? arg1.state.session.user.id : null,
       arg1.request.headers.get('User-Agent'),
     );
   } else {
-    await addLogEntry(eventType, arg1, arg2, arg3);
+    await addLogEntry(eventType, arg1, arg2!, arg3!);
   }
 
 }
 
-export async function addLogEntry(eventType: EventType, ip: string, userId: number, userAgent: string): Promise<void> {
+export async function addLogEntry(eventType: EventType, ip: string|null, userId: number, userAgent: string|null): Promise<void> {
+  
   await db.query('INSERT INTO user_log SET time = UNIX_TIMESTAMP(), ?', {
     user_id: userId,
     event_type: eventType,
     ip: ip,
     user_agent: userAgent,
-    country: getCountryByIp(ip)
+    country: ip ? getCountryByIp(ip) : null,
   });
 
 }
@@ -50,7 +50,7 @@ type LogRow = {
 
 export async function findByUser(user: User): Promise<LogEntry[]> {
 
-  const result = await db.query(
+  const result:[LogRow[]] = await db.query(
     'SELECT * FROM user_log WHERE user_id = ?',
     [user.id]
   );
@@ -72,7 +72,7 @@ function isContext(ctx: any): ctx is Context {
 
 }
 
-function getCountryByIp(ip: string): string|null {
+function getCountryByIp(ip: string): string|undefined {
 
   return geoip.lookup(ip)?.country;
 

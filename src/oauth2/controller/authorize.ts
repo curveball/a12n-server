@@ -124,6 +124,7 @@ class AuthorizeController extends Controller {
       ctx.state.session.user,
       codeChallenge,
       codeChallengeMethod,
+      ctx.state.sessionId,
     );
 
     ctx.status = 302;

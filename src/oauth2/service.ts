@@ -55,7 +55,7 @@ export async function addRedirectUris(client: OAuth2Client, redirectUris: string
  *
  * This function creates an access token for a specific user.
  */
-export async function generateTokenForUser(client: OAuth2Client, user: User): Promise<OAuth2Token> {
+export async function generateTokenForUser(client: OAuth2Client, user: User, browserSessionId?: string): Promise<OAuth2Token> {
   if (!user.active) {
     throw new Error ('Cannot generate token for inactive user');
   }
@@ -76,6 +76,7 @@ export async function generateTokenForUser(client: OAuth2Client, user: User): Pr
     user_id: user.id,
     access_token_expires: accessTokenExpires,
     refresh_token_expires: refreshTokenExpires,
+    browser_session_id: browserSessionId,
   });
 
   return {
@@ -163,7 +164,7 @@ export async function generateTokenFromCode(client: OAuth2Client, code: string, 
   }
 
   const user = await userService.findById(codeRecord.user_id);
-  return generateTokenForUser(client, user);
+  return generateTokenForUser(client, user, codeRecord.browser_session_id || undefined);
 
 }
 
@@ -218,7 +219,7 @@ export async function generateTokenFromRefreshToken(client: OAuth2Client, refres
   }
 
   await revokeToken(oldToken);
-  return generateTokenForUser(client, oldToken.user);
+  return generateTokenForUser(client, oldToken.user, oldToken.browserSessionId);
 
 }
 
@@ -284,6 +285,7 @@ export async function generateCodeForUser(
   user: User,
   codeChallenge: string|undefined,
   codeChallengeMethod: string|undefined,
+  browserSessionId: string,
 ): Promise<OAuth2Code> {
 
   const code = crypto.randomBytes(32).toString('base64').replace('=', '');
@@ -295,7 +297,8 @@ export async function generateCodeForUser(
     user_id: user.id,
     code: code,
     code_challenge: codeChallenge,
-    code_challenge_method: codeChallengeMethod
+    code_challenge_method: codeChallengeMethod,
+    browser_session_id: browserSessionId,
   });
 
   return {
@@ -311,6 +314,7 @@ type OAuth2TokenRecord = {
   user_id: number,
   access_token_expires: number,
   refresh_token_expires: number
+  browser_session_id: string | null,
 };
 
 type OAuth2CodeRecord = {
@@ -321,6 +325,7 @@ type OAuth2CodeRecord = {
   code_challenge: string|undefined,
   code_challenge_method: CodeChallengeMethod
   created: number,
+  browser_session_id: string | null,
 };
 
 /**
@@ -340,7 +345,8 @@ export async function getTokenByAccessToken(accessToken: string): Promise<OAuth2
    refresh_token,
    user_id,
    access_token_expires,
-   refresh_token_expires
+   refresh_token_expires,
+   browser_session_id
   FROM oauth2_tokens
   WHERE
     access_token = ? AND
@@ -362,6 +368,7 @@ export async function getTokenByAccessToken(accessToken: string): Promise<OAuth2
     tokenType: 'bearer',
     user,
     clientId: row.oauth2_client_id,
+    browserSessionId: row.browser_session_id || undefined,
   };
 
 }
@@ -380,7 +387,8 @@ export async function getTokenByRefreshToken(refreshToken: string): Promise<OAut
    refresh_token,
    user_id,
    access_token_expires,
-   refresh_token_expires
+   refresh_token_expires,
+   browser_session_id
   FROM oauth2_tokens
   WHERE
     refresh_token = ? AND
@@ -403,7 +411,24 @@ export async function getTokenByRefreshToken(refreshToken: string): Promise<OAut
     tokenType: 'bearer',
     user,
     clientId: row.oauth2_client_id,
+    browserSessionId: row.browser_session_id || undefined,
   };
+
+}
+
+/**
+ * Removes all tokens that relate to a specific browser session id.
+ *
+ * This will cause all access tokens and refresh tokens to be invalidated. Generally
+ * used when a user logs out.
+ *
+ * This doesn't remove all tokens for all sessions, but should remove the tokens that
+ * relate to the device the user used to log out.
+ */
+export async function invalidateTokensByBrowserSessionId(browserSessionId: string) {
+
+  await db.query('DELETE FROM oauth2_codes WHERE browser_session_id = ?', browserSessionId);
+  await db.query('DELETE FROM oauth2_tokens WHERE browser_session_id = ?', browserSessionId);
 
 }
 

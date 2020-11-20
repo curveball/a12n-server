@@ -1,6 +1,21 @@
 Changelog
 =========
 
+0.14.0 (2020-11-20)
+-------------------
+
+* Now requires Node 14, due to the use of `fs/promises`.
+* The 'logout' feature will now expire any OAuth2 codes and tokens if they
+  were initiated by the current browser session.
+* The 'logout' endpoint now has support for a `continue` query parameter, to
+  let the user get redirected back to a new endpoint after logout.
+* Now using an 'ip to country' database to figure out where users are logging
+  in from, to aid with intrusion detection features if these ever land.
+* A new system that will warn the user and prevent starting if some of the
+  database patches have not been applied.
+* New database patches! Apply them before starting the new version.
+
+
 0.13.6 (2020-11-20)
 -------------------
 

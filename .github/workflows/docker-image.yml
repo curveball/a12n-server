@@ -13,7 +13,7 @@ jobs:
         uses: docker/build-push-action@v1
         with:
           username: ${{ github.actor }}
-          password: ${{ secrets.GITHUB_TOKEN }}
-          registry: docker.pkg.github.com
-          repository: badgateway/a12n-server/a12-nserver
+          password: ${{ secrets.CR_PAT }}
+          registry: ghcr.io/curveball/a12n-server
+          repository: badgateway/a12n-server
           tag_with_ref: true

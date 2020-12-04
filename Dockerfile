@@ -1,4 +1,6 @@
 FROM node:14
+LABEL org.opencontainers.image.source https://github.com/curveball/a12n-server
+
 EXPOSE 8531
 
 RUN mkdir /opt/app

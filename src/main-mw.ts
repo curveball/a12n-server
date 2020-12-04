@@ -30,7 +30,7 @@ export default function(): Middleware {
   /**
    * This middleware contains all the a12n-server functionality.
    */
-  return (ctx, next) => {
+  return ctx => {
     return invokeMiddlewares(ctx, middlewares);
   };
 

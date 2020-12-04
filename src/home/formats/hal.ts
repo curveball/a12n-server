@@ -19,11 +19,14 @@ export default (version: string, authenticatedUser: User) => {
       },
       'logout': {
         href: '/logout',
-        title: 'Log out'
+        title: 'Log out',
       },
       'token': {
         href: '/token',
-        title: 'OAuth2 protocol endpoint'
+        title: 'OAuth2 protocol endpoint',
+        hints: {
+          allow: ['POST'],
+        }
       },
       'privilege-collection': {
         href: '/privilege',
@@ -31,7 +34,10 @@ export default (version: string, authenticatedUser: User) => {
       },
       'user-collection': { href: '/user', title: 'List of users'},
 
-      'oauth_server_metadata_uri' : { href: '/.well-known/oauth-authorization-server', title: 'OAuth 2.0 Authorization Server Metadata' }
+      'oauth_server_metadata_uri' : {
+        href: '/.well-known/oauth-authorization-server',
+        title: 'OAuth 2.0 Authorization Server Metadata'
+      }
     },
     version: version,
   };

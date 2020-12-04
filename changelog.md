@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.14.1 (2020-12-04)
+-------------------
+
+* Updated all dependencies, fixing a highlight.js security issue.
+* Small tweaks to home document.
+
+
 0.14.0 (2020-11-20)
 -------------------
 

@@ -32,6 +32,7 @@ Features
   * Google Authenticator (TOTP).
   * WebauthN / Yubikeys
 * A simple, flat, permission model.
+* Registration, lost password.
 
 Documentation
 -------------
@@ -50,7 +51,6 @@ eventually get there.
 Here's a few key features that I'd imagine people might want, but hasn't been
 built yet:
 
-* A 'lost password' feature.
 * A registration API (Both OAuth2 clients and users all need to be 100%
   managed by manually adding database records).
 * A management interface. This project will be API-only, but a separate admin

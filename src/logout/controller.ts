@@ -26,7 +26,7 @@ class LogoutController extends Controller {
     ctx.status = 303;
     ctx.redirect(
       303,
-      ctx.query.continue || '/'
+      ctx.request.body.continue || '/'
     );
 
   }

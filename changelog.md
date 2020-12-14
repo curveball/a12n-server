@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.14.2 (2020-12-14)
+-------------------
+
+* #214: `continue` url was not being respected in the logout flow.
+
+
 0.14.1 (2020-12-04)
 -------------------
 

@@ -72,6 +72,7 @@
     "@curveball/problem": "^0.2.2",
     "@curveball/router": "^0.2.4",
     "@curveball/session": "^0.5.0",
+    "@curveball/session-redis": "^0.3.0",
     "@simplewebauthn/browser": "^0.8.2",
     "@simplewebauthn/server": "^0.8.2",
     "@types/geoip-lite": "^1.4.0",

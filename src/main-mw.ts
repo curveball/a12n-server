@@ -20,12 +20,12 @@ export default function(): Middleware {
     problem(),
     session({
       store: process.env.REDIS_SESSION ? new RedisStore({
-          prefix: 'A12N-session',
-          clientOptions: {
-            port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT, 10) : 6379,
-            host: process.env.REDIS_HOST ? process.env.REDIS_HOST : '127.0.0.1',
-          },
-        }) : 'memory',
+        prefix: 'A12N-session',
+        clientOptions: {
+          port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT, 10) : 6379,
+          host: process.env.REDIS_HOST ? process.env.REDIS_HOST : '127.0.0.1',
+        },
+      }) : 'memory',
       cookieName: 'A12N',
       expiry: 60*60*24*7,
     }),

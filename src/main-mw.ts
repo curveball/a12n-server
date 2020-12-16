@@ -19,7 +19,7 @@ export default function(): Middleware {
     }),
     problem(),
     session({
-      store: process.env.REDIS_SESSION ? new RedisStore({
+      store: process.env.REDIS_HOST ? new RedisStore({
         prefix: 'A12N-session',
         clientOptions: {
           port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT, 10) : 6379,

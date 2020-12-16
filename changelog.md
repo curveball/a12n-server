@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.14.4 (2020-12-16)
+-------------------
+
+* Now supports Redis as a backend for session storage, which should make this
+  server a lot better when load balanced on several machines.
+
+
 0.14.3 (2020-12-16)
 -------------------
 

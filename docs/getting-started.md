@@ -29,7 +29,7 @@ The next step is to insert the MySQL schemas that are shipping with the git
 repository. The easiest is to just run:
 
 ```sh
-cat mysql-schema/*.sql | mysql -u username -p -h hostname databasename 
+cat mysql-schema/*.sql | mysql -u username -p -h hostname databasename
 ```
 
 While running the application, it is possible to run into privileges issues.
@@ -72,8 +72,10 @@ behavior. See the table below.
 | MYSQL_INSTANCE_CONNECTION_NAME |           |                       |                                                               |
 |                     PUBLIC_URI |           | http://localhost:8531 |                                                               |
 |                           PORT |           |                  8531 | Port to host the API on.                                      |
-|                       SMTP_URL |           |                       | See below section, [Optional](#Optional)                      |
-|                SMTP_EMAIL_FROM |           |                       | See below section, [Optional](#Optional)                      |
+|                       SMTP_URL |           |                       | See below section, [Email](#Email)                      |
+|                SMTP_EMAIL_FROM |           |                       | See below section, [Email](#Email)                      |
+|                     REDIS_HOST |           |                       | When specified, use Redis as a session storage. Required for running the server on multiple hosts.
+|                     REDIS_PORT |           |                  6379 | Set tcp port for Redis
 
 
 Creating the first user
@@ -92,8 +94,8 @@ Instead, run the following query:
 UPDATE users SET active = 1 WHERE id = 1;
 ```
 
-Optional
---------
+Email
+-----
 
 To use any email related feature, such as 'reset password', the following environment variables are also required.
 

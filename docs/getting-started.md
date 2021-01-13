@@ -4,7 +4,7 @@ Getting started
 To set up a new a12n-server from scratch, start by obtaining the following
 prerequisites:
 
-1. A working `nodejs` and `npm` binary.
+1. NodeJS (version 14 or higher) and `npm`.
 2. `git`.
 3. Optional: A working [Docker][1] installation. The server can also be run
    straight from the cli.
@@ -22,21 +22,21 @@ make docker-build
 MySQL setup
 -----------
 
-After you have MySQL up and running, create a new empty database (/schema) for
+After you have MySQL up and running, create new empty database (/schema) & user for
 `a12n-server`.
+
+```sh
+mysql> CREATE DATABASE a12nserver;
+mysql> CREATE USER 'a12nserver' IDENTIFIED BY 'your_password';
+mysql> GRANT SELECT, INSERT, UPDATE, DELETE ON a12nserver.* TO 'a12nserver';
+mysql> FLUSH PRIVILEGES;
+```
 
 The next step is to insert the MySQL schemas that are shipping with the git
 repository. The easiest is to just run:
 
 ```sh
-cat mysql-schema/*.sql | mysql -u username -p -h hostname databasename
-```
-
-While running the application, it is possible to run into privileges issues.
-You need to enable the GRANT statement to grant privileges and roles.
-
-```sh
-GRANT SELECT, INSERT, UPDATE, DELETE ON dbname.* TO 'username'@'localhost';
+cat mysql-schema/*.sql | mysql -u a12nserver -p -h hostname a12nserver
 ```
 
 Running the server
@@ -45,19 +45,22 @@ Running the server
 Docker:
 
 ```sh
-export MYSQL_PASSWORD=....
-export MYSQL_USER=username
-export MYSQL_DATABASE=databasename
+export MYSQL_PASSWORD=your_password
+export MYSQL_USER=a12nserver
+export MYSQL_DATABASE=a12nserver
 docker run -it --rm -p 127.0.0.1:8531:8531 --name a12n-server-01 a12n-server
 ```
 
-Not docker:
+If you are running a12nserver outside of docker, the easiest way to change
+environment variables is to create a `.env` file, and specify the following settings.
 
 ```sh
-export MYSQL_PASSWORD=....
-export MYSQL_USER=username
-export MYSQL_DATABASE=databasename
-make start
+PORT=8531
+MYSQL_HOST=127.0.0.1
+MYSQL_PASSWORD=your_password
+MYSQL_USER=a12nserver
+MYSQL_DATABASE=a12nserver
+PUBLIC_URI="http://localhost:8531/"
 ```
 
 Note: There are several environment variables available to modify the a12n-server
@@ -78,6 +81,12 @@ behavior. See the table below.
 |                     REDIS_PORT |           |                  6379 | Set tcp port for Redis
 
 
+To start the server, we use `make`. Simply execute
+
+```sh
+make start
+```
+
 Creating the first user
 -----------------------
 
@@ -94,6 +103,12 @@ Instead, run the following query:
 UPDATE users SET active = 1 WHERE id = 1;
 ```
 
+To give your newly created user full admin privileges, run:
+
+```sql
+INSERT INTO user_privileges SET user_id = 1, privilege = 'admin', resource='*';
+```
+
 Email
 -----
 
@@ -104,5 +119,3 @@ export SMTP_URL="smtps://[username]:[password]@[host]:[port]/"
 export SMTP_EMAIL_FROM='"[Name]" <[Username]@example.org>'
 ```
 The SMTP_URL takes any format that that [Nodemailer](https://nodemailer.com/smtp/) takes.
-
-[1]: https://www.docker.com/

@@ -107,6 +107,12 @@ Instead, run the following query:
 UPDATE users SET active = 1 WHERE id = 1;
 ```
 
+You might not be an admin. Make yourself as an admin, run:
+
+```sql
+INSERT INTO user_privileges SET user_id = 1, privilege = 'admin', resource='*';
+```
+
 Email
 -----
 

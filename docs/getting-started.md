@@ -119,10 +119,3 @@ export SMTP_URL="smtps://[username]:[password]@[host]:[port]/"
 export SMTP_EMAIL_FROM='"[Name]" <[Username]@example.org>'
 ```
 The SMTP_URL takes any format that that [Nodemailer](https://nodemailer.com/smtp/) takes.
-
-Next steps
-----------
-
-[Oauth2 Client Setup](https://github.com/curveball/a12n-server/blob/master/docs/oauth2-client.md)
-
-[1]: https://www.docker.com/

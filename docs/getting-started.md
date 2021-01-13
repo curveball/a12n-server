@@ -22,33 +22,21 @@ make docker-build
 MySQL setup
 -----------
 
-After you have MySQL up and running, create a new empty database (/schema) & user for
+After you have MySQL up and running, create new empty database (/schema) & user for
 `a12n-server`.
 
 ```sh
 mysql> CREATE DATABASE a12nserver;
-mysql> CREATE USER 'a12nserver' IDENTIFIED BY 'password';
-```
-
-While running the application, it is possible to run into privileges issues.
-You need to enable the GRANT statement to grant privileges and roles.
-
-```sh
-mysql> GRANT SELECT, INSERT, UPDATE, DELETE ON dbname.* TO 'a12nserver';
+mysql> CREATE USER 'a12nserver' IDENTIFIED BY 'your_password';
+mysql> GRANT SELECT, INSERT, UPDATE, DELETE ON a12nserver.* TO 'a12nserver';
+mysql> FLUSH PRIVILEGES;
 ```
 
 The next step is to insert the MySQL schemas that are shipping with the git
 repository. The easiest is to just run:
 
 ```sh
-cat mysql-schema/*.sql | mysql -u a12nserver -p -h hostname databasename
-```
-
-Once you have finalized the permissions that you want to set up for your new users,
-always be sure to reload all the privileges.
-
-```sh
-mysql> FLUSH PRIVILEGES;
+cat mysql-schema/*.sql | mysql -u a12nserver -p -h hostname a12nserver
 ```
 
 Running the server
@@ -57,15 +45,14 @@ Running the server
 Docker:
 
 ```sh
-export MYSQL_PASSWORD=....
+export MYSQL_PASSWORD=your_password
 export MYSQL_USER=a12nserver
 export MYSQL_DATABASE=a12nserver
 docker run -it --rm -p 127.0.0.1:8531:8531 --name a12n-server-01 a12n-server
 ```
 
-Not docker:
-a12n-server comes with `dotenv` package. You can create `.env` file top
-of your project and use these environment variables instead.
+If you are running a12nserver outside of docker, the easiest way to change
+environment variables is to create a `.env` file, and specify the following settings.
 
 ```sh
 PORT=8531

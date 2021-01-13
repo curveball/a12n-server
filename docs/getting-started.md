@@ -22,29 +22,30 @@ make docker-build
 MySQL setup
 -----------
 
-After you have MySQL up and running, create new empty database (/schema) & user for
+After you have MySQL up and running, create a new empty database (/schema) & user for
 `a12n-server`.
 
 ```sh
-mysql> CREATE DATABASE db_name;
-mysql> CREATE USER 'username'@'localhost' IDENTIFIED BY 'password';
-```
-
-The next step is to insert the MySQL schemas that are shipping with the git
-repository. The easiest is to just run:
-
-```sh
-cat mysql-schema/*.sql | mysql -u username -p -h hostname databasename
+mysql> CREATE DATABASE a12nserver;
+mysql> CREATE USER 'a12nserver' IDENTIFIED BY 'password';
 ```
 
 While running the application, it is possible to run into privileges issues.
 You need to enable the GRANT statement to grant privileges and roles.
 
 ```sh
-mysql> GRANT SELECT, INSERT, UPDATE, DELETE ON dbname.* TO 'username'@'localhost';
+mysql> GRANT SELECT, INSERT, UPDATE, DELETE ON dbname.* TO 'a12nserver';
 ```
 
-Once you have finalized the permissions that you want to set up for your new users, always be sure to reload all the privileges.
+The next step is to insert the MySQL schemas that are shipping with the git
+repository. The easiest is to just run:
+
+```sh
+cat mysql-schema/*.sql | mysql -u a12nserver -p -h hostname databasename
+```
+
+Once you have finalized the permissions that you want to set up for your new users,
+always be sure to reload all the privileges.
 
 ```sh
 mysql> FLUSH PRIVILEGES;
@@ -57,18 +58,22 @@ Docker:
 
 ```sh
 export MYSQL_PASSWORD=....
-export MYSQL_USER=username
-export MYSQL_DATABASE=db_name
+export MYSQL_USER=a12nserver
+export MYSQL_DATABASE=a12nserver
 docker run -it --rm -p 127.0.0.1:8531:8531 --name a12n-server-01 a12n-server
 ```
 
 Not docker:
+a12n-server comes with `dotenv` package. You can create `.env` file top
+of your project and use these environment variables instead.
 
 ```sh
-export MYSQL_PASSWORD=....
-export MYSQL_USER=username
-export MYSQL_DATABASE=db_name
-make start
+PORT=8531
+MYSQL_HOST=127.0.0.1
+MYSQL_PASSWORD=your_password
+MYSQL_USER=a12nserver
+MYSQL_DATABASE=a12nserver
+PUBLIC_URI="http://localhost:8531/"
 ```
 
 Note: There are several environment variables available to modify the a12n-server
@@ -88,8 +93,12 @@ behavior. See the table below.
 |                     REDIS_HOST |           |                       | When specified, use Redis as a session storage. Required for running the server on multiple hosts.
 |                     REDIS_PORT |           |                  6379 | Set tcp port for Redis
 
-a12n-server comes with `dotenv` package. You can create `.env` file top
-of your project and use these environment variables instead.
+
+To start the server, we use `make`. Simply execute
+
+```sh
+make start
+```
 
 Creating the first user
 -----------------------

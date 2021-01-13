@@ -4,7 +4,7 @@ Getting started
 To set up a new a12n-server from scratch, start by obtaining the following
 prerequisites:
 
-1. A working `nodejs` and `npm` binary.
+1. A working `nodejs` (node version needs to be > 14) and `npm` binary.
 2. `git`.
 3. Optional: A working [Docker][1] installation. The server can also be run
    straight from the cli.
@@ -22,8 +22,13 @@ make docker-build
 MySQL setup
 -----------
 
-After you have MySQL up and running, create a new empty database (/schema) for
+After you have MySQL up and running, create new empty database (/schema) & user for
 `a12n-server`.
+
+```sh
+mysql> CREATE DATABASE db_name;
+mysql> CREATE USER 'username'@'localhost' IDENTIFIED BY 'password';
+```
 
 The next step is to insert the MySQL schemas that are shipping with the git
 repository. The easiest is to just run:
@@ -36,7 +41,13 @@ While running the application, it is possible to run into privileges issues.
 You need to enable the GRANT statement to grant privileges and roles.
 
 ```sh
-GRANT SELECT, INSERT, UPDATE, DELETE ON dbname.* TO 'username'@'localhost';
+mysql> GRANT SELECT, INSERT, UPDATE, DELETE ON dbname.* TO 'username'@'localhost';
+```
+
+Once you have finalized the permissions that you want to set up for your new users, always be sure to reload all the privileges.
+
+```sh
+mysql> FLUSH PRIVILEGES;
 ```
 
 Running the server
@@ -47,7 +58,7 @@ Docker:
 ```sh
 export MYSQL_PASSWORD=....
 export MYSQL_USER=username
-export MYSQL_DATABASE=databasename
+export MYSQL_DATABASE=db_name
 docker run -it --rm -p 127.0.0.1:8531:8531 --name a12n-server-01 a12n-server
 ```
 
@@ -56,7 +67,7 @@ Not docker:
 ```sh
 export MYSQL_PASSWORD=....
 export MYSQL_USER=username
-export MYSQL_DATABASE=databasename
+export MYSQL_DATABASE=db_name
 make start
 ```
 
@@ -77,6 +88,8 @@ behavior. See the table below.
 |                     REDIS_HOST |           |                       | When specified, use Redis as a session storage. Required for running the server on multiple hosts.
 |                     REDIS_PORT |           |                  6379 | Set tcp port for Redis
 
+a12n-server comes with `dotenv` package. You can create `.env` file top
+of your project and use these environment variables instead.
 
 Creating the first user
 -----------------------

@@ -4,7 +4,7 @@ Getting started
 To set up a new a12n-server from scratch, start by obtaining the following
 prerequisites:
 
-1. A working `nodejs` (node version needs to be > 14) and `npm` binary.
+1. NodeJS (version 14 or higher) and `npm`.
 2. `git`.
 3. Optional: A working [Docker][1] installation. The server can also be run
    straight from the cli.

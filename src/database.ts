@@ -81,6 +81,7 @@ async function getSettings() {
     settings.socketPath = '/cloudsql/' + process.env.MYSQL_INSTANCE_CONNECTION_NAME;
   } else {
     settings.host = process.env.MYSQL_HOST;
+    settings.port = process.env.MYSQL_PORT || 3306;
   }
   return settings;
 

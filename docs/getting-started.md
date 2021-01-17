@@ -72,6 +72,7 @@ behavior. See the table below.
 |                     MYSQL_USER |       Yes |                       | User to connect to MySQL with                                 |
 |                 MYSQL_PASSWORD |       Yes |                       | Password to authenticate to MySQL                             |
 |                 MYSQL_DATABASE |       Yes |                       | Database where the `mysql-schema` was applied                 |
+|                 MYSQL_PORT     |       No  |                  3306 | The port of MySQL                                             |
 | MYSQL_INSTANCE_CONNECTION_NAME |           |                       |                                                               |
 |                     PUBLIC_URI |           | http://localhost:8531 |                                                               |
 |                           PORT |           |                  8531 | Port to host the API on.                                      |

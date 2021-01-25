@@ -25,7 +25,7 @@ class ClientCollectionController extends Controller {
 
   }
 
-  async post(ctx: Context) {
+  async post(ctx: Context<any>) {
 
     const user = await userService.findById(ctx.state.params.id);
     if (!await privilegeService.hasPrivilege(ctx, 'admin')) {

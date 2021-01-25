@@ -15,7 +15,7 @@ import { accessToken, inactive, refreshToken } from './formats/json';
  */
 class IntrospectionController extends Controller {
 
-  async post(ctx: Context) {
+  async post(ctx: Context<any>) {
 
     if (!ctx.request.is('application/x-www-form-urlencoded')) {
       throw new UnsupportedMediaType('This endpoint only supports application/x-www-form-urlencoded');

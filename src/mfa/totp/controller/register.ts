@@ -33,7 +33,7 @@ class TOTPRegisterController extends Controller {
     );
   }
 
-  async post(ctx: Context) {
+  async post(ctx: Context<any>) {
     const user: User = ctx.state.session.registerUser;
 
     if (!user) {

@@ -81,7 +81,7 @@ export async function getOAuth2ClientFromBasicAuth(ctx: Context): Promise<OAuth2
 
 }
 
-export async function getOAuth2ClientFromBody(ctx: Context): Promise<OAuth2Client> {
+export async function getOAuth2ClientFromBody(ctx: Context<any>): Promise<OAuth2Client> {
 
   if (!ctx.request.body.client_id) {
     throw new InvalidRequest('The "client_id" property is required');

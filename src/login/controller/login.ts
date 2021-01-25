@@ -27,7 +27,7 @@ class LoginController extends Controller {
 
   }
 
-  async post(ctx: Context) {
+  async post(ctx: Context<any>) {
 
     let user: User;
     try {
@@ -70,7 +70,7 @@ class LoginController extends Controller {
 
   }
 
-  redirectToLogin(ctx: Context, msg: string, error: string) {
+  redirectToLogin(ctx: Context<any>, msg: string, error: string) {
 
     const params: any = { msg, error };
     if (ctx.request.body && ctx.request.body.continue) {
@@ -97,7 +97,7 @@ class LoginController extends Controller {
     return false;
   }
 
-  async shouldUseTotp(ctx: Context, user: User): Promise<boolean> {
+  async shouldUseTotp(ctx: Context<any>, user: User): Promise<boolean> {
     if (getSetting('totp') !== 'disabled') {
       if (await userService.hasTotp(user)) {
 
@@ -128,7 +128,7 @@ class LoginController extends Controller {
     return false;
   }
 
-  async shouldUseWebauthn(ctx: Context, user: User): Promise<boolean> {
+  async shouldUseWebauthn(ctx: Context<any>, user: User): Promise<boolean> {
     if (getSetting('webauthn') !== 'disabled') {
       if (await webAuthnService.hasWebauthn(user)) {
 

@@ -35,7 +35,7 @@ class WebAuthnAttestationController extends Controller {
     ctx.response.body = attestationOptions;
   }
 
-  async post(ctx: Context) {
+  async post(ctx: Context<any>) {
     const user: User = ctx.state.session.registerUser;
     const body = ctx.request.body;
 

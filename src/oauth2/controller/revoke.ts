@@ -12,7 +12,7 @@ import {
 
 class RevokeController extends Controller {
 
-  async post(ctx: Context) {
+  async post(ctx: Context<any>) {
 
     let oauth2Client: OAuth2Client;
 

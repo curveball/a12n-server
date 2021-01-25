@@ -21,7 +21,7 @@ class UserCollectionController extends Controller {
       throw new Forbidden('Only users with the "admin" privilege may create new users');
     }
 
-    const userBody = ctx.request.body;
+    const userBody: any = ctx.request.body;
 
     try {
       await usersService.findByIdentity(userBody._links.me.href);

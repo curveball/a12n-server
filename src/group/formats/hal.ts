@@ -8,6 +8,10 @@ export function collection(user: User, members: User[] ) {
         href: '/user/' + user.id + '/member',
         title: user.nickname + ' members'
       },
+      'create-form': {
+        href: `/user/${user.id}/member/new`,
+        title: 'Add new member to group'
+      },
       item: [],
     },
     total: members.length,

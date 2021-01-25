@@ -5,7 +5,7 @@ import * as userService from '../../user/service';
 import * as hal from '../formats/hal';
 import * as groupService from '../service';
 
-class GroupMemberCollectionControlller extends Controller {
+class GroupMemberCollectionController extends Controller {
   async get(ctx: Context) {
 
     const user = await userService.findById(parseInt(ctx.state.params.id, 10));
@@ -23,4 +23,4 @@ class GroupMemberCollectionControlller extends Controller {
 
 }
 
-export default new GroupMemberCollectionControlller();
+export default new GroupMemberCollectionController();

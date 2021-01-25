@@ -2,6 +2,7 @@ import database from '../database';
 import * as UserService from '../user/service';
 import { User } from '../user/types';
 
+
 /**
  *  Checks if the user is a type group and returns true or false
  */
@@ -28,5 +29,15 @@ export async function findAllGroupMembers(user: User): Promise<User[]> {
   }
 
   return models;
+
+}
+
+export async function save (userId: string, group: User) {
+
+  const query = `INSERT INTO group_members SET group_id = ${group.id}, user_id = ?`;
+
+  const result = await database.query(query, [userId]);
+
+  return result;
 
 }

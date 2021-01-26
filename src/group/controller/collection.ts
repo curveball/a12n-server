@@ -41,7 +41,7 @@ class GroupMemberCollectionController extends Controller {
       }
     }
 
-    await groupService.save(userBody.userId, group)
+    await groupService.save(userBody.userId, group);
 
     ctx.response.status = 201;
     ctx.response.headers.set('Location', '/user/' + group.id + '/member');

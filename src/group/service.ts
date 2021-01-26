@@ -35,11 +35,11 @@ export async function findAllGroupMembers(user: User): Promise<User[]> {
 
 export async function findByUserId(userId: number): Promise<any> {
 
-  const query = `SELECT * FROM group_members WHERE user_id = ?`;
+  const query = 'SELECT * FROM group_members WHERE user_id = ?';
   const result = await database.query(query, [userId]);
 
   if (result[0].length !== 1) {
-    throw new NotFound(`Can\'t find group member with User ID ${userId}`);
+    throw new NotFound(`Can't find group member with User ID ${userId}`);
   }
 
 }

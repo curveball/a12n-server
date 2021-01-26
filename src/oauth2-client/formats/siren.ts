@@ -46,7 +46,7 @@ export function newClient(user: User) {
           },
           {
             name: 'redirectUris',
-            title: 'Redirect Uris (space separated)',
+            title: 'Redirect Uris (1 per line)',
             type: 'textarea',
           },
         ],

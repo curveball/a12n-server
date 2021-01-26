@@ -31,10 +31,25 @@ class ClientCollectionController extends Controller {
     if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
       throw new Forbidden('Only users with the "admin" privilege can inspect OAuth2 clients that are not your own');
     }
-    const allowedGrantTypes = ctx.request.body.allowedGrantTypes;
+
+    const allowedGrantTypes: GrantType[] = [];
+
+    if (ctx.request.body.allowClientCredentials) {
+      allowedGrantTypes.push('client_credentials');
+    }
+    if (ctx.request.body.allowAuthorizationCode) {
+      allowedGrantTypes.push('authorization_code');
+    }
+    if (ctx.request.body.allowImplicit) {
+      allowedGrantTypes.push('implicit');
+    }
+    if (ctx.request.body.allowRefreshToken) {
+      allowedGrantTypes.push('refresh_token');
+    }
+
     let clientId = ctx.request.body.clientId;
 
-    const redirectUris = ctx.request.body.redirectUris.split(' ');
+    const redirectUris = ctx.request.body.redirectUris.trim().split(/\r\n|\n/).filter((line:string) => !!line);
 
     if (!clientId) {
       clientId = randomId(10);
@@ -45,25 +60,12 @@ class ClientCollectionController extends Controller {
     if (!allowedGrantTypes) {
       throw new UnprocessableEntity('You must specify the allowedGrantTypes property');
     }
-    const allowedGrantTypesArr:GrantType[] = allowedGrantTypes.split(' ');
-
-    const allowedAllowedGrantTypes: GrantType[] = [
-      'password',
-      'client_credentials',
-      'refresh_token',
-      'implicit',
-      'authorization_code'
-    ];
-
-    if (!allowedGrantTypesArr.every(agt => allowedAllowedGrantTypes.includes(agt))) {
-      throw new UnprocessableEntity('allowedGrantTypes can only contain supported grant types as a space-delimited string. Possible supported options are: ' + allowedAllowedGrantTypes.join(' '));
-    }
 
     const clientSecret = randomId(20);
     const newClient: Omit<OAuth2Client,'id'> = {
       clientId,
       user,
-      allowedGrantTypes: allowedGrantTypesArr,
+      allowedGrantTypes: allowedGrantTypes,
       clientSecret: await bcrypt.hash(clientSecret, 12),
     };
 

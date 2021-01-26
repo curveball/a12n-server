@@ -30,7 +30,7 @@ class GroupMemberCollectionController extends Controller {
       throw new BadRequest('This endpoint only exists for groups');
     }
 
-    const userBody = ctx.request.body;
+    const userBody: any = ctx.request.body;
 
     try {
       await groupService.findByUserId(parseInt(userBody.userId, 10));

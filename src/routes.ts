@@ -3,7 +3,6 @@ import blob from './blob/controller';
 import changePassword from './changepassword/controller';
 import createUser from './create-user/controller';
 import group from './group/controller/collection';
-import newGroupMember from './group/controller/new';
 import health from './health/controller';
 import home from './home/controller';
 import introspect from './introspect/controller';
@@ -64,7 +63,6 @@ const routes = [
   router('/user/:id', user),
   router('/user/:id/log', userLog),
   router('/user/:id/member', group),
-  router('/user/:id/member/new', newGroupMember),
   router('/user/:id/client', clients),
   router('/user/:id/client/new', clientNew),
   router('/user/:id/client/:clientId', client),

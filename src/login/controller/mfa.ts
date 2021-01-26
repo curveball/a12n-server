@@ -34,7 +34,7 @@ class MFAController extends Controller {
 
   }
 
-  async post(ctx: Context) {
+  async post(ctx: Context<any>) {
 
     const { user }: MFALoginSession = ctx.state.session.mfa || {};
 

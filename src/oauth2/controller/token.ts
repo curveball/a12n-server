@@ -14,7 +14,7 @@ import {
 
 class TokenController extends Controller {
 
-  async post(ctx: Context) {
+  async post(ctx: Context<any>) {
 
     this.sendCORSHeaders(ctx);
 
@@ -75,7 +75,7 @@ class TokenController extends Controller {
 
   }
 
-  async authorizationCode(oauth2Client: OAuth2Client, ctx: Context) {
+  async authorizationCode(oauth2Client: OAuth2Client, ctx: Context<any>) {
 
     if (!ctx.request.body.code) {
       throw new InvalidRequest('The "code" property is required');
@@ -99,7 +99,7 @@ class TokenController extends Controller {
 
   }
 
-  async password(oauth2Client: OAuth2Client, ctx: Context) {
+  async password(oauth2Client: OAuth2Client, ctx: Context<any>) {
 
     let user: User;
     try {
@@ -134,7 +134,7 @@ class TokenController extends Controller {
 
   }
 
-  async refreshToken(oauth2Client: OAuth2Client, ctx: Context) {
+  async refreshToken(oauth2Client: OAuth2Client, ctx: Context<any>) {
 
     if (!ctx.request.body.refresh_token) {
       throw new InvalidRequest('The "refresh_token" property is required');

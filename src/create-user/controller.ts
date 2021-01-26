@@ -17,7 +17,7 @@ class CreateUserController extends Controller {
     ctx.response.body = createUserForm(ctx.query.msg, ctx.query.error);
   }
 
-  async post(ctx: Context) {
+  async post(ctx: Context<any>) {
 
     if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
       throw new Forbidden('Only users with the "admin" privilege can create new users');

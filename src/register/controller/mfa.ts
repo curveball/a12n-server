@@ -25,7 +25,7 @@ class MFAController extends Controller {
     );
   }
 
-  async post(ctx: Context) {
+  async post(ctx: Context<any>) {
     const { mfaDevice } = ctx.request.body;
 
     if (mfaDevice === 'totp') {

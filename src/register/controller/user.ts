@@ -20,9 +20,10 @@ class UserRegistrationController extends Controller {
 
   async post(ctx: Context) {
 
-    const userPassword = ctx.request.body.password;
-    const confirmPassword = ctx.request.body.confirmPassword;
-    const addMfa = 'addMfa' in ctx.request.body;
+    const body: any = ctx.request.body;
+    const userPassword = body.password;
+    const confirmPassword = body.confirmPassword;
+    const addMfa = 'addMfa' in body;
 
     if (userPassword !== confirmPassword) {
       ctx.status = 303;
@@ -31,7 +32,7 @@ class UserRegistrationController extends Controller {
     }
 
     try {
-      await userService.findByIdentity('mailto:' + ctx.request.body.emailAddress);
+      await userService.findByIdentity('mailto:' + body.emailAddress);
       ctx.status = 303;
       ctx.response.headers.set('Location', '/register?error=User+already+exists');
       return;
@@ -42,8 +43,8 @@ class UserRegistrationController extends Controller {
     }
 
     const user = await userService.save({
-      identity: 'mailto:' + ctx.request.body.emailAddress,
-      nickname: ctx.request.body.nickname,
+      identity: 'mailto:' + body.emailAddress,
+      nickname: body.nickname,
       created: new Date(),
       type: 'user',
       active: false

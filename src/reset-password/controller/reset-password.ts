@@ -27,7 +27,7 @@ class ResetPasswordController extends Controller {
    * This request checks if provided 2 passwords, new password and confirm password, is identical
    * and updates database with the new password.
    */
-  async post(ctx: Context) {
+  async post(ctx: Context<any>) {
 
     if (!ctx.state.session.resetPasswordUser) {
       throw new Forbidden('You can only use this endpoint after you went through the \'forgot password\' flow');

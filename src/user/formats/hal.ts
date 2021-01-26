@@ -27,7 +27,8 @@ export function item(user: User, privileges: PrivilegeMap) {
     _links: {
       'self': {href: '/user/' + user.id, title: user.nickname },
       'me': { href: user.identity, title: user.nickname },
-      'auth-log': { href: '/user/' + user.id + '/log', title: 'Authentication log', type: 'text/csv' }
+      'auth-log': { href: '/user/' + user.id + '/log', title: 'Authentication log', type: 'text/csv' },
+      'up' : { href: '/user', title: 'List of users' },
     },
     nickname: user.nickname,
     active: user.active,

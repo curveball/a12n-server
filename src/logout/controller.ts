@@ -16,7 +16,7 @@ class LogoutController extends Controller {
 
   }
 
-  async post(ctx: Context) {
+  async post(ctx: Context<any>) {
 
     await oauth2Service.invalidateTokensByBrowserSessionId(
       ctx.state.sessionId

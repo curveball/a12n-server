@@ -23,7 +23,7 @@ class ResetPasswordRequestController extends Controller {
 
   }
 
-  async post(ctx: Context) {
+  async post(ctx: Context<any>) {
 
     let user;
     try {

@@ -28,7 +28,7 @@ class WebAuthnLoginRequestController extends Controller {
     ctx.response.body = assertionOptions;
   }
 
-  async post(ctx: Context) {
+  async post(ctx: Context<any>) {
     const { user }: MFALoginSession = ctx.state.session.mfa || {};
     const body = ctx.request.body;
 

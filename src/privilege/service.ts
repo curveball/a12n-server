@@ -87,3 +87,16 @@ export async function findPrivilege(privilege: string): Promise<Privilege> {
   return result[0][0];
 
 }
+
+export async function addPrivilegeForUser(user: User, privilege: string, resource: string): Promise<void> {
+
+  const query = 'INSERT INTO user_privileges SET ?';
+  await database.query(query, [
+    {
+      user_id: user.id,
+      privilege,
+      resource,
+    }
+  ]);
+
+}

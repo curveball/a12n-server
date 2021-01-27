@@ -1,9 +1,9 @@
 import { render } from '../../templates';
 
-export function registrationForm(msg: string, error: string, mfaRegistrationEnabled: boolean): string {
+export function registrationForm(msg: string, error: string, mfaRegistrationEnabled: boolean, firstRunMode: boolean): string {
 
   return render('register/user', {
-    title: 'Register',
+    title: firstRunMode ? 'Create Admin Account' : 'Register',
     msg: msg,
     error: error,
     action: '/register',

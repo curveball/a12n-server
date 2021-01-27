@@ -4,16 +4,20 @@ import { Forbidden, NotFound } from '@curveball/http-errors';
 import { getSetting } from '../../server-settings';
 import * as userService from '../../user/service';
 import { registrationForm } from '../formats/html';
+import * as privilegeService from '../../privilege/service';
 
 class UserRegistrationController extends Controller {
 
   async get(ctx: Context) {
 
+    const firstRun = !(await userService.hasUsers());
+
     ctx.response.type = 'text/html';
     ctx.response.body = registrationForm(
       ctx.query.msg,
       ctx.query.error,
-      getSetting('registration.mfa.enabled')
+      getSetting('registration.mfa.enabled'),
+      firstRun,
     );
 
   }
@@ -42,13 +46,25 @@ class UserRegistrationController extends Controller {
       }
     }
 
+    const firstRun = !(await userService.hasUsers());
+
     const user = await userService.save({
       identity: 'mailto:' + body.emailAddress,
       nickname: body.nickname,
       created: new Date(),
       type: 'user',
-      active: false
+      // Auto-activating if it's the first user.
+      active: firstRun,
     });
+
+    if (firstRun) {
+      // The first user will be an admin
+      await privilegeService.addPrivilegeForUser(
+        user,
+        'admin',
+        '*'
+      );
+    };
 
     await userService.createPassword(user, userPassword);
 

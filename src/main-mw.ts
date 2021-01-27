@@ -6,7 +6,15 @@ import { RedisStore } from '@curveball/session-redis';
 import browser from '@curveball/browser';
 import login from './middleware/login';
 import routes from './routes';
+import links from '@curveball/links';
 
+/**
+ * The 'main middleware'.
+ *
+ * Most of the application is expressed as a single middleware. This could
+ * potentially allow a12nserver to be embedded in another curveball
+ * application.
+ */
 export default function(): Middleware {
 
   if (process.env.PUBLIC_URI === undefined) {
@@ -18,6 +26,7 @@ export default function(): Middleware {
       title: 'a12n-server',
     }),
     problem(),
+    links(),
     session({
       store: process.env.REDIS_HOST ? new RedisStore({
         prefix: 'A12N-session',

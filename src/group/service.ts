@@ -15,10 +15,10 @@ export function isGroup(user: User): boolean {
  * Finding group members
  */
 
-export async function findAllGroupMembers(user: User): Promise<User[]> {
+export async function findMembers(group: User): Promise<User[]> {
 
   const query = `SELECT ${UserService.fieldNames.join(', ')} FROM users INNER JOIN group_members ON users.id = group_members.user_id WHERE group_id = ?`;
-  const result = await database.query(query, [user.id]);
+  const result = await database.query(query, [group.id]);
 
   const models = [];
 
@@ -28,5 +28,31 @@ export async function findAllGroupMembers(user: User): Promise<User[]> {
   }
 
   return models;
+
+}
+
+export async function addMemberToGroup(group: User, user: User): Promise<void> {
+
+  const query = 'INSERT INTO group_members SET group_id = ?, user_id = ?';
+  await database.query(query, [group.id, user.id]);
+
+}
+
+export async function replaceMembers(group: User, users: User[]): Promise<void> {
+
+  const connection = await database.getConnection();
+  await connection.beginTransaction();
+  try {
+    await connection.query('DELETE FROM group_members WHERE group_id = ?', [group.id]);
+    for(const user of users) {
+      await connection.query('INSERT INTO group_members SET group_id = ?, user_id = ?', [group.id, user.id]);
+    }
+    await connection.commit();
+  } catch (err) {
+    await connection.rollback();
+    throw err;
+  } finally {
+    connection.release();
+  }
 
 }

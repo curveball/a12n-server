@@ -50,7 +50,7 @@ type LogRow = {
 
 export async function findByUser(user: User): Promise<LogEntry[]> {
 
-  const result:[LogRow[]] = await db.query(
+  const result:[LogRow[], any] = await db.query(
     'SELECT * FROM user_log WHERE user_id = ?',
     [user.id]
   );

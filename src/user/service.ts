@@ -59,7 +59,7 @@ export async function findActiveById(id: number): Promise<User> {
  */
 export async function hasUsers(): Promise<boolean> {
 
-  const query = `SELECT 1 FROM users LIMIT 1`;
+  const query = 'SELECT 1 FROM users LIMIT 1';
   const result = await database.query(query);
 
   return result[0].length > 0;

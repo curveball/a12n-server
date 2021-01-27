@@ -91,24 +91,8 @@ make start
 Creating the first user
 -----------------------
 
-After installation, you can open the server via `https://localhost:8531/`.
-By default registration is enabled, and you can register your admin user
-via the 'Register' link.
-
-After registration log in will _not_ immediately work. Users needs to be
-activated, and there's no automated facility yet to do this.
-
-Instead, run the following query:
-
-```sql
-UPDATE users SET active = 1 WHERE id = 1;
-```
-
-To give your newly created user full admin privileges, run:
-
-```sql
-INSERT INTO user_privileges SET user_id = 1, privilege = 'admin', resource='*';
-```
+After installation, you can open the server via `https://localhost:8531/`,
+which will prompt you to create your first admin user.
 
 Email
 -----

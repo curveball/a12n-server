@@ -64,7 +64,7 @@ class UserRegistrationController extends Controller {
         'admin',
         '*'
       );
-    };
+    }
 
     await userService.createPassword(user, userPassword);
 

@@ -3,7 +3,7 @@ import mysql from 'mysql2/promise';
 import { readdir } from 'fs/promises';
 import { join } from 'path';
 
-let pool: any = null;
+let pool: mysql.Pool;
 
 async function getPool() {
 
@@ -16,15 +16,15 @@ async function getPool() {
 }
 
 
-export async function getConnection() {
+export async function getConnection(): Promise<mysql.PoolConnection> {
 
   return (await getPool()).getConnection();
 
 }
 
-export async function query(query: string, ...args: any[]) {
+export async function query(query: string, params?: any[]|string|Record<string,any>): Promise<[any, any]> {
 
-  return (await getPool()).query(query, ...args);
+  return (await getPool()).query(query, params);
 
 }
 

@@ -63,6 +63,31 @@ export async function findByIdentity(identity: string): Promise<User> {
 
 }
 
+/**
+ * Finds a user by its href'.
+ *
+ * This can be a string like /user/1, or a full url.
+ * It can also be the uri listed in the 'identity' field.
+ */
+export async function findByHref(href: string): Promise<User> {
+
+  const matches = href.match(/^\/user\/([0-9]+)$/);
+  if (!matches) {
+    return findByIdentity(href);
+  }
+
+  const query = `SELECT ${fieldNames.join(', ')} FROM users WHERE id = ?`;
+  const result = await database.query(query, [matches[1]]);
+
+  if (result[0].length !== 1) {
+    throw new NotFound('User with href: ' + href + ' not found');
+  }
+
+  return recordToModel(result[0][0]);
+
+}
+
+
 export async function save(user: User | NewUser): Promise<User> {
 
   if (!isExistingUser(user)) {

@@ -1,18 +1,12 @@
-import { Context } from '@curveball/core';
 import { HttpError } from '@curveball/http-errors';
 
-interface OAuthError extends HttpError {
+interface OAuth2Error extends HttpError {
   errorCode: string;
 }
 
-export function serializeError(ctx: Context, err: OAuthError) {
+export function isOAuth2Error(err: Error): err is OAuth2Error {
 
-  ctx.response.status = err.httpStatus;
-  ctx.response.headers.set('Content-Type', 'application/json');
-  ctx.response.body = {
-    error: err.errorCode,
-    error_description: err.message,
-  };
+  return typeof (err as any).errorCode === 'string';
 
 }
 
@@ -20,7 +14,7 @@ export function serializeError(ctx: Context, err: OAuthError) {
  * The request is missing a required parameter, includes an invalid parameter
  * value, includes a parameter more than once or is otherwise malformed.
  */
-export class InvalidRequest extends Error implements OAuthError {
+export class InvalidRequest extends Error implements OAuth2Error {
 
   httpStatus = 400;
   errorCode = 'invalid_request';
@@ -31,7 +25,7 @@ export class InvalidRequest extends Error implements OAuthError {
  * The client is not authorized to request an authorization code using this
  * method
  */
-export class UnauthorizedClient extends Error implements OAuthError {
+export class UnauthorizedClient extends Error implements OAuth2Error {
 
   httpStatus = 403;
   errorCode = 'unauthorized_client';
@@ -41,7 +35,7 @@ export class UnauthorizedClient extends Error implements OAuthError {
 /**
  * The resource owner or authorization server denied the request
  */
-export class AccessDenied extends Error implements OAuthError {
+export class AccessDenied extends Error implements OAuth2Error {
 
   httpStatus = 403;
   errorCode = 'access_denied';
@@ -52,7 +46,7 @@ export class AccessDenied extends Error implements OAuthError {
  * The authorization server does not support obtaining an authorization code
  * using this method
  */
-export class UnsupportedResponseType extends Error implements OAuthError {
+export class UnsupportedResponseType extends Error implements OAuth2Error {
 
   httpStatus = 400;
   errorCode = 'unsupported_response_type';
@@ -62,7 +56,7 @@ export class UnsupportedResponseType extends Error implements OAuthError {
 /**
  * The requested scope is invalid, unknown or malformed
  */
-export class InvalidScope extends Error implements OAuthError {
+export class InvalidScope extends Error implements OAuth2Error {
 
   httpStatus = 400;
   errorCode = 'invalid_scope';
@@ -79,7 +73,7 @@ export class InvalidScope extends Error implements OAuthError {
  * the "WWW-Authenticate" response header field matching the authentication
  * scheme used by the client.
  */
-export class InvalidClient extends Error implements OAuthError {
+export class InvalidClient extends Error implements OAuth2Error {
 
   httpStatus = 401;
   errorCode = 'invalid_client';
@@ -92,7 +86,7 @@ export class InvalidClient extends Error implements OAuthError {
  * the redirection URI used in the authorization request, or was issued to
  * another client.
  */
-export class InvalidGrant extends Error implements OAuthError {
+export class InvalidGrant extends Error implements OAuth2Error {
 
   httpStatus = 400;
   errorCode = 'invalid_grant';
@@ -102,7 +96,7 @@ export class InvalidGrant extends Error implements OAuthError {
 /**
  * The authorization grant type is not supported by the authorization server.
  */
-export class UnsupportedGrantType extends Error implements OAuthError {
+export class UnsupportedGrantType extends Error implements OAuth2Error {
 
   httpStatus = 400;
   errorCode = 'unsupported_grant_type';
@@ -115,7 +109,7 @@ export class UnsupportedGrantType extends Error implements OAuthError {
  * Internal Server Error HTTP status code cannot be returned to the client via
  * an HTTP redirect.)
  */
-export class ServerError extends Error implements OAuthError {
+export class ServerError extends Error implements OAuth2Error {
 
   httpStatus = 500;
   errorCode = 'server_error';
@@ -128,10 +122,9 @@ export class ServerError extends Error implements OAuthError {
  * needed because a 503 Service Unavailable HTTP status code cannot be returned
  * to the client via an HTTP redirect.)
  */
-export class TemporarilyUnavailable extends Error implements OAuthError {
+export class TemporarilyUnavailable extends Error implements OAuth2Error {
 
   httpStatus = 503;
   errorCode = 'temporarily_unavailable';
 
 }
-

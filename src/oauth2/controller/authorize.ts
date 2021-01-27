@@ -2,7 +2,7 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { NotFound } from '@curveball/http-errors';
 import querystring from 'querystring';
-import { InvalidClient, InvalidRequest, serializeError, UnsupportedGrantType } from '../errors';
+import { InvalidClient, InvalidRequest, UnsupportedGrantType } from '../errors';
 import * as oauth2Service from '../service';
 import { CodeChallengeMethod } from '../types';
 import { OAuth2Client } from '../../oauth2-client/types';
@@ -146,25 +146,6 @@ class AuthorizeController extends Controller {
 
     ctx.response.status = 302;
     ctx.response.headers.set('Location', '/login?' + querystring.stringify(params));
-
-  }
-
-  /**
-   * We're overriding the default dispatcher to catch OAuth2 errors.
-   */
-  async dispatch(ctx: Context): Promise<void> {
-
-    try {
-      await super.dispatch(ctx);
-    } catch (err) {
-      if (err.errorCode) {
-        /* eslint-disable-next-line no-console */
-        console.log(err);
-        serializeError(ctx, err);
-      } else {
-        throw err;
-      }
-    }
 
   }
 

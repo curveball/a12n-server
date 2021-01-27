@@ -31,13 +31,14 @@ import oauth2Metadata from './well-known/controller/oauth2-metadata';
 import clients from './oauth2-client/controller/collection';
 import client from './oauth2-client/controller/item';
 import clientNew from './oauth2-client/controller/new';
+import oauth2ErrorHandler from './oauth2/oauth2-error-handler';
 
 const routes = [
   router('/', home),
   router('/assets/:filename', blob),
 
-  router('/authorize', oauth2Authorize),
-  router('/token', oauth2Token),
+  router('/authorize', oauth2ErrorHandler, oauth2Authorize),
+  router('/token', oauth2ErrorHandler, oauth2Token),
   router('/revoke', oauth2Revoke),
 
   router('/create-user', createUser),

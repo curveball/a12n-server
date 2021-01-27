@@ -19,7 +19,7 @@ class GroupMemberCollectionController extends Controller {
       throw new BadRequest('This endpoint only exists for groups');
     }
 
-    const members = await groupService.findAllGroupMembers(user);
+    const members = await groupService.findGroupMembers(user);
     ctx.response.body = hal.collection(user, members);
 
   }

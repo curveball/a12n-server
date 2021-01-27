@@ -7,6 +7,7 @@ import * as groupService from '../service';
 import { Conflict, NotFound } from '@curveball/http-errors';
 
 class GroupMemberCollectionController extends Controller {
+
   async get(ctx: Context) {
 
     const user = await userService.findById(parseInt(ctx.state.params.id, 10));
@@ -20,20 +21,37 @@ class GroupMemberCollectionController extends Controller {
 
     const members = await groupService.findAllGroupMembers(user);
     ctx.response.body = hal.collection(user, members);
+
+  }
+
+  async put(ctx: Context) {
+
+    const user = await userService.findById(parseInt(ctx.state.params.id, 10));
+
+    if (!groupService.isGroup(user)) {
+      throw new BadRequest('This endpoint only exists for groups');
+    }
+
+    const members = await groupService.findAllGroupMembers(user);
+    ctx.request.body = hal.collection(user, members);;
+
+    await groupService.update(ctx.request.body)
+    ctx.response.status = 204;
+
   }
 
   async post(ctx: Context) {
 
-    const group = await userService.findById(parseInt(ctx.state.params.id, 10));
+    const user = await userService.findById(parseInt(ctx.state.params.id, 10));
 
-    if (!groupService.isGroup(group)) {
+    if (!groupService.isGroup(user)) {
       throw new BadRequest('This endpoint only exists for groups');
     }
 
     const userBody: any = ctx.request.body;
 
     try {
-      await groupService.findByUserId(parseInt(userBody.userId, 10));
+      await groupService.findUserFromGroup(userBody.userId);
       throw new Conflict('User already part of this group');
     } catch (err) {
       if (!(err instanceof NotFound)) {
@@ -41,10 +59,10 @@ class GroupMemberCollectionController extends Controller {
       }
     }
 
-    await groupService.save(userBody.userId, group);
+    await groupService.addMemberToGroup(userBody.userId, user);
 
     ctx.response.status = 201;
-    ctx.response.headers.set('Location', '/user/' + group.id + '/member');
+    ctx.response.headers.set('Location', '/user/' + user.id + '/member');
   }
 
 

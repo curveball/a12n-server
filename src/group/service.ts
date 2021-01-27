@@ -1,8 +1,8 @@
-import { NotFound } from '@curveball/http-errors/dist';
 import database from '../database';
 import * as UserService from '../user/service';
 import { User } from '../user/types';
-
+import { NotFound } from '@curveball/http-errors/dist';
+import { GroupMember } from './type';
 
 /**
  *  Checks if the user is a type group and returns true or false
@@ -33,7 +33,7 @@ export async function findAllGroupMembers(user: User): Promise<User[]> {
 
 }
 
-export async function findByUserId(userId: number): Promise<any> {
+export async function findUserFromGroup(userId: number): Promise<any> {
 
   const query = 'SELECT * FROM group_members WHERE user_id = ?';
   const result = await database.query(query, [userId]);
@@ -44,10 +44,16 @@ export async function findByUserId(userId: number): Promise<any> {
 
 }
 
-export async function save (userId: string, group: User): Promise<void> {
+export async function update(groupMember: GroupMember): Promise<void> {
+  const query = `UPDATE group_members SET ? WHERE group_id = ?`;
 
-  const query = `INSERT INTO group_members SET group_id = ${group.id}, user_id = ?`;
+  await database.query(query, [groupMember.userId, groupMember.groupId]);
+}
 
-  await database.query(query, [userId]);
+export async function addMemberToGroup (userId: string, group: User): Promise<void> {
+
+  const query = `INSERT INTO group_members SET group_id = ?, user_id = ?`;
+
+  await database.query(query, [group.id, userId]);
 
 }

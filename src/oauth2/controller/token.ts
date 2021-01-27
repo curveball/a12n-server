@@ -4,7 +4,7 @@ import log from '../../log/service';
 import { EventType } from '../../log/types';
 import * as userService from '../../user/service';
 import { User } from '../../user/types';
-import { InvalidGrant, InvalidRequest, serializeError, UnsupportedGrantType } from '../errors';
+import { InvalidGrant, InvalidRequest, UnsupportedGrantType } from '../errors';
 import * as oauth2Service from '../service';
 import { OAuth2Client } from '../../oauth2-client/types';
 import {
@@ -163,25 +163,6 @@ class TokenController extends Controller {
   sendCORSHeaders(ctx: Context) {
 
     ctx.response.headers.set('Access-Control-Allow-Origin', '*');
-
-  }
-
-  /**
-   * We're overriding the default dipatcher to catch OAuth2 errors.
-   */
-  async dispatch(ctx: Context): Promise<void> {
-
-    try {
-      await super.dispatch(ctx);
-    } catch (err) {
-      if (err.errorCode) {
-        /* eslint-disable-next-line no-console */
-        console.log(err);
-        serializeError(ctx, err);
-      } else {
-        throw err;
-      }
-    }
 
   }
 

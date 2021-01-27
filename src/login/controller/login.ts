@@ -15,6 +15,13 @@ import { loginForm } from '../formats/html';
 class LoginController extends Controller {
 
   async get(ctx: Context) {
+
+    const firstRun = !(await userService.hasUsers());
+    if (firstRun) {
+      ctx.redirect(302, '/register');
+      return;
+    }
+
     ctx.response.type = 'text/html';
     ctx.response.body = loginForm(
       ctx.query.msg,

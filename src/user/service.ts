@@ -50,6 +50,22 @@ export async function findActiveById(id: number): Promise<User> {
 
 }
 
+/**
+ * Returns true if more than 1 user exists in the system.
+ *
+ * If there are 0 users, this puts a12nserver in setup mode, which allows a
+ * person to create the first user in the system, automatically activate it
+ * and make them an admin.
+ */
+export async function hasUsers(): Promise<boolean> {
+
+  const query = 'SELECT 1 FROM users LIMIT 1';
+  const result = await database.query(query);
+
+  return result[0].length > 0;
+
+}
+
 export async function findByIdentity(identity: string): Promise<User> {
 
   const query = `SELECT ${fieldNames.join(', ')} FROM users WHERE identity = ?`;

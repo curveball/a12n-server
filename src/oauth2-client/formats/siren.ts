@@ -34,6 +34,11 @@ export function newClient(user: User) {
             type: 'checkbox',
           },
           {
+            name: 'allowPassword',
+            title: 'Allow "password" grant_type (trusted applications only)',
+            type: 'checkbox',
+          },
+          {
             name: 'allowImplicit',
             title: 'Allow "implicit" grant_type (deprecated) ',
             type: 'checkbox',

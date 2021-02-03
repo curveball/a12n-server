@@ -46,6 +46,9 @@ class ClientCollectionController extends Controller {
     if (ctx.request.body.allowRefreshToken) {
       allowedGrantTypes.push('refresh_token');
     }
+    if (ctx.request.body.allowPassword) {
+      allowedGrantTypes.push('password');
+    }
 
     let clientId = ctx.request.body.clientId;
 

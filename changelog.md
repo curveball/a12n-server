@@ -1,6 +1,20 @@
 Changelog
 =========
 
+0.15.0 (2021-12-02)
+-------------------
+
+* Added a 'first run' interface. If no users exist in the system at all,
+  a12nserver will now drop you in a 'create admin user' interface, making the
+  initial setup a LOT simpler.
+* Updated the 'create oauth2 credentials' form to be more userfriendly.
+* Fixed OAuth2 error responses.
+* Added APIs for replacing the member list of a group (`PUT`).
+* Added API for adding a member to a group (`POST`).
+* Improved some of the installation instructions.
+* Added a link from the users page back to the users list.
+
+
 0.14.4 (2020-12-16)
 -------------------
 

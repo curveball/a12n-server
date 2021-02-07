@@ -274,3 +274,16 @@ function isExistingUser(user: User | NewUser): user is User {
   return (<User> user).id !== undefined;
 
 }
+
+export async function getByHref(href: string): Promise<string> {
+
+  const matches = href.match(/^\/user\/([0-9]+)$/);
+
+  if (!matches) {
+    const userRelUrl = new URL(href).pathname;
+    return userRelUrl;
+  } else {
+    return href;
+  }
+
+}

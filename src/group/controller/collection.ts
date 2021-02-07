@@ -68,28 +68,23 @@ class GroupMemberCollectionController extends Controller {
       throw new BadRequest('This endpoint only exists for groups');
     }
 
-    const requestBody = ctx.request.body;
-
-    if (requestBody.operation === undefined) {
+    if (ctx.request.body.operation === undefined) {
       throw new UnprocessableEntity('You must specify an "operation" property');
     }
-    if (requestBody.operation !== 'add-member') {
+    if (ctx.request.body.operation !== 'add-member') {
       throw new UnprocessableEntity('"operation" must be set to "add-member"');
     }
-    if (requestBody.userHref === undefined) {
+    if (ctx.request.body.userHref === undefined) {
       throw new UnprocessableEntity('The "userHref" property must be set, and must point to the member you are adding to the group.');
     }
 
-    let newMemberHref;
-    if (ctx.request.body.userHref.includes(process.env.PUBLIC_URI)) {
-      newMemberHref = requestBody.userHref.split(process.env.PORT).pop();
-    } else {
-      newMemberHref = ctx.request.body.userHref;
-    }
 
+    const newMemberHref = ctx.request.body.userHref;
     let newMember;
+
     try {
-      newMember = await userService.findByHref(newMemberHref);
+      newMember = await userService.getByHref(newMemberHref);
+      newMember = await userService.findByHref(newMember);
     } catch (err) {
       if (err instanceof NotFound) {
         throw new Conflict(`User with href ${newMemberHref} not found`);

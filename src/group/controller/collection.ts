@@ -83,8 +83,7 @@ class GroupMemberCollectionController extends Controller {
     let newMember;
 
     try {
-      newMember = await userService.getByHref(newMemberHref);
-      newMember = await userService.findByHref(newMember);
+      newMember = await userService.findByHref(newMemberHref);
     } catch (err) {
       if (err instanceof NotFound) {
         throw new Conflict(`User with href ${newMemberHref} not found`);

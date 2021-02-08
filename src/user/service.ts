@@ -86,8 +86,8 @@ export async function findByIdentity(identity: string): Promise<User> {
  * It can also be the uri listed in the 'identity' field.
  */
 export async function findByHref(href: string): Promise<User> {
-
-  const matches = href.match(/^\/user\/([0-9]+)$/);
+  const relUrl = getByHref(href)
+  const matches = relUrl.match(/^\/user\/([0-9]+)$/);
   if (!matches) {
     return findByIdentity(href);
   }
@@ -100,7 +100,6 @@ export async function findByHref(href: string): Promise<User> {
   }
 
   return recordToModel(result[0][0]);
-
 }
 
 
@@ -275,15 +274,11 @@ function isExistingUser(user: User | NewUser): user is User {
 
 }
 
-export async function getByHref(href: string): Promise<string> {
+function getByHref(href: string): string {
 
-  const matches = href.match(/^\/user\/([0-9]+)$/);
-
-  if (!matches) {
-    const userRelUrl = new URL(href).pathname;
-    return userRelUrl;
-  } else {
-    return href;
+  const fullUrl = new URL(href)
+  if (fullUrl) {
+    return fullUrl.pathname;
   }
-
+  return href;
 }

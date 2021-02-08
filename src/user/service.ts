@@ -86,8 +86,10 @@ export async function findByIdentity(identity: string): Promise<User> {
  * It can also be the uri listed in the 'identity' field.
  */
 export async function findByHref(href: string): Promise<User> {
-  const relUrl = getRelHref(href);
-  const matches = relUrl.match(/^\/user\/([0-9]+)$/);
+
+  const pathName = getPathName(href);
+  const matches = pathName.match(/^\/user\/([0-9]+)$/);
+
   if (!matches) {
     return findByIdentity(href);
   }
@@ -274,7 +276,7 @@ function isExistingUser(user: User | NewUser): user is User {
 
 }
 
-export function getRelHref(href: string): string {
+export function getPathName(href: string): string {
 
   let url;
 

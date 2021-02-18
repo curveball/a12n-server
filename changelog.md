@@ -1,7 +1,15 @@
 Changelog
 =========
 
-0.15.0 (2021-12-02)
+0.15.1 (2021-02-??)
+-------------------
+
+* When updating the list group members, it's now possible to specify members
+  by using absolute URIs.
+* Updated to latest curveball APIs
+
+
+0.15.0 (2021-02-02)
 -------------------
 
 * Added a 'first run' interface. If no users exist in the system at all,

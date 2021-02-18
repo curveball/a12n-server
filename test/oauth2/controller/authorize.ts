@@ -1,3 +1,6 @@
+// Bring in more definitions
+import '@curveball/session';
+
 import { URLSearchParams } from 'url';
 
 import { MemoryRequest, BaseContext, MemoryResponse } from '@curveball/core';
@@ -71,10 +74,8 @@ describe('AuthorizeController', () => {
     it('should pass valid parameters and call code redirect', async() => {
       const request = new MemoryRequest('GET', '?' + params);
       const context = new BaseContext(request, new MemoryResponse());
-      context.state = {
-        session: {
-          user: {}
-        }
+      context.session = {
+        user: {}
       };
 
       await authorize.get(context);
@@ -88,10 +89,8 @@ describe('AuthorizeController', () => {
 
       const request = new MemoryRequest('GET', '?' + params);
       const context = new BaseContext(request, new MemoryResponse());
-      context.state = {
-        session: {
-          user: {}
-        }
+      context.session = {
+        user: {}
       };
 
       await authorize.get(context);
@@ -106,10 +105,8 @@ describe('AuthorizeController', () => {
 
       const request = new MemoryRequest('GET', '?' + params);
       const context = new BaseContext(request, new MemoryResponse());
-      context.state = {
-        session: {
-          user: {}
-        }
+      context.session = {
+        user: {}
       };
 
       await authorize.get(context);
@@ -123,10 +120,8 @@ describe('AuthorizeController', () => {
 
       const request = new MemoryRequest('GET', '?' + params);
       const context = new BaseContext(request, new MemoryResponse());
-      context.state = {
-        session: {
-          user: {}
-        }
+      context.session = {
+        user: {}
       };
 
       await expect(authorize.get(context)).to.be.rejectedWith(InvalidRequest, 'The "code_challenge_method" must be "plain" or "S256"');
@@ -137,10 +132,8 @@ describe('AuthorizeController', () => {
 
       const request = new MemoryRequest('GET', '?' + params);
       const context = new BaseContext(request, new MemoryResponse());
-      context.state = {
-        session: {
-          user: {}
-        }
+      context.session = {
+        user: {}
       };
 
       await expect(authorize.get(context)).to.be.rejectedWith(InvalidRequest, 'The "code_challenge" must be provided');

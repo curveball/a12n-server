@@ -78,6 +78,7 @@ class GroupMemberCollectionController extends Controller {
       throw new UnprocessableEntity('The "userHref" property must be set, and must point to the member you are adding to the group.');
     }
 
+
     const newMemberHref = ctx.request.body.userHref;
     let newMember;
 

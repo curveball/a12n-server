@@ -7,7 +7,7 @@ import { User } from '../../../user/types';
 
 class WebAuthnRegisterController extends Controller {
   async get(ctx: Context) {
-    const user: User = ctx.state.session.registerUser;
+    const user: User = ctx.session.registerUser;
 
     if (!user) {
       return ctx.redirect(303, '/login');

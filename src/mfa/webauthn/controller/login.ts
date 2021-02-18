@@ -12,7 +12,7 @@ import { MFALoginSession } from '../../types';
 class WebAuthnLoginRequestController extends Controller {
 
   async get(ctx: Context) {
-    const { user }: MFALoginSession = ctx.state.session.mfa || {};
+    const { user }: MFALoginSession = ctx.session.mfa || {};
 
     const assertionOptions = generateAssertionOptions({
       timeout: 60000,
@@ -24,16 +24,16 @@ class WebAuthnLoginRequestController extends Controller {
       userVerification: 'preferred',
     });
 
-    ctx.state.session.webAuthnChallengeLogin = assertionOptions.challenge;
+    ctx.session.webAuthnChallengeLogin = assertionOptions.challenge;
     ctx.response.body = assertionOptions;
   }
 
   async post(ctx: Context<any>) {
-    const { user }: MFALoginSession = ctx.state.session.mfa || {};
+    const { user }: MFALoginSession = ctx.session.mfa || {};
     const body = ctx.request.body;
 
-    const expectedChallenge = ctx.state.session.webAuthnChallengeLogin;
-    ctx.state.session.webAuthnChallengeLogin = null;
+    const expectedChallenge = ctx.session.webAuthnChallengeLogin;
+    ctx.session.webAuthnChallengeLogin = null;
 
     const authenticatorDevice = await webauthnService.findDeviceByUserAndId(user, body.id);
 
@@ -60,8 +60,8 @@ class WebAuthnLoginRequestController extends Controller {
       await webauthnService.save(authenticatorDevice);
     }
 
-    ctx.state.session.mfa = null;
-    ctx.state.session = {
+    ctx.session.mfa = null;
+    ctx.session = {
       user: user,
     };
     log(EventType.loginSuccess, ctx);

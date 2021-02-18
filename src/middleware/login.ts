@@ -58,10 +58,10 @@ export default function(): Middleware {
 
     }
 
-    if (ctx.state.session.user) {
+    if (ctx.session.user) {
 
       // The user was logged in via a session cookie.
-      ctx.state.user = ctx.state.session.user;
+      ctx.state.user = ctx.session.user;
       return next();
 
     }

@@ -10,7 +10,7 @@ import { User } from '../../../user/types';
 class WebAuthnAttestationController extends Controller {
 
   async get(ctx: Context) {
-    const user: User = ctx.state.session.registerUser;
+    const user: User = ctx.session.registerUser;
 
     const attestationOptions = generateAttestationOptions({
       serviceName: getSetting('webauthn.serviceName'),
@@ -31,16 +31,16 @@ class WebAuthnAttestationController extends Controller {
       },
     });
 
-    ctx.state.session.webAuthnChallengeRegister = attestationOptions.challenge;
+    ctx.session.webAuthnChallengeRegister = attestationOptions.challenge;
     ctx.response.body = attestationOptions;
   }
 
   async post(ctx: Context<any>) {
-    const user: User = ctx.state.session.registerUser;
+    const user: User = ctx.session.registerUser;
     const body = ctx.request.body;
 
-    const expectedChallenge = ctx.state.session.webAuthnChallengeRegister;
-    ctx.state.session.webAuthnChallengeRegister = null;
+    const expectedChallenge = ctx.session.webAuthnChallengeRegister;
+    ctx.session.webAuthnChallengeRegister = null;
 
     let verification;
     try {
@@ -73,7 +73,7 @@ class WebAuthnAttestationController extends Controller {
           counter,
         });
 
-        ctx.state.session.registerUser = null;
+        ctx.session.registerUser = null;
       }
     }
 

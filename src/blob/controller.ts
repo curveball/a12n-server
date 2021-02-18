@@ -7,22 +7,22 @@ class BlobController extends Controller {
 
   get(ctx: Context) {
 
-    switch (ctx.state.params.filename) {
+    switch (ctx.params.filename) {
 
       case 'form.css' :
-        ctx.response.body = fs.readFileSync(__dirname + '/../../assets/' + ctx.state.params.filename);
+        ctx.response.body = fs.readFileSync(__dirname + '/../../assets/' + ctx.params.filename);
         ctx.response.type = 'text/css';
         break;
       case 'simplewebauthn-browser.min.js' :
-        ctx.response.body = fs.readFileSync(__dirname + '/../../node_modules/@simplewebauthn/browser/dist/' + ctx.state.params.filename);
+        ctx.response.body = fs.readFileSync(__dirname + '/../../node_modules/@simplewebauthn/browser/dist/' + ctx.params.filename);
         ctx.response.type = 'text/javascript';
         break;
       case 'simplewebauthn-browser.min.js.map' :
-        ctx.response.body = fs.readFileSync(__dirname + '/../../node_modules/@simplewebauthn/browser/dist/' + ctx.state.params.filename);
+        ctx.response.body = fs.readFileSync(__dirname + '/../../node_modules/@simplewebauthn/browser/dist/' + ctx.params.filename);
         ctx.response.type = 'text/pain';
         break;
       case 'webauthn.js' :
-        ctx.response.body = fs.readFileSync(__dirname + '/../../assets/' + ctx.state.params.filename);
+        ctx.response.body = fs.readFileSync(__dirname + '/../../assets/' + ctx.params.filename);
         ctx.response.type = 'application/javascript';
         break;
       default:

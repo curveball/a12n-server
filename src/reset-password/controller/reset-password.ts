@@ -15,7 +15,7 @@ class ResetPasswordController extends Controller {
    */
   async get(ctx: Context) {
 
-    if (!ctx.state.session.resetPasswordUser) {
+    if (!ctx.session.resetPasswordUser) {
       throw new Forbidden('You can only use this endpoint after you went through the \'forgot password\' flow');
     }
     ctx.response.type = 'text/html';
@@ -29,11 +29,11 @@ class ResetPasswordController extends Controller {
    */
   async post(ctx: Context<any>) {
 
-    if (!ctx.state.session.resetPasswordUser) {
+    if (!ctx.session.resetPasswordUser) {
       throw new Forbidden('You can only use this endpoint after you went through the \'forgot password\' flow');
     }
 
-    const user: User = ctx.state.session.resetPasswordUser;
+    const user: User = ctx.session.resetPasswordUser;
     const resetNewPassword = ctx.request.body.newPassword;
     const confirmNewPassword = ctx.request.body.confirmNewPassword;
 
@@ -45,7 +45,7 @@ class ResetPasswordController extends Controller {
 
     await UserService.updatePassword(user, resetNewPassword);
 
-    delete ctx.state.session.resetPasswordUser;
+    delete ctx.session.resetPasswordUser;
     log(EventType.resetPasswordSuccess, ctx.ip()!, user.id);
     ctx.status = 303;
     ctx.response.headers.set('Location', '/login?msg=Your+new+password+has+been+saved');

@@ -11,14 +11,14 @@ class ClientController extends Controller {
 
   async get(ctx: Context) {
 
-    const user = await userService.findById(ctx.state.params.id);
+    const user = await userService.findById(+ctx.params.id);
     if (user.id !== ctx.state.user.id) {
       if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
         throw new Forbidden('Only users with the "admin" privilege can inspect OAuth2 clients that are not your own');
       }
     }
 
-    const client = await getClientByClientId(ctx.state.params.clientId);
+    const client = await getClientByClientId(ctx.params.clientId);
     if (client.user.id !== user.id) {
       throw new NotFound('OAuth2 client not found');
     }

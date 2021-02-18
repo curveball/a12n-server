@@ -75,7 +75,7 @@ class AuthorizeController extends Controller {
       throw err;
     }
 
-    if (ctx.state.session.user !== undefined) {
+    if (ctx.session.user !== undefined) {
 
       if (responseType === 'token') {
         return this.tokenRedirect(ctx, oauth2Client, redirectUri, state);
@@ -93,7 +93,7 @@ class AuthorizeController extends Controller {
 
     const token = await oauth2Service.generateTokenForUser(
       oauth2Client,
-      ctx.state.session.user
+      ctx.session.user
     );
 
     ctx.status = 302;
@@ -121,10 +121,10 @@ class AuthorizeController extends Controller {
 
     const code = await oauth2Service.generateCodeForUser(
       oauth2Client,
-      ctx.state.session.user,
+      ctx.session.user,
       codeChallenge,
       codeChallengeMethod,
-      ctx.state.sessionId,
+      ctx.sessionId!,
     );
 
     ctx.status = 302;

@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.15.1 (2021-02-??)
+0.15.1 (2021-02-18)
 -------------------
 
 * When updating the list group members, it's now possible to specify members

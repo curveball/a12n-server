@@ -11,14 +11,14 @@ import { getSetting } from '../../../server-settings';
 
 class TOTPRegisterController extends Controller {
   async get(ctx: Context) {
-    const user: User = ctx.state.session.registerUser;
+    const user: User = ctx.session.registerUser;
 
     if (!user) {
       return ctx.redirect(303, '/login');
     }
 
-    const secret = ctx.state.session.totpSecret ? ctx.state.session.totpSecret : generateSecret();
-    ctx.state.session.totpSecret = secret;
+    const secret = ctx.session.totpSecret ? ctx.session.totpSecret : generateSecret();
+    ctx.session.totpSecret = secret;
 
     const otpauth = authenticator.keyuri(user.nickname, getSetting('totp.serviceName'), secret);
 
@@ -34,21 +34,21 @@ class TOTPRegisterController extends Controller {
   }
 
   async post(ctx: Context<any>) {
-    const user: User = ctx.state.session.registerUser;
+    const user: User = ctx.session.registerUser;
 
     if (!user) {
       return ctx.redirect(303, '/login');
     }
 
     const { code } = ctx.request.body;
-    const secret = ctx.state.session.totpSecret;
+    const secret = ctx.session.totpSecret;
     const validCode = authenticator.check(code, secret);
 
     if (!validCode) {
       return ctx.redirect(303, '/register/mfa/totp?error=Invalid+token');
     }
 
-    ctx.state.session.totpSecret = null;
+    ctx.session.totpSecret = null;
     await save({
       user,
       secret

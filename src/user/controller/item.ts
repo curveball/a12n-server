@@ -8,7 +8,7 @@ class UserController extends Controller {
 
   async get(ctx: Context) {
 
-    const user = await userService.findById(ctx.state.params.id);
+    const user = await userService.findById(+ctx.params.id);
     ctx.response.body = hal.item(
       user,
       await privilegeService.getPrivilegesForUser(user)

@@ -62,7 +62,7 @@ class LoginController extends Controller {
       return;
     }
 
-    ctx.state.session = {
+    ctx.session = {
       user: user,
     };
     log(EventType.loginSuccess, ctx);
@@ -118,7 +118,7 @@ class LoginController extends Controller {
           mfaType: 'totp'
         };
 
-        ctx.state.session = {
+        ctx.session = {
           mfa: mfaSession,
         };
 
@@ -149,7 +149,7 @@ class LoginController extends Controller {
           mfaType: 'webauthn'
         };
 
-        ctx.state.session = {
+        ctx.session = {
           mfa: mfaSession,
         };
 

@@ -12,7 +12,7 @@ class MFAController extends Controller {
 
   async get(ctx: Context) {
 
-    const { user, mfaType }: MFALoginSession = ctx.state.session.mfa || {};
+    const { user, mfaType }: MFALoginSession = ctx.session.mfa || {};
 
     if (!user) {
       return this.redirectToLogin(ctx);
@@ -36,7 +36,7 @@ class MFAController extends Controller {
 
   async post(ctx: Context<any>) {
 
-    const { user }: MFALoginSession = ctx.state.session.mfa || {};
+    const { user }: MFALoginSession = ctx.session.mfa || {};
 
     if (!user) {
       return this.redirectToLogin(ctx);
@@ -55,7 +55,7 @@ class MFAController extends Controller {
       return this.redirectToMfa(ctx, 'Invalid continue URL provided');
     }
 
-    ctx.state.session = {
+    ctx.session = {
       user: user,
     };
     log(EventType.loginSuccess, ctx);

@@ -6,7 +6,7 @@ import * as privilegeService from '../service';
 class PrivilegeController extends Controller {
 
   async get(ctx: Context) {
-    const privilege = await privilegeService.findPrivilege(ctx.state.params.id);
+    const privilege = await privilegeService.findPrivilege(ctx.params.id);
     ctx.response.body = hal.item(privilege);
   }
 }

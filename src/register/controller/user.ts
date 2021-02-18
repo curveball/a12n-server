@@ -69,7 +69,7 @@ class UserRegistrationController extends Controller {
     await userService.createPassword(user, userPassword);
 
     if (addMfa && getSetting('registration.mfa.enabled')) {
-      ctx.state.session = {
+      ctx.session = {
         registerUser: user,
       };
 

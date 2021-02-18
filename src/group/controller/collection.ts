@@ -10,7 +10,7 @@ class GroupMemberCollectionController extends Controller {
 
   async get(ctx: Context) {
 
-    const user = await userService.findById(parseInt(ctx.state.params.id, 10));
+    const user = await userService.findById(parseInt(ctx.params.id, 10));
 
     /**
      * Checks if user type is a group
@@ -31,7 +31,7 @@ class GroupMemberCollectionController extends Controller {
    */
   async put(ctx: Context) {
 
-    const group = await userService.findById(parseInt(ctx.state.params.id, 10));
+    const group = await userService.findById(parseInt(ctx.params.id, 10));
 
     if (!groupService.isGroup(group)) {
       throw new BadRequest('This endpoint only exists for groups');
@@ -62,7 +62,7 @@ class GroupMemberCollectionController extends Controller {
    */
   async post(ctx: Context<any>) {
 
-    const group = await userService.findById(parseInt(ctx.state.params.id, 10));
+    const group = await userService.findById(parseInt(ctx.params.id, 10));
 
     if (!groupService.isGroup(group)) {
       throw new BadRequest('This endpoint only exists for groups');

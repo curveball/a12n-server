@@ -17,7 +17,7 @@ class ChangePasswordController extends Controller {
 
   async post(ctx: Context<any>) {
 
-    const user: User = ctx.state.session.user;
+    const user: User = ctx.session.user;
     const currentPassword = ctx.request.body.currentPassword;
     const userNewPassword = ctx.request.body.newPassword;
     const confirmNewPassword = ctx.request.body.confirmNewPassword;
@@ -42,7 +42,7 @@ class ChangePasswordController extends Controller {
 
     await UserService.updatePassword(user, userNewPassword);
 
-    ctx.state.session = {
+    ctx.session = {
       user: user,
     };
     log(EventType.changePasswordSuccess, ctx);

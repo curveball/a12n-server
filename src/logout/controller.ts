@@ -19,10 +19,10 @@ class LogoutController extends Controller {
   async post(ctx: Context<any>) {
 
     await oauth2Service.invalidateTokensByBrowserSessionId(
-      ctx.state.sessionId
+      ctx.sessionId!
     );
-    ctx.state.session = null;
-    ctx.state.sessionId = null;
+    ctx.session = {};
+    ctx.sessionId = null;
     ctx.status = 303;
     ctx.redirect(
       303,

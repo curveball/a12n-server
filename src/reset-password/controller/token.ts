@@ -15,11 +15,11 @@ import { validateToken } from '../service';
 class ResetPasswordTokenController extends Controller {
 
   async get(ctx: Context) {
-    const urlToken = ctx.state.params.token;
+    const urlToken = ctx.params.token;
     const user = await validateToken(urlToken);
-    ctx.state.session.resetPasswordUser = user;
+    ctx.session.resetPasswordUser = user;
 
-    if (!ctx.state.session.resetPasswordUser) {
+    if (!ctx.session.resetPasswordUser) {
       throw new Forbidden('You can only use this endpoint after you went through the \'forgot password\' flow');
     }
 

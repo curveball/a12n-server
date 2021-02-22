@@ -27,10 +27,10 @@ class OneTimeTokenController extends Controller {
     }
 
     const token = await createToken(user);
-    const url = process.env.PUBLIC_URI + 'reset-password/token/' + token
+    const url = process.env.PUBLIC_URI + 'reset-password/token/' + token;
 
-    const oneTimeToken = { token, url }
-    return oneTimeToken
+    const oneTimeToken = { token, url };
+    return oneTimeToken;
 
   }
 

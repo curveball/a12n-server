@@ -3,7 +3,7 @@ import { Context } from '@curveball/core';
 import * as privilegeService from '../privilege/service';
 import { Forbidden } from '@curveball/http-errors';
 import * as userService from '../user/service';
-import { createToken } from '../reset-password/service';
+import { createToken } from './service';
 import * as hal from './formats/hal';
 import { resolve } from 'url';
 

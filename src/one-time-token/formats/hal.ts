@@ -1,7 +1,8 @@
 import { HalResource } from 'hal-types';
 import { User } from '../../user/types';
+import { OneTimeToken } from '../types';
 
-export function oneTimeToken(user: User, url: string, token: string): HalResource {
+export function oneTimeToken(user: User, url: string, token: OneTimeToken): HalResource {
 
   return {
     _links: {
@@ -17,6 +18,6 @@ export function oneTimeToken(user: User, url: string, token: string): HalResourc
         title: user.nickname
       },
     },
-    token,
+    ...token,
   };
 }

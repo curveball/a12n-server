@@ -1,7 +1,6 @@
 /* eslint no-console: 0 */
 import { Application } from '@curveball/core';
 
-import process from 'process';
 import mainMw from './main-mw';
 import accessLog from '@curveball/accesslog';
 

@@ -1,7 +1,7 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { NotFound } from '@curveball/http-errors';
-import querystring from 'querystring';
+import * as querystring from 'querystring';
 import { InvalidClient, InvalidRequest, UnsupportedGrantType } from '../errors';
 import * as oauth2Service from '../service';
 import { CodeChallengeMethod } from '../types';

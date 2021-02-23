@@ -1,6 +1,6 @@
 import { OAuth2Token } from '../../oauth2/types';
 import { PrivilegeMap } from '../../privilege/types';
-import url from 'url';
+import * as url from 'url';
 
 export function accessToken(token: OAuth2Token, privileges: PrivilegeMap) {
 

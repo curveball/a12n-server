@@ -73,20 +73,8 @@ class LoginController extends Controller {
       return;
     }
 
-    if (this.isRedirect()) {
-      const redirectVal = getSetting('login.defaultRedirect');
-      ctx.response.headers.set('Location', redirectVal);
-    } else {
-      ctx.response.headers.set('Location', '/');
-    }
+    ctx.response.redirect(303, getSetting('login.defaultRedirect', '/'));
 
-  }
-
-  isRedirect() {
-    if (getSetting('login.defaultRedirect') !== '/') {
-      return true;
-    }
-    return false;
   }
 
   redirectToLogin(ctx: Context<any>, msg: string, error: string) {

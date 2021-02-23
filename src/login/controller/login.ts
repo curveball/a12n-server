@@ -1,7 +1,7 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { NotFound } from '@curveball/http-errors';
-import querystring from 'querystring';
+import * as querystring from 'querystring';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
 import { MFALoginSession } from '../../mfa/types';

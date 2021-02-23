@@ -1,6 +1,6 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import querystring from 'querystring';
+import * as querystring from 'querystring';
 import { isValidRedirect } from '../utilities';
 import { MFALoginSession } from '../../mfa/types';
 import { mfaForm } from '../formats/html';

@@ -1,5 +1,5 @@
 import { NotFound } from '@curveball/http-errors';
-import crypto from 'crypto';
+import * as crypto from 'crypto';
 import db from '../database';
 import { getSetting } from '../server-settings';
 import * as userService from '../user/service';

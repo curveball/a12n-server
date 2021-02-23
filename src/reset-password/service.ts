@@ -1,6 +1,6 @@
 import { BadRequest } from '@curveball/http-errors';
-import crypto from 'crypto';
-import nodemailer from 'nodemailer';
+import * as crypto from 'crypto';
+import * as nodemailer from 'nodemailer';
 import database from '../database';
 import { render } from '../templates';
 import * as userService from '../user/service';

@@ -1,5 +1,5 @@
 /* eslint no-console: 0 */
-import mysql from 'mysql2/promise';
+import * as mysql from 'mysql2/promise';
 import { readdir } from 'fs/promises';
 import { join } from 'path';
 

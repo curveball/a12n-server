@@ -51,7 +51,7 @@ export async function sendResetPasswordEmail(user: User) {
  * This function will create a unique token then store it in the database
  */
 export async function createToken(user: User): Promise<string> {
-  const token = crypto.randomBytes(32).toString('base64').replace(/'+'/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  const token = crypto.randomBytes(32).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
   const query = 'INSERT INTO reset_password_token SET user_id = ?, token = ?, expires_at = UNIX_TIMESTAMP() + ?, created_at = UNIX_TIMESTAMP()';
 
   await database.query(query, [

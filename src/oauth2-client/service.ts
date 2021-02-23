@@ -1,5 +1,5 @@
 import { OAuth2Client, GrantType } from './types';
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import * as userService from '../user/service';
 import db from '../database';
 import { Context } from '@curveball/core';

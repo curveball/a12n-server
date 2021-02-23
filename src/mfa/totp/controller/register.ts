@@ -1,7 +1,7 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { authenticator } from 'otplib';
-import QRCode from 'qrcode';
+import * as QRCode from 'qrcode';
 
 import { generateSecret, save } from '../service';
 import { registrationForm } from '../formats/html';

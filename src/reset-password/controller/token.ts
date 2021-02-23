@@ -2,7 +2,7 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { Forbidden } from '@curveball/http-errors';
 import { resetPasswordForm } from '../formats/redirect';
-import { validateToken } from '../service';
+import { validateToken } from '../../one-time-token/service';
 
 /**
  * This controller is used for validating token and rendering reset password form.

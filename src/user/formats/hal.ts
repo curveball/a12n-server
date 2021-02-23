@@ -49,6 +49,12 @@ export function item(user: User, privileges: PrivilegeMap) {
       title: 'List of OAuth2 client credentials'
     };
   }
+  if (user.type === 'user') {
+    hal._links['one-time-token'] = {
+      href: '/user/' + user.id + '/one-time-token',
+      title: 'Generate a one-time login token.'
+    };
+  }
 
   return hal;
 

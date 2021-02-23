@@ -12,7 +12,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/evert/auth-api.git"
+    "url": "git+https://github.com/curveball/a12n-server.git"
   },
   "files": [
     "package.json",
@@ -34,7 +34,7 @@
       "url": "https://juhangsin.net"
     }
   ],
-  "homepage": "https://github.com/evert/auth-api#readme",
+  "homepage": "https://github.com/curveball/a12n-server#readme",
   "devDependencies": {
     "@types/bcrypt": "^3.0.0",
     "@types/chai": "^4.2.15",

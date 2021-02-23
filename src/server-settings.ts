@@ -10,6 +10,7 @@ type Settings = {
   'webauthn.expectedOrigin': string,
   'webauthn.relyingPartyId': string,
   'webauthn.serviceName': string,
+  'login.defaultRedirect': string,
 }
 
 const settingsCache = new Map<string, any>();

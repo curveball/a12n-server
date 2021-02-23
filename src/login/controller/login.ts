@@ -73,7 +73,7 @@ class LoginController extends Controller {
       return;
     }
 
-    ctx.response.headers.set('Location', '/');
+    ctx.response.redirect(303, getSetting('login.defaultRedirect', '/'));
 
   }
 
@@ -169,7 +169,6 @@ class LoginController extends Controller {
   isMfaEnabled(): boolean {
     return getSetting('totp') !== 'disabled' || getSetting('webauthn') !== 'disabled';
   }
-
 
   redirectToMfa(ctx: Context, redirectUrl: string) {
 

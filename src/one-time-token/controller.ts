@@ -30,7 +30,7 @@ class OneTimeTokenController extends Controller {
     const token = await createToken(user);
     const url = new URL(process.env.PUBLIC_URI + 'reset-password/token/' + token);
 
-    ctx.response.body = hal.oneTimeToken(url)
+    ctx.response.body = hal.oneTimeToken(url);
 
   }
 

@@ -15,7 +15,7 @@ class OneTimeTokenController extends Controller {
       throw new Forbidden('Only users with the "admin" privilege can request for one time token');
     }
 
-    const user = await userService.findByIdentity(ctx.state.user.identity);
+    const user = await userService.findById(ctx.state.params.id);
 
     if (user.type !== 'user') {
       throw new Forbidden('One-time token may only be obtained for users');
@@ -23,7 +23,7 @@ class OneTimeTokenController extends Controller {
 
 
     const token = await createToken(user);
-    const url = resolve(process.env.PUBLIC_URI!, 'reset-password/token/' + token);
+    const url = resolve(process.env.PUBLIC_URI!, 'reset-password/token/' + token.token);
 
     ctx.response.body = hal.oneTimeToken(user, url, token);
 

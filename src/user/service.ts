@@ -1,5 +1,5 @@
 import { NotFound } from '@curveball/http-errors';
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 import * as otplib from 'otplib';
 import database from '../database';
 import { NewUser, User, UserType } from './types';

@@ -4,8 +4,8 @@ import '@curveball/session';
 import { URLSearchParams } from 'url';
 
 import { MemoryRequest, BaseContext, MemoryResponse } from '@curveball/core';
-import chai from 'chai';
-import chaiAsPromised from 'chai-as-promised';
+import * as chai from 'chai';
+import * as chaiAsPromised from 'chai-as-promised';
 import * as sinon from 'sinon';
 
 import { InvalidRequest } from '../../../src/oauth2/errors';

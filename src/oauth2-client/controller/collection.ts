@@ -5,9 +5,9 @@ import * as hal from '../formats/hal';
 import { Forbidden, UnprocessableEntity } from '@curveball/http-errors';
 import { findByUser, create } from '../service';
 import * as userService from '../../user/service';
-import crypto from 'crypto';
+import * as crypto from 'crypto';
 import { GrantType, OAuth2Client } from '../types';
-import bcrypt from 'bcrypt';
+import * as bcrypt from 'bcrypt';
 
 class ClientCollectionController extends Controller {
 

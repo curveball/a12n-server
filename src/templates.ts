@@ -1,5 +1,5 @@
-import fs from 'fs';
-import { default as handlebars } from 'handlebars';
+import * as fs from 'fs';
+import * as handlebars from 'handlebars';
 
 type Params = {
   [key: string]: any

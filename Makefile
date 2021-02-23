@@ -1,47 +1,38 @@
 SOURCE_FILES:=$(shell find src/ -type f -name '*.ts')
-DOCKER_IMAGE_NAME:=a12n-server
 
-.PHONY:start run build test lint fix lint-fix start-dev watch inspect deploy
-start: build
-	node dist/app.js
+.PHONY:all
+all: build
 
-run: start
-
+.PHONY:build
 build: dist/build
 
-docker-build: build
-	docker build -t $(DOCKER_IMAGE_NAME) .
-
-docker-run:
-	docker run -it --rm --name $(DOCKER_IMAGE_NAME)-01 $(DOCKER_IMAGE_NAME)
-
+.PHONY:test
 test:
-	npx nyc mocha
+	node_modules/.bin/nyc node_modules/.bin/mocha
 
+.PHONY:lint
 lint:
-	npx tsc --noemit
-	npx eslint --quiet 'src/**/*.ts' 'test/**/*.ts'
+	node_modules/.bin/eslint --quiet 'src/*.ts' 'test/*.ts'
 
-fix:
-	npx eslint --quiet 'src/**/*.ts' 'test/**/*.ts' --fix
-
+.PHONY:lint-fix
 lint-fix: fix
 
-start-dev:
-	npx tsc-watch --onSuccess 'node dist/app.js'
+.PHONY:fix
+fix:
+	node_modules/.bin/eslint --quiet 'src/**/*.ts' 'test/**/*.ts' --fix
 
+.PHONY:watch
 watch:
-	./node_modules/.bin/tsc --watch
+	node_modules/.bin/tsc --watch
+
+.PHONY:start
+start: build
 
 .PHONY:clean
 clean:
-	rm -r node_modules dist
+	rm -r dist
 
 dist/build: $(SOURCE_FILES)
-	./node_modules/.bin/tsc
-	@# Touching this file so Makefile knows when it was last built.
+	node_modules/.bin/tsc
+	@# Creating a small file to keep track of the last build time
 	touch dist/build
-
-inspect: build
-	node --inspect dist/app.js
-

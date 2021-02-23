@@ -1,11 +1,11 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import * as privilegeService from '../privilege/service';
-import { Forbidden, NotFound } from '@curveball/http-errors';
+import { Forbidden } from '@curveball/http-errors';
 import * as userService from '../user/service';
-import { User } from '../user/types';
 import { createToken } from '../reset-password/service';
 import * as hal from './formats/hal';
+import { resolve } from 'url';
 
 class OneTimeTokenController extends Controller {
 
@@ -15,22 +15,17 @@ class OneTimeTokenController extends Controller {
       throw new Forbidden('Only users with the "admin" privilege can request for one time token');
     }
 
-    let user: User;
-    try {
-      user = await userService.findByIdentity(ctx.state.user.identity);
-    } catch (err) {
-      if (err instanceof NotFound) {
-        ctx.status = 404;
-        return;
-      } else {
-        throw err;
-      }
+    const user = await userService.findByIdentity(ctx.state.user.identity);
+
+    if (user.type !== 'user') {
+      throw new Forbidden('One-time token may only be obtained for users');
     }
 
-    const token = await createToken(user);
-    const url = new URL(process.env.PUBLIC_URI + 'reset-password/token/' + token);
 
-    ctx.response.body = hal.oneTimeToken(url);
+    const token = await createToken(user);
+    const url = resolve(process.env.PUBLIC_URI!, 'reset-password/token/' + token);
+
+    ctx.response.body = hal.oneTimeToken(user, url, token);
 
   }
 

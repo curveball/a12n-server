@@ -62,6 +62,10 @@ class LoginController extends Controller {
       return;
     }
 
+    if (await this.shouldRedirect(ctx)) {
+      return;
+    }
+
     ctx.session = {
       user: user,
     };
@@ -135,6 +139,15 @@ class LoginController extends Controller {
     return false;
   }
 
+  async shouldRedirect(ctx: Context<any>): Promise<boolean> {
+    if (!getSetting('login.defaultRedirect')) {
+      return false;
+    }
+    const defaultUri = getSetting('login.defaultRedirect')
+    this.redirectToMfa(ctx, defaultUri);
+    return true;
+  }
+
   async shouldUseWebauthn(ctx: Context<any>, user: User): Promise<boolean> {
     if (getSetting('webauthn') !== 'disabled') {
       if (await webAuthnService.hasWebauthn(user)) {
@@ -169,7 +182,6 @@ class LoginController extends Controller {
   isMfaEnabled(): boolean {
     return getSetting('totp') !== 'disabled' || getSetting('webauthn') !== 'disabled';
   }
-
 
   redirectToMfa(ctx: Context, redirectUrl: string) {
 

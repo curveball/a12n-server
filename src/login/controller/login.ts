@@ -62,10 +62,6 @@ class LoginController extends Controller {
       return;
     }
 
-    if (await this.shouldRedirect(ctx)) {
-      return;
-    }
-
     ctx.session = {
       user: user,
     };
@@ -77,8 +73,20 @@ class LoginController extends Controller {
       return;
     }
 
-    ctx.response.headers.set('Location', '/');
+    if (this.isRedirect()) {
+      const redirectVal = getSetting('login.defaultRedirect');
+      ctx.response.headers.set('Location', redirectVal);
+    } else {
+      ctx.response.headers.set('Location', '/');
+    }
 
+  }
+
+  isRedirect() {
+    if (getSetting('login.defaultRedirect') !== '/') {
+      return true;
+    }
+    return false;
   }
 
   redirectToLogin(ctx: Context<any>, msg: string, error: string) {
@@ -137,15 +145,6 @@ class LoginController extends Controller {
     }
 
     return false;
-  }
-
-  async shouldRedirect(ctx: Context<any>): Promise<boolean> {
-    if (!getSetting('login.defaultRedirect')) {
-      return false;
-    }
-    const defaultUri = getSetting('login.defaultRedirect');
-    this.redirectToMfa(ctx, defaultUri);
-    return true;
   }
 
   async shouldUseWebauthn(ctx: Context<any>, user: User): Promise<boolean> {

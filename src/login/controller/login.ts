@@ -143,7 +143,7 @@ class LoginController extends Controller {
     if (!getSetting('login.defaultRedirect')) {
       return false;
     }
-    const defaultUri = getSetting('login.defaultRedirect')
+    const defaultUri = getSetting('login.defaultRedirect');
     this.redirectToMfa(ctx, defaultUri);
     return true;
   }

@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.15.2 (2021-02-23)
+------------------
+
+* Added one-time-token API, allowing clients to get temporary login tokens for
+  use with lost-password emails, invite emails.
+
+
 0.15.1 (2021-02-18)
 -------------------
 

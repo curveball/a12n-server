@@ -1,11 +1,16 @@
 Changelog
 =========
 
+0.15.4 (2021-02-23)
+-------------------
+
+* This package is now published on npm under `@curveball/a12n-server`.
+
+
 0.15.3 (2021-02-23)
 -------------------
 
 * Re-releasing to for Github auto-publishing npm packages.
-* This package is now published on npm under `@curveball/a12n-server`.
 
 
 0.15.2 (2021-02-23)

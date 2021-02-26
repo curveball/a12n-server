@@ -65,7 +65,7 @@
   "dependencies": {
     "@curveball/accesslog": "^0.2.1",
     "@curveball/bodyparser": "^0.4.14",
-    "@curveball/browser": "^0.12.0",
+    "@curveball/browser": "^0.14.0",
     "@curveball/controller": "^0.3.0",
     "@curveball/core": "^0.16.2",
     "@curveball/http-errors": "^0.4.0",

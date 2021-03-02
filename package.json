@@ -44,8 +44,8 @@
     "@types/nodemailer": "^6.4.0",
     "@types/qrcode": "^1.4.0",
     "@types/sinon": "^9.0.10",
-    "@typescript-eslint/eslint-plugin": "^4.15.2",
-    "@typescript-eslint/parser": "^4.15.2",
+    "@typescript-eslint/eslint-plugin": "^4.16.1",
+    "@typescript-eslint/parser": "^4.16.1",
     "chai": "^4.3.0",
     "chai-as-promised": "^7.1.1",
     "eslint": "^7.20.0",
@@ -54,7 +54,7 @@
     "nyc": "^15.1.0",
     "sinon": "^9.2.4",
     "ts-node": "^9.1.1",
-    "typescript": "^4.1.5"
+    "typescript": "^4.1.5 <4.2"
   },
   "types": "dist/",
   "nyc": {

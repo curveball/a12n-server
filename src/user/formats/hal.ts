@@ -1,29 +1,28 @@
 import { PrivilegeMap } from '../../privilege/types';
 import { NewUser, User } from '../types';
+import { HalResource } from 'hal-types';
 
-export function collection(users: User[]) {
+export function collection(users: User[]): HalResource {
 
-  const hal: any = {
+  const hal: HalResource = {
     _links: {
       'self': { href: '/user' },
-      'item': [],
+      'item': users.map( user => ({
+        href: '/user/' + user.id,
+        title: user.nickname,
+      })),
       'create-form': { href: '/create-user', title: 'Create New User'}
     },
     total: users.length,
   };
 
-  for (const user of users) {
-    hal._links.item.push({
-      href: '/user/' + user.id,
-      title: user.nickname,
-    });
-  }
   return hal;
 
 }
 
-export function item(user: User, privileges: PrivilegeMap) {
-  const hal: any = {
+export function item(user: User, privileges: PrivilegeMap): HalResource {
+
+  const hal: HalResource = {
     _links: {
       'self': {href: '/user/' + user.id, title: user.nickname },
       'me': { href: user.identity, title: user.nickname },
@@ -52,7 +51,10 @@ export function item(user: User, privileges: PrivilegeMap) {
   if (user.type === 'user') {
     hal._links['one-time-token'] = {
       href: '/user/' + user.id + '/one-time-token',
-      title: 'Generate a one-time login token.'
+      title: 'Generate a one-time login token.',
+      hints: {
+        allow: ['POST'],
+      }
     };
   }
 

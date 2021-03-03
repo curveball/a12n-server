@@ -1,20 +1,27 @@
 import router from '@curveball/router';
+
 import blob from './blob/controller';
 import changePassword from './changepassword/controller';
+import changePasswordRedirect from './well-known/controller/change-password';
+import client from './oauth2-client/controller/item';
+import clientNew from './oauth2-client/controller/new';
+import clients from './oauth2-client/controller/collection';
 import createUser from './create-user/controller';
 import group from './group/controller/collection';
-import oneTimeToken from './one-time-token/controller';
 import health from './health/controller';
 import home from './home/controller';
 import introspect from './introspect/controller';
-import userLog from './log/controller/user';
 import login from './login/controller/login';
 import loginMfa from './login/controller/mfa';
 import loginWebAuthn from './mfa/webauthn/controller/login';
 import logout from './logout/controller';
 import oauth2Authorize from './oauth2/controller/authorize';
-import oauth2Token from './oauth2/controller/token';
+import oauth2ErrorHandler from './oauth2/oauth2-error-handler';
+import oauth2Metadata from './well-known/controller/oauth2-metadata';
 import oauth2Revoke from './oauth2/controller/revoke';
+import oauth2Token from './oauth2/controller/token';
+import oneTimeToken from './one-time-token/controller';
+import passwordToken from './reset-password/controller/token';
 import privilegeCollection from './privilege/controller/collection';
 import privilegeItem from './privilege/controller/item';
 import register from './register/controller/user';
@@ -24,15 +31,10 @@ import registerWebAuthn from './mfa/webauthn/controller/register';
 import registerWebAuthnAttestation from './mfa/webauthn/controller/attestation';
 import resetPassword from './reset-password/controller/request';
 import resetPasswordRedirect from './reset-password/controller/reset-password';
-import passwordToken from './reset-password/controller/token';
-import users from './user/controller/collection';
 import user from './user/controller/item';
-import changePasswordRedirect from './well-known/controller/change-password';
-import oauth2Metadata from './well-known/controller/oauth2-metadata';
-import clients from './oauth2-client/controller/collection';
-import client from './oauth2-client/controller/item';
-import clientNew from './oauth2-client/controller/new';
-import oauth2ErrorHandler from './oauth2/oauth2-error-handler';
+import userAccessToken from './oauth2/controller/user-access-token';
+import userLog from './log/controller/user';
+import users from './user/controller/collection';
 
 const routes = [
   router('/', home),
@@ -66,6 +68,7 @@ const routes = [
   router('/user/:id/log', userLog),
   router('/user/:id/member', group),
   router('/user/:id/one-time-token', oneTimeToken),
+  router('/user/:id/access-token', userAccessToken),
   router('/user/:id/client', clients),
   router('/user/:id/client/new', clientNew),
   router('/user/:id/client/:clientId', client),

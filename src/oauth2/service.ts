@@ -91,6 +91,46 @@ export async function generateTokenForUser(client: OAuth2Client, user: User, bro
 }
 
 /**
+ * This function is used to create arbitrary access tokens, by the currently logged in user.
+ *
+ * There is no specific OAuth2 flow for this.
+ */
+export async function generateTokenForUserNoClient(user: User): Promise<Omit<OAuth2Token, 'clientId'>> {
+  if (!user.active) {
+    throw new Error ('Cannot generate token for inactive user');
+  }
+  const accessToken = crypto.randomBytes(32).toString('base64').replace('=', '');
+  const refreshToken = crypto.randomBytes(32).toString('base64').replace('=', '');
+
+  const query = 'INSERT INTO oauth2_tokens SET created = UNIX_TIMESTAMP(), ?';
+
+  const expirySettings = getTokenExpiry();
+
+  const accessTokenExpires = Math.floor(Date.now() / 1000) + expirySettings.accessToken;
+  const refreshTokenExpires = Math.floor(Date.now() / 1000) + expirySettings.refreshToken;
+
+  await db.query(query, {
+    oauth2_client_id: 0,
+    access_token: accessToken,
+    refresh_token: refreshToken,
+    user_id: user.id,
+    access_token_expires: accessTokenExpires,
+    refresh_token_expires: refreshTokenExpires,
+    browser_session_id: null,
+  });
+
+  return {
+    accessToken: accessToken,
+    refreshToken: refreshToken,
+    accessTokenExpires: accessTokenExpires,
+    tokenType: 'bearer',
+    user,
+  };
+
+}
+
+
+/**
  * This function is used for the client_credentials oauth2 flow.
  *
  * In this flow there is not a 3rd party (resource owner). There is simply 2

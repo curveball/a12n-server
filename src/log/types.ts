@@ -9,6 +9,7 @@ export enum EventType {
   webAuthnFailed,
   tokenRevoked,
   oauth2BadRedirect = 11,
+  generateAccessToken,
 }
 
 export type LogEntry = {

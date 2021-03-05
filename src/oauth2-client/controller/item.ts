@@ -3,7 +3,7 @@ import { Context } from '@curveball/core';
 import * as privilegeService from '../../privilege/service';
 import * as hal from '../formats/hal';
 import { Forbidden, NotFound } from '@curveball/http-errors';
-import { getClientByClientId } from '../service';
+import { findByClientId } from '../service';
 import * as userService from '../../user/service';
 import * as oauth2Service from '../../oauth2/service';
 
@@ -18,7 +18,7 @@ class ClientController extends Controller {
       }
     }
 
-    const client = await getClientByClientId(ctx.params.clientId);
+    const client = await findByClientId(ctx.params.clientId);
     if (client.user.id !== user.id) {
       throw new NotFound('OAuth2 client not found');
     }

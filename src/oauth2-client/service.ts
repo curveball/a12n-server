@@ -6,7 +6,6 @@ import { Context } from '@curveball/core';
 import { NotFound, Unauthorized } from '@curveball/http-errors';
 import { InvalidRequest } from '../oauth2/errors';
 import parseBasicAuth from './parse-basic-auth';
-import * as oauth2Service from './service';
 import { User } from '../user/types';
 
 type OAuth2ClientRecord = {
@@ -18,7 +17,7 @@ type OAuth2ClientRecord = {
 };
 
 
-export async function getClientByClientId(clientId: string): Promise<OAuth2Client> {
+export async function findByClientId(clientId: string): Promise<OAuth2Client> {
 
   const query = 'SELECT id, client_id, client_secret, user_id, allowed_grant_types FROM oauth2_clients WHERE client_id = ?';
   const result = await db.query(query, [clientId]);
@@ -33,6 +32,23 @@ export async function getClientByClientId(clientId: string): Promise<OAuth2Clien
   return mapRecordToModel(record, user);
 
 }
+
+export async function findById(id: number): Promise<OAuth2Client> {
+
+  const query = 'SELECT id, client_id, client_secret, user_id, allowed_grant_types FROM oauth2_clients WHERE id = ?';
+  const result = await db.query(query, [id]);
+
+  if (!result[0].length) {
+    throw new NotFound('OAuth2 id not recognized');
+  }
+
+  const record: OAuth2ClientRecord = result[0][0];
+
+  const user = await userService.findActiveById(record.user_id);
+  return mapRecordToModel(record, user);
+
+}
+
 export async function findByUser(user: User): Promise<OAuth2Client[]> {
 
   const query = 'SELECT id, client_id, client_secret, user_id, allowed_grant_types FROM oauth2_clients WHERE user_id = ?';
@@ -64,7 +80,7 @@ export async function getOAuth2ClientFromBasicAuth(ctx: Context): Promise<OAuth2
   }
 
   try {
-    oauth2Client = await oauth2Service.getClientByClientId(basicAuth[0]);
+    oauth2Client = await findByClientId(basicAuth[0]);
   } catch (e) {
     if (e instanceof NotFound) {
       throw new Unauthorized('Client id or secret incorrect', 'Basic');
@@ -73,7 +89,7 @@ export async function getOAuth2ClientFromBasicAuth(ctx: Context): Promise<OAuth2
       throw e;
     }
   }
-  if (!await oauth2Service.validateSecret(oauth2Client, basicAuth[1])) {
+  if (!await validateSecret(oauth2Client, basicAuth[1])) {
     throw new Unauthorized('Client id or secret incorrect', 'Basic');
   }
 
@@ -88,7 +104,7 @@ export async function getOAuth2ClientFromBody(ctx: Context<any>): Promise<OAuth2
   }
 
   try {
-    return await oauth2Service.getClientByClientId(ctx.request.body.client_id);
+    return await findByClientId(ctx.request.body.client_id);
   } catch (e) {
     if (e instanceof NotFound) {
       throw new Unauthorized('Client id unknown', 'Basic');

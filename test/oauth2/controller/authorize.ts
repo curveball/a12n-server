@@ -43,7 +43,7 @@ describe('AuthorizeController', () => {
   let codeRedirectMock: sinon.SinonStub;
 
   beforeEach(function () {
-    sandbox.stub(oauth2ClientService, 'getClientByClientId').returns(Promise.resolve(oauth2Client));
+    sandbox.stub(oauth2ClientService, 'findByClientId').returns(Promise.resolve(oauth2Client));
     sandbox.stub(oauth2Service, 'validateRedirectUri').returns(Promise.resolve(true));
     sandbox.stub(oauth2Service, 'requireRedirectUri').returns(Promise.resolve());
     codeRedirectMock = sandbox.stub(authorize, 'codeRedirect');

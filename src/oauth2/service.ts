@@ -50,6 +50,41 @@ export async function addRedirectUris(client: OAuth2Client, redirectUris: string
 
 }
 
+export async function getActiveTokens(user: User): Promise<OAuth2Token[]> {
+
+  const query = `
+    SELECT
+     oauth2_client_id,
+     access_token,
+     refresh_token,
+     user_id,
+     access_token_expires,
+     refresh_token_expires,
+     browser_session_id
+    FROM oauth2_tokens
+    WHERE 
+      user_id = ?
+    AND
+      refresh_token_expires > UNIX_TIMESTAMP()
+  `;
+
+  const result = await db.query(query, [user.id]);
+
+  return result[0].map((row: OAuth2TokenRecord):OAuth2Token => {
+    return {
+      accessToken: row.access_token,
+      refreshToken: row.refresh_token,
+
+      accessTokenExpires: row.access_token_expires,
+      refreshTokenExpires: row.refresh_token_expires,
+      tokenType: 'bearer',
+      user: user,
+      clientId: row.oauth2_client_id,
+    };
+  });
+
+}
+
 /**
  * This function is used for the implicit grant oauth2 flow.
  *
@@ -80,9 +115,10 @@ export async function generateTokenForUser(client: OAuth2Client, user: User, bro
   });
 
   return {
-    accessToken: accessToken,
-    refreshToken: refreshToken,
-    accessTokenExpires: accessTokenExpires,
+    accessToken,
+    refreshToken,
+    accessTokenExpires,
+    refreshTokenExpires,
     tokenType: 'bearer',
     user,
     clientId: client.id,
@@ -120,9 +156,10 @@ export async function generateTokenForUserNoClient(user: User): Promise<Omit<OAu
   });
 
   return {
-    accessToken: accessToken,
-    refreshToken: refreshToken,
-    accessTokenExpires: accessTokenExpires,
+    accessToken,
+    refreshToken,
+    accessTokenExpires,
+    refreshTokenExpires,
     tokenType: 'bearer',
     user,
   };
@@ -160,9 +197,10 @@ export async function generateTokenForClient(client: OAuth2Client): Promise<OAut
   });
 
   return {
-    accessToken: accessToken,
-    refreshToken: refreshToken,
-    accessTokenExpires: accessTokenExpires,
+    accessToken,
+    refreshToken,
+    accessTokenExpires,
+    refreshTokenExpires,
     tokenType: 'bearer',
     user: client.user,
     clientId: client.id,
@@ -405,6 +443,7 @@ export async function getTokenByAccessToken(accessToken: string): Promise<OAuth2
     accessToken: row.access_token,
     refreshToken: row.refresh_token,
     accessTokenExpires: row.access_token_expires,
+    refreshTokenExpires: row.refresh_token_expires,
     tokenType: 'bearer',
     user,
     clientId: row.oauth2_client_id,
@@ -448,6 +487,7 @@ export async function getTokenByRefreshToken(refreshToken: string): Promise<OAut
     accessToken: row.access_token,
     refreshToken: row.refresh_token,
     accessTokenExpires: row.access_token_expires,
+    refreshTokenExpires: row.refresh_token_expires,
     tokenType: 'bearer',
     user,
     clientId: row.oauth2_client_id,

@@ -8,7 +8,7 @@ import { CodeChallengeMethod } from '../types';
 import { OAuth2Client } from '../../oauth2-client/types';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
-import { getClientByClientId } from '../../oauth2-client/service';
+import { findByClientId } from '../../oauth2-client/service';
 
 class AuthorizeController extends Controller {
 
@@ -54,7 +54,7 @@ class AuthorizeController extends Controller {
     const grantType = responseType === 'code' ? 'authorization_code' : 'implicit';
 
     try {
-      oauth2Client = await getClientByClientId(clientId);
+      oauth2Client = await findByClientId(clientId);
     } catch (e) {
       if (e instanceof NotFound) {
         throw new InvalidClient('Client id incorrect');

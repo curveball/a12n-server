@@ -1,10 +1,10 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import * as privilegeService from '../privilege/service';
+import * as privilegeService from '../../privilege/service';
 import { Forbidden } from '@curveball/http-errors';
-import * as userService from '../user/service';
-import { createToken } from './service';
-import * as hal from './formats/hal';
+import * as userService from '../../user/service';
+import { createToken } from '../service';
+import * as hal from '../formats/hal';
 import { resolve } from 'url';
 
 class OneTimeTokenController extends Controller {

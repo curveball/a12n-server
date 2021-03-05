@@ -67,6 +67,10 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean):
       href: '/user/' + user.id + '/access-token',
       title: 'Generate an access token for this user.',
     };
+    hal._links['active-sessions'] = {
+      href: `/user/${user.id}/sessions`,
+      title: 'Active user sessions'
+    };
   }
 
   return hal;

@@ -10,6 +10,9 @@ export type OAuth2Token = {
   // Unix timestamp of when the token expires (in seconds)
   accessTokenExpires: number,
 
+  // Unix timestamp of when the token expires (in seconds)
+  refreshTokenExpires: number,
+
   // Type of token. Only 'bearer' is supported rn.
   tokenType: 'bearer',
 

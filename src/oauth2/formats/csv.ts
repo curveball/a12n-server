@@ -1,0 +1,24 @@
+import { OAuth2Token } from '../types';
+import { OAuth2Client } from '../../oauth2-client/types';
+
+import * as stringify from 'csv-stringify/lib/sync';
+
+export function activeSessions(tokens: OAuth2Token[], clients: Map<number, OAuth2Client>): string {
+
+  return stringify(
+    tokens.map( token => {
+      return {
+        Expires: new Date(token.refreshTokenExpires*1000).toString(),
+        Client: token.clientId===0 ? 'System generated' : clients.get(token.clientId)?.user.nickname,
+      };
+    }),
+    {
+      header: true,
+      columns: [
+        'Expires',
+        'Client',
+      ],
+    }
+  );
+
+}

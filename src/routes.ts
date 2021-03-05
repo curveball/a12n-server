@@ -33,6 +33,7 @@ import resetPassword from './reset-password/controller/request';
 import resetPasswordRedirect from './reset-password/controller/reset-password';
 import user from './user/controller/item';
 import userAccessToken from './oauth2/controller/user-access-token';
+import userActiveSessions from './oauth2/controller/active-sessions';
 import userLog from './log/controller/user';
 import users from './user/controller/collection';
 
@@ -69,6 +70,7 @@ const routes = [
   router('/user/:id/member', group),
   router('/user/:id/one-time-token', oneTimeToken),
   router('/user/:id/access-token', userAccessToken),
+  router('/user/:id/sessions', userActiveSessions),
   router('/user/:id/client', clients),
   router('/user/:id/client/new', clientNew),
   router('/user/:id/client/:clientId', client),

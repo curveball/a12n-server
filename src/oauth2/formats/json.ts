@@ -1,3 +1,5 @@
+import { OAuth2Token } from '../types';
+
 export function metadata() {
 
   return <any> {
@@ -14,4 +16,14 @@ export function metadata() {
     revocation_endpoint_auth_methods_supported: ['client_secret_basic'],
   };
 
+}
+
+
+export function tokenResponse(token: OAuth2Token | Omit<OAuth2Token, 'clientId'>) {
+  return {
+    access_token: token.accessToken,
+    token_type: token.tokenType,
+    expires_in: token.accessTokenExpires - Math.round(Date.now() / 1000),
+    refresh_token: token.refreshToken,
+  };
 }

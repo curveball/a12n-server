@@ -2,7 +2,7 @@ import { HalResource } from 'hal-types';
 import { getSetting } from '../../server-settings';
 import { User } from '../../user/types';
 
-export default (version: string, authenticatedUser: User) => {
+export default (version: string, authenticatedUser: User, isAdmin: boolean) => {
 
   const result: HalResource = {
     _links: {
@@ -48,6 +48,14 @@ export default (version: string, authenticatedUser: User) => {
       title: 'Create a new user account',
       type: 'text/html'
     };
+  }
+
+  if (isAdmin) {
+    result._links['exchange-one-time-token'] = {
+      href: '/exchange-one-time-token',
+      title: 'Exchange a one-time token for a Access and Refresh token',
+    };
+
   }
 
   return result;

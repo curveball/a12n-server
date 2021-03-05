@@ -20,7 +20,8 @@ import oauth2ErrorHandler from './oauth2/oauth2-error-handler';
 import oauth2Metadata from './well-known/controller/oauth2-metadata';
 import oauth2Revoke from './oauth2/controller/revoke';
 import oauth2Token from './oauth2/controller/token';
-import oneTimeToken from './one-time-token/controller';
+import oneTimeToken from './one-time-token/controller/generate';
+import oneTimeTokenExchange from './one-time-token/controller/exchange';
 import passwordToken from './reset-password/controller/token';
 import privilegeCollection from './privilege/controller/collection';
 import privilegeItem from './privilege/controller/item';
@@ -41,6 +42,7 @@ const routes = [
   router('/assets/:filename', blob),
 
   router('/authorize', oauth2ErrorHandler, oauth2Authorize),
+  router('/exchange-one-time-token', oneTimeTokenExchange),
   router('/token', oauth2ErrorHandler, oauth2Token),
   router('/revoke', oauth2Revoke),
 

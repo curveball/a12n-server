@@ -1,6 +1,20 @@
 Changelog
 =========
 
+0.16.0 (2021-03-07)
+-------------------
+
+* Added a `login.defaultRedirect` option. This setting allows an admin to
+  specify where users should be redirected to after they log in.
+* Added a 'one time token' API, allowing privileged clients to exchange tokens
+  with regular OAuth2 access tokens. This is useful for custom implementations
+  of 'lost password' features.
+* Added an 'active sessions' API. This API lists all currently active
+  access/refresh tokens for a user.
+* Added an 'access token' endpoint, allowing you to generate a new access
+  token if you had an already valid session.
+
+
 0.15.5 (2021-02-23)
 -------------------
 

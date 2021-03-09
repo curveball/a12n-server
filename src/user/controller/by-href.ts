@@ -11,16 +11,21 @@ class UserByHrefController extends Controller {
     const user = await userService.findByHref(ctx.params.href);
 
     let hasControl = false;
+    let hasPassword = false;
     if (ctx.state.user.id === user.id) {
       hasControl = true;
     } else if (await privilegeService.hasPrivilege(ctx, 'admin')) {
       hasControl = true;
+    }
+    if (hasControl) {
+      hasPassword = await userService.hasPassword(user);
     }
 
     ctx.response.body = hal.item(
       user,
       await privilegeService.getPrivilegesForUser(user),
       hasControl,
+      hasPassword,
     );
 
   }

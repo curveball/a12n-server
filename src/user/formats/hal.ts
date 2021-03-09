@@ -11,7 +11,12 @@ export function collection(users: User[]): HalResource {
         href: '/user/' + user.id,
         title: user.nickname,
       })),
-      'create-form': { href: '/create-user', title: 'Create New User'}
+      'create-form': { href: '/create-user', title: 'Create New User'},
+      'find-by-href': {
+        title: 'Find a user through a identity/href (exact match)',
+        href: '/user/byhref/{href}',
+        templated: true,
+      },
     },
     total: users.length,
   };

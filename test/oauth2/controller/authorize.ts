@@ -13,7 +13,7 @@ import * as oauth2Service from '../../../src/oauth2/service';
 import * as oauth2ClientService from '../../../src/oauth2-client/service';
 import * as userService from '../../../src/user/service';
 import * as serverSettings from '../../../src/server-settings';
-import { User } from '../../../src/user/types';
+import { User, App } from '../../../src/user/types';
 import { OAuth2Client } from '../../../src/oauth2-client/types';
 import authorize from '../../../src/oauth2/controller/authorize';
 
@@ -31,11 +31,19 @@ describe('AuthorizeController', () => {
     type: 'user',
     active: true
   };
+  const app: App = {
+    id: 1,
+    identity: 'identity',
+    nickname: 'appname',
+    created: new Date(1),
+    type: 'app',
+    active: true
+  };
   const oauth2Client: OAuth2Client = {
     id: 1,
     clientId: 'client-id',
     clientSecret: 'client-secret',
-    user: user,
+    app: app,
     allowedGrantTypes: ['authorization_code'],
   };
 

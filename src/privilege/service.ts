@@ -13,7 +13,7 @@ export async function getPrivilegesForPrincipal(principal: Principal): Promise<P
 
   const recursiveGroupIds = await getRecursiveGroupIds(principal.id);
 
-  const query = 'SELECT resource, privilege FROM user_privileges WHERE user_id = (?)';
+  const query = 'SELECT resource, privilege FROM user_privileges WHERE user_id IN (?)';
   const result = await db.query(query, [recursiveGroupIds]);
 
   return result[0].reduce( (currentPrivileges: any, row: PrivilegeRow) => {

@@ -11,8 +11,10 @@ type PrivilegeRow = {
 
 export async function getPrivilegesForPrincipal(principal: Principal): Promise<PrivilegeMap> {
 
-  const query = 'SELECT resource, privilege FROM user_privileges WHERE user_id = ?';
-  const result = await db.query(query, [principal.id]);
+  const recursiveGroupIds = await getRecursiveGroupIds(principal.id);
+
+  const query = 'SELECT resource, privilege FROM user_privileges WHERE user_id = (?)';
+  const result = await db.query(query, [recursiveGroupIds]);
 
   return result[0].reduce( (currentPrivileges: any, row: PrivilegeRow) => {
 
@@ -45,10 +47,9 @@ export async function hasPrivilege(who: Principal | Context, privilege: string, 
     user = who;
   }
 
-  const query = 'SELECT id FROM user_privileges WHERE user_id = ? AND privilege = ? AND (resource = ? OR resource = "*")';
-  const result = await db.query(query, [user.id, privilege, resource]);
+  const privileges = await getPrivilegesForPrincipal(user);
 
-  return result[0].length === 1;
+  return privileges['*']?.includes(privilege) || privileges[resource]?.includes(privilege) || false;
 
 }
 
@@ -98,5 +99,28 @@ export async function addPrivilegeForUser(user: Principal, privilege: string, re
       resource,
     }
   ]);
+
+}
+
+/**
+ * Returns a list of all group principals for a user.
+ *
+ * This basically returns a list of ids of all groups that a user is a part of,
+ * recursively, and also includes the id of the user itself.
+ */
+async function getRecursiveGroupIds(principalId: number): Promise<number[]> {
+
+  const query = 'SELECT group_id FROM group_members WHERE user_id = ?';
+  const result: { group_id: number}[] = (await database.query(query, [principalId]))[0];
+
+  const ids = [
+    principalId
+  ];
+
+  for(const row of result) {
+    ids.push(...await getRecursiveGroupIds(row.group_id));
+  }
+
+  return ids;
 
 }

@@ -1,6 +1,6 @@
 import { Context } from '@curveball/core';
 import db from '../database';
-import { User } from '../user/types';
+import { Principal } from '../user/types';
 import { EventType, LogEntry } from './types';
 import * as geoip from 'geoip-lite';
 
@@ -48,7 +48,7 @@ type LogRow = {
   country: string
 };
 
-export async function findByUser(user: User): Promise<LogEntry[]> {
+export async function findByUser(user: Principal): Promise<LogEntry[]> {
 
   const result:[LogRow[], any] = await db.query(
     'SELECT * FROM user_log WHERE user_id = ?',

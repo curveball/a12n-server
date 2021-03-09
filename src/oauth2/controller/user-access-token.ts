@@ -1,6 +1,6 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { Forbidden } from '@curveball/http-errors';
+import { Forbidden, BadRequest } from '@curveball/http-errors';
 
 import log from '../../log/service';
 import { EventType } from '../../log/types';
@@ -18,6 +18,9 @@ class UserAccessTokenController extends Controller {
       throw new Forbidden('You can only generate OAuth2 access tokens for yourself with this endpoint (unless you have the \'admin\' privilege (which you haven\'t))');
     }
 
+    if (user.type !== 'user') {
+      throw new BadRequest('This API can only be used for principals of type \'user\'');
+    }
     const token = await oauth2Service.generateTokenForUserNoClient(user);
 
     ctx.response.body = {

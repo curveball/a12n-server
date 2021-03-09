@@ -1,6 +1,6 @@
-import { User } from '../../user/types';
+import { App } from '../../user/types';
 
-export function newClient(user: User) {
+export function newClient(user: App) {
 
   const userHref = `/user/${user.id}`;
 

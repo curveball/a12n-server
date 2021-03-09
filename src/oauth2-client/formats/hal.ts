@@ -1,8 +1,8 @@
-import { User } from '../../user/types';
+import { App } from '../../user/types';
 import { OAuth2Client } from '../types';
 import { HalResource } from 'hal-types';
 
-export function collection(user: User, clients: OAuth2Client[]): HalResource {
+export function collection(user: App, clients: OAuth2Client[]): HalResource {
 
   return {
     _links: {
@@ -49,8 +49,8 @@ export function item(client: OAuth2Client, redirectUris: string[]): HalResource 
 
   return {
     _links: {
-      self: { href: `/user/${client.user.id}/client/${client.clientId}` },
-      collection: { href: `/user/${client.user.id}/client`, title: 'List of OAuth2 clients'},
+      self: { href: `/user/${client.app.id}/client/${client.clientId}` },
+      collection: { href: `/user/${client.app.id}/client`, title: 'List of OAuth2 clients'},
     },
     clientId: client.clientId,
     allowedGrantTypes: client.allowedGrantTypes,
@@ -64,8 +64,8 @@ export function newClientSuccess(client: OAuth2Client, redirectUris: string[] ,s
 
   return {
     _links: {
-      self: { href: `/user/${client.user.id}/client/${client.clientId}` },
-      collection: { href: `/user/${client.user.id}/client`, title: 'List of OAuth2 clients'},
+      self: { href: `/user/${client.app.id}/client/${client.clientId}` },
+      collection: { href: `/user/${client.app.id}/client`, title: 'List of OAuth2 clients'},
     },
     clientId: client.clientId,
     clientSecret: secret,

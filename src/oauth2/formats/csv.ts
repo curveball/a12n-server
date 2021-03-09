@@ -9,7 +9,7 @@ export function activeSessions(tokens: OAuth2Token[], clients: Map<number, OAuth
     tokens.map( token => {
       return {
         Expires: new Date(token.refreshTokenExpires*1000).toString(),
-        Client: token.clientId===0 ? 'System generated' : clients.get(token.clientId)?.user.nickname,
+        Client: token.clientId===0 ? 'System generated' : clients.get(token.clientId)?.app.nickname,
       };
     }),
     {

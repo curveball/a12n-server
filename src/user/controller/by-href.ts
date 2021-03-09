@@ -3,6 +3,7 @@ import { Context } from '@curveball/core';
 import * as privilegeService from '../../privilege/service';
 import * as hal from '../formats/hal';
 import * as userService from '../service';
+import * as groupService from '../../group/service';
 
 class UserByHrefController extends Controller {
 
@@ -17,15 +18,16 @@ class UserByHrefController extends Controller {
     } else if (await privilegeService.hasPrivilege(ctx, 'admin')) {
       hasControl = true;
     }
-    if (hasControl) {
+    if (hasControl && user.type === 'user') {
       hasPassword = await userService.hasPassword(user);
     }
 
     ctx.response.body = hal.item(
       user,
-      await privilegeService.getPrivilegesForUser(user),
+      await privilegeService.getPrivilegesForPrincipal(user),
       hasControl,
       hasPassword,
+      await groupService.findGroupsForPrincipal(user),
     );
 
   }

@@ -103,7 +103,10 @@ class TokenController extends Controller {
 
     let user: User;
     try {
-      user = await userService.findByIdentity('mailto:' + ctx.request.body.username);
+      user = await userService.findByIdentity('mailto:' + ctx.request.body.username) as User;
+      if (user.type !== 'user') {
+        throw new InvalidRequest('The "password" grant type is only valid for users');
+      }
     } catch (err) {
       throw new InvalidGrant('Unknown username or password');
     }

@@ -19,7 +19,7 @@ class ClientController extends Controller {
     }
 
     const client = await findByClientId(ctx.params.clientId);
-    if (client.user.id !== user.id) {
+    if (client.app.id !== user.id) {
       throw new NotFound('OAuth2 client not found');
     }
     ctx.response.body = hal.item(client, await oauth2Service.getRedirectUris(client));

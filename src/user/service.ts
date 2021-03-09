@@ -2,7 +2,7 @@ import { NotFound } from '@curveball/http-errors';
 import * as bcrypt from 'bcrypt';
 import * as otplib from 'otplib';
 import database from '../database';
-import { NewUser, User, UserType } from './types';
+import { NewPrincipal, Principal, PrincipalType, User, Group } from './types';
 
 export class InactiveUser extends Error { }
 
@@ -15,12 +15,12 @@ export const fieldNames = [
   'active'
 ];
 
-export async function findAll(): Promise<User[]> {
+export async function findAll(): Promise<Principal[]> {
 
   const query = `SELECT ${fieldNames.join(', ')} FROM users`;
   const result = await database.query(query);
 
-  const users: User[] = [];
+  const users: Principal[] = [];
   for (const user of result[0]) {
     users.push(recordToModel(user));
   }
@@ -28,7 +28,7 @@ export async function findAll(): Promise<User[]> {
 
 }
 
-export async function findById(id: number): Promise<User> {
+export async function findById(id: number): Promise<Principal> {
 
   const query = `SELECT ${fieldNames.join(', ')} FROM users WHERE id = ?`;
   const result = await database.query(query, [id]);
@@ -40,7 +40,7 @@ export async function findById(id: number): Promise<User> {
   return recordToModel(result[0][0]);
 
 }
-export async function findActiveById(id: number): Promise<User> {
+export async function findActiveById(id: number): Promise<Principal> {
 
   const user = await findById(id);
   if (!user.active) {
@@ -66,7 +66,7 @@ export async function hasUsers(): Promise<boolean> {
 
 }
 
-export async function findByIdentity(identity: string): Promise<User> {
+export async function findByIdentity(identity: string): Promise<Principal> {
 
   const query = `SELECT ${fieldNames.join(', ')} FROM users WHERE identity = ?`;
   const result = await database.query(query, [identity]);
@@ -85,7 +85,7 @@ export async function findByIdentity(identity: string): Promise<User> {
  * This can be a string like /user/1, or a full url.
  * It can also be the uri listed in the 'identity' field.
  */
-export async function findByHref(href: string): Promise<User> {
+export async function findByHref(href: string): Promise<Principal> {
 
   const pathName = getPathName(href);
   const matches = pathName.match(/^\/user\/([0-9]+)$/);
@@ -105,7 +105,7 @@ export async function findByHref(href: string): Promise<User> {
 }
 
 
-export async function save(user: User | NewUser): Promise<User> {
+export async function save<T extends User | Principal | Group>(user: Omit<T, 'id'> | T): Promise<T> {
 
   if (!isExistingUser(user)) {
 
@@ -124,7 +124,7 @@ export async function save(user: User | NewUser): Promise<User> {
     return {
       id: result[0].insertId,
       ...user
-    };
+    } as T;
 
   } else {
 
@@ -244,7 +244,7 @@ export type UserRecord = {
   active: number
 };
 
-function userTypeIntToUserType(input: number): UserType {
+function userTypeIntToUserType(input: number): PrincipalType {
 
   switch (input) {
     case 1: return 'user';
@@ -256,7 +256,7 @@ function userTypeIntToUserType(input: number): UserType {
 
 }
 
-function userTypeToInt(input: UserType): number {
+function userTypeToInt(input: PrincipalType): number {
 
   switch (input) {
     case 'user': return 1;
@@ -266,7 +266,7 @@ function userTypeToInt(input: UserType): number {
 
 }
 
-export function recordToModel(user: UserRecord): User {
+export function recordToModel(user: UserRecord): Principal {
 
   return {
     id: user.id,
@@ -279,9 +279,9 @@ export function recordToModel(user: UserRecord): User {
 
 }
 
-function isExistingUser(user: User | NewUser): user is User {
+function isExistingUser(user: Principal | NewPrincipal): user is Principal {
 
-  return (<User> user).id !== undefined;
+  return (<Principal> user).id !== undefined;
 
 }
 

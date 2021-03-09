@@ -1,8 +1,8 @@
 import { PrivilegeMap } from '../../privilege/types';
-import { NewUser, User } from '../types';
+import { NewPrincipal, Principal, Group } from '../types';
 import { HalResource } from 'hal-types';
 
-export function collection(users: User[]): HalResource {
+export function collection(users: Principal[]): HalResource {
 
   const hal: HalResource = {
     _links: {
@@ -32,7 +32,7 @@ export function collection(users: User[]): HalResource {
  * we're generating the repsonse for, or if the current authenticated user
  * has full admin privileges
  */
-export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, hasPassword: boolean): HalResource {
+export function item(user: Principal, privileges: PrivilegeMap, hasControl: boolean, hasPassword: boolean, groups: Group[]): HalResource {
 
   const hal: HalResource = {
     _links: {
@@ -40,6 +40,10 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
       'me': { href: user.identity, title: user.nickname },
       'auth-log': { href: '/user/' + user.id + '/log', title: 'Authentication log', type: 'text/csv' },
       'up' : { href: '/user', title: 'List of users' },
+      'group': groups.map( group => ({
+        href: '/user/' + group.id,
+        title: group.nickname,
+      })),
     },
     nickname: user.nickname,
     active: user.active,
@@ -83,7 +87,7 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
 
 }
 
-export function halToModel(body: any): NewUser {
+export function halToModel(body: any): NewPrincipal {
 
   return {
     identity: body._links.me.href,

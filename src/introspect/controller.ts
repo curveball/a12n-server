@@ -68,7 +68,7 @@ class IntrospectionController extends Controller {
 
     }
     if (foundToken) {
-      const privileges = await privilegeService.getPrivilegesForUser(foundToken.user);
+      const privileges = await privilegeService.getPrivilegesForPrincipal(foundToken.user);
 
       switch (foundTokenType!) {
 

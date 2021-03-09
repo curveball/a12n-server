@@ -4,7 +4,7 @@ import { Conflict, Forbidden, NotFound, UnprocessableEntity } from '@curveball/h
 import * as privilegeService from '../../privilege/service';
 import * as hal from '../formats/hal';
 import * as usersService from '../service';
-import { UserTypeList } from '../types';
+import { PrincipalTypeList } from '../types';
 
 class UserCollectionController extends Controller {
 
@@ -40,8 +40,8 @@ class UserCollectionController extends Controller {
       throw new UnprocessableEntity('active must be a boolean');
     }
 
-    if (!UserTypeList.includes(userBody.type)) {
-      throw new UnprocessableEntity('type must be one of ' + UserTypeList.join(', '));
+    if (!PrincipalTypeList.includes(userBody.type)) {
+      throw new UnprocessableEntity('type must be one of ' + PrincipalTypeList.join(', '));
     }
 
     const user = await usersService.save(

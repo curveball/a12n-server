@@ -38,7 +38,7 @@ class LoginController extends Controller {
 
     let user: User;
     try {
-      user = await userService.findByIdentity('mailto:' + ctx.request.body.userName);
+      user = await userService.findByIdentity('mailto:' + ctx.request.body.userName) as User;
     } catch (err) {
       if (err instanceof NotFound) {
         log(EventType.loginFailed, ctx);

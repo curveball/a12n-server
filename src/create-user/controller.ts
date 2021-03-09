@@ -3,7 +3,7 @@ import { Context } from '@curveball/core';
 import { Forbidden, NotFound, UnprocessableEntity } from '@curveball/http-errors';
 import * as privilegeService from '../privilege/service';
 import * as userService from '../user/service';
-import { UserTypeList } from '../user/types';
+import { PrincipalTypeList } from '../user/types';
 import { createUserForm } from './formats/html';
 
 class CreateUserController extends Controller {
@@ -34,8 +34,8 @@ class CreateUserController extends Controller {
       throw new UnprocessableEntity('nickname must contain at least 1 character');
     }
 
-    if (!UserTypeList.includes(type)) {
-      throw new UnprocessableEntity('type must be one of ' + UserTypeList.join(', '));
+    if (!PrincipalTypeList.includes(type)) {
+      throw new UnprocessableEntity('type must be one of ' + PrincipalTypeList.join(', '));
     }
 
     try {

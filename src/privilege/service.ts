@@ -1,7 +1,7 @@
 import { Context } from '@curveball/core';
 import db from '../database';
 import database from '../database';
-import { User } from '../user/types';
+import { Principal } from '../user/types';
 import { Privilege, PrivilegeMap } from './types';
 
 type PrivilegeRow = {
@@ -9,10 +9,10 @@ type PrivilegeRow = {
   privilege: string,
 };
 
-export async function getPrivilegesForUser(user: User): Promise<PrivilegeMap> {
+export async function getPrivilegesForPrincipal(principal: Principal): Promise<PrivilegeMap> {
 
   const query = 'SELECT resource, privilege FROM user_privileges WHERE user_id = ?';
-  const result = await db.query(query, [user.id]);
+  const result = await db.query(query, [principal.id]);
 
   return result[0].reduce( (currentPrivileges: any, row: PrivilegeRow) => {
 
@@ -33,7 +33,7 @@ export async function getPrivilegesForUser(user: User): Promise<PrivilegeMap> {
 
 }
 
-export async function hasPrivilege(who: User | Context, privilege: string, resource: string = '*'): Promise<boolean> {
+export async function hasPrivilege(who: Principal | Context, privilege: string, resource: string = '*'): Promise<boolean> {
 
   let user;
   if (isContext(who)) {
@@ -52,7 +52,7 @@ export async function hasPrivilege(who: User | Context, privilege: string, resou
 
 }
 
-function isContext(input: Context| User): input is Context {
+function isContext(input: Context| Principal): input is Context {
   return (input as any).request !== undefined && (input as any).response !== undefined;
 }
 
@@ -88,7 +88,7 @@ export async function findPrivilege(privilege: string): Promise<Privilege> {
 
 }
 
-export async function addPrivilegeForUser(user: User, privilege: string, resource: string): Promise<void> {
+export async function addPrivilegeForUser(user: Principal, privilege: string, resource: string): Promise<void> {
 
   const query = 'INSERT INTO user_privileges SET ?';
   await database.query(query, [

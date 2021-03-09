@@ -6,7 +6,7 @@ import { Context } from '@curveball/core';
 import { NotFound, Unauthorized } from '@curveball/http-errors';
 import { InvalidRequest } from '../oauth2/errors';
 import parseBasicAuth from './parse-basic-auth';
-import { User } from '../user/types';
+import { App } from '../user/types';
 
 type OAuth2ClientRecord = {
   id: number,
@@ -28,7 +28,7 @@ export async function findByClientId(clientId: string): Promise<OAuth2Client> {
 
   const record: OAuth2ClientRecord = result[0][0];
 
-  const user = await userService.findActiveById(record.user_id);
+  const user = await userService.findActiveById(record.user_id) as App;
   return mapRecordToModel(record, user);
 
 }
@@ -44,12 +44,12 @@ export async function findById(id: number): Promise<OAuth2Client> {
 
   const record: OAuth2ClientRecord = result[0][0];
 
-  const user = await userService.findActiveById(record.user_id);
+  const user = await userService.findActiveById(record.user_id) as App;
   return mapRecordToModel(record, user);
 
 }
 
-export async function findByUser(user: User): Promise<OAuth2Client[]> {
+export async function findByApp(user: App): Promise<OAuth2Client[]> {
 
   const query = 'SELECT id, client_id, client_secret, user_id, allowed_grant_types FROM oauth2_clients WHERE user_id = ?';
   const result = await db.query(query, [user.id]);
@@ -58,13 +58,13 @@ export async function findByUser(user: User): Promise<OAuth2Client[]> {
 
 }
 
-function mapRecordToModel(record: OAuth2ClientRecord, user: User): OAuth2Client {
+function mapRecordToModel(record: OAuth2ClientRecord, app: App): OAuth2Client {
 
   return {
     id: record.id,
     clientId: record.client_id,
     clientSecret: record.client_secret.toString('utf-8'),
-    user,
+    app,
     allowedGrantTypes: record.allowed_grant_types.split(' ') as GrantType[],
   };
 
@@ -122,7 +122,7 @@ export async function create(client: Omit<OAuth2Client, 'id'>, redirectUris: str
   const params = {
     client_id: client.clientId,
     client_secret: client.clientSecret,
-    user_id: client.user.id,
+    user_id: client.app.id,
     allowed_grant_types: client.allowedGrantTypes.join(' '),
   };
   const result = await db.query(query, [params]);

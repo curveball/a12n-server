@@ -5,6 +5,7 @@ import { getSetting } from '../../server-settings';
 import * as userService from '../../user/service';
 import { registrationForm } from '../formats/html';
 import * as privilegeService from '../../privilege/service';
+import { User } from '../../user/types';
 
 class UserRegistrationController extends Controller {
 
@@ -48,14 +49,14 @@ class UserRegistrationController extends Controller {
 
     const firstRun = !(await userService.hasUsers());
 
-    const user = await userService.save({
+    const user: User = await userService.save({
       identity: 'mailto:' + body.emailAddress,
       nickname: body.nickname,
       created: new Date(),
       type: 'user',
       // Auto-activating if it's the first user.
       active: firstRun,
-    });
+    }) as User;
 
     if (firstRun) {
       // The first user will be an admin

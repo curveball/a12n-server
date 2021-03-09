@@ -43,7 +43,7 @@ export async function validateToken(token: string): Promise<User> {
     throw new BadRequest ('Failed to validate token');
   } else {
     await db.query('DELETE FROM reset_password_token WHERE token = ?', [token]);
-    return userService.findById(result[0][0].user_id);
+    return userService.findById(result[0][0].user_id) as Promise<User>;
   }
 
 }

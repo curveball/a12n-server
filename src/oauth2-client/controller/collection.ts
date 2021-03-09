@@ -3,31 +3,35 @@ import { Context } from '@curveball/core';
 import * as privilegeService from '../../privilege/service';
 import * as hal from '../formats/hal';
 import { Forbidden, UnprocessableEntity } from '@curveball/http-errors';
-import { findByUser, create } from '../service';
+import { findByApp, create } from '../service';
 import * as userService from '../../user/service';
 import * as crypto from 'crypto';
 import { GrantType, OAuth2Client } from '../types';
 import * as bcrypt from 'bcrypt';
+import { App } from '../../user/types';
 
 class ClientCollectionController extends Controller {
 
   async get(ctx: Context) {
 
-    const user = await userService.findById(+ctx.params.id);
-    if (user.id !== ctx.state.user.id) {
+    const app = await userService.findById(+ctx.params.id) as App;
+    if (app.id !== ctx.state.user.id) {
       if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
         throw new Forbidden('Only users with the "admin" privilege can inspect OAuth2 clients that are not your own');
       }
     }
 
-    const clients = await findByUser(user);
-    ctx.response.body = hal.collection(user, clients);
+    const clients = await findByApp(app);
+    ctx.response.body = hal.collection(app, clients);
 
   }
 
   async post(ctx: Context<any>) {
 
-    const user = await userService.findById(+ctx.params.id);
+    const app = await userService.findById(+ctx.params.id);
+    if (app.type !== 'app') {
+      throw new Forbidden('You can only add oauth2 clients to \'app\' principals');
+    }
     if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
       throw new Forbidden('Only users with the "admin" privilege can inspect OAuth2 clients that are not your own');
     }
@@ -67,7 +71,7 @@ class ClientCollectionController extends Controller {
     const clientSecret = randomId(20);
     const newClient: Omit<OAuth2Client,'id'> = {
       clientId,
-      user,
+      app,
       allowedGrantTypes: allowedGrantTypes,
       clientSecret: await bcrypt.hash(clientSecret, 12),
     };

@@ -3,7 +3,7 @@ import * as crypto from 'crypto';
 import db from '../database';
 import { getSetting } from '../server-settings';
 import * as userService from '../user/service';
-import { User } from '../user/types';
+import { User, App, Principal } from '../user/types';
 import { InvalidGrant, InvalidRequest, UnauthorizedClient } from './errors';
 import { CodeChallengeMethod, OAuth2Code, OAuth2Token } from './types';
 import { OAuth2Client } from '../oauth2-client/types';
@@ -50,7 +50,7 @@ export async function addRedirectUris(client: OAuth2Client, redirectUris: string
 
 }
 
-export async function getActiveTokens(user: User): Promise<OAuth2Token[]> {
+export async function getActiveTokens(user: Principal): Promise<OAuth2Token[]> {
 
   const query = `
     SELECT
@@ -90,7 +90,7 @@ export async function getActiveTokens(user: User): Promise<OAuth2Token[]> {
  *
  * This function creates an access token for a specific user.
  */
-export async function generateTokenForUser(client: OAuth2Client, user: User, browserSessionId?: string): Promise<OAuth2Token> {
+export async function generateTokenForUser(client: OAuth2Client, user: Principal, browserSessionId?: string): Promise<OAuth2Token> {
   if (!user.active) {
     throw new Error ('Cannot generate token for inactive user');
   }
@@ -191,7 +191,7 @@ export async function generateTokenForClient(client: OAuth2Client): Promise<OAut
     oauth2_client_id: client.id,
     access_token: accessToken,
     refresh_token: refreshToken,
-    user_id: client.user.id,
+    user_id: client.app.id,
     access_token_expires: accessTokenExpires,
     refresh_token_expires: refreshTokenExpires,
   });
@@ -202,7 +202,7 @@ export async function generateTokenForClient(client: OAuth2Client): Promise<OAut
     accessTokenExpires,
     refreshTokenExpires,
     tokenType: 'bearer',
-    user: client.user,
+    user: client.app,
     clientId: client.id,
   };
 
@@ -241,7 +241,7 @@ export async function generateTokenFromCode(client: OAuth2Client, code: string, 
     throw new UnauthorizedClient('The client_id associated with the token did not match with the authenticated client credentials');
   }
 
-  const user = await userService.findById(codeRecord.user_id);
+  const user = await userService.findById(codeRecord.user_id) as User;
   return generateTokenForUser(client, user, codeRecord.browser_session_id || undefined);
 
 }
@@ -445,7 +445,7 @@ export async function getTokenByAccessToken(accessToken: string): Promise<OAuth2
     accessTokenExpires: row.access_token_expires,
     refreshTokenExpires: row.refresh_token_expires,
     tokenType: 'bearer',
-    user,
+    user: user as App | User,
     clientId: row.oauth2_client_id,
     browserSessionId: row.browser_session_id || undefined,
   };
@@ -489,7 +489,7 @@ export async function getTokenByRefreshToken(refreshToken: string): Promise<OAut
     accessTokenExpires: row.access_token_expires,
     refreshTokenExpires: row.refresh_token_expires,
     tokenType: 'bearer',
-    user,
+    user: user as App | User,
     clientId: row.oauth2_client_id,
     browserSessionId: row.browser_session_id || undefined,
   };

@@ -1,13 +1,10 @@
 import database from '../database';
 import * as UserService from '../user/service';
-import { User } from '../user/types';
+import { Principal, Group } from '../user/types';
 
-/**
- *  Checks if the user is a type group and returns true or false
- */
-export function isGroup(user: User): boolean {
+export function isGroup(principal: Principal): principal is Group {
 
-  return user.type === 'group';
+  return principal.type === 'group';
 
 }
 
@@ -15,7 +12,7 @@ export function isGroup(user: User): boolean {
  * Finding group members
  */
 
-export async function findMembers(group: User): Promise<User[]> {
+export async function findMembers(group: Group): Promise<Principal[]> {
 
   const query = `SELECT ${UserService.fieldNames.join(', ')} FROM users INNER JOIN group_members ON users.id = group_members.user_id WHERE group_id = ?`;
   const result = await database.query(query, [group.id]);
@@ -31,14 +28,14 @@ export async function findMembers(group: User): Promise<User[]> {
 
 }
 
-export async function addMemberToGroup(group: User, user: User): Promise<void> {
+export async function addMemberToGroup(group: Group, user: Principal): Promise<void> {
 
   const query = 'INSERT INTO group_members SET group_id = ?, user_id = ?';
   await database.query(query, [group.id, user.id]);
 
 }
 
-export async function replaceMembers(group: User, users: User[]): Promise<void> {
+export async function replaceMembers(group: Group, users: Principal[]): Promise<void> {
 
   const connection = await database.getConnection();
   await connection.beginTransaction();
@@ -54,5 +51,25 @@ export async function replaceMembers(group: User, users: User[]): Promise<void> 
   } finally {
     connection.release();
   }
+
+}
+
+/**
+ * Finding group members
+ */
+
+export async function findGroupsForPrincipal(principal: Principal): Promise<Group[]> {
+
+  const query = `SELECT ${UserService.fieldNames.join(', ')} FROM users INNER JOIN group_members ON users.id = group_members.user_id WHERE user_id = ?`;
+  const result = await database.query(query, [principal.id]);
+
+  const models: Group[] = [];
+
+  for (const record of result[0]) {
+    const model = UserService.recordToModel(record);
+    models.push(model as Group);
+  }
+
+  return models;
 
 }

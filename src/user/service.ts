@@ -192,6 +192,15 @@ export async function validatePassword(user: User, password: string): Promise<bo
 
 }
 
+export async function hasPassword(user: User): Promise<boolean> {
+
+  const query = 'SELECT user_id FROM user_passwords WHERE user_id = ? LIMIT 1';
+  const result = await database.query(query, [user.id]);
+  return result[0].length > 0;
+
+}
+
+
 /**
  * Returns true or false if the totp token was correct.
  *

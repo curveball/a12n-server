@@ -32,7 +32,7 @@ export function collection(users: User[]): HalResource {
  * we're generating the repsonse for, or if the current authenticated user
  * has full admin privileges
  */
-export function item(user: User, privileges: PrivilegeMap, hasControl: boolean): HalResource {
+export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, hasPassword: boolean): HalResource {
 
   const hal: HalResource = {
     _links: {
@@ -61,6 +61,7 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean):
     };
   }
   if (user.type === 'user' && hasControl) {
+    hal.hasPassword = hasPassword;
     hal._links['one-time-token'] = {
       href: '/user/' + user.id + '/one-time-token',
       title: 'Generate a one-time login token.',

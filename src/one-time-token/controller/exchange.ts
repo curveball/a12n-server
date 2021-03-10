@@ -1,13 +1,14 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 
-import { Forbidden } from '@curveball/http-errors';
+import { Forbidden, UnprocessableEntity } from '@curveball/http-errors';
 
 import { tokenResponse } from '../../oauth2/formats/json';
 
 import * as privilegeService from '../../privilege/service';
 import * as tokenService from '../service';
 import * as oauth2Service from '../../oauth2/service';
+import * as oauth2ClientService from '../../oauth2-client/service';
 
 class OneTimeTokenExchangeController extends Controller {
 
@@ -17,8 +18,16 @@ class OneTimeTokenExchangeController extends Controller {
       throw new Forbidden('Only users with the "admin" privilege use this endpoint');
     }
 
+    if (!ctx.request.body.token) {
+      throw new UnprocessableEntity('A token must be provided for the exchange');
+    }
+    if (!ctx.request.body.client_id) {
+      throw new UnprocessableEntity('A client_id must be provided for the exchange');
+    }
+
     const user = await tokenService.validateToken(ctx.request.body.token);
-    const oauth2Token = await oauth2Service.generateTokenForUserNoClient(user);
+    const client = await oauth2ClientService.findByClientId(ctx.request.body.client_id);
+    const oauth2Token = await oauth2Service.generateTokenForUser(client, user);
 
     ctx.response.body = tokenResponse(oauth2Token);
 

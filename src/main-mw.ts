@@ -1,12 +1,15 @@
 import bodyParser from '@curveball/bodyparser';
-import { invokeMiddlewares, Middleware } from '@curveball/core';
+import browser from '@curveball/browser';
+import cors from '@curveball/cors';
+import links from '@curveball/links';
 import problem from '@curveball/problem';
 import session from '@curveball/session';
 import { RedisStore } from '@curveball/session-redis';
-import browser from '@curveball/browser';
+import { invokeMiddlewares, Middleware } from '@curveball/core';
+
 import login from './middleware/login';
 import routes from './routes';
-import links from '@curveball/links';
+import { getSetting } from './server-settings';
 
 /**
  * The 'main middleware'.
@@ -21,7 +24,17 @@ export default function(): Middleware {
     throw new Error('PUBLIC_URI environment variable must be set.');
   }
 
-  const middlewares = [
+  const middlewares: Middleware[] = [];
+
+  const corsAllowOrigin = getSetting('cors.allowOrigin', undefined);
+
+  if (corsAllowOrigin) {
+    middlewares.push(cors({
+      allowOrigin: corsAllowOrigin
+    }));
+  }
+
+  middlewares.push(
     browser({
       title: 'a12n-server',
     }),
@@ -41,7 +54,7 @@ export default function(): Middleware {
     login(),
     bodyParser(),
     ...routes,
-  ];
+  );
 
   /**
    * This middleware contains all the a12n-server functionality.

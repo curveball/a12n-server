@@ -159,6 +159,7 @@ class TokenController extends Controller {
 
   async options(ctx: Context) {
 
+    ctx.status = 200;
     this.sendCORSHeaders(ctx);
 
   }

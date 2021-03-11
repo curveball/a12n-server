@@ -1,6 +1,26 @@
 Changelog
 =========
 
+0.17.0 (2021-03-11)
+-------------------
+
+* Privileges assigned to groups are now inherited by all users who are part of
+  that group, allowing the use of groups as 'roles'.
+* Added a `/user/by-href/:href` endpoint, allowing API clients to look up
+  users by their 'identity' like their email address.
+* Added a `hasPassword` property to each user. This is only visible on 'your
+  own' user or if you are an admin.
+* The `/token-exchange` endpoint for one-time tokes now requires a `client_id`
+  parameter, similar to OAuth2 endpoints.
+* Fixed a number of internal APIs that let people generate passwords for non-
+  user principals, or oauth2 credentails for groups. Everything is a bit
+  stricter.
+* Internally, 'users', 'apps' and 'groups' are now more often referred to by
+  the name 'principal'. Before, these 3 categories of things were also referred
+  to as 'user'. This migration is not complete, but it's a big first step.
+  Eventually we'll have separate API roots for each of these.
+
+
 0.16.0 (2021-03-07)
 -------------------
 

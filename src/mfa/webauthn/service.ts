@@ -19,8 +19,8 @@ export async function save(webAuthNDevice: NewWebAuthnDevice): Promise<WebAuthnD
 
     const newWebAuthnRecord: Partial<UserWebAuthnRow> = {
       user_id: webAuthNDevice.user.id,
-      credential_id: webAuthNDevice.credentialID,
-      public_key: webAuthNDevice.publicKey,
+      credential_id: webAuthNDevice.credentialID.toString('base64'),
+      public_key: webAuthNDevice.publicKey.toString('base64'),
       counter: webAuthNDevice.counter
     };
 
@@ -34,8 +34,8 @@ export async function save(webAuthNDevice: NewWebAuthnDevice): Promise<WebAuthnD
     const query = 'UPDATE user_webauthn SET ? WHERE id = ?';
 
     const updateWebAuthnRecord: Partial<UserWebAuthnRow> = {
-      credential_id: webAuthNDevice.credentialID,
-      public_key: webAuthNDevice.publicKey,
+      credential_id: webAuthNDevice.credentialID.toString('base64'),
+      public_key: webAuthNDevice.publicKey.toString('base64'),
       counter: webAuthNDevice.counter
     };
 
@@ -74,8 +74,8 @@ export function recordToModel(userWebAuthn: UserWebAuthnRow, user: User): WebAut
   return {
     id: userWebAuthn.id,
     user: user,
-    credentialID: userWebAuthn.credential_id,
-    publicKey: userWebAuthn.public_key,
+    credentialID: Buffer.from(userWebAuthn.credential_id, 'base64'),
+    publicKey: Buffer.from(userWebAuthn.public_key, 'base64'),
     counter: userWebAuthn.counter,
   };
 }

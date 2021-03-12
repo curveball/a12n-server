@@ -13,13 +13,16 @@ class WebAuthnAttestationController extends Controller {
     const user: User = ctx.session.registerUser;
 
     const attestationOptions = generateAttestationOptions({
-      serviceName: getSetting('webauthn.serviceName'),
+      rpName: getSetting('webauthn.serviceName'),
       rpID: getSetting('webauthn.relyingPartyId', new URL(process.env.PUBLIC_URI!).host),
       userID: user.id.toString(),
       userName: user.nickname,
       timeout: 60000,
-      attestationType: 'direct',
-      excludedCredentialIDs: (await webAuthnService.findDevicesByUser(user)).map(device => device.credentialID),
+      attestationType: 'indirect',
+      excludeCredentials: (await webAuthnService.findDevicesByUser(user)).map(device => ({
+        id: Buffer.from(device.credentialID),
+        type: 'public-key',
+      })),
       /**
        * The optional authenticatorSelection property allows for specifying more constraints around
        * the types of authenticators that users to can use for attestation
@@ -58,18 +61,18 @@ class WebAuthnAttestationController extends Controller {
       return;
     }
 
-    const { verified, authenticatorInfo } = verification;
+    const { verified, attestationInfo } = verification;
 
     if (verified) {
-      const { base64PublicKey, base64CredentialID, counter } = authenticatorInfo!;
+      const { credentialPublicKey, credentialID, counter } = attestationInfo!;
 
-      const existingDevice = (await webAuthnService.findDevicesByUser(user)).find(device => device.credentialID === base64CredentialID);
+      const existingDevice = (await webAuthnService.findDevicesByUser(user)).find(device => device.credentialID === credentialID);
 
       if (!existingDevice) {
         await webAuthnService.save({
           user,
-          credentialID: base64CredentialID,
-          publicKey: base64PublicKey,
+          credentialID: credentialPublicKey,
+          publicKey: credentialID,
           counter,
         });
 

@@ -16,7 +16,10 @@ class WebAuthnLoginRequestController extends Controller {
 
     const assertionOptions = generateAssertionOptions({
       timeout: 60000,
-      allowedCredentialIDs: (await webauthnService.findDevicesByUser(user)).map(device => device.credentialID),
+      allowCredentials: (await webauthnService.findDevicesByUser(user)).map(device => ({
+        id: device.credentialID,
+        type: 'public-key',
+      })),
       /**
        * This optional value controls whether or not the authenticator needs be able to uniquely
        * identify the user interacting with it (via built-in PIN pad, fingerprint scanner, etc...)
@@ -44,7 +47,11 @@ class WebAuthnLoginRequestController extends Controller {
         expectedChallenge,
         expectedOrigin: getSetting('webauthn.expectedOrigin', new URL(process.env.PUBLIC_URI!).origin),
         expectedRPID: getSetting('webauthn.relyingPartyId', new URL(process.env.PUBLIC_URI!).host),
-        authenticator: authenticatorDevice,
+        authenticator: {
+          credentialID: authenticatorDevice.credentialID,
+          counter: authenticatorDevice.counter,
+          credentialPublicKey: authenticatorDevice.publicKey,
+        }
       });
     } catch (error) {
       log(EventType.totpFailed, ctx.ip(), user.id);
@@ -53,10 +60,10 @@ class WebAuthnLoginRequestController extends Controller {
       return;
     }
 
-    const { verified, authenticatorInfo } = verification;
+    const { verified, assertionInfo } = verification;
 
     if (verified) {
-      authenticatorDevice.counter = authenticatorInfo.counter;
+      authenticatorDevice.counter = assertionInfo.newCounter;
       await webauthnService.save(authenticatorDevice);
     }
 

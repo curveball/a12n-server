@@ -1,5 +1,5 @@
 type Settings = {
-  'cors.allowOrigin': string[],
+  'cors.allowOrigin': string[] | null,
   'oauth2.code.expiry': number,
   'oauth2.accessToken.expiry': number,
   'oauth2.refreshToken.expiry': number,

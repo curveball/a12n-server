@@ -26,7 +26,7 @@ export default function(): Middleware {
 
   const middlewares: Middleware[] = [];
 
-  const corsAllowOrigin = getSetting('cors.allowOrigin', undefined);
+  const corsAllowOrigin = getSetting('cors.allowOrigin', null);
 
   if (corsAllowOrigin) {
     middlewares.push(cors({

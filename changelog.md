@@ -1,6 +1,17 @@
 Changelog
 =========
 
+0.17.1 (2021-03-14)
+-------------------
+
+* Updated `simplewebauthn` dependencies to the latest version.
+* Switched to 'indirect' attestation-type by default, allowing anomimized
+  attestations to be used.
+* It's now possible to set the value for the CORS `Allow-Origin` option. By
+  default it's enabled, but if `cors.allowOrigin` is supplied, this can be
+  overridden.
+
+
 0.17.0 (2021-03-11)
 -------------------
 

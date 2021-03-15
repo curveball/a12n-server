@@ -8,7 +8,7 @@ prerequisites:
 2. `git`.
 3. MySQL (For Mac: install via ).
     - For Mac: easy install Homebrew [MySQL package](https://formulae.brew.sh/formula/mysql) via [Homebrew](https://brew.sh/).
-    - For Linux: install [MySQL Community Version](https://www.mysql.com/products/community/).
+    - For Linux: `apt install mysql-server`
 4. Optional: A working [Docker][1] installation. The server can also be run straight from the cli.
 
 

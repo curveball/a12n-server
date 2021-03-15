@@ -6,24 +6,30 @@ prerequisites:
 
 1. NodeJS (version 14 or higher) and `npm`.
 2. `git`.
-3. Optional: A working [Docker][1] installation. The server can also be run
-   straight from the cli.
+3. MySQL (For Mac: install via ).
+    - For Mac: easy install Homebrew [MySQL package](https://formulae.brew.sh/formula/mysql) via [Homebrew](https://brew.sh/).
+    - For Linux: `apt install mysql-server`
+4. Optional: A working [Docker][1] installation. The server can also be run straight from the cli.
 
 
-After all of these steps are complete, run:
+After all of these prerequisites are acquired, run:
 
 ```sh
 git clone git@github.com:evert/a12n-server.git
 cd a12n-server
 npm install
+```
+
+If using Docker, finish off with:
+
+```sh
 make docker-build
 ```
 
 MySQL setup
 -----------
 
-After you have MySQL up and running, create new empty database (/schema) & user for
-`a12n-server`.
+After you have MySQL up and running, create new empty database (/schema) & user for `a12n-server`. Replace 'your_password' with a proper user password of your creation.
 
 ```sh
 mysql> CREATE DATABASE a12nserver;
@@ -32,8 +38,7 @@ mysql> GRANT SELECT, INSERT, UPDATE, DELETE ON a12nserver.* TO 'a12nserver';
 mysql> FLUSH PRIVILEGES;
 ```
 
-The next step is to insert the MySQL schemas that are shipping with the git
-repository. The easiest is to just run:
+The next step is to insert the MySQL schemas that are shipping with the git repository. In the a12n-server project's root, just run:
 
 ```sh
 cat mysql-schema/*.sql | mysql -u a12nserver -p -h hostname a12nserver
@@ -51,8 +56,7 @@ export MYSQL_DATABASE=a12nserver
 docker run -it --rm -p 127.0.0.1:8531:8531 --name a12n-server-01 a12n-server
 ```
 
-If you are running a12nserver outside of docker, the easiest way to change
-environment variables is to create a `.env` file, and specify the following settings.
+If you are running a12nserver outside of docker, the easiest way to change environment variables is to create a `.env` file in the a12n-server project root, and specify the following settings.
 
 ```sh
 PORT=8531

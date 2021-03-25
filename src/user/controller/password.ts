@@ -1,7 +1,7 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import * as UserService from '../service';
-import { Forbidden, Unauthorized, NotFound } from '@curveball/http-errors';
+import { Forbidden } from '@curveball/http-errors';
 import { User } from '../types';
 import * as privilegeService from '../../privilege/service';
 

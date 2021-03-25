@@ -81,6 +81,13 @@ export function item(user: Principal, privileges: PrivilegeMap, hasControl: bool
       href: `/user/${user.id}/sessions`,
       title: 'Active user sessions'
     };
+    hal._links['password'] = {
+      href: '/user/' + user.id + '/password',
+      title: 'Change user\'s password',
+      hints: {
+        allow: ['PUT'],
+      }
+    };
   }
 
   return hal;

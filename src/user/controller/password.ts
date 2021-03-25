@@ -14,30 +14,12 @@ class UserPasswordController extends Controller {
     }
 
     const userBody: any = ctx.request.body;
-
-    let user: User;
-    try {
-      user = await UserService.findByIdentity('mailto:' + userBody.identity) as User;
-    } catch (err) {
-      if (err instanceof NotFound) {
-        throw new NotFound('User email doesn\'t exist');
-      } else {
-        throw err;
-      }
-    }
-
+    const user = await UserService.findByHref(ctx.params.href) as User;
     const userNewPassword = userBody.newPassword;
-    const confirmNewPassword = userBody.confirmNewPassword;
-
-
-    if (userNewPassword !== confirmNewPassword) {
-      throw new Unauthorized('New password mismatch, please try again');
-    }
 
     await UserService.updatePassword(user, userNewPassword);
 
-    ctx.response.status = 201;
-    ctx.response.headers.set('Location', `/user/${user.id}`);
+    return ctx.redirect(303, `/user/${user.id}`);
 
   }
 

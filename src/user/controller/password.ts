@@ -14,12 +14,12 @@ class UserPasswordController extends Controller {
     }
 
     const userBody: any = ctx.request.body;
-    const user = await UserService.findByHref(ctx.params.href) as User;
-    const userNewPassword = userBody.newPassword;
+    const user = await UserService.findById(parseInt(ctx.params.id, 10)) as User;
+    const password = userBody.newPassword;
 
-    await UserService.updatePassword(user, userNewPassword);
+    await UserService.updatePassword(user, password);
 
-    return ctx.redirect(303, `/user/${user.id}`);
+    ctx.response.status = 204;
 
   }
 

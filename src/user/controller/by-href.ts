@@ -13,11 +13,14 @@ class UserByHrefController extends Controller {
 
     let hasControl = false;
     let hasPassword = false;
+    const isAdmin = await privilegeService.hasPrivilege(ctx, 'admin');
+
     if (ctx.state.user.id === user.id) {
       hasControl = true;
-    } else if (await privilegeService.hasPrivilege(ctx, 'admin')) {
+    } else if (isAdmin) {
       hasControl = true;
     }
+
     if (hasControl && user.type === 'user') {
       hasPassword = await userService.hasPassword(user);
     }
@@ -27,6 +30,7 @@ class UserByHrefController extends Controller {
       await privilegeService.getPrivilegesForPrincipal(user),
       hasControl,
       hasPassword,
+      isAdmin,
       await groupService.findGroupsForPrincipal(user),
     );
 

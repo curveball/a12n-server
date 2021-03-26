@@ -33,10 +33,11 @@ import registerWebAuthnAttestation from './mfa/webauthn/controller/attestation';
 import resetPassword from './reset-password/controller/request';
 import resetPasswordRedirect from './reset-password/controller/reset-password';
 import user from './user/controller/item';
-import userByHref from './user/controller/by-href';
 import userAccessToken from './oauth2/controller/user-access-token';
 import userActiveSessions from './oauth2/controller/active-sessions';
+import userByHref from './user/controller/by-href';
 import userLog from './log/controller/user';
+import userPassword from './user/controller/password';
 import users from './user/controller/collection';
 
 const routes = [
@@ -71,6 +72,7 @@ const routes = [
   router('/user/byhref/:href', userByHref),
   router('/user/:id', user),
   router('/user/:id/log', userLog),
+  router('/user/:id/password', userPassword),
   router('/user/:id/member', group),
   router('/user/:id/one-time-token', oneTimeToken),
   router('/user/:id/access-token', userAccessToken),

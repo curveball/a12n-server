@@ -17,7 +17,7 @@ class UserController extends Controller {
 
     if (ctx.state.user.id === user.id) {
       hasControl = true;
-    } else if (await privilegeService.hasPrivilege(ctx, 'admin')) {
+    } else if (isAdmin) {
       hasControl = true;
     }
 

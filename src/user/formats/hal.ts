@@ -32,7 +32,7 @@ export function collection(users: Principal[]): HalResource {
  * we're generating the repsonse for, or if the current authenticated user
  * has full admin privileges
  */
-export function item(user: Principal, privileges: PrivilegeMap, hasControl: boolean, hasPassword: boolean, hasPrivilege: boolean, groups: Group[]): HalResource {
+export function item(user: Principal, privileges: PrivilegeMap, hasControl: boolean, hasPassword: boolean, isAdmin: boolean, groups: Group[]): HalResource {
 
   const hal: HalResource = {
     _links: {
@@ -82,7 +82,7 @@ export function item(user: Principal, privileges: PrivilegeMap, hasControl: bool
       title: 'Active user sessions'
     };
   }
-  if (hasPrivilege) {
+  if (isAdmin) {
     hal._links['password'] = {
       href: '/user/' + user.id + '/password',
       title: 'Change user\'s password',

@@ -13,7 +13,8 @@ class UserController extends Controller {
 
     let hasControl = false;
     let hasPassword = false;
-    let hasPrivilege = false;
+    const isAdmin = await privilegeService.hasPrivilege(ctx, 'admin');
+
     if (ctx.state.user.id === user.id) {
       hasControl = true;
     } else if (await privilegeService.hasPrivilege(ctx, 'admin')) {
@@ -24,16 +25,12 @@ class UserController extends Controller {
       hasPassword = await userService.hasPassword(user);
     }
 
-    if (privilegeService.hasPrivilege(user, 'admin', '*')) {
-      hasPrivilege = true;
-    }
-
     ctx.response.body = hal.item(
       user,
       await privilegeService.getPrivilegesForPrincipal(user),
       hasControl,
       hasPassword,
-      hasPrivilege,
+      isAdmin,
       await groupService.findGroupsForPrincipal(user),
     );
 

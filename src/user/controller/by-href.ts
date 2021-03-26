@@ -13,17 +13,16 @@ class UserByHrefController extends Controller {
 
     let hasControl = false;
     let hasPassword = false;
-    let hasPrivilege = false;
+    const isAdmin = await privilegeService.hasPrivilege(ctx, 'admin');
+
     if (ctx.state.user.id === user.id) {
       hasControl = true;
     } else if (await privilegeService.hasPrivilege(ctx, 'admin')) {
       hasControl = true;
     }
+
     if (hasControl && user.type === 'user') {
       hasPassword = await userService.hasPassword(user);
-    }
-    if (privilegeService.hasPrivilege(user, 'admin', '*')) {
-      hasPrivilege = true;
     }
 
     ctx.response.body = hal.item(
@@ -31,7 +30,7 @@ class UserByHrefController extends Controller {
       await privilegeService.getPrivilegesForPrincipal(user),
       hasControl,
       hasPassword,
-      hasPrivilege,
+      isAdmin,
       await groupService.findGroupsForPrincipal(user),
     );
 

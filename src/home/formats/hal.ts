@@ -55,6 +55,10 @@ export default (version: string, authenticatedUser: User, isAdmin: boolean) => {
       href: '/exchange-one-time-token',
       title: 'Exchange a one-time token for a Access and Refresh token',
     };
+    result._links['edit-form'] = {
+      href: `/user/${authenticatedUser.id}/edit`,
+      title: `Edit ${authenticatedUser.nickname}`
+    };
 
   }
 

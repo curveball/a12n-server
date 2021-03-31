@@ -36,12 +36,12 @@ export function item(user: Principal, privileges: PrivilegeMap, hasControl: bool
 
   const hal: HalResource = {
     _links: {
-      'self': {href: '/user/' + user.id, title: user.nickname },
+      'self': {href: `/user/${user.id}`, title: user.nickname },
       'me': { href: user.identity, title: user.nickname },
-      'auth-log': { href: '/user/' + user.id + '/log', title: 'Authentication log', type: 'text/csv' },
+      'auth-log': { href: `/user/${user.id}/log`, title: 'Authentication log', type: 'text/csv' },
       'up' : { href: '/user', title: 'List of users' },
       'group': groups.map( group => ({
-        href: '/user/' + group.id,
+        href: `/user/${group.id}`,
         title: group.nickname,
       })),
     },
@@ -54,27 +54,27 @@ export function item(user: Principal, privileges: PrivilegeMap, hasControl: bool
 
   if (user.type === 'group') {
     hal._links['member-collection'] = {
-      href: '/user/' + user.id + '/member',
+      href: `/user/${user.id}/member`,
       title: 'Group Members'
     };
   }
   if (user.type === 'app') {
     hal._links['client-collection'] = {
-      href: '/user/' + user.id + '/client',
+      href: `/user/${user.id}/client`,
       title: 'List of OAuth2 client credentials'
     };
   }
   if (user.type === 'user' && hasControl) {
     hal.hasPassword = hasPassword;
     hal._links['one-time-token'] = {
-      href: '/user/' + user.id + '/one-time-token',
+      href: `/user/${user.id}/one-time-token`,
       title: 'Generate a one-time login token.',
       hints: {
         allow: ['POST'],
       }
     };
     hal._links['access-token'] = {
-      href: '/user/' + user.id + '/access-token',
+      href: `/user/${user.id}/access-token`,
       title: 'Generate an access token for this user.',
     };
     hal._links['active-sessions'] = {
@@ -84,15 +84,66 @@ export function item(user: Principal, privileges: PrivilegeMap, hasControl: bool
   }
   if (isAdmin && user.type === 'user') {
     hal._links['password'] = {
-      href: '/user/' + user.id + '/password',
+      href: `/user/${user.id}/password`,
       title: 'Change user\'s password',
       hints: {
         allow: ['PUT'],
       }
     };
+    hal._links['edit-form'] = {
+      href: `/user/${user.id}/edit`,
+      title: `Edit ${user.nickname}`
+    };
   }
   return hal;
 
+}
+
+export function edit(user: Principal): HalResource {
+  return {
+    _links: {
+      self: {
+        href: `/user/${user.id}`,
+      },
+      up: {
+        href: `/user/${user.id}`,
+        title: 'Cancel',
+      },
+    },
+    _templates: {
+      default: {
+        title: 'Edit User',
+        method: 'POST',
+        contentType: 'application/x-www-form-urlencoded',
+        properties: [
+          {
+            name: 'identity',
+            prompt: 'Identity',
+            type: 'text',
+            value: user.identity,
+          },
+          {
+            name: 'nickname',
+            prompt: 'Nickname',
+            type: 'text',
+            value: user.nickname,
+          },
+
+          {
+            name: 'active',
+            prompt: 'Active',
+            options: {
+              inline: [
+                { prompt: 'Activated', value: 'true' },
+                { prompt: 'Deactivated', value: 'false' },
+              ],
+            },
+            value: user.active ? 'true' : 'false',
+          },
+        ],
+      },
+    },
+  };
 }
 
 export function halToModel(body: any): NewPrincipal {

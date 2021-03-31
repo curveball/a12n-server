@@ -94,9 +94,9 @@ export async function replacePrivilegeForUser(user: Principal, privilegeMap: Pri
   await database.query(query, [ user.id ]);
 
   for (const [ resource, privileges ] of Object.entries(privilegeMap)) {
-        for (const privilege of privileges) {
-                await addPrivilegeForUser(user, privilege, resource);
-        }
+    for (const privilege of privileges) {
+      await addPrivilegeForUser(user, privilege, resource);
+    }
   }
 
 }

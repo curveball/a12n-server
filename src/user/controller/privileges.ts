@@ -32,11 +32,11 @@ class UserEditPrivilegesController extends Controller {
     await privilegeService.hasPrivilege(ctx, 'admin');
 
     try {
-        const policy = JSON.parse(policyBody) as PrivilegeMap;
+      const policy = JSON.parse(policyBody) as PrivilegeMap;
 
-        await privilegeService.replacePrivilegeForUser(user, policy);
+      await privilegeService.replacePrivilegeForUser(user, policy);
     } catch (err) {
-        throw new BadRequest(err);
+      throw new BadRequest(err);
     }
 
     ctx.redirect(303, `/user/${user.id}`);

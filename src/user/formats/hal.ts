@@ -82,7 +82,7 @@ export function item(user: Principal, privileges: PrivilegeMap, hasControl: bool
       title: 'Active user sessions'
     };
   }
-  if (isAdmin) {
+  if (isAdmin && user.type === 'user') {
     hal._links['password'] = {
       href: '/user/' + user.id + '/password',
       title: 'Change user\'s password',

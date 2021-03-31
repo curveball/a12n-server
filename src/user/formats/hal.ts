@@ -140,18 +140,6 @@ export function edit(user: Principal): HalResource {
             },
             value: user.active ? 'true' : 'false',
           },
-          {
-            name: 'type',
-            prompt: 'Type',
-            options: {
-              inline: [
-                { prompt: 'User', value: 'user' },
-                { prompt: 'App', value: 'app' },
-                { prompt: 'Group', value: 'group' },
-              ],
-            },
-            value: user.type,
-          },
         ],
       },
     },

@@ -89,6 +89,18 @@ export async function findPrivilege(privilege: string): Promise<Privilege> {
 
 }
 
+export async function replacePrivilegeForUser(user: Principal, privilegeMap: PrivilegeMap): Promise<void> {
+  const query = 'DELETE FROM user_privileges WHERE user_id = ?';
+  await database.query(query, [ user.id ]);
+
+  for (const [ resource, privileges ] of Object.entries(privilegeMap)) {
+        for (const privilege of privileges) {
+                await addPrivilegeForUser(user, privilege, resource);
+        }
+  }
+
+}
+
 export async function addPrivilegeForUser(user: Principal, privilege: string, resource: string): Promise<void> {
 
   const query = 'INSERT INTO user_privileges SET ?';

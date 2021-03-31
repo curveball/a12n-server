@@ -134,6 +134,8 @@ export async function save<T extends User | Principal | Group>(user: Omit<T, 'id
     const updateUserRecord: Partial<UserRecord> = {
       identity: user.identity,
       nickname: user.nickname,
+      active: user.active ? 1 : 0,
+      type: userTypeToInt(user.type),
     };
 
     await database.query(query, [updateUserRecord, user.id]);

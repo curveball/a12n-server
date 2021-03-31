@@ -29,4 +29,6 @@ export type App = {
   active: boolean
 }
 
+export type EditPrincipal = Omit<Principal, 'id' | 'privileges'>;
+
 export type NewPrincipal = Omit<Principal, 'id'>;

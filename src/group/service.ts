@@ -60,7 +60,7 @@ export async function replaceMembers(group: Group, users: Principal[]): Promise<
 
 export async function findGroupsForPrincipal(principal: Principal): Promise<Group[]> {
 
-  const query = `SELECT ${UserService.fieldNames.join(', ')} FROM users INNER JOIN group_members ON users.id = group_members.user_id WHERE user_id = ?`;
+  const query = `SELECT ${UserService.fieldNames.join(', ')} FROM users INNER JOIN group_members ON users.id = group_members.group_id WHERE user_id = ?`;
   const result = await database.query(query, [principal.id]);
 
   const models: Group[] = [];

@@ -59,7 +59,7 @@ class ClientCollectionController extends Controller {
     const redirectUris = ctx.request.body.redirectUris.trim().split(/\r\n|\n/).filter((line:string) => !!line);
 
     if (!clientId) {
-      clientId = await generateSecretToken(10)
+      clientId = await generateSecretToken(10);
     } else if (clientId.length < 6) {
       throw new UnprocessableEntity('clientId must be at least 6 characters or left empty');
     }

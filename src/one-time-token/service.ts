@@ -1,10 +1,9 @@
 import { OneTimeToken } from './types';
 import { User } from '../user/types';
 import db from '../database';
-import * as crypto from 'crypto';
 import * as userService from '../user/service';
 import { BadRequest } from '@curveball/http-errors';
-
+import { generateSecretToken } from '../crypto';
 
 /**
  * 2 hour token timeout
@@ -15,7 +14,7 @@ const tokenTTL = 7200;
  * This function will create a unique token then store it in the database
  */
 export async function createToken(user: User): Promise<OneTimeToken> {
-  const token = crypto.randomBytes(32).toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '');
+  const token = await generateSecretToken();
   const query = 'INSERT INTO reset_password_token SET user_id = ?, token = ?, expires_at = UNIX_TIMESTAMP() + ?, created_at = UNIX_TIMESTAMP()';
 
   await db.query(query, [

@@ -7,6 +7,7 @@ import { User, App, Principal } from '../user/types';
 import { InvalidGrant, InvalidRequest, UnauthorizedClient } from './errors';
 import { CodeChallengeMethod, OAuth2Code, OAuth2Token } from './types';
 import { OAuth2Client } from '../oauth2-client/types';
+import { generateSecretToken } from '../crypto';
 
 export async function getRedirectUris(client: OAuth2Client): Promise<string[]> {
 
@@ -94,8 +95,8 @@ export async function generateTokenForUser(client: OAuth2Client, user: Principal
   if (!user.active) {
     throw new Error ('Cannot generate token for inactive user');
   }
-  const accessToken = crypto.randomBytes(32).toString('base64').replace('=', '');
-  const refreshToken = crypto.randomBytes(32).toString('base64').replace('=', '');
+  const accessToken = await generateSecretToken();
+  const refreshToken = await generateSecretToken();
 
   const query = 'INSERT INTO oauth2_tokens SET created = UNIX_TIMESTAMP(), ?';
 
@@ -135,8 +136,8 @@ export async function generateTokenForUserNoClient(user: User): Promise<Omit<OAu
   if (!user.active) {
     throw new Error ('Cannot generate token for inactive user');
   }
-  const accessToken = crypto.randomBytes(32).toString('base64').replace('=', '');
-  const refreshToken = crypto.randomBytes(32).toString('base64').replace('=', '');
+  const accessToken = await generateSecretToken();
+  const refreshToken = await generateSecretToken();
 
   const query = 'INSERT INTO oauth2_tokens SET created = UNIX_TIMESTAMP(), ?';
 
@@ -177,8 +178,8 @@ export async function generateTokenForUserNoClient(user: User): Promise<Omit<OAu
  */
 export async function generateTokenForClient(client: OAuth2Client): Promise<OAuth2Token> {
 
-  const accessToken = crypto.randomBytes(32).toString('base64').replace('=', '');
-  const refreshToken = crypto.randomBytes(32).toString('base64').replace('=', '');
+  const accessToken = await generateSecretToken();
+  const refreshToken = await generateSecretToken();
 
   const query = 'INSERT INTO oauth2_tokens SET created = UNIX_TIMESTAMP(), ?';
 
@@ -366,7 +367,7 @@ export async function generateCodeForUser(
   browserSessionId: string,
 ): Promise<OAuth2Code> {
 
-  const code = crypto.randomBytes(32).toString('base64').replace('=', '');
+  const code = await generateSecretToken();
 
   const query = 'INSERT INTO oauth2_codes SET created = UNIX_TIMESTAMP(), ?';
 

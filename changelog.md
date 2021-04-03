@@ -1,11 +1,18 @@
 Changelog
 =========
 
+0.17.3 (2021-??-??)
+-------------------
+
+* Added UIs for editing user information. (@mihok)
+
+
 0.17.2 (2021-03-26)
 -------------------
 
 * Added a `/user/:id/password` endpoint. This allows an admin to easily
 change a user's password.
+
 
 0.17.1 (2021-03-14)
 -------------------

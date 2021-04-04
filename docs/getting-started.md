@@ -7,10 +7,11 @@ prerequisites:
 1. NodeJS (version 14 or higher) and `npm`.
 2. `git`.
 3. MySQL (For Mac: install via ).
-    - For Mac: easy install Homebrew [MySQL package](https://formulae.brew.sh/formula/mysql) via [Homebrew](https://brew.sh/).
+    - For Mac: easy install Homebrew [MySQL package](https://formulae.brew.sh/formula/mysql)
+      via [Homebrew](https://brew.sh/).
     - For Linux: `apt install mysql-server`
-4. Optional: A working [Docker][1] installation. The server can also be run straight from the cli.
-
+4. Optional: A working [Docker][1] installation. The server can also be run
+   straight from the cli.
 
 After all of these prerequisites are acquired, run:
 
@@ -71,20 +72,20 @@ Note: There are several environment variables available to modify the a12n-serve
 behavior. See the table below.
 
 |                           Name | Required? |               Default | Description                                                   |
-|-------------------------------:|----------:|----------------------:|---------------------------------------------------------------|
-|                     MYSQL_HOST |           |             127.0.0.1 | IP address to connect to where the `mysql-schema` was applied |
-|                     MYSQL_USER |       Yes |                       | User to connect to MySQL with                                 |
-|                 MYSQL_PASSWORD |       Yes |                       | Password to authenticate to MySQL                             |
-|                 MYSQL_DATABASE |       Yes |                       | Database where the `mysql-schema` was applied                 |
-|                 MYSQL_PORT     |       No  |                  3306 | The port of MySQL                                             |
+|:------------------------------ |----------:|----------------------:|---------------------------------------------------------------|
+| MYSQL_HOST                     |           |             127.0.0.1 | IP address to connect to where the `mysql-schema` was applied |
+| MYSQL_USER                     |       Yes |                       | User to connect to MySQL with                                 |
+| MYSQL_PASSWORD                 |       Yes |                       | Password to authenticate to MySQL                             |
+| MYSQL_DATABASE                 |       Yes |                       | Database where the `mysql-schema` was applied                 |
+| MYSQL_PORT                     |       No  |                  3306 | The port of MySQL                                             |
 | MYSQL_INSTANCE_CONNECTION_NAME |           |                       |                                                               |
-|                     PUBLIC_URI |           | http://localhost:8531 |                                                               |
-|                           PORT |           |                  8531 | Port to host the API on.                                      |
-|                       SMTP_URL |           |                       | See below section, [Email](#Email)                      |
-|                SMTP_EMAIL_FROM |           |                       | See below section, [Email](#Email)                      |
-|                     REDIS_HOST |           |                       | When specified, use Redis as a session storage. Required for running the server on multiple hosts.
-|                     REDIS_PORT |           |                  6379 | Set tcp port for Redis
-
+| PUBLIC_URI                     |           | http://localhost:8531 |                                                               |
+| PORT                           |           |                  8531 | Port to host the API on.                                      |
+| SMTP_URL                       |           |                       | See below section, [Email](#Email)                      |
+| SMTP_EMAIL_FROM                |           |                       | See below section, [Email](#Email)                      |
+| REDIS_HOST                     |           |                       | When specified, use Redis as a session storage. Required for running the server on multiple hosts.
+| REDIS_PORT                     |           |                  6379 | Set tcp port for Redis
+| JWT_PRIVATE_KEY                | No        |                       | When set, a12nserver will generate JWT OAuth2 Access tokens as specified in [draft-ietf-oauth-access-token-jwt][oauth2-jwt]. If this is not set, opaque strings will be used |
 
 To start the server, we use `make`. Simply execute
 
@@ -108,3 +109,6 @@ export SMTP_URL="smtps://[username]:[password]@[host]:[port]/"
 export SMTP_EMAIL_FROM='"[Name]" <[Username]@example.org>'
 ```
 The SMTP_URL takes any format that that [Nodemailer](https://nodemailer.com/smtp/) takes.
+
+
+[oauth2-jwt]: https://tools.ietf.org/html/draft-ietf-oauth-access-token-jwt-12

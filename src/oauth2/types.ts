@@ -1,4 +1,4 @@
-import { Principal } from '../user/types';
+import { App, User } from '../user/types';
 
 export type OAuth2Token = {
   // OAuth2 Access token
@@ -17,7 +17,7 @@ export type OAuth2Token = {
   tokenType: 'bearer',
 
   // The user this token belongs to
-  user: Principal,
+  user: App | User,
 
   // The OAuth2 client (app) that created this session
   clientId: number,

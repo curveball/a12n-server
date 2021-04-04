@@ -5,10 +5,10 @@ import * as hal from '../formats/hal';
 import { Forbidden, UnprocessableEntity } from '@curveball/http-errors';
 import { findByApp, create } from '../service';
 import * as userService from '../../user/service';
-import * as crypto from 'crypto';
 import { GrantType, OAuth2Client } from '../types';
 import * as bcrypt from 'bcrypt';
 import { App } from '../../user/types';
+import { generateSecretToken } from '../../crypto';
 
 class ClientCollectionController extends Controller {
 
@@ -59,7 +59,7 @@ class ClientCollectionController extends Controller {
     const redirectUris = ctx.request.body.redirectUris.trim().split(/\r\n|\n/).filter((line:string) => !!line);
 
     if (!clientId) {
-      clientId = randomId(10);
+      clientId = await generateSecretToken(10);
     } else if (clientId.length < 6) {
       throw new UnprocessableEntity('clientId must be at least 6 characters or left empty');
     }
@@ -68,7 +68,7 @@ class ClientCollectionController extends Controller {
       throw new UnprocessableEntity('You must specify the allowedGrantTypes property');
     }
 
-    const clientSecret = randomId(20);
+    const clientSecret = await generateSecretToken();
     const newClient: Omit<OAuth2Client,'id'> = {
       clientId,
       app,
@@ -81,11 +81,6 @@ class ClientCollectionController extends Controller {
 
   }
 
-}
-
-function randomId(bytes: number): string {
-  const buff = crypto.randomBytes(bytes);
-  return buff.toString('base64').replace(/\+/g, '-').replace(/\//g, '_').replace(/=/g, '');
 }
 
 export default new ClientCollectionController();

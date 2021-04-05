@@ -1,6 +1,6 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { Forbidden } from '@curveball/http-errors';
+import { Forbidden, NotFound } from '@curveball/http-errors';
 
 import * as csv from '../formats/csv';
 
@@ -8,6 +8,8 @@ import * as userService from '../../user/service';
 import * as oauth2Service from '../service';
 import * as oauth2ClientService from '../../oauth2-client/service';
 import * as privilegeService from '../../privilege/service';
+
+import { Principal, User, App } from '../../user/types';
 
 import { OAuth2Client } from '../../oauth2-client/types';
 
@@ -18,6 +20,10 @@ class UserActiveSessions extends Controller {
     const user = await userService.findById(+ctx.params.id);
     if (ctx.state.user.id !== user.id && !await privilegeService.hasPrivilege(ctx, 'admin')) {
       throw new Forbidden('You can only use this API for yourself yourself, or if you have \'admin\' privileges');
+    }
+
+    if (!assertNotGroup(user)) {
+      throw new NotFound('This endpoint only exists for users and apps');
     }
 
     const tokens = await oauth2Service.getActiveTokens(user);
@@ -37,5 +43,12 @@ class UserActiveSessions extends Controller {
   }
 
 }
+
+function assertNotGroup(input: Principal): input is User | App {
+
+  return ['user', 'app'].includes(input.type);
+
+}
+
 
 export default new UserActiveSessions();

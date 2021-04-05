@@ -3,11 +3,12 @@ import * as crypto from 'crypto';
 import db from '../database';
 import { getSetting } from '../server-settings';
 import * as userService from '../user/service';
-import { User, App, Principal } from '../user/types';
+import { User, App } from '../user/types';
 import { InvalidGrant, InvalidRequest, UnauthorizedClient } from './errors';
 import { CodeChallengeMethod, OAuth2Code, OAuth2Token } from './types';
 import { OAuth2Client } from '../oauth2-client/types';
 import { generateSecretToken } from '../crypto';
+import { generateJWTAccessToken } from './jwt';
 
 export async function getRedirectUris(client: OAuth2Client): Promise<string[]> {
 
@@ -51,7 +52,7 @@ export async function addRedirectUris(client: OAuth2Client, redirectUris: string
 
 }
 
-export async function getActiveTokens(user: Principal): Promise<OAuth2Token[]> {
+export async function getActiveTokens(user: App | User): Promise<OAuth2Token[]> {
 
   const query = `
     SELECT
@@ -79,7 +80,7 @@ export async function getActiveTokens(user: Principal): Promise<OAuth2Token[]> {
       accessTokenExpires: row.access_token_expires,
       refreshTokenExpires: row.refresh_token_expires,
       tokenType: 'bearer',
-      user: user,
+      user,
       clientId: row.oauth2_client_id,
     };
   });
@@ -91,19 +92,31 @@ export async function getActiveTokens(user: Principal): Promise<OAuth2Token[]> {
  *
  * This function creates an access token for a specific user.
  */
-export async function generateTokenForUser(client: OAuth2Client, user: Principal, browserSessionId?: string): Promise<OAuth2Token> {
+export async function generateTokenForUser(client: OAuth2Client, user: App | User, browserSessionId?: string): Promise<OAuth2Token> {
+
   if (!user.active) {
     throw new Error ('Cannot generate token for inactive user');
   }
-  const accessToken = await generateSecretToken();
+
+  const expirySettings = getTokenExpiry();
+  const accessTokenExpires = Math.floor(Date.now() / 1000) + expirySettings.accessToken;
+  const refreshTokenExpires = Math.floor(Date.now() / 1000) + expirySettings.refreshToken;
+
+  let accessToken: string;
+
+  if (process.env.JWT_PRIVATE_KEY) {
+    accessToken = await generateJWTAccessToken(
+      user,
+      client,
+      expirySettings.accessToken,
+      []
+    );
+  } else {
+    accessToken = await generateSecretToken();
+  }
   const refreshToken = await generateSecretToken();
 
   const query = 'INSERT INTO oauth2_tokens SET created = UNIX_TIMESTAMP(), ?';
-
-  const expirySettings = getTokenExpiry();
-
-  const accessTokenExpires = Math.floor(Date.now() / 1000) + expirySettings.accessToken;
-  const refreshTokenExpires = Math.floor(Date.now() / 1000) + expirySettings.refreshToken;
 
   await db.query(query, {
     oauth2_client_id: client.id,

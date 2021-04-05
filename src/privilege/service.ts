@@ -35,6 +35,30 @@ export async function getPrivilegesForPrincipal(principal: Principal): Promise<P
 
 }
 
+export async function getImmediatePrivilegesForPrincipal(principal: Principal): Promise<PrivilegeMap> {
+
+  const query = 'SELECT resource, privilege FROM user_privileges WHERE user_id = ?';
+  const result = await db.query(query, [principal.id]);
+
+  return result[0].reduce( (currentPrivileges: any, row: PrivilegeRow) => {
+
+    const privileges = Object.assign({}, currentPrivileges);
+
+    // eslint-disable-next-line no-prototype-builtins
+    if (privileges.hasOwnProperty(row.resource)) {
+      if (privileges[row.resource].indexOf(row.privilege) === -1) {
+        privileges[row.resource].push(row.privilege);
+      }
+    } else {
+      privileges[row.resource] = [row.privilege];
+    }
+
+    return privileges;
+
+  }, {});
+
+}
+
 export async function hasPrivilege(who: Principal | Context, privilege: string, resource: string = '*'): Promise<boolean> {
 
   let user;
@@ -87,6 +111,31 @@ export async function findPrivilege(privilege: string): Promise<Privilege> {
 
   return result[0][0];
 
+}
+
+export async function replacePrivilegeForUser(user: Principal, privilegeMap: PrivilegeMap): Promise<void> {
+
+  const conn = await database.getConnection();
+
+  await conn.beginTransaction();
+
+  await conn.query('DELETE FROM user_privileges WHERE user_id = ?', [ user.id ]);
+
+  for (const [ resource, privileges ] of Object.entries(privilegeMap)) {
+    for (const privilege of privileges) {
+
+      await conn.query('INSERT INTO user_privileges SET ?', [
+        {
+          user_id: user.id,
+          privilege,
+          resource,
+        }
+      ]);
+
+    }
+  }
+
+  await conn.commit();
 }
 
 export async function addPrivilegeForUser(user: Principal, privilege: string, resource: string): Promise<void> {

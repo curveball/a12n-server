@@ -90,6 +90,10 @@ export function item(user: Principal, privileges: PrivilegeMap, hasControl: bool
         allow: ['PUT'],
       }
     };
+    hal._links['privileges'] = {
+      href: `/user/${user.id}/edit/privileges`,
+      title: 'Change user\'s privilege policy',
+    };
     hal._links['edit-form'] = {
       href: `/user/${user.id}/edit`,
       title: `Edit ${user.nickname}`
@@ -103,7 +107,7 @@ export function edit(user: Principal): HalResource {
   return {
     _links: {
       self: {
-        href: `/user/${user.id}`,
+        href: `/user/${user.id}/edit`,
       },
       up: {
         href: `/user/${user.id}`,
@@ -139,6 +143,35 @@ export function edit(user: Principal): HalResource {
               ],
             },
             value: user.active ? 'true' : 'false',
+          },
+        ],
+      },
+    },
+  };
+}
+
+export function editPrivileges(user: Principal, privileges: PrivilegeMap): HalResource {
+  return {
+    _links: {
+      self: {
+        href: `/user/${user.id}/edit/privileges`,
+      },
+      up: {
+        href: `/user/${user.id}`,
+        title: 'Cancel',
+      },
+    },
+    _templates: {
+      default: {
+        title: 'Edit User Privileges',
+        method: 'POST',
+        contentType: 'application/x-www-form-urlencoded',
+        properties: [
+          {
+            name: 'policyBody',
+            prompt: 'Privilege Policy',
+            type: 'textarea',
+            value: JSON.stringify(privileges, undefined, 2),
           },
         ],
       },

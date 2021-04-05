@@ -6,13 +6,13 @@ export default (version: string, authenticatedUser: User, isAdmin: boolean) => {
 
   const result: HalResource = {
     _links: {
-      'self': { href: '/', title: 'Auth API Home' },
+      'self': { href: '/', title: 'Home' },
       'authenticated-as': { href: '/user/' + authenticatedUser.id, title: authenticatedUser.nickname },
       'authorize' : { href: '/authorize', title: 'OAuth2 authorize endpoint', type: 'text/html' },
-      'change-password': { href: '/changepassword', title: 'Change user\'s password' },
+      'change-password': { href: '/changepassword', title: 'Change password' },
       'introspect' : {
         href: '/introspect',
-        title: 'OAuth2 Token Introspection',
+        title: 'OAuth2 Introspection Endpoint',
         hints: {
           allow: ['POST'],
         }
@@ -23,7 +23,7 @@ export default (version: string, authenticatedUser: User, isAdmin: boolean) => {
       },
       'token': {
         href: '/token',
-        title: 'OAuth2 protocol endpoint',
+        title: 'OAuth2 Token Endpoint',
         hints: {
           allow: ['POST'],
         }
@@ -55,11 +55,6 @@ export default (version: string, authenticatedUser: User, isAdmin: boolean) => {
       href: '/exchange-one-time-token',
       title: 'Exchange a one-time token for a Access and Refresh token',
     };
-    result._links['edit-form'] = {
-      href: `/user/${authenticatedUser.id}/edit`,
-      title: `Edit ${authenticatedUser.nickname}`
-    };
-
   }
 
   return result;

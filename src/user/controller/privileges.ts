@@ -12,7 +12,7 @@ class UserEditPrivilegesController extends Controller {
   async get(ctx: Context) {
 
     const user = await userService.findById(+ctx.params.id);
-    const privileges = await privilegeService.getPrivilegesForPrincipal(user);
+    const privileges = await privilegeService.getImmediatePrivilegesForPrincipal(user);
 
     await privilegeService.hasPrivilege(ctx, 'admin');
 

@@ -8,7 +8,7 @@ Changelog
 * Added preliminary support for JWT bearer tokens ([draft-ietf-oauth-access-token-jwt-12][oauth2-jwt]).
 * Added a new markdown-based home document, which will be a bit more user-
   friendly for non-devs.
-* Added UI for setting privileges.
+* Added UI for setting privileges. (@mihok)
 * All secret tokens are now URL-safe and generated non-blocking.
 * Throw a 404 when trying to access the 'active sessions' page for a
   group-principal.
@@ -466,6 +466,5 @@ change a user's password.
 ------------------
 
 * First public version
-*
 
 [oauth2-jwt]: https://tools.ietf.org/html/draft-ietf-oauth-access-token-jwt-12

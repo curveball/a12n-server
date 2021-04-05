@@ -39,7 +39,7 @@ export async function getImmediatePrivilegesForPrincipal(principal: Principal): 
 
   const query = 'SELECT resource, privilege FROM user_privileges WHERE user_id = ?';
   const result = await db.query(query, [principal.id]);
-  
+
   return result[0].reduce( (currentPrivileges: any, row: PrivilegeRow) => {
 
     const privileges = Object.assign({}, currentPrivileges);

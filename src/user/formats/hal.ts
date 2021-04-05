@@ -171,6 +171,8 @@ export function editPrivileges(user: Principal, privileges: PrivilegeMap): HalRe
             name: 'policyBody',
             prompt: 'Privilege Policy',
             type: 'textarea',
+            cols: 100,
+            rows: 20,
             value: JSON.stringify(privileges, undefined, 2),
           },
         ],

@@ -1,10 +1,17 @@
 Changelog
 =========
 
-0.17.3 (2021-??-??)
+0.18.0 (2021-04-05)
 -------------------
 
 * Added UIs for editing user information. (@mihok)
+* Added preliminary support for JWT bearer tokens ([draft-ietf-oauth-access-token-jwt-12][oauth2-jwt]).
+* Added a new markdown-based home document, which will be a bit more user-
+  friendly for non-devs.
+* Added UI for setting privileges.
+* All secret tokens are now URL-safe and generated non-blocking.
+* Throw a 404 when trying to access the 'active sessions' page for a
+  group-principal.
 
 
 0.17.2 (2021-03-26)
@@ -459,3 +466,6 @@ change a user's password.
 ------------------
 
 * First public version
+*
+
+[oauth2-jwt]: https://tools.ietf.org/html/draft-ietf-oauth-access-token-jwt-12

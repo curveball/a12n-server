@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.18.1 (2021-04-05)
+-------------------
+
+* Url decode the 'href' on the `/user/byhref` endpoint.
+* Make the 'privilege policy' textarea bigger.
+
+
 0.18.0 (2021-04-05)
 -------------------
 

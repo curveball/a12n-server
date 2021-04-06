@@ -9,7 +9,7 @@ class UserByHrefController extends Controller {
 
   async get(ctx: Context) {
 
-    const user = await userService.findByHref(ctx.params.href);
+    const user = await userService.findByHref(decodeURIComponent(ctx.params.href));
 
     let hasControl = false;
     let hasPassword = false;

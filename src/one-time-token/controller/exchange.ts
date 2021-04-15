@@ -9,10 +9,17 @@ import * as privilegeService from '../../privilege/service';
 import * as tokenService from '../service';
 import * as oauth2Service from '../../oauth2/service';
 import * as oauth2ClientService from '../../oauth2-client/service';
+import * as userService from '../../user/service';
+
+type OtteRequest = {
+  activateUser?: boolean;
+  token: string;
+  client_id: string;
+}
 
 class OneTimeTokenExchangeController extends Controller {
 
-  async post(ctx: Context<any>) {
+  async post(ctx: Context<OtteRequest>) {
 
     if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
       throw new Forbidden('Only users with the "admin" privilege use this endpoint');
@@ -26,6 +33,16 @@ class OneTimeTokenExchangeController extends Controller {
     }
 
     const user = await tokenService.validateToken(ctx.request.body.token);
+
+    if (!user.active) {
+      if (ctx.request.body.activateUser) {
+        user.active = true;
+        await userService.save(user);
+      } else {
+        throw new Forbidden('The user associated with the one-time-token has been deactivated. Either activate the user first, or provide the "activate" property in the request if the intent is to activate the user with the one-time-token mechanism');
+      }
+    }
+
     const client = await oauth2ClientService.findByClientId(ctx.request.body.client_id);
     const oauth2Token = await oauth2Service.generateTokenForUser(client, user);
 

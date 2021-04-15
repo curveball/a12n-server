@@ -7,6 +7,7 @@ Changelog
 * Activating users did not correctly check for "admin" privileges. This is
   now fixed.
 * Added support for `PUT` on `/users/123`
+* Allowing users to be activated using the `token-exchange` API.
 
 
 0.18.1 (2021-04-05)

@@ -90,15 +90,20 @@ export function item(user: Principal, privileges: PrivilegeMap, hasControl: bool
         allow: ['PUT'],
       }
     };
-    hal._links['privileges'] = {
-      href: `/user/${user.id}/edit/privileges`,
-      title: 'Change user\'s privilege policy',
-    };
+
     hal._links['edit-form'] = {
       href: `/user/${user.id}/edit`,
       title: `Edit ${user.nickname}`
     };
   }
+
+  if (isAdmin) {
+    hal._links['privileges'] = {
+      href: `/user/${user.id}/edit/privileges`,
+      title: 'Change privilege policy',
+    };
+  }
+
   return hal;
 
 }
@@ -163,7 +168,7 @@ export function editPrivileges(user: Principal, privileges: PrivilegeMap): HalRe
     },
     _templates: {
       default: {
-        title: 'Edit User Privileges',
+        title: `Edit privilege policy for ${user.nickname}`,
         method: 'POST',
         contentType: 'application/x-www-form-urlencoded',
         properties: [

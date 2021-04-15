@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.18.2 (2021-04-15)
+-------------------
+
+* Activating users did not correctly check for "admin" privileges. This is
+  now fixed.
+* Added support for `PUT` on `/users/123`
+
+
 0.18.1 (2021-04-05)
 -------------------
 

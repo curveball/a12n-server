@@ -7,6 +7,10 @@ import * as hal from '../formats/hal';
 import * as userService from '../service';
 // import * as groupService from '../../group/service';
 
+type PolicyForm = {
+  policyBody: string;
+}
+
 class UserEditPrivilegesController extends Controller {
 
   async get(ctx: Context) {
@@ -23,9 +27,9 @@ class UserEditPrivilegesController extends Controller {
 
   }
 
-  async post(ctx: Context) {
+  async post(ctx: Context<PolicyForm>) {
 
-    const { policyBody }: any = ctx.request.body;
+    const { policyBody } = ctx.request.body;
 
     const user = await userService.findById(+ctx.params.id);
 

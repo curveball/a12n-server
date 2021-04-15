@@ -1,6 +1,6 @@
 {
   "name": "@curveball/a12n-server",
-  "version": "0.18.1",
+  "version": "0.18.2",
   "main": "dist/index.js",
   "description": "A ready-to-launch User and Authentication system for those that don't want to build it",
   "scripts": {
@@ -49,7 +49,7 @@
     "@types/nodemailer": "^6.4.1",
     "@types/qrcode": "^1.4.0",
     "@types/redis": "^2.8.28",
-    "@types/sinon": "^9.0.11",
+    "@types/sinon": "^10.0.0",
     "@typescript-eslint/eslint-plugin": "^4.17.0",
     "@typescript-eslint/parser": "^4.17.0",
     "chai": "^4.3.4",

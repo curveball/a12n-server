@@ -4,6 +4,7 @@ import * as privilegeService from '../../privilege/service';
 import * as hal from '../formats/hal';
 import * as userService from '../service';
 import * as groupService from '../../group/service';
+import { Forbidden } from '@curveball/http-errors';
 
 class UserController extends Controller {
 
@@ -35,6 +36,22 @@ class UserController extends Controller {
     );
 
   }
+
+  async put(ctx: Context<any>) {
+
+    if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
+      throw new Forbidden('Only users with the "admin" privilege may edit users');
+    }
+
+    const user = await userService.findById(+ctx.params.id);
+    user.active = !!ctx.request.body.active;
+    user.nickname = ctx.request.body.nickname;
+
+    await userService.save(user);
+    ctx.status = 204;
+
+  }
+
 
 }
 

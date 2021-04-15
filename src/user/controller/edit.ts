@@ -3,7 +3,7 @@ import { Context } from '@curveball/core';
 import * as privilegeService from '../../privilege/service';
 import * as hal from '../formats/hal';
 import * as userService from '../service';
-// import * as groupService from '../../group/service';
+import { Forbidden } from '@curveball/http-errors';
 
 class UserEditController extends Controller {
 
@@ -11,7 +11,9 @@ class UserEditController extends Controller {
 
     const user = await userService.findById(+ctx.params.id);
 
-    await privilegeService.hasPrivilege(ctx, 'admin');
+    if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
+      throw new Forbidden('Only users with the "admin" privilege use this endpoint');
+    }
 
     ctx.response.body = hal.edit(
       user,
@@ -24,7 +26,9 @@ class UserEditController extends Controller {
     const userBody: any = ctx.request.body;
     const userOld = await userService.findById(+ctx.params.id);
 
-    await privilegeService.hasPrivilege(ctx, 'admin');
+    if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
+      throw new Forbidden('Only users with the "admin" privilege use this endpoint');
+    }
 
     delete userBody['csrf-token'];
 

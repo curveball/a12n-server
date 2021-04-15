@@ -39,7 +39,7 @@ class OneTimeTokenExchangeController extends Controller {
         user.active = true;
         await userService.save(user);
       } else {
-        throw new Forbidden('The user associated with the one-time-token has been deactivated. Either activate the user first, or provide the "activate" property in the request if the intent is to activate the user with the one-time-token mechanism');
+        throw new Forbidden('The user associated with the one-time-token has been deactivated. Either activate the user first, or provide the "activateUser" property in the request if the intent is to activate the user with the one-time-token mechanism');
       }
     }
 

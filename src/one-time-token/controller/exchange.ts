@@ -11,9 +11,15 @@ import * as oauth2Service from '../../oauth2/service';
 import * as oauth2ClientService from '../../oauth2-client/service';
 import * as userService from '../../user/service';
 
+type OtteRequest = {
+  activateUser?: boolean;
+  token: string;
+  client_id: string;
+}
+
 class OneTimeTokenExchangeController extends Controller {
 
-  async post(ctx: Context<any>) {
+  async post(ctx: Context<OtteRequest>) {
 
     if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
       throw new Forbidden('Only users with the "admin" privilege use this endpoint');
@@ -29,7 +35,7 @@ class OneTimeTokenExchangeController extends Controller {
     const user = await tokenService.validateToken(ctx.request.body.token);
 
     if (!user.active) {
-      if (ctx.request.body.activate) {
+      if (ctx.request.body.activateUser) {
         user.active = true;
         await userService.save(user);
       } else {

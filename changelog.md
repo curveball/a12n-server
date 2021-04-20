@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.18.3 (2021-04-20)
+-------------------
+
+* `updatePassword` now supports creating a password without having an
+existing password.
+
+
 0.18.2 (2021-04-15)
 -------------------
 

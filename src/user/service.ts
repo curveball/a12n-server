@@ -162,11 +162,17 @@ export async function createPassword(user: User, password: string): Promise<void
 
 export async function updatePassword(user: User, password: string): Promise<void> {
 
-  const query = 'UPDATE user_passwords SET password = ? WHERE user_id = ?';
-  await database.query(query, [
-    await bcrypt.hash(password, 12),
-    user.id
-  ]);
+  const query = `
+    INSERT INTO user_passwords
+      (password, user_id)
+      VALUES
+      (?, ?)
+    ON DUPLICATE KEY UPDATE
+      password = ?
+  `;
+  const hashedPw = await bcrypt.hash(password, 12);
+
+  await database.query(query, [hashedPw, user.id, hashedPw]);
 
 }
 /**

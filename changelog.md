@@ -5,7 +5,7 @@ Changelog
 -------------------
 
 * `updatePassword` now supports creating a password without having an
-existing password.
+  existing password.
 
 
 0.18.2 (2021-04-15)

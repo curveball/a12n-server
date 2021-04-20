@@ -3,8 +3,34 @@ import { Context } from '@curveball/core';
 import * as UserService from '../service';
 import { Forbidden } from '@curveball/http-errors';
 import * as privilegeService from '../../privilege/service';
+import log from '../../log/service';
+import { EventType } from '../../log/types';
 
 class UserPasswordController extends Controller {
+
+  async post(ctx: Context<any>) {
+
+    if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
+      throw new Forbidden('Only users with the "admin" privilege may create new password');
+    }
+
+    const user = await UserService.findById(parseInt(ctx.params.id, 10));
+    const userNewPassword = ctx.request.body.newPassword;
+
+    if (user.type !== 'user') {
+      throw new Forbidden('You can only create passwords for users');
+    }
+
+    await UserService.createPassword(user, userNewPassword);
+
+    ctx.session = {
+      user: user,
+    };
+    log(EventType.changePasswordSuccess, ctx);
+    ctx.status = 303;
+    ctx.response.headers.set('Location', `/user/${user.id}`);
+
+  }
 
   async put(ctx: Context) {
 

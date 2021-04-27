@@ -1,7 +1,7 @@
 import { NotFound } from '@curveball/http-errors';
 
 import database from '../../database';
-import { User } from '../../user/types';
+import { User } from '../../principal/types';
 
 import { NewWebAuthnDevice, WebAuthnDevice } from './types';
 

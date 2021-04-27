@@ -3,7 +3,7 @@ import { Context } from '@curveball/core';
 import log from '../log/service';
 import { EventType } from '../log/types';
 import * as UserService from '../user/service';
-import { User } from '../user/types';
+import { User } from '../principal/types';
 import { changePasswordForm } from './formats/html';
 
 class ChangePasswordController extends Controller {

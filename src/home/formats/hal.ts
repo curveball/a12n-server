@@ -1,6 +1,6 @@
 import { HalResource } from 'hal-types';
 import { getSetting } from '../../server-settings';
-import { User } from '../../user/types';
+import { User } from '../../principal/types';
 
 export default (version: string, authenticatedUser: User, isAdmin: boolean) => {
 

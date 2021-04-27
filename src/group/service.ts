@@ -1,6 +1,6 @@
 import database from '../database';
-import * as UserService from '../user/service';
-import { Principal, Group } from '../user/types';
+import * as principalService from '../principal/service';
+import { Principal, Group } from '../principal/types';
 
 export function isGroup(principal: Principal): principal is Group {
 
@@ -14,13 +14,13 @@ export function isGroup(principal: Principal): principal is Group {
 
 export async function findMembers(group: Group): Promise<Principal[]> {
 
-  const query = `SELECT ${UserService.fieldNames.join(', ')} FROM users INNER JOIN group_members ON users.id = group_members.user_id WHERE group_id = ?`;
+  const query = `SELECT ${principalService.fieldNames.join(', ')} FROM principals INNER JOIN group_members ON principals.id = group_members.user_id WHERE group_id = ?`;
   const result = await database.query(query, [group.id]);
 
   const models = [];
 
   for (const record of result[0]) {
-    const model = UserService.recordToModel(record);
+    const model = principalService.recordToModel(record);
     models.push(model);
   }
 
@@ -60,13 +60,13 @@ export async function replaceMembers(group: Group, users: Principal[]): Promise<
 
 export async function findGroupsForPrincipal(principal: Principal): Promise<Group[]> {
 
-  const query = `SELECT ${UserService.fieldNames.join(', ')} FROM users INNER JOIN group_members ON users.id = group_members.group_id WHERE user_id = ?`;
+  const query = `SELECT ${principalService.fieldNames.join(', ')} FROM principals INNER JOIN group_members ON principals.id = group_members.group_id WHERE user_id = ?`;
   const result = await database.query(query, [principal.id]);
 
   const models: Group[] = [];
 
   for (const record of result[0]) {
-    const model = UserService.recordToModel(record);
+    const model = principalService.recordToModel(record);
     models.push(model as Group);
   }
 

@@ -2,14 +2,14 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import * as privilegeService from '../../privilege/service';
 import * as hal from '../formats/hal';
-import * as userService from '../service';
 import { Forbidden } from '@curveball/http-errors';
+import * as principalService from '../../principal/service';
 
 class UserEditController extends Controller {
 
   async get(ctx: Context) {
 
-    const user = await userService.findById(+ctx.params.id);
+    const user = await principalService.findById(+ctx.params.id);
 
     if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
       throw new Forbidden('Only users with the "admin" privilege use this endpoint');
@@ -24,7 +24,7 @@ class UserEditController extends Controller {
   async post(ctx: Context) {
 
     const userBody: any = ctx.request.body;
-    const userOld = await userService.findById(+ctx.params.id);
+    const userOld = await principalService.findById(+ctx.params.id);
 
     if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
       throw new Forbidden('Only users with the "admin" privilege use this endpoint');
@@ -37,7 +37,7 @@ class UserEditController extends Controller {
       active: userBody.active === 'true' ? true : false,
     });
 
-    const user = await userService.save(userUpdated);
+    const user = await principalService.save(userUpdated);
 
     ctx.redirect(303, `/user/${user.id}`);
 

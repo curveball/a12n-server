@@ -5,7 +5,7 @@ import * as QRCode from 'qrcode';
 
 import { generateSecret, save } from '../service';
 import { registrationForm } from '../formats/html';
-import { User } from '../../../user/types';
+import { User } from '../../../principal/types';
 import { getSetting } from '../../../server-settings';
 
 

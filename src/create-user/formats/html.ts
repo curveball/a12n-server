@@ -1,5 +1,5 @@
 import { render } from '../../templates';
-import { PrincipalTypeList } from '../../user/types';
+import { PrincipalTypeList } from '../../principal/types';
 
 export function createUserForm(msg: string, error: string) {
 

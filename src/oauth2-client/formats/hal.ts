@@ -1,4 +1,4 @@
-import { App } from '../../user/types';
+import { App } from '../../principal/types';
 import { OAuth2Client } from '../types';
 import { HalResource } from 'hal-types';
 

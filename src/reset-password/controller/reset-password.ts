@@ -4,7 +4,7 @@ import { Forbidden } from '@curveball/http-errors';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
 import * as UserService from '../../user/service';
-import { User } from '../../user/types';
+import { User } from '../../principal/types';
 import { resetPasswordForm } from '../formats/redirect';
 
 class ResetPasswordController extends Controller {

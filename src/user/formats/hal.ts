@@ -1,5 +1,5 @@
 import { PrivilegeMap } from '../../privilege/types';
-import { NewPrincipal, Principal, Group } from '../types';
+import { NewPrincipal, Principal, Group } from '../../principal/types';
 import { HalResource } from 'hal-types';
 
 export function collection(users: Principal[]): HalResource {
@@ -47,7 +47,8 @@ export function item(user: Principal, privileges: PrivilegeMap, hasControl: bool
     },
     nickname: user.nickname,
     active: user.active,
-    created: user.created,
+    createdAt: user.createdAt,
+    modifiedAt: user.modifiedAt,
     type: user.type,
     privileges
   };
@@ -191,7 +192,8 @@ export function halToModel(body: any): NewPrincipal {
   return {
     identity: body._links.me.href,
     nickname: body.nickname,
-    created: new Date(),
+    createdAt: new Date(),
+    modifiedAt: new Date(),
     type: body.type,
     active: body.active
   };

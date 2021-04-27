@@ -1,4 +1,4 @@
-import { User, App } from '../user/types';
+import { User, App } from '../principal/types';
 import { OAuth2Client } from '../oauth2-client/types';
 import { generateSecretToken } from '../crypto';
 import * as jwt from 'jsonwebtoken';

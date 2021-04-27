@@ -1,4 +1,4 @@
-import { User } from '../../user/types';
+import { User } from '../../principal/types';
 
 export type TotpDevice = {
     id: number;

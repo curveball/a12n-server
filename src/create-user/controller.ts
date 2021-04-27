@@ -2,8 +2,8 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { Forbidden, NotFound, UnprocessableEntity } from '@curveball/http-errors';
 import * as privilegeService from '../privilege/service';
-import * as userService from '../user/service';
-import { PrincipalTypeList } from '../user/types';
+import * as principalService from '../principal/service';
+import { PrincipalTypeList } from '../principal/types';
 import { createUserForm } from './formats/html';
 
 class CreateUserController extends Controller {
@@ -39,7 +39,7 @@ class CreateUserController extends Controller {
     }
 
     try {
-      await userService.findByIdentity(ctx.request.body.identity);
+      await principalService.findByIdentity(ctx.request.body.identity);
       ctx.status = 303;
       ctx.response.headers.set('Location', '/create-user?error=User+already+exists');
       return;
@@ -49,11 +49,12 @@ class CreateUserController extends Controller {
       }
     }
 
-    const newUser = await userService.save({
+    const newUser = await principalService.save({
       identity: identity,
       nickname: nickname,
-      created: new Date(),
-      type: type,
+      createdAt: new Date(),
+      modifiedAt: new Date(),
+      type,
       active: 'active' in ctx.request.body
     });
 

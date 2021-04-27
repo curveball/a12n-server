@@ -3,14 +3,14 @@ import { Context } from '@curveball/core';
 import { Conflict, Forbidden, NotFound, UnprocessableEntity } from '@curveball/http-errors';
 import * as privilegeService from '../../privilege/service';
 import * as hal from '../formats/hal';
-import * as usersService from '../service';
-import { PrincipalTypeList } from '../types';
+import * as principalService from '../../principal/service';
+import { PrincipalTypeList } from '../../principal/types';
 
 class UserCollectionController extends Controller {
 
   async get(ctx: Context) {
 
-    const users = await usersService.findAll();
+    const users = await principalService.findAll();
     ctx.response.body = hal.collection(users);
 
   }
@@ -24,7 +24,7 @@ class UserCollectionController extends Controller {
     const userBody: any = ctx.request.body;
 
     try {
-      await usersService.findByIdentity(userBody._links.me.href);
+      await principalService.findByIdentity(userBody._links.me.href);
       throw new Conflict('User already exists');
     } catch (err) {
       if (!(err instanceof NotFound)) {
@@ -44,7 +44,7 @@ class UserCollectionController extends Controller {
       throw new UnprocessableEntity('type must be one of ' + PrincipalTypeList.join(', '));
     }
 
-    const user = await usersService.save(
+    const user = await principalService.save(
       hal.halToModel(userBody)
     );
 

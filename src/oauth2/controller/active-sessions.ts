@@ -4,12 +4,12 @@ import { Forbidden, NotFound } from '@curveball/http-errors';
 
 import * as csv from '../formats/csv';
 
-import * as userService from '../../user/service';
+import * as principalService from '../../principal/service';
 import * as oauth2Service from '../service';
 import * as oauth2ClientService from '../../oauth2-client/service';
 import * as privilegeService from '../../privilege/service';
 
-import { Principal, User, App } from '../../user/types';
+import { Principal, User, App } from '../../principal/types';
 
 import { OAuth2Client } from '../../oauth2-client/types';
 
@@ -17,7 +17,7 @@ class UserActiveSessions extends Controller {
 
   async get(ctx: Context<any>) {
 
-    const user = await userService.findById(+ctx.params.id);
+    const user = await principalService.findById(+ctx.params.id);
     if (ctx.state.user.id !== user.id && !await privilegeService.hasPrivilege(ctx, 'admin')) {
       throw new Forbidden('You can only use this API for yourself yourself, or if you have \'admin\' privileges');
     }

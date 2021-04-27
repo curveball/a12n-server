@@ -1,7 +1,7 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { BadRequest } from '@curveball/http-errors/dist';
-import * as userService from '../../user/service';
+import * as userService from '../../principal/service';
 import * as hal from '../formats/hal';
 import * as groupService from '../service';
 import { Conflict, NotFound, UnprocessableEntity } from '@curveball/http-errors';

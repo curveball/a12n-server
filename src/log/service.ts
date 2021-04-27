@@ -1,6 +1,6 @@
 import { Context } from '@curveball/core';
 import db from '../database';
-import { Principal } from '../user/types';
+import { Principal } from '../principal/types';
 import { EventType, LogEntry } from './types';
 import * as geoip from 'geoip-lite';
 

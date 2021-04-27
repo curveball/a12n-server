@@ -3,7 +3,7 @@ import { Context } from '@curveball/core';
 import { NotFound, BadRequest } from '@curveball/http-errors';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
-import * as userService from '../../user/service';
+import * as principalService from '../../principal/service';
 import { resetPasswordRequestForm } from '../formats/html';
 import { sendResetPasswordEmail } from '../service';
 
@@ -27,7 +27,7 @@ class ResetPasswordRequestController extends Controller {
 
     let user;
     try {
-      user = await userService.findByIdentity('mailto:' + ctx.request.body.emailAddress);
+      user = await principalService.findByIdentity('mailto:' + ctx.request.body.emailAddress);
     } catch (err) {
       if (err instanceof NotFound) {
         ctx.redirect(303, '/reset-password?error=Account+not+found.+Please+try+again');

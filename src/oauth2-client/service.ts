@@ -1,12 +1,12 @@
 import { OAuth2Client, GrantType } from './types';
 import * as bcrypt from 'bcrypt';
-import * as userService from '../user/service';
+import * as principalService from '../principal/service';
 import db from '../database';
 import { Context } from '@curveball/core';
 import { NotFound, Unauthorized } from '@curveball/http-errors';
 import { InvalidRequest } from '../oauth2/errors';
 import parseBasicAuth from './parse-basic-auth';
-import { App } from '../user/types';
+import { App } from '../principal/types';
 
 type OAuth2ClientRecord = {
   id: number,
@@ -28,7 +28,7 @@ export async function findByClientId(clientId: string): Promise<OAuth2Client> {
 
   const record: OAuth2ClientRecord = result[0][0];
 
-  const user = await userService.findActiveById(record.user_id) as App;
+  const user = await principalService.findActiveById(record.user_id) as App;
   return mapRecordToModel(record, user);
 
 }
@@ -44,7 +44,7 @@ export async function findById(id: number): Promise<OAuth2Client> {
 
   const record: OAuth2ClientRecord = result[0][0];
 
-  const user = await userService.findActiveById(record.user_id) as App;
+  const user = await principalService.findActiveById(record.user_id) as App;
   return mapRecordToModel(record, user);
 
 }

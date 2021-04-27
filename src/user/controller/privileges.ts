@@ -4,7 +4,7 @@ import { BadRequest } from '@curveball/http-errors';
 import * as privilegeService from '../../privilege/service';
 import { PrivilegeMap } from '../../privilege/types';
 import * as hal from '../formats/hal';
-import * as userService from '../service';
+import * as principalService from '../../principal/service';
 // import * as groupService from '../../group/service';
 
 type PolicyForm = {
@@ -15,7 +15,7 @@ class UserEditPrivilegesController extends Controller {
 
   async get(ctx: Context) {
 
-    const user = await userService.findById(+ctx.params.id);
+    const user = await principalService.findById(+ctx.params.id);
     const privileges = await privilegeService.getImmediatePrivilegesForPrincipal(user);
 
     await privilegeService.hasPrivilege(ctx, 'admin');
@@ -31,8 +31,7 @@ class UserEditPrivilegesController extends Controller {
 
     const { policyBody } = ctx.request.body;
 
-    const user = await userService.findById(+ctx.params.id);
-
+    const user = await principalService.findById(+ctx.params.id);
     await privilegeService.hasPrivilege(ctx, 'admin');
 
     try {

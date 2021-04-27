@@ -1,4 +1,4 @@
-import { User } from '../../user/types';
+import { User } from '../../principal/types';
 import { getSetting } from '../../server-settings';
 
 export default (version: string, authenticatedUser: User, isAdmin: boolean) => {

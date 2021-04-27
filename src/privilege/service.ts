@@ -1,7 +1,7 @@
 import { Context } from '@curveball/core';
 import db from '../database';
 import database from '../database';
-import { Principal } from '../user/types';
+import { Principal } from '../principal/types';
 import { Privilege, PrivilegeMap } from './types';
 
 type PrivilegeRow = {

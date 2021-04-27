@@ -2,8 +2,9 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
+import * as principalService from '../../principal/service';
 import * as userService from '../../user/service';
-import { User } from '../../user/types';
+import { User } from '../../principal/types';
 import { InvalidGrant, InvalidRequest, UnsupportedGrantType } from '../errors';
 import * as oauth2Service from '../service';
 import { OAuth2Client } from '../../oauth2-client/types';
@@ -103,7 +104,7 @@ class TokenController extends Controller {
 
     let user: User;
     try {
-      user = await userService.findByIdentity('mailto:' + ctx.request.body.username) as User;
+      user = await principalService.findByIdentity('mailto:' + ctx.request.body.username) as User;
       if (user.type !== 'user') {
         throw new InvalidRequest('The "password" grant type is only valid for users');
       }

@@ -7,8 +7,9 @@ import { EventType } from '../../log/types';
 import { MFALoginSession } from '../../mfa/types';
 import * as webAuthnService from '../../mfa/webauthn/service';
 import { getSetting } from '../../server-settings';
+import * as principalService from '../../principal/service';
 import * as userService from '../../user/service';
-import { User } from '../../user/types';
+import { User } from '../../principal/types';
 import { isValidRedirect } from '../utilities';
 import { loginForm } from '../formats/html';
 
@@ -16,7 +17,7 @@ class LoginController extends Controller {
 
   async get(ctx: Context) {
 
-    const firstRun = !(await userService.hasUsers());
+    const firstRun = !(await principalService.hasPrincipals());
     if (firstRun) {
       ctx.redirect(302, '/register');
       return;
@@ -38,7 +39,7 @@ class LoginController extends Controller {
 
     let user: User;
     try {
-      user = await userService.findByIdentity('mailto:' + ctx.request.body.userName) as User;
+      user = await principalService.findByIdentity('mailto:' + ctx.request.body.userName) as User;
     } catch (err) {
       if (err instanceof NotFound) {
         log(EventType.loginFailed, ctx);

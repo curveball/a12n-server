@@ -1,4 +1,4 @@
-import { Group, Principal } from '../../user/types';
+import { Group, Principal } from '../../principal/types';
 import { HalResource } from 'hal-types';
 
 export function collection(group: Group, members: Principal[]): HalResource {

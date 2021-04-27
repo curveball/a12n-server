@@ -1,4 +1,4 @@
-import { App } from '../user/types';
+import { App } from '../principal/types';
 
 export type GrantType = 'refresh_token' | 'client_credentials' | 'password' | 'implicit' | 'authorization_code';
 

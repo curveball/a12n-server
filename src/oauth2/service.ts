@@ -2,8 +2,8 @@ import { NotFound } from '@curveball/http-errors';
 import * as crypto from 'crypto';
 import db from '../database';
 import { getSetting } from '../server-settings';
-import * as userService from '../user/service';
-import { User, App } from '../user/types';
+import * as principalService from '../principal/service';
+import { User, App } from '../principal/types';
 import { InvalidGrant, InvalidRequest, UnauthorizedClient } from './errors';
 import { CodeChallengeMethod, OAuth2Code, OAuth2Token } from './types';
 import { OAuth2Client } from '../oauth2-client/types';
@@ -255,7 +255,7 @@ export async function generateTokenFromCode(client: OAuth2Client, code: string, 
     throw new UnauthorizedClient('The client_id associated with the token did not match with the authenticated client credentials');
   }
 
-  const user = await userService.findById(codeRecord.user_id) as User;
+  const user = await principalService.findById(codeRecord.user_id) as User;
   return generateTokenForUser(client, user, codeRecord.browser_session_id || undefined);
 
 }
@@ -451,7 +451,7 @@ export async function getTokenByAccessToken(accessToken: string): Promise<OAuth2
   }
 
   const row: OAuth2TokenRecord = result[0][0];
-  const user = await userService.findActiveById(row.user_id);
+  const user = await principalService.findActiveById(row.user_id);
 
   return {
     accessToken: row.access_token,
@@ -495,7 +495,7 @@ export async function getTokenByRefreshToken(refreshToken: string): Promise<OAut
 
   const row: OAuth2TokenRecord = result[0][0];
 
-  const user = await userService.findActiveById(row.user_id);
+  const user = await principalService.findActiveById(row.user_id);
 
   return {
     accessToken: row.access_token,

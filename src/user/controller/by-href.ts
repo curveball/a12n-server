@@ -2,6 +2,7 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import * as privilegeService from '../../privilege/service';
 import * as hal from '../formats/hal';
+import * as principalService from '../../principal/service';
 import * as userService from '../service';
 import * as groupService from '../../group/service';
 
@@ -9,7 +10,7 @@ class UserByHrefController extends Controller {
 
   async get(ctx: Context) {
 
-    const user = await userService.findByHref(decodeURIComponent(ctx.params.href));
+    const user = await principalService.findByHref(decodeURIComponent(ctx.params.href));
 
     let hasControl = false;
     let hasPassword = false;

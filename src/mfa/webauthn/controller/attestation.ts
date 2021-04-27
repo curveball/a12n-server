@@ -4,7 +4,7 @@ import { generateAttestationOptions, verifyAttestationResponse } from '@simplewe
 
 import * as webAuthnService from '../service';
 import { getSetting } from '../../../server-settings';
-import { User } from '../../../user/types';
+import { User } from '../../../principal/types';
 
 
 class WebAuthnAttestationController extends Controller {

@@ -2,7 +2,7 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import * as privilegeService from '../../privilege/service';
 import { Forbidden } from '@curveball/http-errors';
-import * as userService from '../../user/service';
+import * as principalService from '../../principal/service';
 import { createToken } from '../service';
 import * as hal from '../formats/hal';
 import { resolve } from 'url';
@@ -15,7 +15,7 @@ class OneTimeTokenController extends Controller {
       throw new Forbidden('Only users with the "admin" privilege can request for one time token');
     }
 
-    const user = await userService.findById(ctx.state.params.id);
+    const user = await principalService.findById(ctx.state.params.id);
 
     if (user.type !== 'user') {
       throw new Forbidden('One-time token may only be obtained for users');

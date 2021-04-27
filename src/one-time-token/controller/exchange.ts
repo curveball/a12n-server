@@ -9,7 +9,7 @@ import * as privilegeService from '../../privilege/service';
 import * as tokenService from '../service';
 import * as oauth2Service from '../../oauth2/service';
 import * as oauth2ClientService from '../../oauth2-client/service';
-import * as userService from '../../user/service';
+import * as principalService from '../../principal/service';
 
 type OtteRequest = {
   activateUser?: boolean;
@@ -37,7 +37,7 @@ class OneTimeTokenExchangeController extends Controller {
     if (!user.active) {
       if (ctx.request.body.activateUser) {
         user.active = true;
-        await userService.save(user);
+        await principalService.save(user);
       } else {
         throw new Forbidden('The user associated with the one-time-token has been deactivated. Either activate the user first, or provide the "activateUser" property in the request if the intent is to activate the user with the one-time-token mechanism');
       }

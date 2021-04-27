@@ -1,4 +1,4 @@
-import { User } from '../user/types';
+import { User } from '../principal/types';
 
 export type MFALoginSession = {
   user: User;

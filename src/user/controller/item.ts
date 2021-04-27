@@ -3,6 +3,7 @@ import { Context } from '@curveball/core';
 import * as privilegeService from '../../privilege/service';
 import * as hal from '../formats/hal';
 import * as userService from '../service';
+import * as principalService from '../../principal/service';
 import * as groupService from '../../group/service';
 import { Forbidden } from '@curveball/http-errors';
 
@@ -10,7 +11,7 @@ class UserController extends Controller {
 
   async get(ctx: Context) {
 
-    const user = await userService.findById(+ctx.params.id);
+    const user = await principalService.findById(+ctx.params.id);
 
     let hasControl = false;
     let hasPassword = false;
@@ -43,11 +44,11 @@ class UserController extends Controller {
       throw new Forbidden('Only users with the "admin" privilege may edit users');
     }
 
-    const user = await userService.findById(+ctx.params.id);
+    const user = await principalService.findById(+ctx.params.id);
     user.active = !!ctx.request.body.active;
     user.nickname = ctx.request.body.nickname;
 
-    await userService.save(user);
+    await principalService.save(user);
     ctx.status = 204;
 
   }

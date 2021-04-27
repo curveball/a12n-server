@@ -4,7 +4,7 @@ import { Forbidden, BadRequest } from '@curveball/http-errors';
 
 import log from '../../log/service';
 import { EventType } from '../../log/types';
-import * as userService from '../../user/service';
+import * as principalService from '../../principal/service';
 import * as oauth2Service from '../service';
 
 import * as privilegeService from '../../privilege/service';
@@ -13,7 +13,7 @@ class UserAccessTokenController extends Controller {
 
   async post(ctx: Context<any>) {
 
-    const user = await userService.findById(+ctx.params.id);
+    const user = await principalService.findById(+ctx.params.id);
     if (ctx.state.user.id !== user.id && !await privilegeService.hasPrivilege(ctx, 'admin')) {
       throw new Forbidden('You can only generate OAuth2 access tokens for yourself with this endpoint (unless you have the \'admin\' privilege (which you haven\'t))');
     }

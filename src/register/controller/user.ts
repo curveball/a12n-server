@@ -2,16 +2,17 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { Forbidden, NotFound } from '@curveball/http-errors';
 import { getSetting } from '../../server-settings';
+import * as principalService from '../../principal/service';
 import * as userService from '../../user/service';
 import { registrationForm } from '../formats/html';
 import * as privilegeService from '../../privilege/service';
-import { User } from '../../user/types';
+import { User } from '../../principal/types';
 
 class UserRegistrationController extends Controller {
 
   async get(ctx: Context) {
 
-    const firstRun = !(await userService.hasUsers());
+    const firstRun = !(await principalService.hasPrincipals());
 
     ctx.response.type = 'text/html';
     ctx.response.body = registrationForm(
@@ -37,7 +38,7 @@ class UserRegistrationController extends Controller {
     }
 
     try {
-      await userService.findByIdentity('mailto:' + body.emailAddress);
+      await principalService.findByIdentity('mailto:' + body.emailAddress);
       ctx.status = 303;
       ctx.response.headers.set('Location', '/register?error=User+already+exists');
       return;
@@ -47,12 +48,13 @@ class UserRegistrationController extends Controller {
       }
     }
 
-    const firstRun = !(await userService.hasUsers());
+    const firstRun = !(await principalService.hasPrincipals());
 
-    const user: User = await userService.save({
+    const user: User = await principalService.save({
       identity: 'mailto:' + body.emailAddress,
       nickname: body.nickname,
-      created: new Date(),
+      createdAt: new Date(),
+      modifiedAt: new Date(),
       type: 'user',
       // Auto-activating if it's the first user.
       active: firstRun,

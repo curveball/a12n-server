@@ -1,4 +1,4 @@
-import { App } from '../../user/types';
+import { App } from '../../principal/types';
 
 export function newClient(user: App) {
 

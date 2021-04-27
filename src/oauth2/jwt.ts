@@ -56,9 +56,17 @@ type JwtAccessToken = {
 
 export async function generateJWTAccessToken(user: User|App, client: OAuth2Client, expiry: number, scopes: string[]): Promise<string> {
 
+  if (!process.env.JWT_PRIVATE_KEY) {
+    throw new Error('The JWT_PRIVATE_KEY environment variable must be set, and must be a RSA private key file (typically a .pem file)');
+  }
+
   const origin = process.env.PUBLIC_URI!;
   const jti = await generateSecretToken();
-  const privateKey = process.env.JWT_PRIVATE_KEY!;
+
+  // Some environment variable systems will convert the newline to a literal '\n'.
+  // this is a safe operation, because the file should not contain any literal
+  // backslashes.
+  const privateKey = process.env.JWT_PRIVATE_KEY.replace(/\\n/gm, '\n');
 
   const jwtBody: JwtAccessToken = {
     iss: origin,

@@ -1,4 +1,4 @@
-import { getPathName } from '../../src/user/service';
+import { getPathName } from '../../src/principal/service';
 import { expect } from 'chai';
 
 describe('getPathName', () => {

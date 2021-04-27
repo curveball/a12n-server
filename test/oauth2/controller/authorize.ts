@@ -11,9 +11,10 @@ import * as sinon from 'sinon';
 import { InvalidRequest } from '../../../src/oauth2/errors';
 import * as oauth2Service from '../../../src/oauth2/service';
 import * as oauth2ClientService from '../../../src/oauth2-client/service';
+import * as principalService from '../../../src/principal/service';
 import * as userService from '../../../src/user/service';
 import * as serverSettings from '../../../src/server-settings';
-import { User, App } from '../../../src/user/types';
+import { User, App } from '../../../src/principal/types';
 import { OAuth2Client } from '../../../src/oauth2-client/types';
 import authorize from '../../../src/oauth2/controller/authorize';
 
@@ -27,7 +28,8 @@ describe('AuthorizeController', () => {
     id: 1,
     identity: 'identity',
     nickname: 'nickname',
-    created: new Date(1),
+    createdAt: new Date(1),
+    modifiedAt: new Date(1),
     type: 'user',
     active: true
   };
@@ -35,7 +37,8 @@ describe('AuthorizeController', () => {
     id: 1,
     identity: 'identity',
     nickname: 'appname',
-    created: new Date(1),
+    createdAt: new Date(1),
+    modifiedAt: new Date(1),
     type: 'app',
     active: true
   };
@@ -55,7 +58,7 @@ describe('AuthorizeController', () => {
     sandbox.stub(oauth2Service, 'validateRedirectUri').returns(Promise.resolve(true));
     sandbox.stub(oauth2Service, 'requireRedirectUri').returns(Promise.resolve());
     codeRedirectMock = sandbox.stub(authorize, 'codeRedirect');
-    sandbox.stub(userService, 'findByIdentity').returns(Promise.resolve(user));
+    sandbox.stub(principalService, 'findByIdentity').returns(Promise.resolve(user));
     sandbox.stub(userService, 'validatePassword').returns(Promise.resolve(true));
     sandbox.stub(userService, 'hasTotp').returns(Promise.resolve(false));
     sandbox.stub(serverSettings, 'getSetting').returns(true);

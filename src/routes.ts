@@ -45,6 +45,15 @@ import users from './user/controller/collection';
 const routes = [
   router('/', home),
   router('/assets/:filename', blob),
+  
+  router('/app', apps),
+  router('/app/:id', app),
+  router('/app/:id/edit', appEdit),
+  router('/app/:id/edit/privileges', appEditPrivileges),
+  router('/app/:id/log', appLog),
+  router('/app/:id/client', clients),
+  router('/app/:id/client/new', clientNew),
+  router('/app/:id/client/:clientId', client),
 
   router('/authorize', oauth2ErrorHandler, oauth2Authorize),
   router('/exchange-one-time-token', oneTimeTokenExchange),

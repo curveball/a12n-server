@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://curveballjs.org/schemas/a12nserver/new-principal.json",
+  "type": "object",
+  "description": "This is the request body used to create new principals",
+
+  "required": ["nickname", "active", "type"],
+  "additionalProperties": false,
+
+  "properties": {
+    "nickname": {
+      "type": "string",
+      "minLength": 3
+    },
+    "active": {
+      "type": "boolean"
+    },
+    "type": {
+      "enum": ["user", "app", "group"]
+    }
+  }
+}

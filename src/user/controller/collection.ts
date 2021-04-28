@@ -27,7 +27,7 @@ class UserCollectionController extends Controller {
     }
 
     ctx.request.validate<NewPrincipalBody>(
-      'https://..'
+      'https://curveballjs.org/schemas/a12nserver/new-principal.json'
     );
 
     const identity = ctx.request.links.get('me')?.href;

@@ -22,6 +22,8 @@ Admin
 
 * <a href="/privilege" rel="privilege-collection">List of privileges</a>
 * <a href="/user" rel="user-collection">List of users</a>
+* <a href="/app" rel="app-collection">List of apps</a>
+* <a href="/group" rel="group-collection">List of groups</a>
 ${getSetting('registration.enabled')?'* <a href="/register" rel="registration">Public registration endpoint</a>':''}
 
 

@@ -20,7 +20,7 @@ class HomeController extends Controller {
     ctx.response.headers.append('Link', [
       '</>; rel="alternate"; type="application/hal+json"',
       '</logout>; rel="logout"',
-      `</user/${user.id}>; rel="authenticated-as" title="${user.nickname.replace('"','')}`,
+      `</user/${user.id}>; rel="authenticated-as" title="${user.nickname.replace('"','')}"`,
     ]);
     ctx.response.body = markdown(version, user, isAdmin);
 

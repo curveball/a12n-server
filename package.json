@@ -81,6 +81,7 @@
     "@curveball/router": "^0.3.0",
     "@curveball/session": "^0.6.2",
     "@curveball/session-redis": "^0.4.1",
+    "@curveball/validator": "^0.8.0",
     "@simplewebauthn/browser": "^2.1.0",
     "@simplewebauthn/server": "^2.2.0",
     "@types/geoip-lite": "^1.4.1",

@@ -1,10 +1,15 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { Conflict, Forbidden, NotFound, UnprocessableEntity } from '@curveball/http-errors';
+import { BadRequest, Conflict, Forbidden, NotFound } from '@curveball/http-errors';
 import * as privilegeService from '../../privilege/service';
 import * as hal from '../formats/hal';
 import * as principalService from '../../principal/service';
-import { PrincipalTypeList } from '../../principal/types';
+
+type NewPrincipalBody = {
+  nickname: string;
+  active: boolean;
+  type: 'user' | 'app' | 'group';
+}
 
 class UserCollectionController extends Controller {
 
@@ -21,10 +26,17 @@ class UserCollectionController extends Controller {
       throw new Forbidden('Only users with the "admin" privilege may create new users');
     }
 
-    const userBody: any = ctx.request.body;
+    ctx.request.validate<NewPrincipalBody>(
+      'https://..'
+    );
+
+    const identity = ctx.request.links.get('me')?.href;
+    if (!identity) {
+      throw new BadRequest('You must specify a link with rel "me", either via a HAL link or HTTP Link header');
+    }
 
     try {
-      await principalService.findByIdentity(userBody._links.me.href);
+      await principalService.findByIdentity(identity);
       throw new Conflict('User already exists');
     } catch (err) {
       if (!(err instanceof NotFound)) {
@@ -32,21 +44,14 @@ class UserCollectionController extends Controller {
       }
     }
 
-    if (typeof userBody.nickname !== 'string') {
-      throw new UnprocessableEntity('nickname must be a string');
-    }
-
-    if (typeof userBody.active !== 'boolean') {
-      throw new UnprocessableEntity('active must be a boolean');
-    }
-
-    if (!PrincipalTypeList.includes(userBody.type)) {
-      throw new UnprocessableEntity('type must be one of ' + PrincipalTypeList.join(', '));
-    }
-
-    const user = await principalService.save(
-      hal.halToModel(userBody)
-    );
+    const user = await principalService.save({
+      identity,
+      nickname: ctx.request.body.nickname,
+      type: ctx.request.body.type,
+      active: ctx.request.body.active,
+      createdAt: new Date(),
+      modifiedAt: new Date(),
+    });
 
     ctx.response.status = 201;
     ctx.response.headers.set('Location', `/user/${user.id}`);

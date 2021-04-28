@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.19.0 (????-??-??)
+-------------------
+
+* First steps to integrating json-schema in a12nserver.
+
+
 0.18.3 (2021-04-20)
 -------------------
 

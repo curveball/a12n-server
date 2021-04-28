@@ -4,12 +4,14 @@ import cors from '@curveball/cors';
 import links from '@curveball/links';
 import problem from '@curveball/problem';
 import session from '@curveball/session';
+import validator from '@curveball/validator';
 import { RedisStore } from '@curveball/session-redis';
 import { invokeMiddlewares, Middleware } from '@curveball/core';
 
 import login from './middleware/login';
 import routes from './routes';
 import { getSetting } from './server-settings';
+import { join } from 'path';
 
 /**
  * The 'main middleware'.
@@ -53,6 +55,7 @@ export default function(): Middleware {
     }),
     login(),
     bodyParser(),
+    validator(join(__dirname, '../schemas')),
     ...routes,
   );
 

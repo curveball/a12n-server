@@ -1,5 +1,5 @@
 import { PrivilegeMap } from '../../privilege/types';
-import { NewPrincipal, Principal, Group } from '../../principal/types';
+import { Principal, Group } from '../../principal/types';
 import { HalResource } from 'hal-types';
 
 export function collection(users: Principal[]): HalResource {
@@ -185,17 +185,4 @@ export function editPrivileges(user: Principal, privileges: PrivilegeMap): HalRe
       },
     },
   };
-}
-
-export function halToModel(body: any): NewPrincipal {
-
-  return {
-    identity: body._links.me.href,
-    nickname: body.nickname,
-    createdAt: new Date(),
-    modifiedAt: new Date(),
-    type: body.type,
-    active: body.active
-  };
-
 }

@@ -8,7 +8,7 @@ export function collection(apps: App[]): HalResource {
     _links: {
       'self': { href: '/app' },
       'item': apps.map( app => ({
-        href: '/user/' + app.id,
+        href: app.href,
         title: app.nickname,
       })),
       'create-form': { href: '/app/new', title: 'Add new App'},
@@ -55,7 +55,7 @@ export function item(app: App, privileges: PrivilegeMap, isAdmin: boolean, group
 
   if (isAdmin) {
     hal._links['privileges'] = {
-      href: `/${app.href}/edit/privileges`,
+      href: `${app.href}/edit/privileges`,
       title: 'Change privilege policy',
     };
   }

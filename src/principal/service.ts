@@ -20,8 +20,14 @@ export async function findAll(type: 'app'): Promise<App[]>;
 export async function findAll(): Promise<Principal[]>; 
 export async function findAll(type?: PrincipalType): Promise<Principal[]> {
 
-  const query = `SELECT ${fieldNames.join(', ')} FROM principals`;
-  const result = await database.query(query);
+  let result;
+  if (type) {
+    const query = `SELECT ${fieldNames.join(', ')} FROM principals WHERE type = ?`;
+    result = await database.query(query, [userTypeToInt(type)]);
+  } else {
+    const query = `SELECT ${fieldNames.join(', ')} FROM principals`;
+    result = await database.query(query);
+  }
 
   const principals: Principal[] = [];
   for (const principal of result[0]) {
@@ -213,7 +219,7 @@ export function recordToModel(user: PrincipalRecord): Principal {
 
   return {
     id: user.id,
-    href: `/${user.type}/${user.id}`,
+    href: `/${userTypeIntToUserType(user.type)}/${user.id}`,
     identity: user.identity,
     nickname: user.nickname,
     createdAt: new Date(user.created_at),

@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://curveballjs.org/schemas/a12nserver/principal-edit.json",
+  "type": "object",
+  "description": "This is the request body used for editing principals.",
+
+  "required": ["nickname", "active", "type"],
+  "additionalProperties": false,
+
+  "properties": {
+    "_links": {},
+    "nickname": {
+      "type": "string",
+      "minLength": 3
+    },
+    "active": {
+      "type": "boolean"
+    },
+    "type": {
+      "enum": ["user", "app", "group"]
+    },
+    "createdAt": {
+      "readOnly": true
+    },
+    "modifiedAt": {
+      "readOnly": true
+    },
+    "privileges": {
+      "readOnly": true
+    }
+  }
+}

@@ -14,10 +14,10 @@ export const fieldNames: Array<keyof PrincipalRecord> = [
   'active'
 ];
 
-export async function findAll(type: 'user'): Promise<User[]>; 
-export async function findAll(type: 'group'): Promise<Group[]>; 
-export async function findAll(type: 'app'): Promise<App[]>; 
-export async function findAll(): Promise<Principal[]>; 
+export async function findAll(type: 'user'): Promise<User[]>;
+export async function findAll(type: 'group'): Promise<Group[]>;
+export async function findAll(type: 'app'): Promise<App[]>;
+export async function findAll(): Promise<Principal[]>;
 export async function findAll(type?: PrincipalType): Promise<Principal[]> {
 
   let result;
@@ -37,10 +37,10 @@ export async function findAll(type?: PrincipalType): Promise<Principal[]> {
 
 }
 
-export async function findById(id: number, type: 'user'): Promise<User>; 
-export async function findById(id: number, type: 'group'): Promise<Group>; 
-export async function findById(id: number, type: 'app'): Promise<App>; 
-export async function findById(id: number): Promise<Principal>; 
+export async function findById(id: number, type: 'user'): Promise<User>;
+export async function findById(id: number, type: 'group'): Promise<Group>;
+export async function findById(id: number, type: 'app'): Promise<App>;
+export async function findById(id: number): Promise<Principal>;
 export async function findById(id: number, type?: PrincipalType): Promise<Principal> {
 
   const query = `SELECT ${fieldNames.join(', ')} FROM principals WHERE id = ?`;

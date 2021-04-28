@@ -47,7 +47,7 @@ import users from './user/controller/collection';
 const routes = [
   router('/', home),
   router('/assets/:filename', blob),
-  
+
   router('/app', apps),
   router('/app/:id', app),
   router('/app/:id/edit', userEdit),

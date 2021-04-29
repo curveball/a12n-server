@@ -1,8 +1,8 @@
 import { PrivilegeMap } from '../../privilege/types';
-import { Principal, Group, PrincipalStats } from '../../principal/types';
+import { Principal, Group } from '../../principal/types';
 import { HalResource } from 'hal-types';
 
-export function collection(users: Principal[], stats: PrincipalStats): HalResource {
+export function collection(users: Principal[]): HalResource {
 
   const hal: HalResource = {
     _links: {
@@ -18,8 +18,7 @@ export function collection(users: Principal[], stats: PrincipalStats): HalResour
         templated: true,
       },
     },
-    total: users.length,
-    stats
+    total: users.length
   };
 
   return hal;

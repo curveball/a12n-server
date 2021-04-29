@@ -32,8 +32,11 @@ export async function getPrincipleStats(): Promise<PrincipalStats> {
   const query = 'SELECT type, COUNT(*) as total FROM principals GROUP BY type';
   const result = await database.query(query);
 
-  const principalStats: any = {};
-  // const principalStats: Record<PrincipalType, number> = {};
+  const principalStats: Record<PrincipalType, number> = {
+    user: 0,
+    app: 0,
+    group: 0
+  };
 
   for (const principal of result[0]) {
     principalStats[userTypeIntToUserType(principal.type)] = principal.total;

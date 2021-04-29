@@ -1,6 +1,6 @@
 import { NotFound } from '@curveball/http-errors';
 import database from '../database';
-import { Principal, NewPrincipal, PrincipalType } from './types';
+import { Principal, NewPrincipal, PrincipalType, PrincipalStats } from './types';
 
 export class InactivePrincipal extends Error { }
 
@@ -24,6 +24,22 @@ export async function findAll(): Promise<Principal[]> {
     principals.push(recordToModel(principal));
   }
   return principals;
+
+}
+
+export async function getPrincipleStats(): Promise<PrincipalStats> {
+
+  const query = `SELECT type, COUNT(*) as total FROM principals GROUP BY type`;
+  const result = await database.query(query);
+
+  const principalStats: any = {};
+  // const principalStats: Record<PrincipalType, number> = {};
+
+  for (const principal of result[0]) {
+    principalStats[userTypeIntToUserType(principal.type)] = principal.total
+  }
+
+  return principalStats;
 
 }
 

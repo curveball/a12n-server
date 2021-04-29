@@ -15,7 +15,7 @@ class UserCollectionController extends Controller {
 
   async get(ctx: Context) {
 
-    const users = await principalService.findAll();
+    const users = await principalService.findAll('user');
     ctx.response.body = hal.collection(users);
 
   }

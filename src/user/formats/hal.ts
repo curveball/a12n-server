@@ -1,8 +1,8 @@
 import { PrivilegeMap } from '../../privilege/types';
-import { Principal, Group } from '../../principal/types';
+import { Principal, Group, User } from '../../principal/types';
 import { HalResource } from 'hal-types';
 
-export function collection(users: Principal[]): HalResource {
+export function collection(users: User[]): HalResource {
 
   const hal: HalResource = {
     _links: {
@@ -32,7 +32,7 @@ export function collection(users: Principal[]): HalResource {
  * we're generating the repsonse for, or if the current authenticated user
  * has full admin privileges
  */
-export function item(user: Principal, privileges: PrivilegeMap, hasControl: boolean, hasPassword: boolean, isAdmin: boolean, groups: Group[]): HalResource {
+export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, hasPassword: boolean, isAdmin: boolean, groups: Group[]): HalResource {
 
   const hal: HalResource = {
     _links: {
@@ -53,13 +53,7 @@ export function item(user: Principal, privileges: PrivilegeMap, hasControl: bool
     privileges
   };
 
-  if (user.type === 'group') {
-    hal._links['member-collection'] = {
-      href: `/user/${user.id}/member`,
-      title: 'Group Members'
-    };
-  }
-  if (user.type === 'user' && hasControl) {
+  if (hasControl) {
     hal.hasPassword = hasPassword;
     hal._links['one-time-token'] = {
       href: `/user/${user.id}/one-time-token`,
@@ -77,7 +71,7 @@ export function item(user: Principal, privileges: PrivilegeMap, hasControl: bool
       title: 'Active user sessions'
     };
   }
-  if (isAdmin && user.type === 'user') {
+  if (isAdmin) {
     hal._links['password'] = {
       href: `/user/${user.id}/password`,
       title: 'Change user\'s password',
@@ -90,9 +84,7 @@ export function item(user: Principal, privileges: PrivilegeMap, hasControl: bool
       href: `/user/${user.id}/edit`,
       title: `Edit ${user.nickname}`
     };
-  }
 
-  if (isAdmin) {
     hal._links['privileges'] = {
       href: `/user/${user.id}/edit/privileges`,
       title: 'Change privilege policy',

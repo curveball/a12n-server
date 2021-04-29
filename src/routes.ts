@@ -1,5 +1,7 @@
 import router from '@curveball/router';
 
+import app from './app/controller/item';
+import apps from './app/controller/collection';
 import blob from './blob/controller';
 import changePassword from './changepassword/controller';
 import changePasswordRedirect from './well-known/controller/change-password';
@@ -45,6 +47,15 @@ import users from './user/controller/collection';
 const routes = [
   router('/', home),
   router('/assets/:filename', blob),
+
+  router('/app', apps),
+  router('/app/:id', app),
+  router('/app/:id/edit', userEdit),
+  router('/app/:id/edit/privileges', userEditPrivileges),
+  router('/app/:id/log', userLog),
+  router('/app/:id/client', clients),
+  router('/app/:id/client/new', clientNew),
+  router('/app/:id/client/:clientId', client),
 
   router('/authorize', oauth2ErrorHandler, oauth2Authorize),
   router('/exchange-one-time-token', oneTimeTokenExchange),

@@ -32,7 +32,9 @@ export default (version: string, authenticatedUser: User, isAdmin: boolean, stat
         href: '/privilege',
         title: 'List of available privileges',
       },
+      'app-collection': { href: '/app', title: 'List of apps'},
       'user-collection': { href: '/user', title: 'List of users'},
+      'group-collection': { href: '/group', title: 'List of groups'},
 
       'oauth_server_metadata_uri' : {
         href: '/.well-known/oauth-authorization-server',

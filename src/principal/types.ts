@@ -1,11 +1,12 @@
 export type Principal = User | Group | App;
-export type NewPrincipal = Omit<Principal, 'id'>;
+export type NewPrincipal = Omit<Principal, 'id' | 'href'>;
 
 export type PrincipalType = 'user' | 'app' | 'group';
 export const PrincipalTypeList: PrincipalType[] = ['user', 'app', 'group'];
 
 export type User = {
   id: number,
+  href: string,
   type: 'user',
   identity: string,
   nickname: string,
@@ -16,6 +17,7 @@ export type User = {
 
 export type Group = {
   id: number,
+  href: string,
   type: 'group',
   identity: string,
   nickname: string,
@@ -26,6 +28,7 @@ export type Group = {
 
 export type App = {
   id: number,
+  href: string,
   type: 'app'
   identity: string,
   nickname: string,

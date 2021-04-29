@@ -1,6 +1,6 @@
 import { NotFound } from '@curveball/http-errors';
 import database from '../database';
-import { Principal, NewPrincipal, PrincipalType, PrincipalStats } from './types';
+import { Principal, NewPrincipal, PrincipalType, User, Group, App, PrincipalStats } from './types';
 
 export class InactivePrincipal extends Error { }
 
@@ -14,10 +14,20 @@ export const fieldNames: Array<keyof PrincipalRecord> = [
   'active'
 ];
 
-export async function findAll(): Promise<Principal[]> {
+export async function findAll(type: 'user'): Promise<User[]>;
+export async function findAll(type: 'group'): Promise<Group[]>;
+export async function findAll(type: 'app'): Promise<App[]>;
+export async function findAll(): Promise<Principal[]>;
+export async function findAll(type?: PrincipalType): Promise<Principal[]> {
 
-  const query = `SELECT ${fieldNames.join(', ')} FROM principals`;
-  const result = await database.query(query);
+  let result;
+  if (type) {
+    const query = `SELECT ${fieldNames.join(', ')} FROM principals WHERE type = ?`;
+    result = await database.query(query, [userTypeToInt(type)]);
+  } else {
+    const query = `SELECT ${fieldNames.join(', ')} FROM principals`;
+    result = await database.query(query);
+  }
 
   const principals: Principal[] = [];
   for (const principal of result[0]) {
@@ -46,7 +56,11 @@ export async function getPrincipleStats(): Promise<PrincipalStats> {
 
 }
 
-export async function findById(id: number): Promise<Principal> {
+export async function findById(id: number, type: 'user'): Promise<User>;
+export async function findById(id: number, type: 'group'): Promise<Group>;
+export async function findById(id: number, type: 'app'): Promise<App>;
+export async function findById(id: number): Promise<Principal>;
+export async function findById(id: number, type?: PrincipalType): Promise<Principal> {
 
   const query = `SELECT ${fieldNames.join(', ')} FROM principals WHERE id = ?`;
   const result = await database.query(query, [id]);
@@ -55,7 +69,12 @@ export async function findById(id: number): Promise<Principal> {
     throw new NotFound(`Principal with id: ${id} not found`);
   }
 
-  return recordToModel(result[0][0]);
+  const principal = recordToModel(result[0][0]);
+
+  if (type && principal.type !== type) {
+    throw new NotFound(`Principal with id ${id} does not have type ${type}`);
+  }
+  return principal;
 
 }
 
@@ -138,7 +157,7 @@ export async function findByHref(href: string): Promise<Principal> {
   return recordToModel(result[0][0]);
 }
 
-export async function save<T extends Principal>(principal: Omit<T, 'id'> | T): Promise<T> {
+export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'> | T): Promise<T> {
 
   if (!isExistingPrincipal(principal)) {
 
@@ -219,6 +238,7 @@ export function recordToModel(user: PrincipalRecord): Principal {
 
   return {
     id: user.id,
+    href: `/${userTypeIntToUserType(user.type)}/${user.id}`,
     identity: user.identity,
     nickname: user.nickname,
     createdAt: new Date(user.created_at),

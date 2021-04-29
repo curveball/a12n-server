@@ -2,12 +2,6 @@ import database from '../database';
 import * as principalService from '../principal/service';
 import { Principal, Group } from '../principal/types';
 
-export function isGroup(principal: Principal): principal is Group {
-
-  return principal.type === 'group';
-
-}
-
 /**
  * Finding group members
  */
@@ -28,7 +22,7 @@ export async function findMembers(group: Group): Promise<Principal[]> {
 
 }
 
-export async function addMemberToGroup(group: Group, user: Principal): Promise<void> {
+export async function addMember(group: Group, user: Principal): Promise<void> {
 
   const query = 'INSERT INTO group_members SET group_id = ?, user_id = ?';
   await database.query(query, [group.id, user.id]);

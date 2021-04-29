@@ -29,14 +29,14 @@ export async function findAll(): Promise<Principal[]> {
 
 export async function getPrincipleStats(): Promise<PrincipalStats> {
 
-  const query = `SELECT type, COUNT(*) as total FROM principals GROUP BY type`;
+  const query = 'SELECT type, COUNT(*) as total FROM principals GROUP BY type';
   const result = await database.query(query);
 
   const principalStats: any = {};
   // const principalStats: Record<PrincipalType, number> = {};
 
   for (const principal of result[0]) {
-    principalStats[userTypeIntToUserType(principal.type)] = principal.total
+    principalStats[userTypeIntToUserType(principal.type)] = principal.total;
   }
 
   return principalStats;

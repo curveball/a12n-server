@@ -7,14 +7,13 @@ import { findByApp, create } from '../service';
 import * as principalService from '../../principal/service';
 import { GrantType, OAuth2Client } from '../types';
 import * as bcrypt from 'bcrypt';
-import { App } from '../../principal/types';
 import { generateSecretToken } from '../../crypto';
 
 class ClientCollectionController extends Controller {
 
   async get(ctx: Context) {
 
-    const app = await principalService.findById(+ctx.params.id) as App;
+    const app = await principalService.findById(+ctx.params.id, 'app');
     if (app.id !== ctx.state.user.id) {
       if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
         throw new Forbidden('Only users with the "admin" privilege can inspect OAuth2 clients that are not your own');
@@ -28,10 +27,7 @@ class ClientCollectionController extends Controller {
 
   async post(ctx: Context<any>) {
 
-    const app = await principalService.findById(+ctx.params.id);
-    if (app.type !== 'app') {
-      throw new Forbidden('You can only add oauth2 clients to \'app\' principals');
-    }
+    const app = await principalService.findById(+ctx.params.id, 'app');
     if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
       throw new Forbidden('Only users with the "admin" privilege can inspect OAuth2 clients that are not your own');
     }

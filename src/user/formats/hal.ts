@@ -18,7 +18,7 @@ export function collection(users: Principal[]): HalResource {
         templated: true,
       },
     },
-    total: users.length,
+    total: users.length
   };
 
   return hal;

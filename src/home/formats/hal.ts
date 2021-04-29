@@ -1,8 +1,8 @@
 import { HalResource } from 'hal-types';
 import { getSetting } from '../../server-settings';
-import { User } from '../../principal/types';
+import { User, PrincipalStats } from '../../principal/types';
 
-export default (version: string, authenticatedUser: User, isAdmin: boolean) => {
+export default (version: string, authenticatedUser: User, isAdmin: boolean, stats: PrincipalStats) => {
 
   const result: HalResource = {
     _links: {
@@ -42,6 +42,7 @@ export default (version: string, authenticatedUser: User, isAdmin: boolean) => {
       }
     },
     version: version,
+    stats
   };
 
   if (getSetting('registration.enabled')) {

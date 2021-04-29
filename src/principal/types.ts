@@ -37,4 +37,8 @@ export type App = {
   active: boolean
 }
 
-
+export type PrincipalStats = {
+  user: number,
+  app: number,
+  group: number
+};

@@ -36,7 +36,7 @@ export function item(app: App, privileges: PrivilegeMap, isAdmin: boolean, group
       'auth-log': { href: `${app.href}/log`, title: 'Authentication log', type: 'text/csv' },
       'up' : { href: '/app', title: 'List of apps' },
       'group': groups.map( group => ({
-        href: `/user/${group.id}`,
+        href: group.href,
         title: group.nickname,
       })),
       'client-collection': {

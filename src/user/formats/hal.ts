@@ -8,7 +8,7 @@ export function collection(users: Principal[]): HalResource {
     _links: {
       'self': { href: '/user' },
       'item': users.map( user => ({
-        href: '/user/' + user.id,
+        href: user.href,
         title: user.nickname,
       })),
       'create-form': { href: '/create-user', title: 'Create New User'},
@@ -36,12 +36,12 @@ export function item(user: Principal, privileges: PrivilegeMap, hasControl: bool
 
   const hal: HalResource = {
     _links: {
-      'self': {href: `/user/${user.id}`, title: user.nickname },
+      'self': {href: user.href, title: user.nickname },
       'me': { href: user.identity, title: user.nickname },
-      'auth-log': { href: `/user/${user.id}/log`, title: 'Authentication log', type: 'text/csv' },
+      'auth-log': { href: `${user.href}/log`, title: 'Authentication log', type: 'text/csv' },
       'up' : { href: '/user', title: 'List of users' },
       'group': groups.map( group => ({
-        href: `/user/${group.id}`,
+        href: group.href,
         title: group.nickname,
       })),
     },
@@ -57,12 +57,6 @@ export function item(user: Principal, privileges: PrivilegeMap, hasControl: bool
     hal._links['member-collection'] = {
       href: `/user/${user.id}/member`,
       title: 'Group Members'
-    };
-  }
-  if (user.type === 'app') {
-    hal._links['client-collection'] = {
-      href: `/user/${user.id}/client`,
-      title: 'List of OAuth2 client credentials'
     };
   }
   if (user.type === 'user' && hasControl) {
@@ -113,10 +107,10 @@ export function edit(user: Principal): HalResource {
   return {
     _links: {
       self: {
-        href: `/user/${user.id}/edit`,
+        href: `${user.href}/edit`,
       },
       up: {
-        href: `/user/${user.id}`,
+        href: user.href,
         title: 'Cancel',
       },
     },
@@ -160,10 +154,10 @@ export function editPrivileges(user: Principal, privileges: PrivilegeMap): HalRe
   return {
     _links: {
       self: {
-        href: `/user/${user.id}/edit/privileges`,
+        href: `${user.href}/edit/privileges`,
       },
       up: {
-        href: `/user/${user.id}`,
+        href: user.href,
         title: 'Cancel',
       },
     },

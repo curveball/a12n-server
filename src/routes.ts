@@ -92,9 +92,6 @@ const routes = [
   router('/user/:id/one-time-token', oneTimeToken),
   router('/user/:id/access-token', userAccessToken),
   router('/user/:id/sessions', userActiveSessions),
-  router('/user/:id/client', clients),
-  router('/user/:id/client/new', clientNew),
-  router('/user/:id/client/:clientId', client),
 
   router('/changepassword', changePassword),
   router('/reset-password', resetPassword),

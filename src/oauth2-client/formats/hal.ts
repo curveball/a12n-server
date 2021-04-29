@@ -6,13 +6,13 @@ export function collection(user: App, clients: OAuth2Client[]): HalResource {
 
   return {
     _links: {
-      self: { href: `/user/${user.id}/client` },
-      up: { href: `/user/${user.id}`, title: user.nickname},
+      self: { href: `${user.href}/client` },
+      up: { href: user.href, title: user.nickname},
       item: clients.map( client => ({
-        href: `/user/${user.id}/client/${client.clientId}`
+        href: `${user.href}/client/${client.clientId}`
       })),
       'create-form': {
-        href: `/user/${user.id}/client/new`,
+        href: `${user.href}/client/new`,
         title: 'Add new OAuth2 credentials',
         type: 'application/vnd.siren+json',
       },
@@ -49,13 +49,12 @@ export function item(client: OAuth2Client, redirectUris: string[]): HalResource 
 
   return {
     _links: {
-      self: { href: `/user/${client.app.id}/client/${client.clientId}` },
-      collection: { href: `/user/${client.app.id}/client`, title: 'List of OAuth2 clients'},
+      self: { href: `${client.app.href}/client/${client.clientId}` },
+      collection: { href: `${client.app.href}/client`, title: 'List of OAuth2 clients'},
     },
     clientId: client.clientId,
     allowedGrantTypes: client.allowedGrantTypes,
     redirectUris,
-
   };
 
 }
@@ -64,8 +63,8 @@ export function newClientSuccess(client: OAuth2Client, redirectUris: string[] ,s
 
   return {
     _links: {
-      self: { href: `/user/${client.app.id}/client/${client.clientId}` },
-      collection: { href: `/user/${client.app.id}/client`, title: 'List of OAuth2 clients'},
+      self: { href: `${client.app.href}/client/${client.clientId}` },
+      collection: { href: `${client.app.href}/client`, title: 'List of OAuth2 clients'},
     },
     clientId: client.clientId,
     clientSecret: secret,

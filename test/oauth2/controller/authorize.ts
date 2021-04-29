@@ -26,6 +26,7 @@ describe('AuthorizeController', () => {
 
   const user: User = {
     id: 1,
+    href: '/user/1',
     identity: 'identity',
     nickname: 'nickname',
     createdAt: new Date(1),
@@ -35,6 +36,7 @@ describe('AuthorizeController', () => {
   };
   const app: App = {
     id: 1,
+    href: '/app/1',
     identity: 'identity',
     nickname: 'appname',
     createdAt: new Date(1),

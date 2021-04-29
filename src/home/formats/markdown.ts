@@ -1,6 +1,6 @@
 import { User } from '../../principal/types';
 import { getSetting } from '../../server-settings';
-import { PrincipalStats } from '../../principal/types'
+import { PrincipalStats } from '../../principal/types';
 
 export default (version: string, authenticatedUser: User, isAdmin: boolean, userStats: PrincipalStats) => {
 

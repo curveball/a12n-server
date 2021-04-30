@@ -54,7 +54,6 @@ const routes = [
   router('/app/:id', app),
   router('/app/:id/edit', userEdit),
   router('/app/:id/edit/privileges', userEditPrivileges),
-  router('/app/:id/log', userLog),
   router('/app/:id/client', clients),
   router('/app/:id/client/new', clientNew),
   router('/app/:id/client/:clientId', client),

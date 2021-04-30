@@ -9,7 +9,9 @@ import client from './oauth2-client/controller/item';
 import clientNew from './oauth2-client/controller/new';
 import clients from './oauth2-client/controller/collection';
 import createUser from './create-user/controller';
-import group from './group/controller/collection';
+import groups from './group/controller/collection';
+import group from './group/controller/item';
+import groupMembers from './group/controller/member-collection';
 import health from './health/controller';
 import home from './home/controller';
 import introspect from './introspect/controller';
@@ -72,6 +74,12 @@ const routes = [
   router('/health', health),
   router('/introspect', introspect),
 
+  router('/group', groups),
+  router('/group/:id', group),
+  router('/group/:id/edit', userEdit),
+  router('/group/:id/edit/privileges', userEditPrivileges),
+  router('/group/:id/member', groupMembers),
+
   router('/privilege', privilegeCollection),
   router('/privilege/:id', privilegeItem),
 
@@ -88,7 +96,6 @@ const routes = [
   router('/user/:id/edit/privileges', userEditPrivileges),
   router('/user/:id/log', userLog),
   router('/user/:id/password', userPassword),
-  router('/user/:id/member', group),
   router('/user/:id/one-time-token', oneTimeToken),
   router('/user/:id/access-token', userAccessToken),
   router('/user/:id/sessions', userActiveSessions),

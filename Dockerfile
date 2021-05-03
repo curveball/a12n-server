@@ -5,8 +5,9 @@ WORKDIR /opt/app
 COPY package.json package.json Makefile tsconfig.json ./
 COPY assets assets
 COPY templates templates
-COPY src src
 COPY mysql-schema mysql-schema
+COPY schemas schemas
+COPY src src
 RUN npm i --environment=dev && npx tsc && npm prune --production && rm -r src/
 
 # Stage 2: run!

@@ -2,7 +2,7 @@ import { App } from '../../principal/types';
 
 export function newClient(user: App) {
 
-  const userHref = `/user/${user.id}`;
+  const userHref = `/app/${user.id}`;
 
   return {
     properties: {

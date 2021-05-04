@@ -2,7 +2,7 @@ import * as fs from 'fs';
 import * as handlebars from 'handlebars';
 
 type Params = {
-  [key: string]: any
+  [key: string]: any;
 };
 type Template = (parameters?: Params) => string;
 

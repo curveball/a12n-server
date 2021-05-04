@@ -2,30 +2,30 @@ import { App, User } from '../principal/types';
 
 export type OAuth2Token = {
   // OAuth2 Access token
-  accessToken: string,
+  accessToken: string;
 
   // OAuth2 Refresh token
-  refreshToken: string,
+  refreshToken: string;
 
   // Unix timestamp of when the token expires (in seconds)
-  accessTokenExpires: number,
+  accessTokenExpires: number;
 
   // Unix timestamp of when the token expires (in seconds)
-  refreshTokenExpires: number,
+  refreshTokenExpires: number;
 
   // Type of token. Only 'bearer' is supported rn.
-  tokenType: 'bearer',
+  tokenType: 'bearer';
 
   // The user this token belongs to
-  user: App | User,
+  user: App | User;
 
   // The OAuth2 client (app) that created this session
-  clientId: number,
+  clientId: number;
 
   // If the token was created via a browser-flow, such as implicit or
   // authorization_code, this will contain the browser session cookie
   // id.
-  browserSessionId?: string,
+  browserSessionId?: string;
 };
 
 export type OAuth2Code = {

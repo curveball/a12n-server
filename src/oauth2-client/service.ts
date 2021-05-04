@@ -9,11 +9,11 @@ import parseBasicAuth from './parse-basic-auth';
 import { App } from '../principal/types';
 
 type OAuth2ClientRecord = {
-  id: number,
-  client_id: string,
-  client_secret: Buffer,
-  user_id: number,
-  allowed_grant_types: string
+  id: number;
+  client_id: string;
+  client_secret: Buffer;
+  user_id: number;
+  allowed_grant_types: string;
 };
 
 

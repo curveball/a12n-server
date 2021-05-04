@@ -13,11 +13,11 @@ export enum EventType {
 }
 
 export type LogEntry = {
-  time: Date,
-  ip: string,
-  eventType: EventType,
-  userAgent: string,
-  country: string|null,
+  time: Date;
+  ip: string;
+  eventType: EventType;
+  userAgent: string;
+  country: string|null;
 };
 
 export const eventTypeString = new Map<EventType, string>([

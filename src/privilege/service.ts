@@ -5,8 +5,8 @@ import { Principal } from '../principal/types';
 import { Privilege, PrivilegeMap } from './types';
 
 type PrivilegeRow = {
-  resource: string,
-  privilege: string,
+  resource: string;
+  privilege: string;
 };
 
 export async function getPrivilegesForPrincipal(principal: Principal): Promise<PrivilegeMap> {

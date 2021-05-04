@@ -11,7 +11,7 @@ type JwtAccessToken = {
    *
    * This will be URI pointing to the a12nserver instance
    */
-  iss: string,
+  iss: string;
 
   /**
    * Expires, unix timestamp

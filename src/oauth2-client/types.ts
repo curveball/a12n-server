@@ -14,12 +14,12 @@ export type OAuth2Client = {
   /**
    * Unique, internal id.
    */
-  id: number,
+  id: number;
 
   /**
    * A string that's used to configure OAuth2 clients.
    */
-  clientId: string,
+  clientId: string;
 
 
   /**
@@ -27,10 +27,10 @@ export type OAuth2Client = {
    */
   clientSecret: string;
 
-  app: App,
+  app: App;
 
   /**
    * List of allowed grantTypes this client may use.
    */
-  allowedGrantTypes: GrantType[],
+  allowedGrantTypes: GrantType[];
 };

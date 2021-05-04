@@ -2,7 +2,7 @@ import { OAuth2Token } from '../types';
 
 export function metadata() {
 
-  return <any> {
+  return {
     issuer: '/',
     authorization_endpoint: '/authorize',
     token_endpoint: '/token',

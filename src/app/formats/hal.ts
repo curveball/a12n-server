@@ -11,7 +11,7 @@ export function collection(apps: App[]): HalResource {
         href: app.href,
         title: app.nickname,
       })),
-      'create-form': { href: '/app/new', title: 'Add new App'},
+      'create-form': { href: '/create-user', title: 'Add new App'},
     },
     total: apps.length,
   };

@@ -400,24 +400,24 @@ export async function generateCodeForUser(
 }
 
 type OAuth2TokenRecord = {
-  oauth2_client_id: number,
-  access_token: string,
-  refresh_token: string,
-  user_id: number,
-  access_token_expires: number,
-  refresh_token_expires: number
-  browser_session_id: string | null,
+  oauth2_client_id: number;
+  access_token: string;
+  refresh_token: string;
+  user_id: number;
+  access_token_expires: number;
+  refresh_token_expires: number;
+  browser_session_id: string | null;
 };
 
 type OAuth2CodeRecord = {
-  id: number,
-  client_id: number,
-  code: string,
-  user_id: number,
-  code_challenge: string|undefined,
-  code_challenge_method: CodeChallengeMethod
-  created: number,
-  browser_session_id: string | null,
+  id: number;
+  client_id: number;
+  code: string;
+  user_id: number;
+  code_challenge: string|undefined;
+  code_challenge_method: CodeChallengeMethod;
+  created: number;
+  browser_session_id: string | null;
 };
 
 /**
@@ -527,9 +527,9 @@ export async function invalidateTokensByBrowserSessionId(browserSessionId: strin
 }
 
 type TokenExpiry = {
-  accessToken: number,
-  refreshToken: number,
-  code: number,
+  accessToken: number;
+  refreshToken: number;
+  code: number;
 };
 
 function getTokenExpiry(): TokenExpiry {

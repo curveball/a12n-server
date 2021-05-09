@@ -175,10 +175,11 @@ export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'
 
     const result = await database.query(query, [newPrincipalRecord]);
 
-    return {
+    /* eslint-disable-next-line @typescript-eslint/consistent-type-assertions */
+    return ({
       id: result[0].insertId,
       ...principal
-    } as T;
+    }) as T;
 
   } else {
 
@@ -203,13 +204,13 @@ export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'
 }
 
 export type PrincipalRecord = {
-  id: number,
-  identity: string,
-  nickname: string,
-  created_at: number,
-  modified_at: number,
-  type: number,
-  active: number
+  id: number;
+  identity: string;
+  nickname: string;
+  created_at: number;
+  modified_at: number;
+  type: number;
+  active: number;
 };
 
 function userTypeIntToUserType(input: number): PrincipalType {
@@ -251,7 +252,7 @@ export function recordToModel(user: PrincipalRecord): Principal {
 
 function isExistingPrincipal(user: Principal | NewPrincipal): user is Principal {
 
-  return (<Principal> user).id !== undefined;
+  return (user as Principal).id !== undefined;
 
 }
 

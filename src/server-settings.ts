@@ -1,17 +1,17 @@
 type Settings = {
-  'cors.allowOrigin': string[] | null,
-  'oauth2.code.expiry': number,
-  'oauth2.accessToken.expiry': number,
-  'oauth2.refreshToken.expiry': number,
-  'registration.enabled': boolean,
-  'registration.mfa.enabled': boolean,
-  'totp': 'enabled' | 'required' | 'disabled',
-  'totp.serviceName': string,
-  'webauthn': 'enabled' | 'disabled' | 'required',
-  'webauthn.expectedOrigin': string,
-  'webauthn.relyingPartyId': string,
-  'webauthn.serviceName': string,
-  'login.defaultRedirect': string,
+  'cors.allowOrigin': string[] | null;
+  'oauth2.code.expiry': number;
+  'oauth2.accessToken.expiry': number;
+  'oauth2.refreshToken.expiry': number;
+  'registration.enabled': boolean;
+  'registration.mfa.enabled': boolean;
+  'totp': 'enabled' | 'required' | 'disabled';
+  'totp.serviceName': string;
+  'webauthn': 'enabled' | 'disabled' | 'required';
+  'webauthn.expectedOrigin': string;
+  'webauthn.relyingPartyId': string;
+  'webauthn.serviceName': string;
+  'login.defaultRedirect': string;
 }
 
 const settingsCache = new Map<string, any>();

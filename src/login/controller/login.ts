@@ -81,7 +81,7 @@ class LoginController extends Controller {
   redirectToLogin(ctx: Context<any>, msg: string, error: string) {
 
     const params: any = { msg, error };
-    if (ctx.request.body && ctx.request.body.continue) {
+    if (ctx.request.body?.continue) {
       params['continue'] = ctx.request.body.continue;
     }
     ctx.response.status = 303;

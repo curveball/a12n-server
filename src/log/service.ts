@@ -17,7 +17,7 @@ export default async function log(
     await addLogEntry(
       eventType,
       arg1.ip()!,
-      arg1.session.user && arg1.session.user.id ? arg1.session.user.id : null,
+      arg1.session.user?.id ?? null,
       arg1.request.headers.get('User-Agent'),
     );
   } else {
@@ -39,13 +39,13 @@ export async function addLogEntry(eventType: EventType, ip: string|null, userId:
 }
 
 type LogRow = {
-  id: number,
-  user_id: number,
-  ip: string,
-  time: number,
-  event_type: EventType,
-  user_agent: string,
-  country: string
+  id: number;
+  user_id: number;
+  ip: string;
+  time: number;
+  event_type: EventType;
+  user_agent: string;
+  country: string;
 };
 
 export async function findByUser(user: Principal): Promise<LogEntry[]> {
@@ -68,7 +68,7 @@ export async function findByUser(user: Principal): Promise<LogEntry[]> {
 
 function isContext(ctx: any): ctx is Context {
 
-  return ((<Context> ctx).ip !== undefined);
+  return (ctx as Context).ip !== undefined;
 
 }
 

@@ -17,6 +17,6 @@ export default function parseBasic(ctx: Context): null | [string, string] {
     return null;
   }
 
-  return <[string, string]> decoded;
+  return decoded as [string, string];
 
 }

@@ -55,7 +55,10 @@ export default function(): Middleware {
     }),
     login(),
     bodyParser(),
-    validator(join(__dirname, '../schemas')),
+    validator({
+      schemaPath: join(__dirname, '../schemas'),
+      noLink: true,
+    }),
     ...routes,
   );
 

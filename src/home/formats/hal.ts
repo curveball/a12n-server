@@ -8,19 +8,22 @@ export default (version: string, authenticatedUser: User, isAdmin: boolean, stat
     _links: {
       'self': { href: '/', title: 'Home' },
       'authenticated-as': { href: '/user/' + authenticatedUser.id, title: authenticatedUser.nickname },
-      'authorize' : { href: '/authorize', title: 'OAuth2 authorize endpoint', type: 'text/html' },
       'change-password': { href: '/changepassword', title: 'Change password' },
-      'introspect' : {
-        href: '/introspect',
-        title: 'OAuth2 Introspection Endpoint',
-        hints: {
-          allow: ['POST'],
-        }
-      },
+
+      'app-collection': { href: '/app', title: 'List of apps'},
+      'user-collection': { href: '/user', title: 'List of users'},
+      'group-collection': { href: '/group', title: 'List of groups'},
       'logout': {
         href: '/logout',
         title: 'Log out',
       },
+      'privilege-collection': {
+        href: '/privilege',
+        title: 'List of available privileges',
+      },
+
+
+      'authorize' : { href: '/authorize', title: 'OAuth2 authorize endpoint', type: 'text/html' },
       'token': {
         href: '/token',
         title: 'OAuth2 Token Endpoint',
@@ -28,13 +31,18 @@ export default (version: string, authenticatedUser: User, isAdmin: boolean, stat
           allow: ['POST'],
         }
       },
-      'privilege-collection': {
-        href: '/privilege',
-        title: 'List of available privileges',
+      'introspect' : {
+        href: '/introspect',
+        title: 'OAuth2 Introspection Endpoint',
+        hints: {
+          allow: ['POST'],
+        }
       },
-      'app-collection': { href: '/app', title: 'List of apps'},
-      'user-collection': { href: '/user', title: 'List of users'},
-      'group-collection': { href: '/group', title: 'List of groups'},
+
+      'schema-collection': {
+        href: '/schema',
+        title: 'List of JSON schemas for this API'
+      },
 
       'oauth_server_metadata_uri' : {
         href: '/.well-known/oauth-authorization-server',

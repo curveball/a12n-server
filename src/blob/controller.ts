@@ -9,6 +9,7 @@ class BlobController extends Controller {
 
     switch (ctx.params.filename) {
 
+      case 'extra.css' :
       case 'form.css' :
         ctx.response.body = fs.readFileSync(__dirname + '/../../assets/' + ctx.params.filename);
         ctx.response.type = 'text/css';

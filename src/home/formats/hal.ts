@@ -1,8 +1,9 @@
 import { HalResource } from 'hal-types';
 import { getSetting } from '../../server-settings';
-import { User, PrincipalStats } from '../../principal/types';
+import { User } from '../../principal/types';
+import { ServerStats } from '../../types';
 
-export default (version: string, authenticatedUser: User, isAdmin: boolean, stats: PrincipalStats) => {
+export default (version: string, authenticatedUser: User, isAdmin: boolean, stats: ServerStats) => {
 
   const result: HalResource = {
     _links: {

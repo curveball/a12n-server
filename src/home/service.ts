@@ -7,6 +7,6 @@ export async function getServerStats(): Promise<ServerStats> {
   return {
     ...await getPrincipalStats(),
     privileges: (await findPrivileges()).length
-  }
+  };
 
 }

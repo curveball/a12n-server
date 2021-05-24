@@ -10,7 +10,7 @@ function statsBlock(kind: string, count: number): string {
 
   <div class="counter">
     <span class="num">${count}</span>
-    <span class="kind">${kind}s</span>
+    <span class="kind">${kind}${count!=1?'s':''}</span>
   </div>
 
   <div class="actions"><a href="/${kind}" rel="${kind}-collection">Manage</a></div>

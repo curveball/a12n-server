@@ -3,7 +3,7 @@ import { Context } from '@curveball/core';
 import hal from './formats/hal';
 import markdown from './formats/markdown';
 import * as privilegeService from '../privilege/service';
-import * as principalService from '../principal/service';
+import { getServerStats } from './service';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const version = require('../../package.json').version;
@@ -16,7 +16,9 @@ class HomeController extends Controller {
 
     const user = ctx.state.user;
     const isAdmin = await privilegeService.hasPrivilege(user, 'admin', '*');
-    const stats = await principalService.getPrincipleStats();
+
+    const stats = await getServerStats();
+
     ctx.response.type = 'text/markdown';
     ctx.response.headers.set('Title', 'Home');
     ctx.response.headers.append('Link', [
@@ -34,11 +36,11 @@ class HomeController extends Controller {
 
     const user = ctx.state.user;
     const isAdmin = await privilegeService.hasPrivilege(user, 'admin', '*');
-    const principalStats = await principalService.getPrincipleStats();
+    const stats = await getServerStats();
     ctx.response.headers.append('Link', [
       '</>; rel="alternate"; type="text/markdown"',
     ]);
-    ctx.response.body = hal(version, user, isAdmin, principalStats);
+    ctx.response.body = hal(version, user, isAdmin, stats);
 
   }
 

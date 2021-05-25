@@ -39,6 +39,9 @@ export default function(): Middleware {
   middlewares.push(
     browser({
       title: 'a12n-server',
+      stylesheets: [
+        '/assets/extra.css'
+      ],
     }),
     problem(),
     links(),

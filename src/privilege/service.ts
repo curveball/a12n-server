@@ -81,6 +81,9 @@ function isContext(input: Context| Principal): input is Context {
   return (input as any).request !== undefined && (input as any).response !== undefined;
 }
 
+/**
+ * Returns the list of 'privilege types'
+ */
 export async function findPrivileges(): Promise<Privilege[]> {
 
   const query = `

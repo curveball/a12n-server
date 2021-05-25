@@ -1,51 +1,41 @@
 import { User } from '../../principal/types';
 import { getSetting } from '../../server-settings';
-import { PrincipalStats } from '../../principal/types';
+import { ServerStats } from '../../types';
 
-export default (version: string, authenticatedUser: User, isAdmin: boolean, userStats: PrincipalStats) => {
+
+function statsBlock(kind: string, count: number): string {
 
   return `
-Curveball A12N Server
-=====================
+<div class="statsBlock">
 
-_Version ${version}_
+  <div class="counter">
+    <span class="num">${count}</span>
+    <span class="kind">${kind}${count!=1?'s':''}</span>
+  </div>
 
-${authenticatedUser.nickname}
----
+  <div class="actions"><a href="/${kind}" rel="${kind}-collection">Manage</a></div>
 
-* <a href="/user/${authenticatedUser.id}" rel="authenticated-as">My profile</a>
-* <a href="/changepassword" rel="change-password">Change password</a>
-* <a href="/logout" rel="logout">Log out</a>
+</div>
+`;
+
+}
 
 
-Admin
------
+export default (version: string, authenticatedUser: User, isAdmin: boolean, serverStats: ServerStats) => {
 
-* <a href="/privilege" rel="privilege-collection">List of privileges</a>
-* <a href="/user" rel="user-collection">List of users</a>
-* <a href="/app" rel="app-collection">List of apps</a>
-* <a href="/group" rel="group-collection">List of groups</a>
-${getSetting('registration.enabled')?'* <a href="/register" rel="registration">Public registration endpoint</a>':''}
-<table>
-  <tbody>
-    <tr>
-      <th>Principals</th>
-      <th>Total</th>
-    </tr>
-    <tr>
-      <td>Users</td>
-      <td>${userStats.user}</td>
-    </tr>
-    <tr>
-      <td>Apps</td>
-      <td>${userStats.app}</td>
-    </tr>
-    <tr>
-      <td>Groups</td>
-      <td>${userStats.group}</td>
-    </tr>
-  </tbody>
-</table>
+  return `
+<div class="statsTray">
+  ${statsBlock('user', serverStats.user)}
+  ${statsBlock('app', serverStats.app)}
+  ${statsBlock('group', serverStats.group)}
+  ${statsBlock('privilege', serverStats.privileges)}
+</div>
+
+Useful links
+------------
+
+${getSetting('registration.enabled')?'* <a href="/register" rel="registration">Public registration</a>':''}
+* <a href="/change-password" rel="change-password">Change Password</a>
 
 
 OAuth2 endpoints
@@ -60,6 +50,9 @@ Other API endpoints
 -------------------
 
 * ${isAdmin?'<a href="/exchange-one-time-token" rel="exchange-one-time-token">Exchange one-time-token</a>':''}
+* <a href="/schemas" rel="schema-collection">JSON Schema collection</a>
+
+_Version ${version}_
 
 [RFC7662]: https://tools.ietf.org/html/rfc7662 "OAuth 2.0 Token Introspection"
 [RFC8414]: https://tools.ietf.org/html/rfc8414 "OAuth 2.0 Authorization Server Metadata"

@@ -37,7 +37,7 @@ export async function findAll(type?: PrincipalType): Promise<Principal[]> {
 
 }
 
-export async function getPrincipleStats(): Promise<PrincipalStats> {
+export async function getPrincipalStats(): Promise<PrincipalStats> {
 
   const query = 'SELECT type, COUNT(*) as total FROM principals GROUP BY type';
   const result = await database.query(query);

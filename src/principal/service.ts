@@ -147,7 +147,7 @@ export async function findByHref(href: string): Promise<Principal> {
       break;
   }
 
-  const query = `SELECT ${fieldNames.join(', ')} FROM users WHERE type IN (?) AND id = ?`;
+  const query = `SELECT ${fieldNames.join(', ')} FROM principals WHERE type IN (?) AND id = ?`;
   const result = await database.query(query, [typeFilter, matches[2]]);
 
   if (result[0].length !== 1) {

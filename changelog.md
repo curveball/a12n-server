@@ -4,6 +4,13 @@ Changelog
 0.19.0 (????-??-??)
 -------------------
 
+* Redesigned home page.
+* A drastically smaller Docker image. The uncompressed image size dropped from
+  1.2G to 267M due to the use of multi-stage builds.
+* Apps now appear in `/app` and no longer in `/user`
+* Groups now appear in `/group` and no longer in `/user`
+* Renamed 'users' to 'principals' in many places in the source, including
+  database tables.
 * First steps to integrating json-schema in a12nserver.
 
 

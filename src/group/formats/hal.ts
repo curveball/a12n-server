@@ -1,5 +1,5 @@
 import { Group, Principal } from '../../principal/types';
-import { HalResource } from 'hal-types';
+import { HalResource, HalFormsTemplate } from 'hal-types';
 import { PrivilegeMap } from '../../privilege/types';
 
 export function memberCollection(group: Group, members: Principal[]): HalResource {
@@ -43,7 +43,7 @@ export function collection(groups: Group[]): HalResource {
 /**
  * Generate a HAL response for a specific group
  */
-export function item(group: Group, privileges: PrivilegeMap, isAdmin: boolean, groups: Group[]): HalResource {
+export function item(group: Group, privileges: PrivilegeMap, isAdmin: boolean, groups: Group[], members: Principal[]): HalResource {
 
   const hal: HalResource = {
     _links: {
@@ -54,9 +54,16 @@ export function item(group: Group, privileges: PrivilegeMap, isAdmin: boolean, g
         href: group.href,
         title: group.nickname,
       })),
+      'member': members.map( member => ({
+        href: member.href,
+        title: member.nickname
+      })),
       'member-collection': {
         href: `${group.href}/member`,
-        title: 'Group member'
+        title: 'Group member',
+        hints: {
+          status: 'deprecated'
+        },
       }
     },
     nickname: group.nickname,
@@ -72,8 +79,61 @@ export function item(group: Group, privileges: PrivilegeMap, isAdmin: boolean, g
       href: `/user/${group.id}/edit/privileges`,
       title: 'Change privilege policy',
     };
+    hal._templates = {
+      'add-member': addMemberForm(group),
+      'remove-member': removeMemberForm(group, members)
+    };
   }
 
   return hal;
+
+}
+
+function addMemberForm(group: Group): HalFormsTemplate {
+
+  return {
+    method: 'PATCH',
+    title: 'Add member',
+    target: group.href,
+    properties: [
+      {
+        type: 'hidden',
+        name: 'operation',
+        value: 'add-member',
+      },
+      {
+        type: 'text',
+        prompt: 'Member',
+        name: 'memberHref',
+      },
+    ]
+  };
+
+}
+function removeMemberForm(group: Group, members: Principal[]): HalFormsTemplate {
+
+  return {
+    method: 'PATCH',
+    title: 'Remove member',
+    target: group.href,
+    properties: [
+      {
+        type: 'hidden',
+        name: 'operation',
+        value: 'remove-member',
+      },
+      {
+        type: 'text',
+        prompt: 'Member',
+        name: 'memberHref',
+        options: {
+          inline: members.map(member => ({
+            prompt: member.nickname,
+            value: member.href
+          }))
+        },
+      },
+    ]
+  };
 
 }

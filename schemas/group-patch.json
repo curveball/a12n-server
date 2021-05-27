@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://curveballjs.org/schemas/a12nserver/group-patch.json",
+  "type": "object",
+  "description": "The body of a PATCH call on a group. This PATCH request lets you add or remove members from a group",
+
+  "required": ["op", "userHref"],
+  "additionalProperties": false,
+
+  "properties": {
+    "operation": {
+      "type": "string",
+      "enum": ["add-member", "remove-member"]
+    },
+    "memberHref": {
+      "type": "string",
+      "description": "A URI pointing to a user. This can be specified as a mailto: address, a relative URI pointing to the user resource or an absolute URI"
+    }
+  }
+}

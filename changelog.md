@@ -7,10 +7,14 @@ Changelog
 * Redesigned home page.
 * A drastically smaller Docker image. The uncompressed image size dropped from
   1.2G to 267M due to the use of multi-stage builds.
-* Apps now appear in `/app` and no longer in `/user`
-* Groups now appear in `/group` and no longer in `/user`
+* Apps now appear in `/app` and no longer in `/user`.
+* Groups now appear in `/group` and no longer in `/user`.
+* HAL forms for adding and removing members to groups.
 * Renamed 'users' to 'principals' in many places in the source, including
   database tables.
+* Clean up line endings from `JWT_PRIVATE_KEY` if they are not in the expected
+  format. This will make it work better with at least AWS Secure Parameter
+  Store / ECS / Lambda.
 * First steps to integrating json-schema in a12nserver.
 
 

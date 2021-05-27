@@ -4,7 +4,7 @@ import * as privilegeService from '../../privilege/service';
 import * as hal from '../formats/hal';
 import * as principalService from '../../principal/service';
 import * as groupService from '../../group/service';
-import { Forbidden } from '@curveball/http-errors';
+import { Forbidden, NotFound, Conflict } from '@curveball/http-errors';
 
 type EditPrincipalBody = {
   nickname: string;
@@ -22,18 +22,25 @@ type EditPrincipalBody = {
   privileges?: unknown;
 }
 
+type GroupPatch = {
+  operation: 'add-member' | 'remove-member';
+  memberHref: string;
+};
+
 class GroupController extends Controller {
 
   async get(ctx: Context) {
 
-    const user = await principalService.findById(+ctx.params.id, 'group');
+    const group = await principalService.findById(+ctx.params.id, 'group');
     const isAdmin = await privilegeService.hasPrivilege(ctx, 'admin');
+    const members = await groupService.findMembers(group);
 
     ctx.response.body = hal.item(
-      user,
-      await privilegeService.getPrivilegesForPrincipal(user),
+      group,
+      await privilegeService.getPrivilegesForPrincipal(group),
       isAdmin,
-      await groupService.findGroupsForPrincipal(user),
+      await groupService.findGroupsForPrincipal(group),
+      members,
     );
 
   }
@@ -53,6 +60,45 @@ class GroupController extends Controller {
 
     await principalService.save(user);
     ctx.status = 204;
+
+  }
+
+  /**
+   * The POST request here is a simpler rpc-like API to add or remove members
+   * from a group.
+   */
+  async patch(ctx: Context) {
+
+    ctx.request.validate<GroupPatch>('https://curveballjs.org/schemas/a12nserver/group-patch.json');
+    const group = await principalService.findById(+ctx.params.id, 'group');
+
+    const memberHref = ctx.request.body.memberHref;
+    let member;
+
+    try {
+      member = await principalService.findByHref(memberHref);
+    } catch (err) {
+      if (err instanceof NotFound) {
+        throw new Conflict(`User with href ${memberHref} not found`);
+      } else {
+        throw err;
+      }
+    }
+
+    switch (ctx.request.body.operation) {
+      case 'add-member':
+        await groupService.addMember(group, member);
+        break;
+      case 'remove-member':
+        await groupService.removeMember(group, member);
+        break;
+    }
+
+    if (ctx.request.accepts('text/html')) {
+      ctx.redirect(303, group.href);
+    } else {
+      ctx.status = 204;
+    }
 
   }
 

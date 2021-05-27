@@ -48,6 +48,13 @@ export async function replaceMembers(group: Group, users: Principal[]): Promise<
 
 }
 
+export async function removeMember(group: Group, user: Principal): Promise<void> {
+
+  const query = 'DELETE FROM group_members WHERE group_id = ? AND user_id = ?';
+  await database.query(query, [group.id, user.id]);
+
+}
+
 /**
  * Finding group members
  */

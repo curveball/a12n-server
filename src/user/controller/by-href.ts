@@ -12,49 +12,52 @@ class UserByHrefController extends Controller {
 
   async get(ctx: Context) {
 
-    const user = await principalService.findByHref(decodeURIComponent(ctx.params.href));
+    const principal = await principalService.findByHref(decodeURIComponent(ctx.params.href));
 
     let hasControl = false;
     let hasPassword = false;
     const isAdmin = await privilegeService.hasPrivilege(ctx, 'admin');
 
-    if (ctx.state.user.id === user.id) {
+    if (ctx.state.user.id === principal.id) {
       hasControl = true;
     } else if (isAdmin) {
       hasControl = true;
     }
 
-    if (hasControl && user.type === 'user') {
-      hasPassword = await userService.hasPassword(user);
+    if (hasControl && principal.type === 'user') {
+      hasPassword = await userService.hasPassword(principal);
     }
 
     // This endpoint supports rendering groups and apps, for backwards
     // compatibility. This will be removed in the future
-    switch(user.type) {
+    switch(principal.type) {
       case 'user' :
         ctx.response.body = userHal.item(
-          user,
-          await privilegeService.getPrivilegesForPrincipal(user),
+          principal,
+          await privilegeService.getPrivilegesForPrincipal(principal),
           hasControl,
           hasPassword,
           isAdmin,
-          await groupService.findGroupsForPrincipal(user),
+          await groupService.findGroupsForPrincipal(principal),
         );
         break;
-      case 'group' :
+      case 'group' : {
+        const members = await groupService.findMembers(principal);
         ctx.response.body = groupHal.item(
-          user,
-          await privilegeService.getPrivilegesForPrincipal(user),
+          principal,
+          await privilegeService.getPrivilegesForPrincipal(principal),
           isAdmin,
-          await groupService.findGroupsForPrincipal(user),
+          await groupService.findGroupsForPrincipal(principal),
+          members,
         );
         break;
+      }
       case 'app' :
         ctx.response.body = appHal.item(
-          user,
-          await privilegeService.getPrivilegesForPrincipal(user),
+          principal,
+          await privilegeService.getPrivilegesForPrincipal(principal),
           isAdmin,
-          await groupService.findGroupsForPrincipal(user),
+          await groupService.findGroupsForPrincipal(principal),
         );
         break;
     }

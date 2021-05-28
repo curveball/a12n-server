@@ -4,7 +4,7 @@
   "type": "object",
   "description": "The body of a PATCH call on a group. This PATCH request lets you add or remove members from a group",
 
-  "required": ["op", "userHref"],
+  "required": ["operation", "userHref"],
   "additionalProperties": false,
 
   "properties": {

@@ -58,11 +58,11 @@ class GroupMemberCollectionController extends Controller {
     if (ctx.request.body.operation !== 'add-member') {
       throw new UnprocessableEntity('"operation" must be set to "add-member"');
     }
-    if (ctx.request.body.userHref === undefined) {
-      throw new UnprocessableEntity('The "userHref" property must be set, and must point to the member you are adding to the group.');
+    if (ctx.request.body.memberHref === undefined) {
+      throw new UnprocessableEntity('The "memberHref" property must be set, and must point to the member you are adding to the group.');
     }
 
-    const newMemberHref = ctx.request.body.userHref;
+    const newMemberHref = ctx.request.body.memberHref;
     let newMember;
 
     try {

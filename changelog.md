@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.19.1 (2021-05-28)
+-------------------
+
+* Fix: bug in JSON schema for editing group members.
+* @curveball/validator had a critical bug that caused error handling to break
+  for validation errors.
+
+
 0.19.0 (2021-05-27)
 -------------------
 

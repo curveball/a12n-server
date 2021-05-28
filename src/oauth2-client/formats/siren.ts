@@ -2,14 +2,14 @@ import { App } from '../../principal/types';
 
 export function newClient(user: App) {
 
-  const userHref = `/app/${user.id}`;
+  const memberHref = `/app/${user.id}`;
 
   return {
     properties: {
       title: 'Add new OAuth2 Client',
     },
     links: [
-      { rel: ['up'], href: `${userHref}/client`, title: 'Back to list of clients'}
+      { rel: ['up'], href: `${memberHref}/client`, title: 'Back to list of clients'}
     ],
     actions: [
       {
@@ -17,7 +17,7 @@ export function newClient(user: App) {
         title: 'Add new Client Credentials',
         method: 'POST',
         type: 'application/x-www-form-urlencoded',
-        href: `${userHref}/client`,
+        href: `${memberHref}/client`,
         fields: [
           {
             name: 'clientId',

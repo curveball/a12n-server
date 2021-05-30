@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.19.2 (2021-05-28)
+-------------------
+
+* Fix: bug in JSON schema for group members. Inconsistent property
+  names.
+* Renamed userHref to memberHref.
+
+
 0.19.1 (2021-05-28)
 -------------------
 

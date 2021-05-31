@@ -83,8 +83,8 @@ export function item(group: Group, privileges: PrivilegeMap, isAdmin: boolean, g
       'add-member': addMemberForm(group),
     };
     if (members.length>0) {
-      hal._templates['remove-member'] = removeMemberForm(group, members)
-    };
+      hal._templates['remove-member'] = removeMemberForm(group, members);
+    }
   }
 
   return hal;

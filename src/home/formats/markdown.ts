@@ -50,7 +50,7 @@ Other API endpoints
 -------------------
 
 * ${isAdmin?'<a href="/exchange-one-time-token" rel="exchange-one-time-token">Exchange one-time-token</a>':''}
-* <a href="/schemas" rel="schema-collection">JSON Schema collection</a>
+* <a href="/schema" rel="schema-collection">JSON Schema collection</a>
 
 _Version ${version}_
 

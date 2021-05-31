@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.19.4 (????-??-??)
+0.19.4 (2021-05-31)
 --------------------
 
 * Fix link to schema collection on home document.

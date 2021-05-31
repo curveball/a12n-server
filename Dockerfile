@@ -14,8 +14,10 @@ RUN npm i --environment=dev && npx tsc && npm prune --production && rm -r src/
 FROM node:14-alpine
 LABEL org.opencontainers.image.source https://github.com/curveball/a12n-server
 
+
 EXPOSE 8531
 WORKDIR /opt/app
+RUN apk --no-cache add curl
 
 COPY --from=build-stage /opt/app .
 CMD node dist/app.js

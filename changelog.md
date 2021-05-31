@@ -6,7 +6,8 @@ Changelog
 
 * Fix link to schema collection on home document.
 * Add Curl to Docker image as it's a common health check tool.
-*
+* Fix a bug that preventing using `PATCH on /group/:id` in the HAL browser.
+
 
 0.19.3 (2021-05-30)
 -------------------

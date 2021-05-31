@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.19.3 (2021-05-30)
+-------------------
+
+* Make sure that the `/health` endpoint also gets logged correctly.
+
+
 0.19.2 (2021-05-28)
 -------------------
 

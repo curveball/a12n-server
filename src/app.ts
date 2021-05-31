@@ -34,7 +34,9 @@ if (!process.env.PUBLIC_URI) {
 
   const app = new Application();
 
-  app.use(accessLog());
+  app.use(accessLog({
+    blacklist: [],
+  }));
   app.use(mainMw());
 
   app.listen(port);

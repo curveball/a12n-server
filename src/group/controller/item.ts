@@ -69,6 +69,8 @@ class GroupController extends Controller {
    */
   async patch(ctx: Context) {
 
+    delete (ctx.request.body as any)['csrf-token'];
+
     ctx.request.validate<GroupPatch>('https://curveballjs.org/schemas/a12nserver/group-patch.json');
     const group = await principalService.findById(+ctx.params.id, 'group');
 

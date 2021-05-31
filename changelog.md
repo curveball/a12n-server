@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.19.5 (????-??-??)
+-------------------
+
+* Don't show 'remove member' form on groups if there are no members.
+
+
 0.19.4 (2021-05-31)
 --------------------
 

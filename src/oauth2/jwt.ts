@@ -3,11 +3,12 @@ import { OAuth2Client } from '../oauth2-client/types';
 import { generateSecretToken } from '../crypto';
 import * as jwt from 'jsonwebtoken';
 import { resolve } from 'url';
+import { getSetting } from '../server-settings';
 
 type JwtAccessToken = {
 
   /**
-   * Issuer.
+   e Issuer.
    *
    * This will be URI pointing to the a12nserver instance
    */
@@ -56,7 +57,8 @@ type JwtAccessToken = {
 
 export async function generateJWTAccessToken(user: User|App, client: OAuth2Client, expiry: number, scopes: string[]): Promise<string> {
 
-  if (!process.env.JWT_PRIVATE_KEY) {
+  const jwtPrivateKey = getSetting('jwt.privateKey');
+  if (!jwtPrivateKey) {
     throw new Error('The JWT_PRIVATE_KEY environment variable must be set, and must be a RSA private key file (typically a .pem file)');
   }
 
@@ -66,7 +68,7 @@ export async function generateJWTAccessToken(user: User|App, client: OAuth2Clien
   // Some environment variable systems will convert the newline to a literal '\n'.
   // this is a safe operation, because the file should not contain any literal
   // backslashes.
-  const privateKey = process.env.JWT_PRIVATE_KEY.replace(/\\n/gm, '\n');
+  const privateKey = jwtPrivateKey.replace(/\\n/gm, '\n');
 
   const jwtBody: JwtAccessToken = {
     iss: origin,

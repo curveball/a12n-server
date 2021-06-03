@@ -535,9 +535,9 @@ type TokenExpiry = {
 function getTokenExpiry(): TokenExpiry {
 
   return {
-    accessToken: getSetting('oauth2.accessToken.expiry', 600),
-    refreshToken: getSetting('oauth2.refreshToken.expiry', 3600 * 6),
-    code: getSetting('oauth2.code.expiry', 600),
+    accessToken: getSetting('oauth2.accessToken.expiry'),
+    refreshToken: getSetting('oauth2.refreshToken.expiry'),
+    code: getSetting('oauth2.code.expiry'),
   };
 
 }

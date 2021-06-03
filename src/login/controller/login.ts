@@ -74,7 +74,7 @@ class LoginController extends Controller {
       return;
     }
 
-    ctx.response.redirect(303, getSetting('login.defaultRedirect', '/'));
+    ctx.response.redirect(303, getSetting('login.defaultRedirect'));
 
   }
 

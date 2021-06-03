@@ -48,19 +48,13 @@ const settingsRules: SettingsRules = {
   'smtp.url' : {
     description: 'The url to the SMTP server. See the node-mailer documentation for possible values',
     env: 'SMTP_URL',
-
-    // There's no reason this can't be in the DB, but code using this setting just needs to
-    // be changed to use the settings api.
-    fromDb: false,
+    fromDb: true,
     default: null,
   },
   'smtp.emailFrom' : {
     description: 'The "from" address that should be used for all outgoing emails',
     env: 'SMTP_EMAIL_FROM',
-
-    // There's no reason this can't be in the DB, but code using this setting just needs to
-    // be changed to use the settings api.
-    fromDb: false,
+    fromDb: true,
     default: null,
   },
 

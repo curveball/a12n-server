@@ -14,7 +14,7 @@ class WebAuthnAttestationController extends Controller {
 
     const attestationOptions = generateAttestationOptions({
       rpName: getSetting('webauthn.serviceName'),
-      rpID: getSetting('webauthn.relyingPartyId', new URL(process.env.PUBLIC_URI!).host),
+      rpID: getSetting('webauthn.relyingPartyId') || new URL(process.env.PUBLIC_URI!).host,
       userID: user.id.toString(),
       userName: user.nickname,
       timeout: 60000,
@@ -50,8 +50,8 @@ class WebAuthnAttestationController extends Controller {
       verification = await verifyAttestationResponse({
         credential: body,
         expectedChallenge,
-        expectedOrigin: getSetting('webauthn.expectedOrigin', new URL(process.env.PUBLIC_URI!).origin),
-        expectedRPID: getSetting('webauthn.relyingPartyId', new URL(process.env.PUBLIC_URI!).host),
+        expectedOrigin: getSetting('webauthn.expectedOrigin') || new URL(process.env.PUBLIC_URI!).origin,
+        expectedRPID: getSetting('webauthn.relyingPartyId') || new URL(process.env.PUBLIC_URI!).host,
       });
     } catch (error) {
       /* eslint-disable-next-line no-console */

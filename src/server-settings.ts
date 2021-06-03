@@ -1,7 +1,12 @@
 import db from './database';
 
 type Settings = {
+  'login.defaultRedirect': string;
   'cors.allowOrigin': string[] | null;
+
+  'smtp.url': null | string;
+  'smtp.emailFrom': null | string;
+
   'oauth2.code.expiry': number;
   'oauth2.accessToken.expiry': number;
   'oauth2.refreshToken.expiry': number;
@@ -13,7 +18,7 @@ type Settings = {
   'webauthn.expectedOrigin': string | null;
   'webauthn.relyingPartyId': string | null;
   'webauthn.serviceName': string;
-  'login.defaultRedirect': string;
+
 }
 
 type SettingsRules = {
@@ -38,6 +43,25 @@ const settingsRules: SettingsRules = {
     env: 'REGISTRATION_ENABLED',
     fromDb: true,
     default: true,
+  },
+
+  'smtp.url' : {
+    description: 'The url to the SMTP server. See the node-mailer documentation for possible values',
+    env: 'SMTP_URL',
+
+    // There's no reason this can't be in the DB, but code using this setting just needs to
+    // be changed to use the settings api.
+    fromDb: false,
+    default: null,
+  },
+  'smtp.emailFrom' : {
+    description: 'The "from" address that should be used for all outgoing emails',
+    env: 'SMTP_EMAIL_FROM',
+
+    // There's no reason this can't be in the DB, but code using this setting just needs to
+    // be changed to use the settings api.
+    fromDb: false,
+    default: null,
   },
 
   'cors.allowOrigin': {

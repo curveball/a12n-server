@@ -104,7 +104,7 @@ export async function generateTokenForUser(client: OAuth2Client, user: App | Use
 
   let accessToken: string;
 
-  if (process.env.JWT_PRIVATE_KEY) {
+  if (getSetting('jwt.privateKey')!==null) {
     accessToken = await generateJWTAccessToken(
       user,
       client,

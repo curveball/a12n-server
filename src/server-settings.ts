@@ -2,6 +2,8 @@ import db from './database';
 
 type Settings = {
   'login.defaultRedirect': string;
+  'registration.enabled': boolean;
+  'registration.mfa.enabled': boolean;
   'cors.allowOrigin': string[] | null;
 
   'smtp.url': null | string;
@@ -10,8 +12,9 @@ type Settings = {
   'oauth2.code.expiry': number;
   'oauth2.accessToken.expiry': number;
   'oauth2.refreshToken.expiry': number;
-  'registration.enabled': boolean;
-  'registration.mfa.enabled': boolean;
+
+  'jwt.privateKey': string | null,
+
   'totp': 'enabled' | 'required' | 'disabled';
   'totp.serviceName': string;
   'webauthn': 'enabled' | 'disabled' | 'required';
@@ -44,6 +47,16 @@ const settingsRules: SettingsRules = {
     fromDb: true,
     default: true,
   },
+  'registration.mfa.enabled': {
+    description: 'Whether MFA/2FA is enabled.',
+    fromDb: true,
+    default: true,
+  },
+  'cors.allowOrigin': {
+    description: 'List of allowed origins that may directly talk to the server. This should only ever be 1st party, trusted domains. By default CORS is not enabled',
+    fromDb: true,
+    default: null,
+  },
 
   'smtp.url' : {
     description: 'The url to the SMTP server. See the node-mailer documentation for possible values',
@@ -58,11 +71,7 @@ const settingsRules: SettingsRules = {
     default: null,
   },
 
-  'cors.allowOrigin': {
-    description: 'List of allowed origins that may directly talk to the server. This should only ever be 1st party, trusted domains. By default CORS is not enabled',
-    fromDb: true,
-    default: null,
-  },
+
 
   'oauth2.code.expiry': {
     description: 'The expiry time (in seconds) for the \'code\' from the oauth2 authorization code grant type',
@@ -83,10 +92,11 @@ const settingsRules: SettingsRules = {
     default: 3600*6,
   },
 
-  'registration.mfa.enabled': {
-    description: 'Whether MFA/2FA is enabled.',
-    fromDb: true,
-    default: true,
+  'jwt.privateKey': {
+    description: 'The RSA private key to sign JWT access tokens. Usually this value has the contents of a .pem file. If not set, JWT will be disabled',
+    env: 'JWT_PRIVATE_KEY',
+    fromDb: false,
+    default: null,
   },
 
   'totp': {

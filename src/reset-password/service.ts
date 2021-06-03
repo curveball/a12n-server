@@ -2,7 +2,7 @@ import * as nodemailer from 'nodemailer';
 import { render } from '../templates';
 import { User } from '../principal/types';
 import { createToken } from '../one-time-token/service';
-import { getSetting } from '../server-settings';
+import { requireSetting } from '../server-settings';
 
 /**
  * This function is for sending reset password email with validated token
@@ -13,15 +13,8 @@ import { getSetting } from '../server-settings';
  */
 export async function sendResetPasswordEmail(user: User) {
 
-  const smtpEmailFrom = getSetting('smtp.emailFrom');
-  const smtpUrl = getSetting('smtp.url');
-  if (!smtpEmailFrom) {
-    throw new Error('The \'smtp.emailFrom\' setting must be provided for email to work. You may set this via the SMTP_EMAIL_FROm environment variable or via the settings database.');
-  }
-
-  if (!smtpUrl) {
-    throw new Error('The \'smtp.url\' setting must be provided for email to work. You may provide this via the SMTP_URL environment variable or via the settings database.');
-  }
+  const smtpEmailFrom = requireSetting('smtp.emailFrom')!;
+  const smtpUrl = requireSetting('smtp.url')!;
 
   const transporter = nodemailer.createTransport(smtpUrl);
   const token = await createToken(user);

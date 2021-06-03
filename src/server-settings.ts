@@ -138,6 +138,39 @@ export function getSetting<T extends keyof Settings>(setting: T): Settings[T] {
   return settingsCache[setting];
 
 }
+/**
+ * Retrieves the value of a single setting, by name.
+ *
+ * If the setting was not provided (null) this function will throw an exception.
+ */
+export function requireSetting<T extends keyof Settings>(setting: T): Settings[T] {
+
+  if (settingsCache === null) {
+    throw new Error('Settings have not been loaded. Call load() first');
+  }
+  const value = settingsCache[setting];
+  const info = settingsRules[setting];
+
+  if (value === null) {
+
+    let msg = `A value for the setting "${setting}" must be provided for this feature to work. `;
+    if (info.fromDb && info.env) {
+      msg+=`You should either set the "${setting}" setting in the database, or provide a value with the "${info.env}" environment variable.`;
+    } else if (info.fromDb) {
+      msg+=`You should set the "${setting}" setting in the database.`;
+    } else if (info.env) {
+      msg+=`You should provide a value with the "${info.env}" environment variable.`;
+    } else {
+      msg+'There is literally no way to actually do this, and this is a bug. DM me for a prize.';
+    }
+    throw msg;
+  }
+
+  return value;
+
+}
+
+
 
 /**
  * Loads or reloads settings from the database.

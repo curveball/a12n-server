@@ -13,7 +13,7 @@ type Settings = {
   'oauth2.accessToken.expiry': number;
   'oauth2.refreshToken.expiry': number;
 
-  'jwt.privateKey': string | null,
+  'jwt.privateKey': string | null;
 
   'totp': 'enabled' | 'required' | 'disabled';
   'totp.serviceName': string;

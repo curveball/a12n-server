@@ -2,7 +2,7 @@ import * as nodemailer from 'nodemailer';
 import { render } from '../templates';
 import { User } from '../principal/types';
 import { createToken } from '../one-time-token/service';
-
+import { requireSetting } from '../server-settings';
 
 /**
  * This function is for sending reset password email with validated token
@@ -13,15 +13,10 @@ import { createToken } from '../one-time-token/service';
  */
 export async function sendResetPasswordEmail(user: User) {
 
-  if (!process.env.SMTP_EMAIL_FROM) {
-    throw new Error('The environment variable SMTP_EMAIL_FROM must be set');
-  }
+  const smtpEmailFrom = requireSetting('smtp.emailFrom')!;
+  const smtpUrl = requireSetting('smtp.url')!;
 
-  if (!process.env.SMTP_URL) {
-    throw new Error('The environment variable SMTP_URL must be set. Needs to contain "smtps://[Username]:[Password]@[Host]:[Port]"');
-  }
-
-  const transporter = nodemailer.createTransport(process.env.SMTP_URL);
+  const transporter = nodemailer.createTransport(smtpUrl);
   const token = await createToken(user);
   const emailTemplate = render('emails/reset-password-email', {
     name: user.nickname,
@@ -31,7 +26,7 @@ export async function sendResetPasswordEmail(user: User) {
 
   // send mail with defined transport object
   const info = await transporter.sendMail({
-    from: process.env.SMTP_EMAIL_FROM, // sender address
+    from: smtpEmailFrom, // sender address
     to: user.identity.substring(7), // list of receivers
     subject: 'Password reset request', // Subject line
     html: emailTemplate

@@ -49,7 +49,7 @@ export function item(group: Group, privileges: PrivilegeMap, isAdmin: boolean, g
     if(a.nickname < b.nickname) { return -1; }
     if(a.nickname > b.nickname) { return 1; }
     return 0;
-  })
+  });
 
   const hal: HalResource = {
     _links: {

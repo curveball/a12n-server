@@ -45,6 +45,12 @@ export function collection(groups: Group[]): HalResource {
  */
 export function item(group: Group, privileges: PrivilegeMap, isAdmin: boolean, groups: Group[], members: Principal[]): HalResource {
 
+  const allMember = members.sort(function(a, b){
+    if(a.nickname < b.nickname) { return -1; }
+    if(a.nickname > b.nickname) { return 1; }
+    return 0;
+  })
+
   const hal: HalResource = {
     _links: {
       'self': {href: group.href, title: group.nickname },
@@ -54,7 +60,7 @@ export function item(group: Group, privileges: PrivilegeMap, isAdmin: boolean, g
         href: group.href,
         title: group.nickname,
       })),
-      'member': members.map( member => ({
+      'member': allMember.map( member => ({
         href: member.href,
         title: member.nickname
       })),

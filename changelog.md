@@ -1,10 +1,12 @@
 Changelog
 =========
 
-0.19.5 (????-??-??)
+0.19.5 (2021-06-10)
 -------------------
 
 * Don't show 'remove member' form on groups if there are no members.
+* Add & Move SMTP & JWT_PRIVATE_KEY setting to the new setting system.
+* Sort group members alphabetically.
 
 
 0.19.4 (2021-05-31)

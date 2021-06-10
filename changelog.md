@@ -1,6 +1,25 @@
 Changelog
 =========
 
+0.19.7 (2021-06-10)
+-------------------
+
+* Group members are now sorted alphabetically by 'nickname'.
+* Updated dependencies.
+
+
+0.19.6 (2021-06-10)
+-------------------
+
+* This release was botched, do not upgrade to this.
+
+
+0.19.5 (2021-06-10)
+-------------------
+
+* This version was never released.
+
+
 0.19.4 (2021-05-31)
 --------------------
 

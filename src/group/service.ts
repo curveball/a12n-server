@@ -8,7 +8,7 @@ import { Principal, Group } from '../principal/types';
 
 export async function findMembers(group: Group): Promise<Principal[]> {
 
-  const query = `SELECT ${principalService.fieldNames.join(', ')} FROM principals INNER JOIN group_members ON principals.id = group_members.user_id WHERE group_id = ?`;
+  const query = `SELECT ${principalService.fieldNames.join(', ')} FROM principals INNER JOIN group_members ON principals.id = group_members.user_id WHERE group_id = ? ORDER BY nickname`;
   const result = await database.query(query, [group.id]);
 
   const models = [];

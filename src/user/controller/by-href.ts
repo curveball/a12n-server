@@ -40,6 +40,7 @@ class UserByHrefController extends Controller {
           isAdmin,
           await groupService.findGroupsForPrincipal(principal),
         );
+        ctx.redirect(303, principal.href);
         break;
       case 'group' : {
         const members = await groupService.findMembers(principal);

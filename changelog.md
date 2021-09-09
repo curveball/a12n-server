@@ -1,10 +1,11 @@
 Changelog
 =========
 
-0.19.5 (????-??-??)
+0.19.5 (2021-09-09)
 -------------------
 
 * Don't show 'remove member' form on groups if there are no members.
+* The 'create member' API can now also read links from HAL bodies.
 
 
 0.19.4 (2021-05-31)

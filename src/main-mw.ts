@@ -44,7 +44,6 @@ export default function(): Middleware {
       ],
     }),
     problem(),
-    links(),
     session({
       store: process.env.REDIS_HOST ? new RedisStore({
         prefix: 'A12N-session',
@@ -58,6 +57,7 @@ export default function(): Middleware {
     }),
     login(),
     bodyParser(),
+    links(),
     validator({
       schemaPath: join(__dirname, '../schemas'),
       noLink: true,

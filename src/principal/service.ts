@@ -1,4 +1,4 @@
-import { NotFound } from '@curveball/http-errors';
+import { NotFound, UnprocessableEntity } from '@curveball/http-errors';
 import database from '../database';
 import { Principal, NewPrincipal, PrincipalType, User, Group, App, PrincipalStats } from './types';
 
@@ -184,6 +184,11 @@ export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'
   } else {
 
     // Update user
+
+    if (principal.type === "user" && !isIdentityValid(principal.identity, principal.type)) {
+      throw new UnprocessableEntity('Identity must include mailto:');
+    };
+
     const query = 'UPDATE principals SET ? WHERE id = ?';
 
     principal.modifiedAt = new Date();
@@ -248,6 +253,15 @@ export function recordToModel(user: PrincipalRecord): Principal {
     active: !!user.active
   };
 
+}
+
+export function isIdentityValid(identity: string, type: 'user'): Boolean {
+
+  const regex = /^mailto:/
+  if (type === "user" && regex.test(identity)) {
+    return true;
+  }
+  return false;
 }
 
 function isExistingPrincipal(user: Principal | NewPrincipal): user is Principal {

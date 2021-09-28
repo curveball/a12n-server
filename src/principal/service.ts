@@ -257,7 +257,7 @@ export function recordToModel(user: PrincipalRecord): Principal {
 
 export function isIdentityValid(identity: string, type: 'user'): boolean {
 
-  const regex = /^(?:[a-z]+:)?/;
+  const regex = /^(?:[A-Za-z]+:)?/;
   if (type === 'user' && regex.test(identity)) {
     return true;
   }

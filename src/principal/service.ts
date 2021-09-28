@@ -257,7 +257,8 @@ export function recordToModel(user: PrincipalRecord): Principal {
 
 export function isIdentityValid(identity: string, type: 'user'): boolean {
 
-  if (type === 'user' && identity.startsWith('mailto:')) {
+  const regex = /^(mailto:|tel:|^https?:\/\/)/;
+  if (type === 'user' && regex.test(identity)) {
     return true;
   }
   return false;

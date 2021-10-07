@@ -186,7 +186,7 @@ export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'
     // Update user
 
     if (!isIdentityValid(principal.identity)) {
-      throw new UnprocessableEntity('Identity must include mailto:');
+      throw new UnprocessableEntity('Identity must be a valid URI');
     }
 
     const query = 'UPDATE principals SET ? WHERE id = ?';
@@ -257,7 +257,7 @@ export function recordToModel(user: PrincipalRecord): Principal {
 
 export function isIdentityValid(identity: string): boolean {
 
-  const regex = /^(?:[A-Za-z]+:)?/;
+  const regex = /^(?:[A-Za-z]+:\S*$)?/;
   return regex.test(identity);
 
 }

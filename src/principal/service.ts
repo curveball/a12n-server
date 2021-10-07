@@ -185,7 +185,7 @@ export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'
 
     // Update user
 
-    if (principal.type === 'user' && !isIdentityValid(principal.identity, principal.type)) {
+    if (!isIdentityValid(principal.identity)) {
       throw new UnprocessableEntity('Identity must include mailto:');
     }
 
@@ -255,13 +255,11 @@ export function recordToModel(user: PrincipalRecord): Principal {
 
 }
 
-export function isIdentityValid(identity: string, type: 'user'): boolean {
+export function isIdentityValid(identity: string): boolean {
 
   const regex = /^(?:[A-Za-z]+:)?/;
-  if (type === 'user' && regex.test(identity)) {
-    return true;
-  }
-  return false;
+  return regex.test(identity);
+
 }
 
 function isExistingPrincipal(user: Principal | NewPrincipal): user is Principal {

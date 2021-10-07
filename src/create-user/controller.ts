@@ -27,13 +27,10 @@ class CreateUserController extends Controller {
     const nickname = ctx.request.body.nickname;
     const type = ctx.request.body.type;
 
-    if (type === 'user' && !principalService.isIdentityValid(identity, type)) {
-      throw new UnprocessableEntity('Identity must include mailto:');
+    if (!principalService.isIdentityValid(identity)) {
+      throw new UnprocessableEntity('Identity must be a valid URI');
     }
 
-    if (!identity || !identity.includes(':') || identity.includes(' ')) {
-      throw new UnprocessableEntity('Identity must exist and must be a url');
-    }
     if (nickname.length < 1) {
       throw new UnprocessableEntity('nickname must contain at least 1 character');
     }

@@ -38,7 +38,7 @@ class UserEditPrivilegesController extends Controller {
       const policy = JSON.parse(policyBody) as PrivilegeMap;
 
       await privilegeService.replacePrivilegeForUser(user, policy);
-    } catch (err) {
+    } catch (err: any) {
       throw new BadRequest(err);
     }
 

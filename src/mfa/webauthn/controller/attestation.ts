@@ -53,7 +53,7 @@ class WebAuthnAttestationController extends Controller {
         expectedOrigin: getSetting('webauthn.expectedOrigin') || new URL(process.env.PUBLIC_URI!).origin,
         expectedRPID: getSetting('webauthn.relyingPartyId') || new URL(process.env.PUBLIC_URI!).host,
       });
-    } catch (error) {
+    } catch (error: any) {
       /* eslint-disable-next-line no-console */
       console.error(error);
       ctx.status = 400;

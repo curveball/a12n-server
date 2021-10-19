@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.19.9 (2021-10-18)
+-------------------
+
+* Halloween theme. Automatically enables the last week of October.
+* #295: Improved validation for `identity` field on users, groups and apps.
+
+
 0.19.8 (2021-09-09)
 -------------------
 

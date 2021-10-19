@@ -53,7 +53,7 @@ class WebAuthnLoginRequestController extends Controller {
           credentialPublicKey: authenticatorDevice.publicKey,
         }
       });
-    } catch (error) {
+    } catch (error: any) {
       log(EventType.totpFailed, ctx.ip(), user.id);
       ctx.status = 400;
       ctx.response.body = { error: error.message };

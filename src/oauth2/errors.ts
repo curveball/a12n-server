@@ -4,7 +4,7 @@ interface OAuth2Error extends HttpError {
   errorCode: string;
 }
 
-export function isOAuth2Error(err: Error): err is OAuth2Error {
+export function isOAuth2Error(err: any): err is OAuth2Error {
 
   return typeof (err as any).errorCode === 'string';
 

@@ -26,6 +26,9 @@
         "SwitchCase": 1
       }],
       "linebreak-style": ["error", "unix"],
+      "no-constant-condition": ["error", {
+        "checkLoops": false
+      }],
       "quotes": ["error", "single",
           {
             "allowTemplateLiterals": false,
@@ -52,7 +55,10 @@
       "@typescript-eslint/no-invalid-void-type": "error",
       "@typescript-eslint/no-namespace": "error",
       "@typescript-eslint/no-non-null-asserted-optional-chain": "error",
-      "@typescript-eslint/no-unused-vars": ["error"],
+      "@typescript-eslint/no-unused-vars": ["error", {
+        "ignoreRestSiblings": true,
+        "args": "none"
+      }],
       "@typescript-eslint/prefer-for-of": ["error"],
       "@typescript-eslint/prefer-optional-chain": ["error"],
       "@typescript-eslint/prefer-ts-expect-error": ["error"],

@@ -99,7 +99,7 @@ const routes = [
   router('/user/:id/access-token', userAccessToken),
   router('/user/:id/sessions', userActiveSessions),
 
-  router('/changepassword', changePassword),
+  router('/change-password', changePassword),
   router('/reset-password', resetPassword),
   router('/reset-password/token/:token', passwordToken),
   router('/reset-password/change-password', resetPasswordRedirect),

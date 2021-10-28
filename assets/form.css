@@ -1,5 +1,10 @@
 body {
   background: #ECEFF1;
+  font-family: "Montserrat";
+}
+
+.material-icons {
+  vertical-align: middle;
 }
 
 header {
@@ -17,13 +22,16 @@ header h1 {
 
 form {
   font-size: 18px;
-  margin: 2em  auto;
+  margin: 2em auto;
   padding: 0;
   border-radius: .5ex;
   background: white;
-  max-width: 25em;
+  max-width: 35em;
   box-shadow: 0 1ex 7em -3ex #b0c4d5;
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  font-size: .8rem;
 }
 
 
@@ -33,18 +41,54 @@ input, button, select {
 
 form fieldset {
   border:none;
-  padding: 2em;
-  margin: 0 auto;
-  grid-template-rows: 3em 2em 2em;
+  padding: 2em 4rem;
+  margin: 0 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+form fieldset:first-child {
+  margin-top: 3rem;
 }
 
 form label {
+  --box-shadow-color: #f1f1f1;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: center;
+  box-shadow: inset 0 0 0 2px var(--box-shadow-color);
+  border-radius: 2em;
+  padding: .25rem 1rem;
+  overflow: hidden;
+  gap: 1em;
+  transition: box-shadow .2s linear;
 }
 
-form label:not(:last-child) {
-  margin-bottom: 3em;
+form label > span:first-child {
+  color: var(--divider-color);
+  font-weight: bold;
+}
+
+form label:focus-within {
+ --box-shadow-color: #b9b9b9;
+}
+
+form label:focus-within span:first-child {
+  color: var(--secondary-text-color);
+}
+
+form fieldset:last-of-type {
+  flex-direction: row-reverse;
+}
+
+form fieldset:last-of-type label {
+  /*! min-width: 6em; */
+  padding: 0;
+} 
+
+form fieldset:not(:last-of-type) label:not(:last-child) {
+  margin-bottom: 1rem;
 }
 
 
@@ -59,17 +103,21 @@ form select {
   line-height: 3;
   padding: 0;
   border-radius: .25ex;
+  flex: 1 1 auto;
 }
 
 form input,
 form select {
-  background: rgba(0,0,0,.04);
-  border-width: 0 0 2px 0;
-  border-style: solid;
-  border-color: #CcCcCc;
+  background: transparent;
+  border-style: none;
   text-indent: 1ex;
-  transition: border-color .5s cubic-bezier(0.075, 0.82, 0.165, 1);
-  margin-top: 1ex;
+  color: #b9b9b9;
+  font-weight: bold;
+}
+
+form input::autofill,
+form input:-internal-autofill-selected {
+  background:white;
 }
 
 form input:hover {
@@ -88,8 +136,22 @@ form input:invalid {
   border-color: transparent;
 }
 
-form input:invalid:focus {
-  border-color: #F44336;
+form input + .feedback.invalid {
+  opacity: 0;
+  color: #F44336;
+  transition: opacity .5s;
+}
+
+form input:invalid:not(:empty) + .feedback.invalid {
+  opacity: .5;
+}
+form input:invalid:hover:not(:empty) + .feedback.invalid,
+form input:invalid:focus + .feedback.invalid {
+  opacity: 1;
+}
+
+form input:invalid:focus + .feedback.invalid {
+  transition-delay: 1s;
 }
 
 form input[type=checkbox],
@@ -104,6 +166,8 @@ form input[type=radio] {
 
 form input[type=checkbox] {
   border-radius: .2ex;
+  border-radius: .2ex;
+  margin: 1rem .25rem;
 }
 
 form input[type=radio] {
@@ -137,74 +201,50 @@ form select:focus {
 
 form button {
   border: none;
-  background: #1E88E5;
+  background: var(--dark-primary-color);
   color: white;
   cursor: pointer;
   transition: transform .15s;
+  padding: 0 1.5rem;
+  font-weight: bold;
 }
 
-form button:hover {
-  transform: translateY(-2px) scale(1.02);
+form:not(:invalid) button:hover {
+  background-color: var(--default-primary-color);
 }
 
 form:invalid button[type=submit] {
-  background-color: #CCC;
+  background-color: var(--divider-color);
   transform: none;
   pointer-events: none;
 }
 
-.msg.info {
+.msg {
   padding: 1em 2em;
-  margin: 0 auto 1em;
-  max-width: 33em;
-  font-weight: 800;
-  background: #1e88e5;
-  color: white;
+  margin: 2em 5em;
   position: relative;
   text-indent: -2.6ex;
+  max-width: ;
+  font-weight: 800;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  border-radius: 0.3rem;
 }
 
-.msg.info::before {
-  content: '\2713';
-  margin-right: 1ex;
-}
-
-.msg.info::after {
-  content: '';
-  display: block;
-  position: absolute;
-  width: 1em;
-  height: 1em;
-  top: 100%;
-  transform: rotate(45deg) translateY(-1.5ex);
-  background: #1e88e5;
+.msg.info {
+  border: 2px solid var(--default-primary-color);
+  color: var(--dark-primary-color);
 }
 
 .msg.error {
-  padding: 1em 2em;
-  margin: 0 auto 1em;
-  max-width: 33em;
-  font-weight: 800;
-  background: #F44336;
-  color: white;
-  position: relative;
-  text-indent: -2.6ex;
+  border: 2px solid #F44336;
+  color: #F44336;  
+  /*! background: #f4433624; */
 }
-
-.msg.error::before {
-  content: '\26A0';
-  margin-right: 1ex;
-}
-
-.msg.error::after {
-  content: '';
-  display: block;
-  position: absolute;
-  width: 1em;
-  height: 1em;
-  top: 100%;
-  transform: rotate(45deg) translateY(-1.5ex);
-  background: #F44336;
+.msg span {
+  margin-left: 1em;
 }
 
 input.totp {
@@ -235,22 +275,23 @@ input.totp {
   cursor: pointer;
 }
 
-form p {
-  margin-bottom: 10px;
-}
-
-form a {
+form a, form a:visited, form a:visited:hover {
   color: #1e88e5;
   text-decoration-color: #1e88e5;
-  transition: all .5s;
+  text-decoration-color: transparent;
+  
 }
 
 form a:hover {
-  text-decoration-color: transparent;
+  text-decoration-color: var(--default-primary-color);
 }
 
-.login-options {
-  text-align: center;
+fieldset:last-of-type p {
+  text-align: start;
+  flex: 1;
+  align-self: center;
+  justify-content: space-evenly;
+  display: flex;
 }
 
 .hidden {

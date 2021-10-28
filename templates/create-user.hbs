@@ -1,10 +1,16 @@
 <form action="{{ action }}" method="post">
 
   {{# if msg}}
-  <div class="msg info">{{ msg }}</div>
+  <div class="msg info">
+    <i class="material-icons">info</i>
+    <span>{{ msg }}</span>
+  </div>
   {{/if}}
   {{# if error}}
-  <div class="msg error">{{ error }}</div>
+  <div class="msg error">
+    <i class="material-icons">warning</i>
+    <span>{{ error }}</span>
+  </div>
   {{/if}}
 
   <fieldset>
@@ -16,6 +22,9 @@
     <label for="identity">
       <span>Identity (unique URL identifying this user)</span>
       <input type="url" name="identity" id="identity" required="required" autocomplete="url" />
+      <span class="feedback invalid">
+        <i class="material-icons" title="This is not a valid email address" data-error="malformat">info</i>
+      </span>
     </label>
 
     <label for="type">

@@ -47,7 +47,6 @@ form label:not(:last-child) {
   margin-bottom: 3em;
 }
 
-
 form fieldset.radiogroup label:not(:last-child) {
   margin-bottom: 1em;
 }
@@ -147,6 +146,11 @@ form button:hover {
   transform: translateY(-2px) scale(1.02);
 }
 
+form button:focus {
+  transform: translateY(-2px) scale(1.02);
+  box-shadow: #3ca4ff 0px 0px 10px;
+}
+
 form:invalid button[type=submit] {
   background-color: #CCC;
   transform: none;
@@ -243,13 +247,24 @@ form a {
   color: #1e88e5;
   text-decoration-color: #1e88e5;
   transition: all .5s;
+  padding: 3px 5px;
 }
 
 form a:hover {
   text-decoration-color: transparent;
 }
 
-.login-options {
+form a:focus {
+  text-decoration-color: transparent;
+  box-shadow: #3ca4ff 0px 0px 10px;
+  border-radius: .25ex;
+}
+
+.form-description {
+  margin-bottom: 2em;
+}
+
+.form-options {
   text-align: center;
 }
 

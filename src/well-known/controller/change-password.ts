@@ -15,7 +15,7 @@ class WellKnownChangePassword extends Controller {
      */
   async get(ctx: Context) {
     ctx.status = 301;
-    ctx.response.headers.set('Location', '/changepassword');
+    ctx.response.headers.set('Location', '/change-password');
   }
 }
 

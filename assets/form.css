@@ -248,6 +248,10 @@ form a:hover {
   text-decoration-color: transparent;
 }
 
+.form-description {
+  margin-bottom: 2em;
+}
+
 .form-options {
   text-align: center;
 }

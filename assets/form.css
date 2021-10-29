@@ -43,14 +43,9 @@ form label {
   flex-direction: column;
 }
 
-form label:not(:last-child):not(button) {
+form label:not(:last-child) {
   margin-bottom: 3em;
 }
-
-form label:not(:last-child) button {
-  margin-bottom: 1em;
-}
-
 
 form fieldset.radiogroup label:not(:last-child) {
   margin-bottom: 1em;

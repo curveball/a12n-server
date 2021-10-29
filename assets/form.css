@@ -43,8 +43,12 @@ form label {
   flex-direction: column;
 }
 
-form label:not(:last-child) {
+form label:not(:last-child):not(button) {
   margin-bottom: 3em;
+}
+
+form label:not(:last-child) button {
+  margin-bottom: 1em;
 }
 
 
@@ -249,7 +253,7 @@ form a:hover {
   text-decoration-color: transparent;
 }
 
-.login-options {
+.form-options {
   text-align: center;
 }
 

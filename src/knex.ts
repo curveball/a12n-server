@@ -18,7 +18,7 @@ export async function getConnection(): Promise<Knex> {
 
 }
 
-export async function query(query: string, params: Knex.Value | Knex.ValueDict): Promise<Knex<any, any>> {
+export async function query(query: string, params: Knex.Value[] | Knex.ValueDict): Promise<Knex<any, any>> {
 
   return (await getPool()).raw(query, params);
 

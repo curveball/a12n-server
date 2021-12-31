@@ -162,7 +162,7 @@ export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'
   if (!isExistingPrincipal(principal)) {
 
     // New principal
-    const query = 'INSERT INTO principals SET ?';
+    const connection = await database.getConnection();
 
     const newPrincipalRecord: Omit<PrincipalRecord, 'id'> = {
       identity: principal.identity,
@@ -173,11 +173,15 @@ export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'
       created_at: Date.now(),
     };
 
-    const result = await database.query(query, [newPrincipalRecord]);
+    const result = await connection<PrincipalRecord>('principals')
+      .insert(newPrincipalRecord, 'id')
+      .returning('id');
+
+    console.log('INSERT', result);
 
     /* eslint-disable-next-line @typescript-eslint/consistent-type-assertions */
     return ({
-      id: result[0].insertId,
+      id: result[0],
       ...principal
     }) as T;
 
@@ -189,8 +193,6 @@ export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'
       throw new UnprocessableEntity('Identity must be a valid URI');
     }
 
-    const query = 'UPDATE principals SET ? WHERE id = ?';
-
     principal.modifiedAt = new Date();
 
     const updatePrincipalRecord: Omit<PrincipalRecord, 'id' | 'created_at' | 'type'> = {
@@ -200,7 +202,12 @@ export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'
       modified_at: principal.modifiedAt.getTime(),
     };
 
-    await database.query(query, [updatePrincipalRecord, principal.id]);
+
+    const connection = await database.getConnection();
+
+    await connection('principals')
+      .where('id', principal.id)
+      .update(updatePrincipalRecord)
 
     return principal;
 

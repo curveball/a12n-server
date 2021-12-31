@@ -118,26 +118,27 @@ export async function getOAuth2ClientFromBody(ctx: Context<any>): Promise<OAuth2
 
 export async function create(client: Omit<OAuth2Client, 'id'>, redirectUris: string[]): Promise<OAuth2Client> {
 
-  const query = 'INSERT INTO oauth2_clients SET ?';
-  const params = {
+  const params: Partial<OAuth2ClientRecord> = {
     client_id: client.clientId,
-    client_secret: client.clientSecret,
+    client_secret: Buffer.from(client.clientSecret),
     user_id: client.app.id,
     allowed_grant_types: client.allowedGrantTypes.join(' '),
   };
-  const result = await db.query(query, [params]);
 
-  const realClient = {
-    ...client,
-    id: result[0].insertId
-  };
+  const connection = await db.getConnection();
+  const result = await connection<OAuth2ClientRecord>('oauth2_clients')
+    .insert(params, 'id')
+    .returning('id');
+
+  const newClient = await connection<OAuth2ClientRecord, OAuth2ClientRecord>('oauth2_client')
+    .select({ id: result[0] })
+    .returning('*');
+
+  const realClient = await mapToOauth2Client(newClient[0], client.app, client.allowedGrantTypes);
 
   for(const uri of redirectUris) {
 
-    await db.query(
-      'INSERT INTO oauth2_redirect_uris SET ?',
-      [{oauth2_client_id: realClient.id, uri}]
-    );
+    await connection('oauth2_redirect_uris').insert({oauth2_client_id: realClient.id, uri});
 
   }
 
@@ -150,5 +151,18 @@ export async function validateSecret(oauth2Client: OAuth2Client, secret: string)
 
   return await bcrypt.compare(secret, oauth2Client.clientSecret);
 
+}
+
+async function mapToOauth2Client(data: OAuth2ClientRecord, app: App, allowedGrantTypes: GrantType[]): Promise<OAuth2Client> {
+  return {
+    id: data.id,
+    clientId: data.client_id,
+    clientSecret: data.client_secret.toString(),
+    app: {
+      ...app,
+      id: data.user_id,
+    },
+    allowedGrantTypes,
+  };
 }
 

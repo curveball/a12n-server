@@ -18,7 +18,7 @@ export async function getConnection(): Promise<Knex> {
 
 }
 
-export async function query<T = any>(query: string, params: Knex.Value[] | Knex.ValueDict): Promise<Knex.Raw<T>> {
+export async function query<T = any>(query: string, params: Knex.ValueDict | Knex.RawBinding[] = []): Promise<Knex.Raw<T>> {
 
   return (await getPool()).raw(query, params);
 
@@ -45,7 +45,7 @@ async function getSettings() {
       database: process.env.PG_DATABASE,
     };
   } else if (Object.keys(process.env).includes('MYSQL_DATABASE')) {
-    client = 'mysql';
+    client = 'mysql2';
     connection = {
       host: process.env.MYSQL_HOST || '127.0.0.1',
       port: process.env.MYSQL_PORT || 3306,
@@ -72,5 +72,6 @@ async function getSettings() {
       'public'
     ],
     pool: { min: 0, max: 10 },
+    debug: true,
   };
 };

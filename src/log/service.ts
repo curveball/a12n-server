@@ -28,8 +28,11 @@ export default async function log(
 
 export async function addLogEntry(eventType: EventType, ip: string|null, userId: number, userAgent: string|null): Promise<void> {
 
-  await db.query('INSERT INTO user_log SET time = UNIX_TIMESTAMP(), ?', {
+  const connection = await db.getConnection();
+
+  await connection('user_log').insert({
     user_id: userId,
+    time: connection.raw('UNIX_TIMESTAMP()'),
     event_type: eventType,
     ip: ip,
     user_agent: userAgent,
@@ -72,8 +75,8 @@ function isContext(ctx: any): ctx is Context {
 
 }
 
-function getCountryByIp(ip: string): string|undefined {
+function getCountryByIp(ip: string): string|null {
 
-  return geoip.lookup(ip)?.country;
+  return geoip.lookup(ip)?.country || null;
 
 }

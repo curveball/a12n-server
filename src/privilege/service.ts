@@ -118,39 +118,35 @@ export async function findPrivilege(privilege: string): Promise<Privilege> {
 
 export async function replacePrivilegeForUser(user: Principal, privilegeMap: PrivilegeMap): Promise<void> {
 
-  const conn = await database.getConnection();
+  const connection = await database.getConnection();
+  const transaction = await connection.transaction();
 
-  await conn.beginTransaction();
-
-  await conn.query('DELETE FROM user_privileges WHERE user_id = ?', [ user.id ]);
+  await transaction.raw('DELETE FROM user_privileges WHERE user_id = ?', [ user.id ]);
 
   for (const [ resource, privileges ] of Object.entries(privilegeMap)) {
     for (const privilege of privileges) {
 
-      await conn.query('INSERT INTO user_privileges SET ?', [
-        {
+      await transaction('user_privileges').insert({
           user_id: user.id,
           privilege,
           resource,
-        }
-      ]);
+        });
 
     }
   }
 
-  await conn.commit();
+  await transaction.commit();
 }
 
 export async function addPrivilegeForUser(user: Principal, privilege: string, resource: string): Promise<void> {
 
-  const query = 'INSERT INTO user_privileges SET ?';
-  await database.query(query, [
-    {
+  const connection = await database.getConnection();
+
+  await connection('user_privileges').insert({
       user_id: user.id,
       privilege,
       resource,
-    }
-  ]);
+    });
 
 }
 

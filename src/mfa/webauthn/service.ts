@@ -15,8 +15,6 @@ type UserWebAuthnRow = {
 
 export async function save(webAuthNDevice: NewWebAuthnDevice): Promise<WebAuthnDevice> {
   if (!isExistingDevice(webAuthNDevice)) {
-    const query = 'INSERT INTO user_webauthn SET ?, created = UNIX_TIMESTAMP()';
-
     const newWebAuthnRecord: Partial<UserWebAuthnRow> = {
       user_id: webAuthNDevice.user.id,
       credential_id: webAuthNDevice.credentialID.toString('base64'),
@@ -24,22 +22,27 @@ export async function save(webAuthNDevice: NewWebAuthnDevice): Promise<WebAuthnD
       counter: webAuthNDevice.counter
     };
 
-    const result = await database.query(query, [newWebAuthnRecord]);
+    const connection = await database.getConnection();
+
+    const result = await connection<UserWebAuthnRow>('user_webauthn')
+      .insert(newWebAuthnRecord, 'id')
+      .returning('id');
 
     return {
-      id: result[0].insertId,
+      id: result[0],
       ...webAuthNDevice
     };
   } else {
-    const query = 'UPDATE user_webauthn SET ? WHERE id = ?';
-
     const updateWebAuthnRecord: Partial<UserWebAuthnRow> = {
       credential_id: webAuthNDevice.credentialID.toString('base64'),
       public_key: webAuthNDevice.publicKey.toString('base64'),
       counter: webAuthNDevice.counter
     };
 
-    await database.query(query, [updateWebAuthnRecord, webAuthNDevice.id]);
+    const connection = await database.getConnection();
+    await connection('user_webauthn')
+      .where('id', webAuthNDevice.id)
+      .update(updateWebAuthnRecord);
 
     return webAuthNDevice;
   }

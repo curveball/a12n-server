@@ -125,7 +125,7 @@ export async function generateTokenForUser(client: OAuth2Client, user: App | Use
     user_id: user.id,
     access_token_expires: accessTokenExpires,
     refresh_token_expires: refreshTokenExpires,
-    browser_session_id: browserSessionId,
+    browser_session_id: browserSessionId || null,
   });
 
   return {
@@ -388,8 +388,8 @@ export async function generateCodeForUser(
     client_id: client.id,
     user_id: user.id,
     code: code,
-    code_challenge: codeChallenge,
-    code_challenge_method: codeChallengeMethod,
+    code_challenge: codeChallenge || null,
+    code_challenge_method: codeChallengeMethod || null,
     browser_session_id: browserSessionId,
   });
 
@@ -521,8 +521,8 @@ export async function getTokenByRefreshToken(refreshToken: string): Promise<OAut
  */
 export async function invalidateTokensByBrowserSessionId(browserSessionId: string) {
 
-  await db.query('DELETE FROM oauth2_codes WHERE browser_session_id = ?', browserSessionId);
-  await db.query('DELETE FROM oauth2_tokens WHERE browser_session_id = ?', browserSessionId);
+  await db.query('DELETE FROM oauth2_codes WHERE browser_session_id = ?', [browserSessionId]);
+  await db.query('DELETE FROM oauth2_tokens WHERE browser_session_id = ?', [browserSessionId]);
 
 }
 

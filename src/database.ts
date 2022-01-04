@@ -3,6 +3,14 @@ import { knex, Knex } from 'knex';
 
 let pool: Knex;
 
+type RawMySQLResult<T> = [ T[], [] ];
+
+interface RawPostgreSQLResult<T> {
+  rows: T[],
+}
+
+type RawResult<T> = RawMySQLResult<T> | RawPostgreSQLResult<T>;
+
 async function getPool(): Promise<Knex> {
 
   if (!pool) {
@@ -18,10 +26,20 @@ export async function getConnection(): Promise<Knex> {
 
 }
 
-export async function query<T = any>(query: string, params: Knex.ValueDict | Knex.RawBinding[] = []): Promise<Knex.Raw<T>> {
+export async function query<T = any>(query: string, params: Knex.ValueDict | Knex.RawBinding[] = []): Promise<T[]> {
+  
+  const { client } = await getSettings();
 
-  return (await getPool()).raw(query, params);
+  // Knex returns weird typings for the raw function,
+  const result = (await (await getPool()).raw(query, params)) as RawResult<T>;
 
+  console.log('PG RESULT', result);
+
+  if (client === 'pg') {
+    return (result as RawPostgreSQLResult<T>).rows;
+  }
+
+  return (result as RawMySQLResult<T>)[0];
 }
 
 export default {

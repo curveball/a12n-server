@@ -53,11 +53,11 @@ type LogRow = {
 
 export async function findByUser(user: Principal): Promise<LogEntry[]> {
 
-  const result:[LogRow[], any] = await db.query(
+  const result = await db.query<LogRow>(
     'SELECT * FROM user_log WHERE user_id = ?',
     [user.id]
   );
-  return result[0].map( (row: LogRow) => {
+  return result.map( (row: LogRow) => {
     return {
       time: new Date(row.time * 1000),
       ip: row.ip,

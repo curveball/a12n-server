@@ -24,6 +24,11 @@ type Settings = {
 
 }
 
+type SettingsRecord = {
+  setting: keyof Settings,
+  value: string, 
+}
+
 type SettingsRules = {
   [Setting in keyof Settings]: {
     description: string;
@@ -199,8 +204,8 @@ export async function load(): Promise<void> {
 
   // Load database values next
   const query = 'SELECT setting, value FROM server_settings';
-  const result: {setting: keyof Settings; value: string}[] = (await db.query(query))[0];
-
+  const result = (await db.query<SettingsRecord>(query));
+  console.log('RESULT', (await db.query<SettingsRecord>(query)));
   for (const row of result) {
 
     if (!isValidSettingName(row.setting)) {

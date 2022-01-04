@@ -1,4 +1,17 @@
 <form action="{{ action }}" method="post">
+
+  {{#if logoUrl}}
+    <!-- show app logo -->
+    <fieldset><img src={{logoUrl}} style="max-width: 100%"/></fieldset>
+    {{#else}}
+    
+    <!-- show curveball logo -->
+    <fieldset style="background: #1e88e5;">
+      <img src="https://curveballjs.org/assets/images/logo.svg" style="max-width: 100%"/>
+    </fieldset>
+    {{/else}}
+  {{/if}}
+
   {{# if msg}}
   <div class="msg info">{{ msg }}</div>
   {{/if}}

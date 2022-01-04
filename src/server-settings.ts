@@ -21,6 +21,7 @@ type Settings = {
   'webauthn.expectedOrigin': string | null;
   'webauthn.relyingPartyId': string | null;
   'webauthn.serviceName': string;
+  'logo_url': string | null;
 
 }
 
@@ -35,7 +36,11 @@ type SettingsRules = {
 }
 
 const settingsRules: SettingsRules = {
-
+  'logo_url' : {
+    description: 'The application logo to display on the a12nserver pages',
+    fromDb: true,
+    default: '' //curveball logo
+  },
   'login.defaultRedirect': {
     description: 'This is the url that the user will be redirected to after the log in to a12nserver, and no other redirect_uri is provided by the application. It\'s a good idea to set this to your application URL',
     fromDb: true,

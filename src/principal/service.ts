@@ -177,8 +177,6 @@ export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'
       .insert(newPrincipalRecord, 'id')
       .returning('id');
 
-    console.log('INSERT', result);
-
     /* eslint-disable-next-line @typescript-eslint/consistent-type-assertions */
     return ({
       id: result[0],

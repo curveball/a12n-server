@@ -115,18 +115,19 @@ export async function generateTokenForUser(client: OAuth2Client, user: App | Use
     accessToken = await generateSecretToken();
   }
   const refreshToken = await generateSecretToken();
+  const connection = await db.getConnection();
 
-  const query = 'INSERT INTO oauth2_tokens SET created = UNIX_TIMESTAMP(), ?';
-
-  await db.query(query, {
-    oauth2_client_id: client.id,
-    access_token: accessToken,
-    refresh_token: refreshToken,
-    user_id: user.id,
-    access_token_expires: accessTokenExpires,
-    refresh_token_expires: refreshTokenExpires,
-    browser_session_id: browserSessionId || null,
-  });
+  await connection<OAuth2TokenRecord>('oauth2_tokens')
+    .insert({
+      oauth2_client_id: client.id,
+      access_token: accessToken,
+      refresh_token: refreshToken,
+      user_id: user.id,
+      access_token_expires: accessTokenExpires,
+      refresh_token_expires: refreshTokenExpires,
+      browser_session_id: browserSessionId || null,
+      created: connection.raw('UNIX_TIMESTAMP()'),
+    });
 
   return {
     accessToken,
@@ -152,14 +153,14 @@ export async function generateTokenForUserNoClient(user: User): Promise<Omit<OAu
   const accessToken = await generateSecretToken();
   const refreshToken = await generateSecretToken();
 
-  const query = 'INSERT INTO oauth2_tokens SET created = UNIX_TIMESTAMP(), ?';
+  const connection = await db.getConnection();
 
   const expirySettings = getTokenExpiry();
 
   const accessTokenExpires = Math.floor(Date.now() / 1000) + expirySettings.accessToken;
   const refreshTokenExpires = Math.floor(Date.now() / 1000) + expirySettings.refreshToken;
 
-  await db.query(query, {
+  await connection<OAuth2TokenRecord>('oauth2_tokens').insert({
     oauth2_client_id: 0,
     access_token: accessToken,
     refresh_token: refreshToken,
@@ -167,6 +168,7 @@ export async function generateTokenForUserNoClient(user: User): Promise<Omit<OAu
     access_token_expires: accessTokenExpires,
     refresh_token_expires: refreshTokenExpires,
     browser_session_id: null,
+    created: connection.raw('UNIX_TIMESTAMP()'),
   });
 
   return {
@@ -194,20 +196,21 @@ export async function generateTokenForClient(client: OAuth2Client): Promise<OAut
   const accessToken = await generateSecretToken();
   const refreshToken = await generateSecretToken();
 
-  const query = 'INSERT INTO oauth2_tokens SET created = UNIX_TIMESTAMP(), ?';
+  const connection = await db.getConnection();
 
   const expirySettings = getTokenExpiry();
 
   const accessTokenExpires = Math.floor(Date.now() / 1000) + expirySettings.accessToken;
   const refreshTokenExpires = Math.floor(Date.now() / 1000) + expirySettings.refreshToken;
 
-  await db.query(query, {
+  await connection<OAuth2TokenRecord>('oauth2_tokens').insert({
     oauth2_client_id: client.id,
     access_token: accessToken,
     refresh_token: refreshToken,
     user_id: client.app.id,
     access_token_expires: accessTokenExpires,
     refresh_token_expires: refreshTokenExpires,
+    created: connection.raw('UNIX_TIMESTAMP()'),
   });
 
   return {
@@ -376,22 +379,22 @@ export async function generateCodeForUser(
   client: OAuth2Client,
   user: User,
   codeChallenge: string|undefined,
-  codeChallengeMethod: string|undefined,
+  codeChallengeMethod: CodeChallengeMethod|undefined,
   browserSessionId: string,
 ): Promise<OAuth2Code> {
 
   const code = await generateSecretToken();
-
-  const query = 'INSERT INTO oauth2_codes SET created = UNIX_TIMESTAMP(), ?';
-
-  await db.query(query, {
-    client_id: client.id,
-    user_id: user.id,
-    code: code,
-    code_challenge: codeChallenge || null,
-    code_challenge_method: codeChallengeMethod || null,
-    browser_session_id: browserSessionId,
-  });
+  const connection = await db.getConnection();
+  await connection<OAuth2CodeRecord>('oauth2_codes')
+    .insert({
+      client_id: client.id,
+      user_id: user.id,
+      code: code,
+      code_challenge: codeChallenge,
+      code_challenge_method: codeChallengeMethod,
+      browser_session_id: browserSessionId,
+      created: connection.raw('UNIX_TIMESTAMP()'),
+    });
 
   return {
     code: code
@@ -406,6 +409,7 @@ type OAuth2TokenRecord = {
   user_id: number;
   access_token_expires: number;
   refresh_token_expires: number;
+  created: number;
   browser_session_id: string | null;
 };
 

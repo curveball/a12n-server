@@ -1,5 +1,6 @@
 import * as fs from 'fs';
 import * as handlebars from 'handlebars';
+import { getSetting } from './server-settings';
 
 type Params = {
   [key: string]: any;
@@ -16,10 +17,12 @@ export function render(name: string, params?: Params): string {
   const newParams = {};
   Object.assign(newParams, params, {
     appName: 'Auth API',
+    logoUrl: getSetting('logo_url')
   });
+
   return layoutTemplate({
-    ...params,
-    body: pageTemplate(params)
+    ...newParams,
+    body: pageTemplate(newParams)
   });
 
 }

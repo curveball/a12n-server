@@ -33,6 +33,7 @@ export async function query<T = any>(query: string, params: Knex.ValueDict | Kne
   // Knex returns weird typings for the raw function,
   const result = (await (await getPool()).raw(query, params)) as RawResult<T>;
 
+  console.log(result);
   if (client === 'pg') {
     return (result as RawPostgreSQLResult<T>).rows;
   }
@@ -45,7 +46,7 @@ export default {
   query,
 };
 
-async function getSettings() {
+function getSettings(): Knex.Config {
 
   let connection: any = {};
   let client: string = '';
@@ -76,9 +77,10 @@ async function getSettings() {
       delete connection.host;
       delete connection.port;
     }
+  } else {
+    throw new Error('No database client selected, please provide either PG_DATABASE or MYSQL_DATABASE environment variables');
   }
 
-  // We are running in a local environment.
   return {
     client,
     connection,

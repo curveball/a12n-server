@@ -134,7 +134,7 @@ export async function create(client: Omit<OAuth2Client, 'id'>, redirectUris: str
     .select({ id: result })
     .returning('*');
 
-  const realClient = await mapToOauth2Client(newClient[0], client.app, client.allowedGrantTypes);
+  const realClient = mapToOauth2Client(newClient[0], client.app, client.allowedGrantTypes);
 
   for(const uri of redirectUris) {
 
@@ -153,15 +153,12 @@ export async function validateSecret(oauth2Client: OAuth2Client, secret: string)
 
 }
 
-async function mapToOauth2Client(data: OAuth2ClientRecord, app: App, allowedGrantTypes: GrantType[]): Promise<OAuth2Client> {
+function mapToOauth2Client(data: OAuth2ClientRecord, app: App, allowedGrantTypes: GrantType[]): OAuth2Client {
   return {
     id: data.id,
     clientId: data.client_id,
     clientSecret: data.client_secret.toString(),
-    app: {
-      ...app,
-      id: data.user_id,
-    },
+    app,
     allowedGrantTypes,
   };
 }

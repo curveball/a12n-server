@@ -8,6 +8,7 @@ type UserTotpDeviceRow = {
   id: number;
   user_id: number;
   secret: string;
+  created: number;
 };
 
 export function generateSecret(): string {
@@ -20,6 +21,7 @@ export async function save(totpDevice: NewTotpDevice): Promise<TotpDevice> {
   const newTotpDeviceRecord: Partial<UserTotpDeviceRow> = {
     user_id: totpDevice.user.id,
     secret: totpDevice.secret,
+    created: Math.floor(Date.now() / 1000),
   };
 
   const connection = await database.getConnection();

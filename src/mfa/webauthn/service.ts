@@ -11,6 +11,7 @@ type UserWebAuthnRow = {
   credential_id: string;
   public_key: string;
   counter: number;
+  created: number;
 };
 
 export async function save(webAuthNDevice: NewWebAuthnDevice): Promise<WebAuthnDevice> {
@@ -19,7 +20,8 @@ export async function save(webAuthNDevice: NewWebAuthnDevice): Promise<WebAuthnD
       user_id: webAuthNDevice.user.id,
       credential_id: webAuthNDevice.credentialID.toString('base64'),
       public_key: webAuthNDevice.publicKey.toString('base64'),
-      counter: webAuthNDevice.counter
+      counter: webAuthNDevice.counter,
+      created: Math.floor(Date.now() / 1000),
     };
 
     const connection = await database.getConnection();

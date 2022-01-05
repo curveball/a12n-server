@@ -33,8 +33,6 @@ export async function query<T = any>(query: string, params: Knex.ValueDict | Kne
   // Knex returns weird typings for the raw function,
   const result = (await (await getPool()).raw(query, params)) as RawResult<T>;
 
-  console.log('PG RESULT', result);
-
   if (client === 'pg') {
     return (result as RawPostgreSQLResult<T>).rows;
   }

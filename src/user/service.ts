@@ -36,7 +36,7 @@ export async function validatePassword(user: User, password: string): Promise<bo
   const query = 'SELECT password FROM user_passwords WHERE user_id = ?';
   const result = await database.query(query, [user.id]);
 
-  const hashes = result[0].map( (row: PasswordRow) => row.password );
+  const hashes = result.map( (row: PasswordRow) => row.password );
 
   for (const hash of hashes) {
 
@@ -54,7 +54,7 @@ export async function hasPassword(user: User): Promise<boolean> {
 
   const query = 'SELECT user_id FROM user_passwords WHERE user_id = ? LIMIT 1';
   const result = await database.query(query, [user.id]);
-  return result[0].length > 0;
+  return result.length > 0;
 
 }
 
@@ -69,11 +69,11 @@ export async function validateTotp(user: User, token: string): Promise<boolean> 
   const query = 'SELECT secret FROM user_totp WHERE user_id = ?';
   const result = await database.query(query, [user.id]);
 
-  if (!result[0].length) {
+  if (!result.length) {
     // Not set up
     return false;
   }
-  const secret = result[0][0].secret;
+  const secret = result[0].secret;
 
   return otplib.authenticator.check(token, secret);
 
@@ -89,6 +89,6 @@ export async function hasTotp(user: User): Promise<boolean> {
   const query = 'SELECT secret FROM user_totp WHERE user_id = ?';
   const result = await database.query(query, [user.id]);
 
-  return result[0].length !== 0;
+  return result.length !== 0;
 
 }

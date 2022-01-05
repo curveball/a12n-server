@@ -22,7 +22,7 @@ export async function findByClientId(clientId: string): Promise<OAuth2Client> {
   const query = 'SELECT id, client_id, client_secret, user_id, allowed_grant_types FROM oauth2_clients WHERE client_id = ?';
   const result = await db.query(query, [clientId]);
 
-  if (!result[0].length) {
+  if (!result.length) {
     throw new NotFound('OAuth2 client_id not recognized');
   }
 
@@ -38,11 +38,11 @@ export async function findById(id: number): Promise<OAuth2Client> {
   const query = 'SELECT id, client_id, client_secret, user_id, allowed_grant_types FROM oauth2_clients WHERE id = ?';
   const result = await db.query(query, [id]);
 
-  if (!result[0].length) {
+  if (!result.length) {
     throw new NotFound('OAuth2 id not recognized');
   }
 
-  const record: OAuth2ClientRecord = result[0][0];
+  const record: OAuth2ClientRecord = result[0];
 
   const user = await principalService.findActiveById(record.user_id) as App;
   return mapRecordToModel(record, user);
@@ -54,7 +54,7 @@ export async function findByApp(user: App): Promise<OAuth2Client[]> {
   const query = 'SELECT id, client_id, client_secret, user_id, allowed_grant_types FROM oauth2_clients WHERE user_id = ?';
   const result = await db.query(query, [user.id]);
 
-  return result[0].map( (record: OAuth2ClientRecord) => mapRecordToModel(record, user));
+  return result.map( (record: OAuth2ClientRecord) => mapRecordToModel(record, user));
 
 }
 
@@ -131,7 +131,7 @@ export async function create(client: Omit<OAuth2Client, 'id'>, redirectUris: str
     .returning('id');
 
   const newClient = await connection<OAuth2ClientRecord, OAuth2ClientRecord>('oauth2_client')
-    .select({ id: result[0] })
+    .select({ id: result })
     .returning('*');
 
   const realClient = await mapToOauth2Client(newClient[0], client.app, client.allowedGrantTypes);

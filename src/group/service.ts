@@ -13,7 +13,7 @@ export async function findMembers(group: Group): Promise<Principal[]> {
 
   const models = [];
 
-  for (const record of result[0]) {
+  for (const record of result) {
     const model = principalService.recordToModel(record);
     models.push(model);
   }
@@ -63,7 +63,7 @@ export async function findGroupsForPrincipal(principal: Principal): Promise<Grou
 
   const models: Group[] = [];
 
-  for (const record of result[0]) {
+  for (const record of result) {
     const model = principalService.recordToModel(record);
     models.push(model as Group);
   }

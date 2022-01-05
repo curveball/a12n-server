@@ -13,10 +13,10 @@ export async function getPrivilegesForPrincipal(principal: Principal): Promise<P
 
   const recursiveGroupIds = await getRecursiveGroupIds(principal.id);
 
-  const query = 'SELECT resource, privilege FROM user_privileges WHERE user_id IN (?)';
-  const result = await db.query(query, [recursiveGroupIds]);
+  const query = `SELECT resource, privilege FROM user_privileges WHERE user_id IN (${recursiveGroupIds.map(_ => '?').join(',')})`;
+  const result = await db.query(query, [...recursiveGroupIds]);
 
-  return result[0].reduce( (currentPrivileges: any, row: PrivilegeRow) => {
+  return result.reduce( (currentPrivileges: any, row: PrivilegeRow) => {
 
     const privileges = Object.assign({}, currentPrivileges);
 
@@ -40,7 +40,7 @@ export async function getImmediatePrivilegesForPrincipal(principal: Principal): 
   const query = 'SELECT resource, privilege FROM user_privileges WHERE user_id = ?';
   const result = await db.query(query, [principal.id]);
 
-  return result[0].reduce( (currentPrivileges: any, row: PrivilegeRow) => {
+  return result.reduce( (currentPrivileges: any, row: PrivilegeRow) => {
 
     const privileges = Object.assign({}, currentPrivileges);
 
@@ -95,24 +95,24 @@ export async function findPrivileges(): Promise<Privilege[]> {
   WHERE privileges.privilege IS NULL
   `;
 
-  const result = await database.query(query);
+  const result = await database.query<Privilege>(query);
 
-  return result[0];
+  return result;
 }
 
 export async function findPrivilege(privilege: string): Promise<Privilege> {
 
   const query = 'SELECT privilege, description FROM privileges WHERE privilege = ?';
-  const result = await database.query(query, [privilege]);
+  const result = await database.query<Privilege>(query, [privilege]);
 
-  if (result[0].length !== 1) {
+  if (result.length !== 1) {
     return {
       privilege: privilege,
       description: ''
     };
   }
 
-  return result[0][0];
+  return result[0];
 
 }
 
@@ -159,7 +159,7 @@ export async function addPrivilegeForUser(user: Principal, privilege: string, re
 async function getRecursiveGroupIds(principalId: number): Promise<number[]> {
 
   const query = 'SELECT group_id FROM group_members WHERE user_id = ?';
-  const result: { group_id: number}[] = (await database.query(query, [principalId]))[0];
+  const result: { group_id: number }[] = (await database.query(query, [principalId]));
 
   const ids = [
     principalId

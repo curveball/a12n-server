@@ -32,7 +32,7 @@ export async function addLogEntry(eventType: EventType, ip: string|null, userId:
 
   await connection('user_log').insert({
     user_id: userId,
-    time: connection.raw('UNIX_TIMESTAMP()'),
+    time: Math.floor(Date.now() / 1000),
     event_type: eventType,
     ip: ip,
     user_agent: userAgent,

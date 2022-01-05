@@ -52,25 +52,25 @@ export async function findDevicesByUser(user: User): Promise<WebAuthnDevice[]> {
   const query = 'SELECT id, credential_id, public_key, counter FROM user_webauthn WHERE user_id = ?';
   const result = await database.query(query, [user.id]);
 
-  return result[0].map( (row: UserWebAuthnRow) => recordToModel(row, user));
+  return result.map( (row: UserWebAuthnRow) => recordToModel(row, user));
 }
 
 export async function findDeviceByUserAndId(user: User, credentialId: string): Promise<WebAuthnDevice> {
   const query = 'SELECT id, credential_id, public_key, counter FROM user_webauthn WHERE user_id = ? and credential_id = ?';
   const result = await database.query(query, [user.id, credentialId]);
 
-  if (result[0].length !== 1) {
+  if (result.length !== 1) {
     throw new NotFound('Device with id: ' + credentialId + ' not found');
   }
 
-  return recordToModel(result[0][0], user);
+  return recordToModel(result[0], user);
 }
 
 export async function hasWebauthn(user: User): Promise<boolean> {
   const query = 'SELECT credential_id FROM user_webauthn WHERE user_id = ?';
   const result = await database.query(query, [user.id]);
 
-  return result[0].length !== 0;
+  return result.length !== 0;
 }
 
 export function recordToModel(userWebAuthn: UserWebAuthnRow, user: User): WebAuthnDevice {

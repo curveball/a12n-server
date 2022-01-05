@@ -46,7 +46,7 @@ export default {
   query,
 };
 
-function getSettings(): Knex.Config {
+export function getSettings(): Knex.Config {
 
   let connection: any = {};
   let client: string = '';

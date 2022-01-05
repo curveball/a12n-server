@@ -27,6 +27,15 @@ fix:
 
 lint-fix: fix
 
+migrate:
+	npx knex migrate:latest
+
+migrate-rollback:
+	npx knex migrate:rollback
+
+migration:
+	npx knex migrate:make $(name) -x ts
+
 start-dev:
 	npx tsc-watch --onSuccess 'node dist/app.js'
 

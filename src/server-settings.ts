@@ -21,7 +21,7 @@ type Settings = {
   'webauthn.expectedOrigin': string | null;
   'webauthn.relyingPartyId': string | null;
   'webauthn.serviceName': string;
-  'logo_url': string | null;
+  'logo_url': string;
 
 }
 
@@ -39,7 +39,7 @@ const settingsRules: SettingsRules = {
   'logo_url' : {
     description: 'The application logo to display on the a12nserver pages',
     fromDb: true,
-    default: '' //curveball logo
+    default: '/_hal-browser/assets/curveball.svg' // curveball logo, should be replaced with word mark logo (see https://github.com/curveball/browser/pull/119)
   },
   'login.defaultRedirect': {
     description: 'This is the url that the user will be redirected to after the log in to a12nserver, and no other redirect_uri is provided by the application. It\'s a good idea to set this to your application URL',

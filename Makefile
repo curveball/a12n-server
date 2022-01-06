@@ -20,10 +20,10 @@ test:
 
 lint:
 	npx tsc --noemit
-	npx eslint --quiet 'src/**/*.ts' 'test/**/*.ts' 'knexfile.ts'
+	npx eslint --quiet 'src/**/*.ts' 'test/**/*.ts' 'knexfile.ts' 'migrations/*.ts'
 
 fix:
-	npx eslint --quiet 'src/**/*.ts' 'test/**/*.ts' 'knexfile.ts' --fix
+	npx eslint --quiet 'src/**/*.ts' 'test/**/*.ts' 'knexfile.ts' 'migrations/*.ts' --fix
 
 lint-fix: fix
 

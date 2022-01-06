@@ -205,7 +205,7 @@ export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'
 
     await connection('principals')
       .where('id', principal.id)
-      .update(updatePrincipalRecord)
+      .update(updatePrincipalRecord);
 
     return principal;
 

@@ -7,8 +7,8 @@
     "prepublishOnly": "make build",
     "test": "make lint test",
     "tsc": "tsc",
-    "start": "node ./dist/app.js",
-    "start:watch": "tsc-watch --onSuccess 'node dist/app.js'"
+    "start": "node ./dist/src/app.js",
+    "start:watch": "tsc-watch --onSuccess 'node dist/src/app.js'"
   },
   "repository": {
     "type": "git",

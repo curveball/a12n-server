@@ -25,6 +25,7 @@
     },
     "include": [
         "src/**/*",
-        "knexfile.ts"
+        "knexfile.ts",
+        "migrations/*"
     ]
 }

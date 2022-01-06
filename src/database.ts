@@ -6,7 +6,7 @@ let pool: Knex;
 type RawMySQLResult<T> = [ T[], [] ];
 
 interface RawPostgreSQLResult<T> {
-  rows: T[],
+  rows: T[];
 }
 
 type RawResult<T> = RawMySQLResult<T> | RawPostgreSQLResult<T>;
@@ -14,7 +14,10 @@ type RawResult<T> = RawMySQLResult<T> | RawPostgreSQLResult<T>;
 async function getPool(): Promise<Knex> {
 
   if (!pool) {
-    pool = knex(await getSettings());
+    pool = knex(getSettings());
+
+    await pool.migrate.latest();
+
   }
 
   return pool;
@@ -27,13 +30,12 @@ export async function getConnection(): Promise<Knex> {
 }
 
 export async function query<T = any>(query: string, params: Knex.ValueDict | Knex.RawBinding[] = []): Promise<T[]> {
-  
+
   const { client } = await getSettings();
 
   // Knex returns weird typings for the raw function,
   const result = (await (await getPool()).raw(query, params)) as RawResult<T>;
 
-  console.log(result);
   if (client === 'pg') {
     return (result as RawPostgreSQLResult<T>).rows;
   }
@@ -48,15 +50,15 @@ export default {
 
 export function getSettings(): Knex.Config {
 
-  let connection: any = {};
-  let client: string = '';
+  let connection: Knex.MySql2ConnectionConfig | Knex.PgConnectionConfig;
+  let client;
 
   // Declare explicitly the client to use, or try to infer it.
   if (Object.keys(process.env).includes('PG_DATABASE')) {
     client = 'pg';
     connection = {
       host: process.env.PG_HOST || '127.0.0.1',
-      port: process.env.PG_PORT || 5432,
+      port: parseInt(process.env.PG_PORT as string, 10) || 5432,
       user: process.env.PG_USER,
       password: process.env.PG_PASSWORD,
       database: process.env.PG_DATABASE,
@@ -65,14 +67,14 @@ export function getSettings(): Knex.Config {
     client = 'mysql2';
     connection = {
       host: process.env.MYSQL_HOST || '127.0.0.1',
-      port: process.env.MYSQL_PORT || 3306,
+      port: parseInt(process.env.MYSQL_PORT as string, 10) || 3306,
       user: process.env.MYSQL_USER,
       password: process.env.MYSQL_PASSWORD,
       database: process.env.MYSQL_DATABASE,
-    }
+    };
 
     if (process.env.MYSQL_INSTANCE_CONNECTION_NAME) {
-      connection.socketPath = '/cloudsql/' + process.env.MYSQL_INSTANCE_CONNECTION_NAME;
+      (connection as Knex.MySql2ConnectionConfig).socketPath = '/cloudsql/' + process.env.MYSQL_INSTANCE_CONNECTION_NAME;
     } else {
       delete connection.host;
       delete connection.port;
@@ -85,11 +87,15 @@ export function getSettings(): Knex.Config {
     client,
     connection,
     searchPath: [
-      connection.user,
-      connection.database,
+      connection.user as string,
+      connection.database as string,
       'public'
     ],
+    migrations: {
+      directory: './dist/migrations',
+      loadExtensions: ['.js']
+    },
     pool: { min: 0, max: 10 },
-    debug: true,
+    debug: process.env.DEBUG ? true : false,
   };
-};
+}

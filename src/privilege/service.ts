@@ -127,10 +127,10 @@ export async function replacePrivilegeForUser(user: Principal, privilegeMap: Pri
     for (const privilege of privileges) {
 
       await transaction('user_privileges').insert({
-          user_id: user.id,
-          privilege,
-          resource,
-        });
+        user_id: user.id,
+        privilege,
+        resource,
+      });
 
     }
   }
@@ -143,10 +143,10 @@ export async function addPrivilegeForUser(user: Principal, privilege: string, re
   const connection = await database.getConnection();
 
   await connection('user_privileges').insert({
-      user_id: user.id,
-      privilege,
-      resource,
-    });
+    user_id: user.id,
+    privilege,
+    resource,
+  });
 
 }
 

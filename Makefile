@@ -3,7 +3,7 @@ DOCKER_IMAGE_NAME:=a12n-server
 
 .PHONY:start run build test lint fix lint-fix start-dev watch inspect deploy
 start: build
-	node dist/app.js
+	node dist/src/app.js
 
 run: start
 
@@ -20,10 +20,10 @@ test:
 
 lint:
 	npx tsc --noemit
-	npx eslint --quiet 'src/**/*.ts' 'test/**/*.ts'
+	npx eslint --quiet 'src/**/*.ts' 'test/**/*.ts' 'knexfile.ts'
 
 fix:
-	npx eslint --quiet 'src/**/*.ts' 'test/**/*.ts' --fix
+	npx eslint --quiet 'src/**/*.ts' 'test/**/*.ts' 'knexfile.ts' --fix
 
 lint-fix: fix
 
@@ -37,7 +37,7 @@ migration:
 	npx knex migrate:make $(name) -x ts
 
 start-dev:
-	npx tsc-watch --onSuccess 'node dist/app.js'
+	npx tsc-watch --onSuccess 'node dist/src/app.js'
 
 watch:
 	./node_modules/.bin/tsc --watch
@@ -52,5 +52,7 @@ dist/build: $(SOURCE_FILES)
 	touch dist/build
 
 inspect: build
-	node --inspect dist/app.js
+	node --inspect dist/src/app.js
 
+inspect-brk: build
+	node --inspect-brk dist/src/app.js

@@ -25,8 +25,8 @@ type Settings = {
 }
 
 type SettingsRecord = {
-  setting: keyof Settings,
-  value: string, 
+  setting: keyof Settings;
+  value: string;
 }
 
 type SettingsRules = {

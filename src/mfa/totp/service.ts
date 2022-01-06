@@ -28,7 +28,7 @@ export async function save(totpDevice: NewTotpDevice): Promise<TotpDevice> {
 
   const result = await connection<UserTotpDeviceRow>('user_totp')
     .insert(newTotpDeviceRecord, 'id')
-    .returning('id')
+    .returning('id');
 
   return {
     id: result[0],

@@ -1,5 +1,5 @@
 // Update with your config settings.
-import { getSettings } from './src/database'
+import { getSettings } from './src/database';
 
 const settings = getSettings();
 

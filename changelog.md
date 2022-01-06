@@ -1,6 +1,15 @@
 Changelog
 =========
 
+0.20.0 (2022-01-07)
+-------------------
+
+* Add app logo to a12n server pages
+* Update dependencies
+* Update change password route
+* Small fixes (Bad Gateway copyright notice, copy changes + new cancel button on reset password page)
+
+
 0.19.9 (2021-10-18)
 -------------------
 

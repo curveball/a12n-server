@@ -30,7 +30,7 @@ class LoginController extends Controller {
       {
         continue: ctx.query.continue,
       },
-      getSetting('registration.enabled')
+      await getSetting('registration.enabled'),
     );
 
   }

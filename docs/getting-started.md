@@ -112,10 +112,3 @@ The SMTP_URL takes any format that that [Nodemailer](https://nodemailer.com/smtp
 
 
 [oauth2-jwt]: https://tools.ietf.org/html/draft-ietf-oauth-access-token-jwt-12
-
-
-
-Server Settings & Defaults
---------------------------
-
-Read about configurable [settings and defaults here](https://github.com/curveball/a12n-server/tree/master/docs/server-settings).

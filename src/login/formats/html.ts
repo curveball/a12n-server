@@ -8,7 +8,7 @@ export function loginForm(msg: string, error: string, hiddenFields: KeyValue, re
     error: error,
     hiddenFields: hiddenFields,
     action: '/login',
-    registrationEnabled
+    registrationEnabled,
   });
 
 }

@@ -1,8 +1,14 @@
 Changelog
 =========
 
+0.19.11 (2022-01-07)
+--------------------
+
+* This release rolls back the 'app logo' feature. The default setting has cosmetic bugs.
+
+
 0.19.10 (2022-01-07)
--------------------
+--------------------
 
 * Add app logo to login, registration, lost-password pages.
 * The 'Change password' form now lives on `/change-password` instead of `/changepassword` for consistency with other routes.

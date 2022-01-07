@@ -1,6 +1,15 @@
 Changelog
 =========
 
+0.19.10 (2022-01-07)
+-------------------
+
+* Add app logo to login, registration, lost-password pages.
+* The 'Change password' form now lives on `/change-password` instead of `/changepassword` for consistency with other routes.
+* Small fixes (Bad Gateway copyright notice, copy changes + new cancel button on reset password page).
+* Update dependencies.
+
+
 0.19.9 (2021-10-18)
 -------------------
 

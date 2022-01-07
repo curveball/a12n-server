@@ -8,18 +8,6 @@ header {
   box-shadow: none;
   color: #1e88e5;
   position: relative;
-  height: unset !important;
-  flex-direction: column;
-  align-items: center;
-  gap: 2rem;
-}
-
-header .logo {
-  max-width: 25rem;
-}
-
-header .logo img {
-  width: 100%;
 }
 
 header h1 {

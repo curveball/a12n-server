@@ -21,7 +21,6 @@ type Settings = {
   'webauthn.expectedOrigin': string | null;
   'webauthn.relyingPartyId': string | null;
   'webauthn.serviceName': string;
-  'logo_url': string;
 
 }
 

@@ -1,6 +1,6 @@
 {
   "name": "@curveball/a12n-server",
-  "version": "0.19.9",
+  "version": "0.19.11",
   "main": "dist/index.js",
   "description": "A ready-to-launch User and Authentication system for those that don't want to build it",
   "scripts": {
@@ -76,7 +76,7 @@
     "@curveball/bodyparser": "^0.4.14",
     "@curveball/browser": "^0.16.0",
     "@curveball/controller": "^0.3.0",
-    "@curveball/core": "^0.16.3",
+    "@curveball/core": "^0.16.2",
     "@curveball/cors": "^0.1.0",
     "@curveball/http-errors": "^0.4.0",
     "@curveball/links": "^0.1.5",

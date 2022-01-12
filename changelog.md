@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.19.12 (2022-01-12)
+--------------------
+
+* This release reinstates the v0.19.10 changes after `@curveball/browser` received an updated logo.
+
+
 0.19.11 (2022-01-07)
 --------------------
 

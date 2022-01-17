@@ -6,7 +6,7 @@ import * as privilegeService from '../privilege/service';
 import { getServerStats } from './service';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-const version = require('../../../package.json').version;
+const version = require('../../package.json').version;
 
 class HomeController extends Controller {
 

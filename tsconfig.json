@@ -24,8 +24,6 @@
         "declaration": true
     },
     "include": [
-        "src/**/*",
-        "knexfile.ts",
-        "migrations/*"
+        "src/**/*"
     ]
 }

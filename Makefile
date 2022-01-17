@@ -20,24 +20,24 @@ test:
 
 lint:
 	npx tsc --noemit
-	npx eslint --quiet 'src/**/*.ts' 'test/**/*.ts' 'knexfile.ts' 'migrations/*.ts'
+	npx eslint --quiet 'src/**/*.ts' 'test/**/*.ts'
 
 fix:
-	npx eslint --quiet 'src/**/*.ts' 'test/**/*.ts' 'knexfile.ts' 'migrations/*.ts' --fix
+	npx eslint --quiet 'src/**/*.ts' 'test/**/*.ts' --fix
 
 lint-fix: fix
 
-migrate:
-	npx knex migrate:latest
+migrate: build
+	npx knex migrate:latest --knexfile './dist/knexfile.ts'
 
-migrate-rollback:
-	npx knex migrate:rollback
+migrate-rollback: build
+	npx knex migrate:rollback --knexfile './dist/knexfile.ts'
 
-migration:
-	npx knex migrate:make $(name) -x ts
+migration: build
+	npx knex migrate:make $(name) -x ts --knexfile './dist/knexfile.ts'
 
 start-dev:
-	npx tsc-watch --onSuccess 'node dist/src/app.js'
+	npx tsc-watch --onSuccess 'node dist/app.js'
 
 watch:
 	./node_modules/.bin/tsc --watch
@@ -52,7 +52,7 @@ dist/build: $(SOURCE_FILES)
 	touch dist/build
 
 inspect: build
-	node --inspect dist/src/app.js
+	node --inspect dist/app.js
 
 inspect-brk: build
-	node --inspect-brk dist/src/app.js
+	node --inspect-brk dist/app.js

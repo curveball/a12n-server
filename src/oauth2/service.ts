@@ -243,7 +243,7 @@ export async function generateTokenFromCode(client: OAuth2Client, code: string, 
     throw new InvalidRequest('The supplied code was not recognized');
   }
 
-  const codeRecord: OAuth2CodeRecord = codeResult[0][0];
+  const codeRecord: OAuth2CodeRecord = codeResult[0];
   const expirySettings = getTokenExpiry();
 
   // Delete immediately.
@@ -454,7 +454,7 @@ export async function getTokenByAccessToken(accessToken: string): Promise<OAuth2
     throw new NotFound('Access token not recognized');
   }
 
-  const row: OAuth2TokenRecord = result[0][0];
+  const row: OAuth2TokenRecord = result[0];
   const user = await principalService.findActiveById(row.user_id);
 
   return {
@@ -497,7 +497,7 @@ export async function getTokenByRefreshToken(refreshToken: string): Promise<OAut
     throw new NotFound('Refresh token not recognized');
   }
 
-  const row: OAuth2TokenRecord = result[0][0];
+  const row: OAuth2TokenRecord = result[0];
 
   const user = await principalService.findActiveById(row.user_id);
 

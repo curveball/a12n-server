@@ -14,8 +14,12 @@ type RawResult<T> = RawMySQLResult<T> | RawPostgreSQLResult<T>;
 async function getPool(): Promise<Knex> {
 
   if (!pool) {
+    // eslint-disable-next-line no-console
+    console.log('Connecting to database');
     pool = knex(getSettings());
 
+    // eslint-disable-next-line no-console
+    console.log('Running Migrations');
     await pool.migrate.latest();
 
   }
@@ -93,7 +97,8 @@ export function getSettings(): Knex.Config {
     ],
     migrations: {
       directory: './dist/migrations',
-      loadExtensions: ['.js']
+      loadExtensions: ['.js'],
+      schemaName: connection.database as string,
     },
     pool: { min: 0, max: 10 },
     debug: process.env.DEBUG ? true : false,

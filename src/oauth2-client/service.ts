@@ -26,7 +26,7 @@ export async function findByClientId(clientId: string): Promise<OAuth2Client> {
     throw new NotFound('OAuth2 client_id not recognized');
   }
 
-  const record: OAuth2ClientRecord = result[0][0];
+  const record: OAuth2ClientRecord = result[0];
 
   const user = await principalService.findActiveById(record.user_id) as App;
   return mapRecordToModel(record, user);

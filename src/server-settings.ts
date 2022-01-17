@@ -204,7 +204,10 @@ export async function load(): Promise<void> {
 
   // Load database values next
   const query = 'SELECT setting, value FROM server_settings';
-  const result = (await db.query<SettingsRecord>(query));
+
+  // eslint-disable-next-line no-console
+  console.log('Loading settings');
+  const result = await db.query<SettingsRecord>(query);
   for (const row of result) {
 
     if (!isValidSettingName(row.setting)) {

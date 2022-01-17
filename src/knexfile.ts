@@ -1,4 +1,4 @@
-import { getSettings } from './src/database';
+import { getSettings } from './database';
 
 const settings = getSettings();
 

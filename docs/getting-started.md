@@ -35,7 +35,7 @@ After you have MySQL up and running, create new empty database (/schema) & user 
 ```sh
 mysql> CREATE DATABASE a12nserver;
 mysql> CREATE USER 'a12nserver' IDENTIFIED BY 'your_password';
-mysql> GRANT SELECT, INSERT, UPDATE, DELETE ON a12nserver.* TO 'a12nserver';
+mysql> GRANT SELECT, INSERT, UPDATE, DELETE, ALTER, CREATE, DROP ON a12nserver.* TO 'a12nserver';
 mysql> FLUSH PRIVILEGES;
 ```
 

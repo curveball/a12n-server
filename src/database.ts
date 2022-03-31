@@ -96,7 +96,7 @@ export function getSettings(): Knex.Config {
       'public'
     ],
     migrations: {
-      directory: './dist/migrations',
+      directory: './migrations',
       loadExtensions: ['.js'],
       schemaName: connection.database as string,
     },

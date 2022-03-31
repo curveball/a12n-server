@@ -28,13 +28,16 @@ fix:
 lint-fix: fix
 
 migrate: build
-	npx knex migrate:latest --knexfile './dist/knexfile.ts'
+	npx knex migrate:latest --knexfile './dist/knexfile.js'
 
-migrate-rollback: build
-	npx knex migrate:rollback --knexfile './dist/knexfile.ts'
+migrate-rollback:
+	npx knex migrate:rollback --knexfile './dist/knexfile.js'
+
+migrate-unlock:
+	npx knex migrate:unlock --knexfile './dist/knexfile.js'
 
 create-migration:
-	npx knex migrate:make $(name) -x ts --knexfile './dist/knexfile.ts'
+	npx knex migrate:make $(name) -x ts --knexfile './dist/knexfile.js'
 
 start-dev:
 	npx tsc-watch --onSuccess 'node dist/app.js'

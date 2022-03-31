@@ -49,7 +49,7 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
     - run: make test
-  postres:
+  mysql:
     name: Test MySQL migrations
     needs: build
     runs-on: ubuntu-latest

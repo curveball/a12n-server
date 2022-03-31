@@ -1,6 +1,6 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { generateAttestationOptions, verifyAttestationResponse } from '@simplewebauthn/server';
+import { generateRegistrationOptions, verifyRegistrationResponse } from '@simplewebauthn/server';
 
 import * as webAuthnService from '../service';
 import { getSetting } from '../../../server-settings';
@@ -12,7 +12,7 @@ class WebAuthnAttestationController extends Controller {
   async get(ctx: Context) {
     const user: User = ctx.session.registerUser;
 
-    const attestationOptions = generateAttestationOptions({
+    const registrationOptions = generateRegistrationOptions({
       rpName: getSetting('webauthn.serviceName'),
       rpID: getSetting('webauthn.relyingPartyId') || new URL(process.env.PUBLIC_URI!).host,
       userID: user.id.toString(),
@@ -25,7 +25,7 @@ class WebAuthnAttestationController extends Controller {
       })),
       /**
        * The optional authenticatorSelection property allows for specifying more constraints around
-       * the types of authenticators that users to can use for attestation
+       * the types of authenticators that users to can use for registration
        */
       authenticatorSelection: {
         authenticatorAttachment: 'cross-platform',
@@ -34,8 +34,8 @@ class WebAuthnAttestationController extends Controller {
       },
     });
 
-    ctx.session.webAuthnChallengeRegister = attestationOptions.challenge;
-    ctx.response.body = attestationOptions;
+    ctx.session.webAuthnChallengeRegister = registrationOptions.challenge;
+    ctx.response.body = registrationOptions;
   }
 
   async post(ctx: Context<any>) {
@@ -47,7 +47,7 @@ class WebAuthnAttestationController extends Controller {
 
     let verification;
     try {
-      verification = await verifyAttestationResponse({
+      verification = await verifyRegistrationResponse({
         credential: body,
         expectedChallenge,
         expectedOrigin: getSetting('webauthn.expectedOrigin') || new URL(process.env.PUBLIC_URI!).origin,
@@ -61,10 +61,10 @@ class WebAuthnAttestationController extends Controller {
       return;
     }
 
-    const { verified, attestationInfo } = verification;
+    const { verified, registrationInfo } = verification;
 
     if (verified) {
-      const { credentialPublicKey, credentialID, counter } = attestationInfo!;
+      const { credentialPublicKey, credentialID, counter } = registrationInfo!;
 
       const existingDevice = (await webAuthnService.findDevicesByUser(user)).find(device => device.credentialID === credentialID);
 

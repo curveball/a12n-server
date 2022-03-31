@@ -54,7 +54,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     services:
-      postgres:
+      mysql:
             # Docker Hub image
         image: mysql
         # Provide the password for postgres
@@ -62,6 +62,9 @@ jobs:
           MYSQL_USER: a12nserver
           MYSQL_PASSWORD: password
           MYSQL_DATABASE: a12nserver
+          MYSQL_ROOT_PASSWORD: password
+        ports:
+          - 3306:3306
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}

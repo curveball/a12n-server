@@ -50,22 +50,18 @@ jobs:
     - run: npm ci
     - run: make test
   postres:
-    name: Test Postgres migrations
+    name: Test MySQL migrations
     needs: build
     runs-on: ubuntu-latest
     services:
       postgres:
             # Docker Hub image
-        image: postgres
+        image: mysql
         # Provide the password for postgres
         env:
-          POSTGRES_PASSWORD: postgres
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          MYSQL_USER=a12nserver
+          MYSQL_PASSWORD=password
+          MYSQL_DATABASE=a12nserver
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
@@ -73,3 +69,10 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
+    - name: Run migrations
+      env:
+        MYSQL_USER=a12nserver
+        MYSQL_PASSWORD=password
+        MYSQL_DATABASE=a12nserver
+        MYSQL_HOST=127.0.0.1
+      run: make migrate

@@ -33,7 +33,7 @@ migrate: build
 migrate-rollback: build
 	npx knex migrate:rollback --knexfile './dist/knexfile.ts'
 
-migration: build
+create-migration:
 	npx knex migrate:make $(name) -x ts --knexfile './dist/knexfile.ts'
 
 start-dev:

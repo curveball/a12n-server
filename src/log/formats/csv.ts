@@ -1,5 +1,5 @@
 import { eventTypeString, LogEntry } from '../types';
-import * as stringify from 'csv-stringify/lib/sync';
+import { stringify } from 'csv-stringify/sync';
 
 export default function csv(log: LogEntry[]): string {
 

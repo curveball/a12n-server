@@ -1,7 +1,7 @@
 import { OAuth2Token } from '../types';
 import { OAuth2Client } from '../../oauth2-client/types';
 
-import * as stringify from 'csv-stringify/lib/sync';
+import { stringify } from 'csv-stringify/sync';
 
 export function activeSessions(tokens: OAuth2Token[], clients: Map<number, OAuth2Client>): string {
 

@@ -18,8 +18,8 @@ export async function up(knex: Knex): Promise<void> {
   oauth2_client_id INT UNSIGNED NOT NULL,
   uri VARCHAR(300) NOT NULL
 )`);
-  await knex.raw(`INSERT INTO oauth2_redirect_uris (oauth2_client_id, uri) SELECT oauth2_client_id, url FROM oauth2_redirection_urls`);
-  await knex.raw(`DROP TABLE oauth2_redirection_urls`);
+  await knex.raw('INSERT INTO oauth2_redirect_uris (oauth2_client_id, uri) SELECT oauth2_client_id, url FROM oauth2_redirection_urls');
+  await knex.raw('DROP TABLE oauth2_redirection_urls');
 
 
 }

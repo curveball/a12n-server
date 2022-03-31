@@ -13,7 +13,7 @@ export async function up(knex: Knex): Promise<void> {
     timestamp: Math.floor(Date.now()/1000)
   });
 
-  await knex.raw(`RENAME TABLE users_auth_log TO user_log`);
+  await knex.raw('RENAME TABLE users_auth_log TO user_log');
   await knex.raw(`ALTER TABLE user_log ADD
   ip VARCHAR(45) NOT NULL`);
 

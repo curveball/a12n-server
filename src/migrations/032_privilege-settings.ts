@@ -17,7 +17,7 @@ export async function up(knex: Knex): Promise<void> {
   privilege VARCHAR(200) NOT NULL PRIMARY KEY,
   description VARCHAR(2000) NOT NULL
 )`);
-  await knex.raw(`INSERT INTO privileges (privilege, description) VALUES ('admin', 'Full admin privileges on the authenciation server')`);
+  await knex.raw('INSERT INTO privileges (privilege, description) VALUES (\'admin\', \'Full admin privileges on the authenciation server\')');
 
 
 }

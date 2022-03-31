@@ -13,7 +13,7 @@ export async function up(knex: Knex): Promise<void> {
     timestamp: Math.floor(Date.now()/1000)
   });
 
-  await knex.raw(`DROP TABLE oauth2_token`);
+  await knex.raw('DROP TABLE oauth2_token');
   await knex.raw(`CREATE TABLE oauth2_tokens (
   id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
   oauth2_client_id VARCHAR(50) NOT NULL,

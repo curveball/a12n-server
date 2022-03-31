@@ -18,8 +18,8 @@ export async function up(knex: Knex): Promise<void> {
   user_id INT UNSIGNED NOT NULL,
   privilege VARCHAR(50) NOT NULL
 )`);
-  await knex.raw(`INSERT INTO user_privileges (user_id, privilege) SELECT user_id, permission from user_permissions`);
-  await knex.raw(`DROP TABLE user_permissions`);
+  await knex.raw('INSERT INTO user_privileges (user_id, privilege) SELECT user_id, permission from user_permissions');
+  await knex.raw('DROP TABLE user_permissions');
 
 
 }

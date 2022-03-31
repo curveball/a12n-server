@@ -13,11 +13,11 @@ export async function up(knex: Knex): Promise<void> {
     timestamp: Math.floor(Date.now()/1000)
   });
 
-  await knex.raw(`RENAME TABLE users to principals`);
+  await knex.raw('RENAME TABLE users to principals');
   await knex.raw(`ALTER TABLE principals 
   CHANGE created created_at BIGINT NOT NULL,
   ADD modified_at BIGINT NOT NULL`);
-  await knex.raw(`UPDATE principals SET created_at = created_at * 1000, modified_at = UNIX_TIMESTAMP()*1000`);
+  await knex.raw('UPDATE principals SET created_at = created_at * 1000, modified_at = UNIX_TIMESTAMP()*1000');
 
 
 }

@@ -3,7 +3,7 @@ DOCKER_IMAGE_NAME:=a12n-server
 
 .PHONY:start run build test lint fix lint-fix start-dev watch inspect deploy
 start: build
-	node dist/src/app.js
+	node dist/app.js
 
 run: start
 

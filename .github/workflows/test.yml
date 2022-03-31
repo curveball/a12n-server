@@ -59,9 +59,9 @@ jobs:
         image: mysql
         # Provide the password for postgres
         env:
-          MYSQL_USER=a12nserver
-          MYSQL_PASSWORD=password
-          MYSQL_DATABASE=a12nserver
+          MYSQL_USER: a12nserver
+          MYSQL_PASSWORD: password
+          MYSQL_DATABASE: a12nserver
     steps:
     - uses: actions/checkout@v2
     - name: Use Node.js ${{ matrix.node-version }}
@@ -71,8 +71,8 @@ jobs:
     - run: npm ci
     - name: Run migrations
       env:
-        MYSQL_USER=a12nserver
-        MYSQL_PASSWORD=password
-        MYSQL_DATABASE=a12nserver
-        MYSQL_HOST=127.0.0.1
+        MYSQL_USER: a12nserver
+        MYSQL_PASSWORD: password
+        MYSQL_DATABASE: a12nserver
+        MYSQL_HOST: 127.0.0.1
       run: make migrate

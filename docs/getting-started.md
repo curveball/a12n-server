@@ -39,12 +39,6 @@ mysql> GRANT SELECT, INSERT, UPDATE, DELETE, ALTER, CREATE, DROP ON a12nserver.*
 mysql> FLUSH PRIVILEGES;
 ```
 
-The next step is to insert the MySQL schemas that are shipping with the git repository. In the a12n-server project's root, just run:
-
-```sh
-cat mysql-schema/*.sql | mysql -u a12nserver -p -h hostname a12nserver
-```
-
 Running the server
 ------------------
 

@@ -13,9 +13,9 @@ export async function up(knex: Knex): Promise<void> {
     timestamp: Math.floor(Date.now()/1000)
   });
 
-  await knex.raw(`ALTER TABLE oauth2_token
-  CHANGE client_id oauth2_client_id VARCHAR(50) NOT NULL`);
-
+  await knex.schema.alterTable('oauth2_token', table => {
+    table.renameColumn('client_id', 'oauth2_client_id');
+  });
 
 }
 

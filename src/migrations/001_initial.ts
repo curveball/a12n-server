@@ -19,31 +19,37 @@ export async function up(knex: Knex): Promise<void> {
     timestamp: Math.floor(Date.now()/1000)
   });
 
-  await knex.raw(`CREATE TABLE users (
-  id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  identity VARCHAR(200) NOT NULL,
-  nickname VARCHAR(100),
-  created INT UNSIGNED NOT NULL,
-  active BOOL NOT NULL DEFAULT '0',
-  UNIQUE(identity)
-)`);
-  await knex.raw(`CREATE TABLE users_auth_log (
-  id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  time INT UNSIGNED NOT NULL,
-  user_id INT UNSIGNED NOT NULL,
-  event_type TINYINT UNSIGNED NOT NULL
-)`);
-  await knex.raw(`CREATE TABLE user_passwords (
-  user_id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  password VARBINARY(60) NOT NULL
-)`);
-  await knex.raw(`CREATE TABLE user_totp (
-  user_id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  secret VARCHAR(50),
-  failures TINYINT UNSIGNED NOT NULL DEFAULT '0',
-  UNIQUE(user_id)
-)`);
+  await knex.schema.createTable('users', table => {
+    table.increments('id');
+    table.string('identity').notNullable().unique();
+    table.string('nickname');
+    table.integer('created').unsigned().notNullable();
+    table.boolean('active').notNullable().defaultTo(false);
+  });
 
+  await knex.schema.createTable('users_auth_log', table => {
+
+    table.increments('id');
+    table.integer('time').unsigned().notNullable();
+    table.integer('user_id').unsigned().notNullable();
+    table.tinyint('event_type').unsigned().notNullable();
+
+  });
+
+  await knex.schema.createTable('user_passwords', table => {
+
+    table.integer('user_id').unsigned().notNullable().primary();
+    table.string('password').notNullable();
+
+  });
+
+  await knex.schema.createTable('user_totp', table => {
+
+    table.integer('user_totp').unsigned().notNullable().primary();
+    table.string('secret', 50);
+    table.tinyint('failures').unsigned().notNullable().defaultTo(0);
+
+  });
 
 }
 

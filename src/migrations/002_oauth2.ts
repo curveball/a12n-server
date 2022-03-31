@@ -13,19 +13,22 @@ export async function up(knex: Knex): Promise<void> {
     timestamp: Math.floor(Date.now()/1000)
   });
 
-  await knex.raw(`CREATE TABLE oauth2_clients (
-  id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  client_id VARCHAR(50) NOT NULL UNIQUE,
-  client_secret VARCHAR(50) NOT NULL,
-  allowed_grant_types VARCHAR(50) NOT NULL,
-  name VARCHAR(50)
-)`);
-  await knex.raw(`CREATE TABLE oauth2_redirection_urls (
-  id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  oauth2_client_id INT UNSIGNED NOT NULL,
-  url VARCHAR(300) NOT NULL
-)`);
+  await knex.schema.createTable('oauth2_clients', table => {
 
+    table.increments('id');
+    table.string('client_id', 50).notNullable().unique();
+    table.string('client_secret', 50).notNullable();
+    table.string('allowed_grant_types', 50).notNullable();
+    table.string('name', 50).notNullable();
+
+  });
+  await knex.schema.createTable('oauth2_redirection_urls', table => {
+
+    table.increments('id');
+    table.integer('oauth2_client_id').unique().notNullable();
+    table.string('url', 300).notNullable();
+
+  });
 
 }
 

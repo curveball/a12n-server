@@ -1,5 +1,6 @@
 /* eslint no-console: 0 */
 import { knex, Knex } from 'knex';
+import * as path from 'node:path';
 
 let pool: Knex;
 
@@ -96,7 +97,7 @@ export function getSettings(): Knex.Config {
       'public'
     ],
     migrations: {
-      directory: './migrations',
+      directory: path.join(__dirname, 'migrations'),
       loadExtensions: ['.js'],
       schemaName: connection.database as string,
     },

@@ -32,17 +32,14 @@ export async function addMember(group: Group, user: Principal): Promise<void> {
 export async function replaceMembers(group: Group, users: Principal[]): Promise<void> {
 
   const connection = await database.getConnection();
-  const transaction = await connection.transaction();
-  try {
-    await transaction.raw('DELETE FROM group_members WHERE group_id = ?', [group.id]);
+  await connection.transaction(async trx => {
+    await trx.raw('DELETE FROM group_members WHERE group_id = ?', [group.id]);
     for(const user of users) {
-      await transaction.raw('INSERT INTO group_members SET group_id = ?, user_id = ?', [group.id, user.id]);
+      await trx.raw('INSERT INTO group_members SET group_id = ?, user_id = ?', [group.id, user.id]);
     }
-    await transaction.commit();
-  } catch (err) {
-    await transaction.rollback();
-    throw err;
-  }
+    await trx.commit();
+  });
+
 }
 
 export async function removeMember(group: Group, user: Principal): Promise<void> {

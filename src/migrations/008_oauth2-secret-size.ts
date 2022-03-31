@@ -13,9 +13,11 @@ export async function up(knex: Knex): Promise<void> {
     timestamp: Math.floor(Date.now()/1000)
   });
 
-  await knex.raw(`ALTER TABLE oauth2_clients
-  CHANGE client_secret client_secret VARCHAR(60) NOT NULL`);
+  await knex.schema.alterTable('oauth2_clients', table => {
 
+    table.string('client_secret', 60).notNullable().alter();
+
+  });
 
 }
 

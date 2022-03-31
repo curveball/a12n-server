@@ -13,13 +13,16 @@ export async function up(knex: Knex): Promise<void> {
     timestamp: Math.floor(Date.now()/1000)
   });
 
-  await knex.raw(`CREATE TABLE user_privileges (
-  id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  user_id INT UNSIGNED NOT NULL,
-  privilege VARCHAR(50) NOT NULL
-)`);
+  await knex.schema.createTable('user_privileges', table => {
+
+    table.increments();
+    table.integer('user_id').unsigned().notNullable();
+    table.string('privilege', 50).notNullable();
+
+  });
+
   await knex.raw('INSERT INTO user_privileges (user_id, privilege) SELECT user_id, permission from user_permissions');
-  await knex.raw('DROP TABLE user_permissions');
+  await knex.schema.dropTable('user_permissions');
 
 
 }

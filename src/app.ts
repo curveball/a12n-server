@@ -9,8 +9,7 @@ import { load } from './server-settings';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pkgInfo = require('../package.json');
-console.log('⚾ Curveball %s %s', pkgInfo.name, pkgInfo.version);
-
+console.info('⚾ %s %s', pkgInfo.name, pkgInfo.version);
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();

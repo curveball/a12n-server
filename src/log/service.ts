@@ -16,7 +16,7 @@ export default async function log(
   if (isContext(arg1)) {
     await addLogEntry(
       eventType,
-      arg1.ip()!,
+      arg1.ip(),
       arg1.session.user?.id ?? null,
       arg1.request.headers.get('User-Agent'),
     );

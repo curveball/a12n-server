@@ -10,8 +10,7 @@ import { load } from './server-settings';
 const pkgInfo = require('../package.json');
 console.info('⚾ %s %s', pkgInfo.name, pkgInfo.version);
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-require('dotenv').config();
+import './env';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv-defaults').config();

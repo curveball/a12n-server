@@ -1,57 +1,26 @@
 /* eslint no-console: 0 */
 import { knex, Knex } from 'knex';
 import * as path from 'node:path';
+import './env';
 
-let pool: Knex;
+let db: Knex = null as any;
 
-type RawMySQLResult<T> = [ T[], [] ];
+export async function init() {
 
-interface RawPostgreSQLResult<T> {
-  rows: T[];
-}
-
-type RawResult<T> = RawMySQLResult<T> | RawPostgreSQLResult<T>;
-
-async function getPool(): Promise<Knex> {
-
-  if (!pool) {
+  if (!db) {
     // eslint-disable-next-line no-console
     console.log('Connecting to database');
-    pool = knex(getSettings());
+    db = knex(getSettings());
 
     // eslint-disable-next-line no-console
     console.log('Running Migrations');
-    await pool.migrate.latest();
+    await db.migrate.latest();
 
   }
 
-  return pool;
 }
 
-export async function getConnection(): Promise<Knex> {
-
-  return (await getPool());
-
-}
-
-export async function query<T = any>(query: string, params: Knex.ValueDict | Knex.RawBinding[] = []): Promise<T[]> {
-
-  const { client } = await getSettings();
-
-  // Knex returns weird typings for the raw function,
-  const result = (await (await getPool()).raw(query, params)) as RawResult<T>;
-
-  if (client === 'pg') {
-    return (result as RawPostgreSQLResult<T>).rows;
-  }
-
-  return (result as RawMySQLResult<T>)[0];
-}
-
-export default {
-  getConnection,
-  query,
-};
+export default db;
 
 export function getSettings(): Knex.Config {
 

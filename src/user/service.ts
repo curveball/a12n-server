@@ -10,7 +10,7 @@ type PasswordRow = {
 export async function createPassword(user: User, password: string): Promise<void> {
 
   const query = 'INSERT INTO user_passwords SET user_id = ?, password = ?';
-  await database.query(query, [
+  await database.raw(query, [
     user.id,
     await bcrypt.hash(password, 12)
   ]);
@@ -22,7 +22,7 @@ export async function updatePassword(user: User, password: string): Promise<void
   const query = 'INSERT INTO user_passwords (password, user_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE password = ?';
   const hashedPw = await bcrypt.hash(password, 12);
 
-  await database.query(query, [hashedPw, user.id, hashedPw]);
+  await database.raw(query, [hashedPw, user.id, hashedPw]);
 
 }
 

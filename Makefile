@@ -33,12 +33,6 @@ migrate: build
 migrate-rollback:
 	npx knex migrate:rollback --knexfile './dist/knexfile.js'
 
-migrate-unlock:
-	npx knex migrate:unlock --knexfile './dist/knexfile.js'
-
-create-migration:
-	npx knex migrate:make $(name) -x ts --knexfile './dist/knexfile.js'
-
 start-dev:
 	npx tsc-watch --onSuccess 'node dist/app.js'
 

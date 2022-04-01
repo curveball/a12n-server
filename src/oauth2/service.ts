@@ -15,7 +15,7 @@ export async function getRedirectUris(client: OAuth2Client): Promise<string[]> {
   const query = 'SELECT uri FROM oauth2_redirect_uris WHERE oauth2_client_id = ?';
   const result = await db.query(query, [client.id]);
 
-  return result[0].map((record: {uri:string}) => record.uri);
+  return result.map((record: {uri:string}) => record.uri);
 
 }
 
@@ -67,12 +67,12 @@ export async function getActiveTokens(user: App | User): Promise<OAuth2Token[]> 
     WHERE 
       user_id = ?
     AND
-      refresh_token_expires > UNIX_TIMESTAMP()
+      refresh_token_expires > ?
   `;
 
-  const result = await db.query(query, [user.id]);
+  const result = await db.query(query, [user.id, Math.trunc(Date.now())]);
 
-  return result[0].map((row: OAuth2TokenRecord):OAuth2Token => {
+  return result.map((row: OAuth2TokenRecord):OAuth2Token => {
     return {
       accessToken: row.access_token,
       refreshToken: row.refresh_token,
@@ -115,18 +115,19 @@ export async function generateTokenForUser(client: OAuth2Client, user: App | Use
     accessToken = await generateSecretToken();
   }
   const refreshToken = await generateSecretToken();
+  const connection = await db.getConnection();
 
-  const query = 'INSERT INTO oauth2_tokens SET created = UNIX_TIMESTAMP(), ?';
-
-  await db.query(query, {
-    oauth2_client_id: client.id,
-    access_token: accessToken,
-    refresh_token: refreshToken,
-    user_id: user.id,
-    access_token_expires: accessTokenExpires,
-    refresh_token_expires: refreshTokenExpires,
-    browser_session_id: browserSessionId,
-  });
+  await connection<OAuth2TokenRecord>('oauth2_tokens')
+    .insert({
+      oauth2_client_id: client.id,
+      access_token: accessToken,
+      refresh_token: refreshToken,
+      user_id: user.id,
+      access_token_expires: accessTokenExpires,
+      refresh_token_expires: refreshTokenExpires,
+      browser_session_id: browserSessionId || null,
+      created: Math.trunc(Date.now() / 1000),
+    });
 
   return {
     accessToken,
@@ -152,14 +153,14 @@ export async function generateTokenForUserNoClient(user: User): Promise<Omit<OAu
   const accessToken = await generateSecretToken();
   const refreshToken = await generateSecretToken();
 
-  const query = 'INSERT INTO oauth2_tokens SET created = UNIX_TIMESTAMP(), ?';
+  const connection = await db.getConnection();
 
   const expirySettings = getTokenExpiry();
 
   const accessTokenExpires = Math.floor(Date.now() / 1000) + expirySettings.accessToken;
   const refreshTokenExpires = Math.floor(Date.now() / 1000) + expirySettings.refreshToken;
 
-  await db.query(query, {
+  await connection<OAuth2TokenRecord>('oauth2_tokens').insert({
     oauth2_client_id: 0,
     access_token: accessToken,
     refresh_token: refreshToken,
@@ -167,6 +168,7 @@ export async function generateTokenForUserNoClient(user: User): Promise<Omit<OAu
     access_token_expires: accessTokenExpires,
     refresh_token_expires: refreshTokenExpires,
     browser_session_id: null,
+    created: Math.floor(Date.now() / 1000),
   });
 
   return {
@@ -194,20 +196,21 @@ export async function generateTokenForClient(client: OAuth2Client): Promise<OAut
   const accessToken = await generateSecretToken();
   const refreshToken = await generateSecretToken();
 
-  const query = 'INSERT INTO oauth2_tokens SET created = UNIX_TIMESTAMP(), ?';
+  const connection = await db.getConnection();
 
   const expirySettings = getTokenExpiry();
 
   const accessTokenExpires = Math.floor(Date.now() / 1000) + expirySettings.accessToken;
   const refreshTokenExpires = Math.floor(Date.now() / 1000) + expirySettings.refreshToken;
 
-  await db.query(query, {
+  await connection<OAuth2TokenRecord>('oauth2_tokens').insert({
     oauth2_client_id: client.id,
     access_token: accessToken,
     refresh_token: refreshToken,
     user_id: client.app.id,
     access_token_expires: accessTokenExpires,
     refresh_token_expires: refreshTokenExpires,
+    created: Math.floor(Date.now() / 1000),
   });
 
   return {
@@ -236,11 +239,11 @@ export async function generateTokenFromCode(client: OAuth2Client, code: string, 
   const query = 'SELECT * FROM oauth2_codes WHERE code = ?';
   const codeResult = await db.query(query, [code]);
 
-  if (!codeResult[0].length) {
+  if (!codeResult.length) {
     throw new InvalidRequest('The supplied code was not recognized');
   }
 
-  const codeRecord: OAuth2CodeRecord = codeResult[0][0];
+  const codeRecord: OAuth2CodeRecord = codeResult[0];
   const expirySettings = getTokenExpiry();
 
   // Delete immediately.
@@ -376,22 +379,22 @@ export async function generateCodeForUser(
   client: OAuth2Client,
   user: User,
   codeChallenge: string|undefined,
-  codeChallengeMethod: string|undefined,
+  codeChallengeMethod: CodeChallengeMethod|undefined,
   browserSessionId: string,
 ): Promise<OAuth2Code> {
 
   const code = await generateSecretToken();
-
-  const query = 'INSERT INTO oauth2_codes SET created = UNIX_TIMESTAMP(), ?';
-
-  await db.query(query, {
-    client_id: client.id,
-    user_id: user.id,
-    code: code,
-    code_challenge: codeChallenge,
-    code_challenge_method: codeChallengeMethod,
-    browser_session_id: browserSessionId,
-  });
+  const connection = await db.getConnection();
+  await connection<OAuth2CodeRecord>('oauth2_codes')
+    .insert({
+      client_id: client.id,
+      user_id: user.id,
+      code: code,
+      code_challenge: codeChallenge,
+      code_challenge_method: codeChallengeMethod,
+      browser_session_id: browserSessionId,
+      created: Math.floor(Date.now() / 1000),
+    });
 
   return {
     code: code
@@ -406,6 +409,7 @@ type OAuth2TokenRecord = {
   user_id: number;
   access_token_expires: number;
   refresh_token_expires: number;
+  created: number;
   browser_session_id: string | null;
 };
 
@@ -442,15 +446,15 @@ export async function getTokenByAccessToken(accessToken: string): Promise<OAuth2
   FROM oauth2_tokens
   WHERE
     access_token = ? AND
-    access_token_expires > UNIX_TIMESTAMP()
+    access_token_expires > ?
   `;
 
-  const result = await db.query(query, [accessToken]);
-  if (!result[0].length) {
+  const result = await db.query(query, [accessToken, Math.floor(Date.now() / 1000)]);
+  if (!result.length) {
     throw new NotFound('Access token not recognized');
   }
 
-  const row: OAuth2TokenRecord = result[0][0];
+  const row: OAuth2TokenRecord = result[0];
   const user = await principalService.findActiveById(row.user_id);
 
   return {
@@ -485,15 +489,15 @@ export async function getTokenByRefreshToken(refreshToken: string): Promise<OAut
   FROM oauth2_tokens
   WHERE
     refresh_token = ? AND
-    refresh_token_expires > UNIX_TIMESTAMP()
+    refresh_token_expires > ?
   `;
 
-  const result = await db.query(query, [refreshToken]);
-  if (!result[0].length) {
+  const result = await db.query(query, [refreshToken, Math.floor(Date.now() / 1000)]);
+  if (!result.length) {
     throw new NotFound('Refresh token not recognized');
   }
 
-  const row: OAuth2TokenRecord = result[0][0];
+  const row: OAuth2TokenRecord = result[0];
 
   const user = await principalService.findActiveById(row.user_id);
 
@@ -521,8 +525,8 @@ export async function getTokenByRefreshToken(refreshToken: string): Promise<OAut
  */
 export async function invalidateTokensByBrowserSessionId(browserSessionId: string) {
 
-  await db.query('DELETE FROM oauth2_codes WHERE browser_session_id = ?', browserSessionId);
-  await db.query('DELETE FROM oauth2_tokens WHERE browser_session_id = ?', browserSessionId);
+  await db.query('DELETE FROM oauth2_codes WHERE browser_session_id = ?', [browserSessionId]);
+  await db.query('DELETE FROM oauth2_tokens WHERE browser_session_id = ?', [browserSessionId]);
 
 }
 

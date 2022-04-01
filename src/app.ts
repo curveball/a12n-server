@@ -4,7 +4,6 @@ import { Application } from '@curveball/core';
 import mainMw from './main-mw';
 import accessLog from '@curveball/accesslog';
 
-import { checkPatches } from './database';
 import { load } from './server-settings';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -25,10 +24,6 @@ if (!process.env.PUBLIC_URI) {
 
 (async () => {
 
-  console.log('Connecting to database');
-  await checkPatches();
-
-  console.log('Loading settings');
   await load();
 
   const app = new Application();

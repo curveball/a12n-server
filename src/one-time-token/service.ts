@@ -15,12 +15,13 @@ const tokenTTL = 7200;
  */
 export async function createToken(user: User): Promise<OneTimeToken> {
   const token = await generateSecretToken();
-  const query = 'INSERT INTO reset_password_token SET user_id = ?, token = ?, expires_at = UNIX_TIMESTAMP() + ?, created_at = UNIX_TIMESTAMP()';
+  const query = 'INSERT INTO reset_password_token SET user_id = ?, token = ?, expires_at = ?, created_at = ?';
 
   await db.query(query, [
     user.id,
     token,
-    tokenTTL
+    Math.floor(Date.now() / 1000) + tokenTTL,
+    Math.floor(Date.now() / 1000),
   ]);
   return {
     token,
@@ -35,14 +36,14 @@ export async function createToken(user: User): Promise<OneTimeToken> {
  */
 export async function validateToken(token: string): Promise<User> {
 
-  const query = 'SELECT token, user_id FROM reset_password_token WHERE token = ? AND expires_at > UNIX_TIMESTAMP()';
-  const result = await db.query(query, [token]);
+  const query = 'SELECT token, user_id FROM reset_password_token WHERE token = ? AND expires_at > ?';
+  const result = await db.query(query, [token, Math.floor(Date.now() / 1000)]);
 
-  if (result[0].length !== 1) {
+  if (result.length !== 1) {
     throw new BadRequest ('Failed to validate token');
   } else {
     await db.query('DELETE FROM reset_password_token WHERE token = ?', [token]);
-    return principalService.findById(result[0][0].user_id) as Promise<User>;
+    return principalService.findById(result[0].user_id) as Promise<User>;
   }
 
 }

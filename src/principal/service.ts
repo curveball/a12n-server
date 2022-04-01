@@ -30,7 +30,7 @@ export async function findAll(type?: PrincipalType): Promise<Principal[]> {
   }
 
   const principals: Principal[] = [];
-  for (const principal of result[0]) {
+  for (const principal of result) {
     principals.push(recordToModel(principal));
   }
   return principals;
@@ -48,7 +48,7 @@ export async function getPrincipalStats(): Promise<PrincipalStats> {
     group: 0
   };
 
-  for (const principal of result[0]) {
+  for (const principal of result) {
     principalStats[userTypeIntToUserType(principal.type)] = principal.total;
   }
 
@@ -65,11 +65,11 @@ export async function findById(id: number, type?: PrincipalType): Promise<Princi
   const query = `SELECT ${fieldNames.join(', ')} FROM principals WHERE id = ?`;
   const result = await database.query(query, [id]);
 
-  if (result[0].length !== 1) {
+  if (result.length !== 1) {
     throw new NotFound(`Principal with id: ${id} not found`);
   }
 
-  const principal = recordToModel(result[0][0]);
+  const principal = recordToModel(result[0]);
 
   if (type && principal.type !== type) {
     throw new NotFound(`Principal with id ${id} does not have type ${type}`);
@@ -100,7 +100,7 @@ export async function hasPrincipals(): Promise<boolean> {
   const query = 'SELECT 1 FROM principals LIMIT 1';
   const result = await database.query(query);
 
-  return result[0].length > 0;
+  return result.length > 0;
 
 }
 
@@ -109,11 +109,11 @@ export async function findByIdentity(identity: string): Promise<Principal> {
   const query = `SELECT ${fieldNames.join(', ')} FROM principals WHERE identity = ?`;
   const result = await database.query(query, [identity]);
 
-  if (result[0].length !== 1) {
+  if (result.length !== 1) {
     throw new NotFound(`Principal with identity: ${identity} not found`);
   }
 
-  return recordToModel(result[0][0]);
+  return recordToModel(result[0]);
 
 }
 
@@ -147,14 +147,14 @@ export async function findByHref(href: string): Promise<Principal> {
       break;
   }
 
-  const query = `SELECT ${fieldNames.join(', ')} FROM principals WHERE type IN (?) AND id = ?`;
-  const result = await database.query(query, [typeFilter, matches[2]]);
+  const query = `SELECT ${fieldNames.join(', ')} FROM principals WHERE type IN (${typeFilter.map(_ => '?').join(',')}) AND id = ?`;
+  const result = await database.query(query, [...typeFilter, matches[2]]);
 
-  if (result[0].length !== 1) {
+  if (result.length !== 1) {
     throw new NotFound('Principal with href: ' + href + ' not found');
   }
 
-  return recordToModel(result[0][0]);
+  return recordToModel(result[0]);
 }
 
 export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'> | T): Promise<T> {
@@ -162,7 +162,7 @@ export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'
   if (!isExistingPrincipal(principal)) {
 
     // New principal
-    const query = 'INSERT INTO principals SET ?';
+    const connection = await database.getConnection();
 
     const newPrincipalRecord: Omit<PrincipalRecord, 'id'> = {
       identity: principal.identity,
@@ -173,11 +173,13 @@ export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'
       created_at: Date.now(),
     };
 
-    const result = await database.query(query, [newPrincipalRecord]);
+    const result = await connection<PrincipalRecord>('principals')
+      .insert(newPrincipalRecord, 'id')
+      .returning('id');
 
     /* eslint-disable-next-line @typescript-eslint/consistent-type-assertions */
     return ({
-      id: result[0].insertId,
+      id: result[0],
       ...principal
     }) as T;
 
@@ -189,8 +191,6 @@ export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'
       throw new UnprocessableEntity('Identity must be a valid URI');
     }
 
-    const query = 'UPDATE principals SET ? WHERE id = ?';
-
     principal.modifiedAt = new Date();
 
     const updatePrincipalRecord: Omit<PrincipalRecord, 'id' | 'created_at' | 'type'> = {
@@ -200,7 +200,12 @@ export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'
       modified_at: principal.modifiedAt.getTime(),
     };
 
-    await database.query(query, [updatePrincipalRecord, principal.id]);
+
+    const connection = await database.getConnection();
+
+    await connection('principals')
+      .where('id', principal.id)
+      .update(updatePrincipalRecord);
 
     return principal;
 

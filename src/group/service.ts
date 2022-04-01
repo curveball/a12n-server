@@ -13,7 +13,7 @@ export async function findMembers(group: Group): Promise<Principal[]> {
 
   const models = [];
 
-  for (const record of result[0]) {
+  for (const record of result) {
     const model = principalService.recordToModel(record);
     models.push(model);
   }
@@ -32,19 +32,13 @@ export async function addMember(group: Group, user: Principal): Promise<void> {
 export async function replaceMembers(group: Group, users: Principal[]): Promise<void> {
 
   const connection = await database.getConnection();
-  await connection.beginTransaction();
-  try {
-    await connection.query('DELETE FROM group_members WHERE group_id = ?', [group.id]);
+  await connection.transaction(async trx => {
+    await trx.raw('DELETE FROM group_members WHERE group_id = ?', [group.id]);
     for(const user of users) {
-      await connection.query('INSERT INTO group_members SET group_id = ?, user_id = ?', [group.id, user.id]);
+      await trx.raw('INSERT INTO group_members SET group_id = ?, user_id = ?', [group.id, user.id]);
     }
-    await connection.commit();
-  } catch (err) {
-    await connection.rollback();
-    throw err;
-  } finally {
-    connection.release();
-  }
+    await trx.commit();
+  });
 
 }
 
@@ -66,7 +60,7 @@ export async function findGroupsForPrincipal(principal: Principal): Promise<Grou
 
   const models: Group[] = [];
 
-  for (const record of result[0]) {
+  for (const record of result) {
     const model = principalService.recordToModel(record);
     models.push(model as Group);
   }

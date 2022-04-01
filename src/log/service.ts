@@ -16,7 +16,7 @@ export default async function log(
   if (isContext(arg1)) {
     await addLogEntry(
       eventType,
-      arg1.ip()!,
+      arg1.ip(),
       arg1.session.user?.id ?? null,
       arg1.request.headers.get('User-Agent'),
     );
@@ -28,8 +28,11 @@ export default async function log(
 
 export async function addLogEntry(eventType: EventType, ip: string|null, userId: number, userAgent: string|null): Promise<void> {
 
-  await db.query('INSERT INTO user_log SET time = UNIX_TIMESTAMP(), ?', {
+  const connection = await db.getConnection();
+
+  await connection('user_log').insert({
     user_id: userId,
+    time: Math.floor(Date.now() / 1000),
     event_type: eventType,
     ip: ip,
     user_agent: userAgent,
@@ -50,11 +53,11 @@ type LogRow = {
 
 export async function findByUser(user: Principal): Promise<LogEntry[]> {
 
-  const result:[LogRow[], any] = await db.query(
+  const result = await db.query<LogRow>(
     'SELECT * FROM user_log WHERE user_id = ?',
     [user.id]
   );
-  return result[0].map( (row: LogRow) => {
+  return result.map( (row: LogRow) => {
     return {
       time: new Date(row.time * 1000),
       ip: row.ip,
@@ -72,8 +75,8 @@ function isContext(ctx: any): ctx is Context {
 
 }
 
-function getCountryByIp(ip: string): string|undefined {
+function getCountryByIp(ip: string): string|null {
 
-  return geoip.lookup(ip)?.country;
+  return geoip.lookup(ip)?.country || null;
 
 }

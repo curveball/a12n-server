@@ -22,11 +22,11 @@ export async function findByClientId(clientId: string): Promise<OAuth2Client> {
   const query = 'SELECT id, client_id, client_secret, user_id, allowed_grant_types FROM oauth2_clients WHERE client_id = ?';
   const result = await db.query(query, [clientId]);
 
-  if (!result[0].length) {
+  if (!result.length) {
     throw new NotFound('OAuth2 client_id not recognized');
   }
 
-  const record: OAuth2ClientRecord = result[0][0];
+  const record: OAuth2ClientRecord = result[0];
 
   const user = await principalService.findActiveById(record.user_id) as App;
   return mapRecordToModel(record, user);
@@ -38,11 +38,11 @@ export async function findById(id: number): Promise<OAuth2Client> {
   const query = 'SELECT id, client_id, client_secret, user_id, allowed_grant_types FROM oauth2_clients WHERE id = ?';
   const result = await db.query(query, [id]);
 
-  if (!result[0].length) {
+  if (!result.length) {
     throw new NotFound('OAuth2 id not recognized');
   }
 
-  const record: OAuth2ClientRecord = result[0][0];
+  const record: OAuth2ClientRecord = result[0];
 
   const user = await principalService.findActiveById(record.user_id) as App;
   return mapRecordToModel(record, user);
@@ -54,7 +54,7 @@ export async function findByApp(user: App): Promise<OAuth2Client[]> {
   const query = 'SELECT id, client_id, client_secret, user_id, allowed_grant_types FROM oauth2_clients WHERE user_id = ?';
   const result = await db.query(query, [user.id]);
 
-  return result[0].map( (record: OAuth2ClientRecord) => mapRecordToModel(record, user));
+  return result.map( (record: OAuth2ClientRecord) => mapRecordToModel(record, user));
 
 }
 
@@ -118,26 +118,27 @@ export async function getOAuth2ClientFromBody(ctx: Context<any>): Promise<OAuth2
 
 export async function create(client: Omit<OAuth2Client, 'id'>, redirectUris: string[]): Promise<OAuth2Client> {
 
-  const query = 'INSERT INTO oauth2_clients SET ?';
-  const params = {
+  const params: Partial<OAuth2ClientRecord> = {
     client_id: client.clientId,
-    client_secret: client.clientSecret,
+    client_secret: Buffer.from(client.clientSecret),
     user_id: client.app.id,
     allowed_grant_types: client.allowedGrantTypes.join(' '),
   };
-  const result = await db.query(query, [params]);
 
-  const realClient = {
-    ...client,
-    id: result[0].insertId
-  };
+  const connection = await db.getConnection();
+  const result = await connection<OAuth2ClientRecord>('oauth2_clients')
+    .insert(params, 'id')
+    .returning('id');
+
+  const newClient = await connection<OAuth2ClientRecord, OAuth2ClientRecord>('oauth2_client')
+    .select({ id: result })
+    .returning('*');
+
+  const realClient = mapToOauth2Client(newClient[0], client.app, client.allowedGrantTypes);
 
   for(const uri of redirectUris) {
 
-    await db.query(
-      'INSERT INTO oauth2_redirect_uris SET ?',
-      [{oauth2_client_id: realClient.id, uri}]
-    );
+    await connection('oauth2_redirect_uris').insert({oauth2_client_id: realClient.id, uri});
 
   }
 
@@ -150,5 +151,15 @@ export async function validateSecret(oauth2Client: OAuth2Client, secret: string)
 
   return await bcrypt.compare(secret, oauth2Client.clientSecret);
 
+}
+
+function mapToOauth2Client(data: OAuth2ClientRecord, app: App, allowedGrantTypes: GrantType[]): OAuth2Client {
+  return {
+    id: data.id,
+    clientId: data.client_id,
+    clientSecret: data.client_secret.toString(),
+    app,
+    allowedGrantTypes,
+  };
 }
 

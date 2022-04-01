@@ -27,6 +27,18 @@ fix:
 
 lint-fix: fix
 
+migrate: build
+	npx knex migrate:latest --knexfile './dist/knexfile.js'
+
+migrate-rollback:
+	npx knex migrate:rollback --knexfile './dist/knexfile.js'
+
+migrate-unlock:
+	npx knex migrate:unlock --knexfile './dist/knexfile.js'
+
+create-migration:
+	npx knex migrate:make $(name) -x ts --knexfile './dist/knexfile.js'
+
 start-dev:
 	npx tsc-watch --onSuccess 'node dist/app.js'
 
@@ -45,3 +57,5 @@ dist/build: $(SOURCE_FILES)
 inspect: build
 	node --inspect dist/app.js
 
+inspect-brk: build
+	node --inspect-brk dist/app.js

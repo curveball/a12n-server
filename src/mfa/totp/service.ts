@@ -8,6 +8,7 @@ type UserTotpDeviceRow = {
   id: number;
   user_id: number;
   secret: string;
+  created: number;
 };
 
 export function generateSecret(): string {
@@ -17,17 +18,20 @@ export function generateSecret(): string {
 }
 
 export async function save(totpDevice: NewTotpDevice): Promise<TotpDevice> {
-  const query = 'INSERT INTO user_totp SET ?, created = UNIX_TIMESTAMP()';
-
   const newTotpDeviceRecord: Partial<UserTotpDeviceRow> = {
     user_id: totpDevice.user.id,
     secret: totpDevice.secret,
+    created: Math.floor(Date.now() / 1000),
   };
 
-  const result = await database.query(query, [newTotpDeviceRecord]);
+  const connection = await database.getConnection();
+
+  const result = await connection<UserTotpDeviceRow>('user_totp')
+    .insert(newTotpDeviceRecord, 'id')
+    .returning('id');
 
   return {
-    id: result[0].insertId,
+    id: result[0],
     'failures': 0,
     ...totpDevice,
   };

@@ -1,88 +1,107 @@
 /* eslint no-console: 0 */
-import * as mysql from 'mysql2/promise';
-import { readdir } from 'fs/promises';
-import { join } from 'path';
+import { knex, Knex } from 'knex';
+import * as path from 'node:path';
 
-let pool: mysql.Pool;
+let pool: Knex;
 
-async function getPool() {
+type RawMySQLResult<T> = [ T[], [] ];
+
+interface RawPostgreSQLResult<T> {
+  rows: T[];
+}
+
+type RawResult<T> = RawMySQLResult<T> | RawPostgreSQLResult<T>;
+
+async function getPool(): Promise<Knex> {
 
   if (!pool) {
-    pool = mysql.createPool(await getSettings());
+    // eslint-disable-next-line no-console
+    console.log('Connecting to database');
+    pool = knex(getSettings());
+
+    // eslint-disable-next-line no-console
+    console.log('Running Migrations');
+    await pool.migrate.latest();
+
   }
 
   return pool;
+}
+
+export async function getConnection(): Promise<Knex> {
+
+  return (await getPool());
 
 }
 
+export async function query<T = any>(query: string, params: Knex.ValueDict | Knex.RawBinding[] = []): Promise<T[]> {
 
-export async function getConnection(): Promise<mysql.PoolConnection> {
+  const { client } = await getSettings();
 
-  return (await getPool()).getConnection();
+  // Knex returns weird typings for the raw function,
+  const result = (await (await getPool()).raw(query, params)) as RawResult<T>;
 
-}
-
-export async function query(query: string, params?: any[]|string|Record<string,any>): Promise<[any, any]> {
-
-  return (await getPool()).query(query, params);
-
-}
-
-export async function checkPatches() {
-
-  // Get a list of known database patches.
-  const files = await readdir(join(__dirname, '..', 'mysql-schema'));
-  const patches = new Map<number, string>();
-  for(const file of files) {
-    const match = file.match(/^([0-9]+)-.*\.sql$/);
-    if (!match) continue;
-    patches.set(
-      parseInt(match[1]),
-      file
-    );
+  if (client === 'pg') {
+    return (result as RawPostgreSQLResult<T>).rows;
   }
 
-  const result = await query('SELECT id FROM changelog');
-  for (const { id } of result[0]) {
-    if (!patches.has(id)) {
-      console.warn('Warning! Found an unknown database patch in the changelog. Patch id: ' + id);
-    }
-    patches.delete(id);
-  }
-
-  if (patches.size > 0) {
-    console.error('Error!! Database patches have not been applied. Please run the following .sql scripts:');
-    for (const fileName of patches.values()) {
-      console.error(`  - ${fileName}`);
-    }
-    throw new Error('Missing patches');
-  }
-
+  return (result as RawMySQLResult<T>)[0];
 }
 
 export default {
-  query,
   getConnection,
-  checkPatches,
+  query,
 };
 
-async function getSettings() {
+export function getSettings(): Knex.Config {
 
-  let settings: any = {};
+  let connection: Knex.MySql2ConnectionConfig | Knex.PgConnectionConfig;
+  let client;
 
-  // We are running in a local environment.
-  settings = {
-    user: process.env.MYSQL_USER,
-    password: process.env.MYSQL_PASSWORD,
-    database: process.env.MYSQL_DATABASE,
-  };
+  // Declare explicitly the client to use, or try to infer it.
+  if (Object.keys(process.env).includes('PG_DATABASE')) {
+    client = 'pg';
+    connection = {
+      host: process.env.PG_HOST || '127.0.0.1',
+      port: parseInt(process.env.PG_PORT as string, 10) || 5432,
+      user: process.env.PG_USER,
+      password: process.env.PG_PASSWORD,
+      database: process.env.PG_DATABASE,
+    };
+  } else if (Object.keys(process.env).includes('MYSQL_DATABASE')) {
+    client = 'mysql2';
+    connection = {
+      host: process.env.MYSQL_HOST || '127.0.0.1',
+      port: parseInt(process.env.MYSQL_PORT as string, 10) || 3306,
+      user: process.env.MYSQL_USER,
+      password: process.env.MYSQL_PASSWORD,
+      database: process.env.MYSQL_DATABASE,
+    };
 
-  if (process.env.MYSQL_INSTANCE_CONNECTION_NAME) {
-    settings.socketPath = '/cloudsql/' + process.env.MYSQL_INSTANCE_CONNECTION_NAME;
+    if (process.env.MYSQL_INSTANCE_CONNECTION_NAME) {
+      (connection as Knex.MySql2ConnectionConfig).socketPath = '/cloudsql/' + process.env.MYSQL_INSTANCE_CONNECTION_NAME;
+    } else {
+      delete connection.host;
+      delete connection.port;
+    }
   } else {
-    settings.host = process.env.MYSQL_HOST;
-    settings.port = process.env.MYSQL_PORT || 3306;
+    throw new Error('No database client selected, please provide either PG_DATABASE or MYSQL_DATABASE environment variables');
   }
-  return settings;
 
+  return {
+    client,
+    connection,
+    searchPath: [
+      connection.user as string,
+      connection.database as string,
+      'public'
+    ],
+    migrations: {
+      directory: path.join(__dirname, 'migrations'),
+      loadExtensions: ['.js'],
+      schemaName: connection.database as string,
+    },
+    pool: { min: 0, max: 10 },
+    debug: process.env.DEBUG ? true : false,
+  };
 }

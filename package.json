@@ -7,7 +7,7 @@
     "prepublishOnly": "make build",
     "test": "make lint test",
     "tsc": "tsc",
-    "start": "node ./dist/app.js",
+    "start": "node ./dist/src/app.js",
     "start:watch": "tsc-watch --onSuccess 'node dist/app.js'"
   },
   "repository": {
@@ -94,9 +94,11 @@
     "geoip-lite": "^1.4.2",
     "handlebars": "^4.7.7",
     "jsonwebtoken": "^8.5.1",
+    "knex": "^0.95.15",
     "mysql2": "^2.2.5",
     "nodemailer": "^6.5.0",
     "otplib": "^12.0.1",
+    "pg": "^8.7.1",
     "qrcode": "^1.3.2"
   },
   "mocha": {

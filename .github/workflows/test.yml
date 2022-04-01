@@ -96,7 +96,7 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
-    - run: psql -h postgres -d a12nserver -U a12nserver -c 'CREATE SCHEMA a12nserver;'
+    - run: psql -d a12nserver -U a12nserver -c 'CREATE SCHEMA a12nserver;'
     - name: Run migrations
       env:
         PG_USER: a12nserver

@@ -16,8 +16,9 @@ export default db;
 
 export function getSettings(): Knex.Config {
 
-  let connection: Knex.MySql2ConnectionConfig | Knex.PgConnectionConfig;
+  let connection: Knex.MySql2ConnectionConfig | Knex.PgConnectionConfig | Knex.Sqlite3ConnectionConfig;
   let client;
+  let searchPath;
 
   // Declare explicitly the client to use, or try to infer it.
   if (Object.keys(process.env).includes('PG_DATABASE')) {
@@ -29,6 +30,10 @@ export function getSettings(): Knex.Config {
       password: process.env.PG_PASSWORD,
       database: process.env.PG_DATABASE,
     };
+    searchPath = [
+      connection.user as string,
+      connection.database as string,
+    ];
   } else if (Object.keys(process.env).includes('MYSQL_DATABASE')) {
     client = 'mysql2';
     connection = {
@@ -46,21 +51,21 @@ export function getSettings(): Knex.Config {
       delete connection.port;
     }
   } else {
-    throw new Error('No database client selected, please provide either PG_DATABASE or MYSQL_DATABASE environment variables');
+
+    console.warn('Warning! No database settings provided, so we\'re using an in-memory database that will be erased upon restart!');
+    client = 'sqlite3';
+    connection = {
+      filename: ':memory:',
+    };
   }
 
   return {
     client,
     connection,
-    searchPath: [
-      connection.user as string,
-      connection.database as string,
-      'public'
-    ],
+    searchPath,
     migrations: {
       directory: path.join(__dirname, 'migrations'),
       loadExtensions: ['.js'],
-      schemaName: connection.database as string,
     },
     pool: { min: 0, max: 10 },
     debug: process.env.DEBUG ? true : false,

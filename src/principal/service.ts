@@ -1,6 +1,8 @@
 import { NotFound, UnprocessableEntity } from '@curveball/http-errors';
 import database from '../database';
 import { Principal, NewPrincipal, PrincipalType, User, Group, App, PrincipalStats } from './types';
+import { Principal as PrincipalRecord } from 'knex/types/tables';
+import { generatePublicId } from '../crypto';
 
 export class InactivePrincipal extends Error { }
 
@@ -157,7 +159,7 @@ export async function findByHref(href: string): Promise<Principal> {
   return recordToModel(result[0]);
 }
 
-export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'> | T): Promise<T> {
+export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href' | 'externalId'> | T): Promise<T> {
 
   if (!isExistingPrincipal(principal)) {
 
@@ -166,6 +168,7 @@ export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'
 
     const newPrincipalRecord: Omit<PrincipalRecord, 'id'> = {
       identity: principal.identity,
+      externalId: await generatePublicId(),
       nickname: principal.nickname,
       type: userTypeToInt(principal.type),
       active: principal.active ? 1 : 0,
@@ -193,7 +196,7 @@ export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'
 
     principal.modifiedAt = new Date();
 
-    const updatePrincipalRecord: Omit<PrincipalRecord, 'id' | 'created_at' | 'type'> = {
+    const updatePrincipalRecord: Omit<PrincipalRecord, 'id' | 'created_at' | 'type' | 'externalId'> = {
       identity: principal.identity,
       nickname: principal.nickname,
       active: principal.active ? 1 : 0,
@@ -212,16 +215,6 @@ export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'
   }
 
 }
-
-export type PrincipalRecord = {
-  id: number;
-  identity: string;
-  nickname: string;
-  created_at: number;
-  modified_at: number;
-  type: number;
-  active: number;
-};
 
 function userTypeIntToUserType(input: number): PrincipalType {
 
@@ -249,8 +242,9 @@ export function recordToModel(user: PrincipalRecord): Principal {
 
   return {
     id: user.id,
-    href: `/${userTypeIntToUserType(user.type)}/${user.id}`,
+    href: `/${userTypeIntToUserType(user.type)}/${user.externalId}`,
     identity: user.identity,
+    externalId: user.externalId,
     nickname: user.nickname,
     createdAt: new Date(user.created_at),
     modifiedAt: new Date(user.modified_at),

@@ -13,9 +13,17 @@ export async function up(knex: Knex): Promise<void> {
     timestamp: Math.floor(Date.now()/1000)
   });
 
-  await knex.schema.alterTable('oauth2_tokens', table => {
-    table.string('access_token', 2000).alter();
-  });
+  switch(knex().client.driverName) {
+    case 'mysql' :
+      await knex.raw('ALTER TABLE oauth2_tokens CHANGE access_token access_token VARCHAR(2000) CHARACTER SET ascii');
+      break;
+    default:
+      await knex.schema.alterTable('oauth2_tokens', table => {
+        table.string('access_token', 2000).notNullable().alter();
+      });
+      break;
+  }
+
 
 }
 

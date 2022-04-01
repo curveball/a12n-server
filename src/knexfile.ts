@@ -1,5 +1,4 @@
 import { getSettings } from './database';
-import './env';
 
 const settings = getSettings();
 

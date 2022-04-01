@@ -1,7 +1,6 @@
 /* eslint no-console: 0 */
 import { knex, Knex } from 'knex';
 import * as path from 'node:path';
-import './env';
 
 const db: Knex = knex(getSettings());
 

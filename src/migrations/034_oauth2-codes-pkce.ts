@@ -13,10 +13,12 @@ export async function up(knex: Knex): Promise<void> {
     timestamp: Math.floor(Date.now()/1000)
   });
 
-  await knex.raw(`ALTER TABLE oauth2_codes
-  ADD COLUMN  code_challenge VARCHAR(50) NULL AFTER user_id,
-  ADD COLUMN  code_challenge_method VARCHAR(50) NULL AFTER code_challenge`);
+  await knex.schema.alterTable('oauth2_codes', table => {
 
+    table.string('code_challenge', 50).nullable().after('user_id');
+    table.string('code_challenge_method', 50).nullable().after('user_id');
+
+  });
 
 }
 

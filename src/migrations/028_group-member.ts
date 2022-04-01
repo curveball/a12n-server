@@ -13,11 +13,10 @@ export async function up(knex: Knex): Promise<void> {
     timestamp: Math.floor(Date.now()/1000)
   });
 
-  await knex.raw(`CREATE TABLE group_members (
-  user_id INT UNSIGNED NOT NULL,
-  group_id INT UNSIGNED NULL
-)`);
-
+  await knex.schema.createTable('group_members', table => {
+    table.integer('user_id').unsigned().notNullable();
+    table.integer('group_id').unsigned().notNullable();
+  });
 
 }
 

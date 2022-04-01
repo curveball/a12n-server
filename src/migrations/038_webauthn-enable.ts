@@ -13,14 +13,17 @@ export async function up(knex: Knex): Promise<void> {
     timestamp: Math.floor(Date.now()/1000)
   });
 
-  await knex.raw(`INSERT INTO server_settings (setting, value) VALUES
-  ('registration.mfa.enabled', 'true')
-  ON DUPLICATE KEY UPDATE value = 'true'`);
-  await knex.raw(`INSERT INTO server_settings (setting, value) VALUES
-  ('webauthn', '"enabled"')
-  ON DUPLICATE KEY UPDATE value = '"enabled"'`);
-  await knex.raw(`UPDATE server_settings SET value = NULL WHERE setting 
-  IN ('webauthn.relyingPartyId', 'webauthn.expectedOrigin')`);
+  await knex('server_settings').insert({
+    setting: 'registration.mfa.enabled',
+    value: 'true',
+  }).onConflict('setting').merge();
+
+  await knex('server_settings').insert({
+    setting: 'webauthn',
+    value: '"enabled"',
+  }).onConflict('setting').merge();
+
+  await knex.raw("UPDATE server_settings SET value = NULL WHERE setting IN ('webauthn.relyingPartyId', 'webauthn.expectedOrigin')");
 
 
 }

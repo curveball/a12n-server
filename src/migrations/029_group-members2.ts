@@ -13,11 +13,9 @@ export async function up(knex: Knex): Promise<void> {
     timestamp: Math.floor(Date.now()/1000)
   });
 
-  await knex.raw(`ALTER TABLE group_members
-  CHANGE user_id user_id INT UNSIGNED NOT NULL,
-  CHANGE group_id group_id INT UNSIGNED NOT NULL,
-  ADD PRIMARY KEY (user_id, group_id)`);
-
+  await knex.schema.alterTable('group_members', table => {
+    table.primary(['user_id', 'group_id']);
+  });
 
 }
 

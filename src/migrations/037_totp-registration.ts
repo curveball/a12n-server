@@ -14,9 +14,10 @@ export async function up(knex: Knex): Promise<void> {
   });
 
   await knex.raw('INSERT INTO server_settings (setting, value) VALUES (\'totp.serviceName\', \'"Authentication API"\')');
-  await knex.raw(`ALTER TABLE user_totp
-  ADD created INT UNSIGNED NOT NULL DEFAULT '0'`);
 
+  await knex.schema.alterTable('user_totp', table => {
+    table.integer('created').unsigned().notNullable().defaultTo(0);
+  });
 
 }
 

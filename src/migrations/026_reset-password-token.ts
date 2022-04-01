@@ -13,14 +13,15 @@ export async function up(knex: Knex): Promise<void> {
     timestamp: Math.floor(Date.now()/1000)
   });
 
-  await knex.raw(`CREATE TABLE reset_password_token (
-  id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  user_id INT UNSIGNED NOT NULL,
-  token VARCHAR(100) NOT NULL UNIQUE,
-  expires_at INT UNSIGNED NOT NULL,
-  created_at INT UNSIGNED NOT NULL
-)`);
+  await knex.schema.createTable('reset_password_token', table => {
 
+    table.increments();
+    table.integer('user_id').unsigned().notNullable();
+    table.string('token', 100).notNullable().unique();
+    table.integer('expires_at').unsigned().notNullable();
+    table.integer('created_at').unsigned().notNullable();
+
+  });
 
 }
 

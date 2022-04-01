@@ -86,8 +86,6 @@ jobs:
         image: postgres
         env:
           POSTGRES_PASSWORD: password
-          MYSQL_DATABASE: a12nserver
-          MYSQL_ROOT_PASSWORD: password
         ports:
           - 5432:5432
     steps:

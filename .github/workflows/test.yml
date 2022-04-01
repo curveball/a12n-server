@@ -85,6 +85,7 @@ jobs:
       postgres:
         image: postgres
         env:
+          POSTGRES_USER: a12nserver
           POSTGRES_PASSWORD: password
         ports:
           - 5432:5432
@@ -97,8 +98,8 @@ jobs:
     - run: npm ci
     - name: Run migrations
       env:
-        PG_USER: postgres
+        PG_USER: a12nserver
         PG_PASSWORD: password
-        PG_DATABASE: postgres
+        PG_DATABASE: a12nserver
         PG_HOST: 127.0.0.1
       run: make migrate

@@ -13,7 +13,6 @@ export async function up(knex: Knex): Promise<void> {
     timestamp: Math.floor(Date.now()/1000)
   });
 
-  console.debug(knex().client.driverName);
   switch(knex().client.driverName) {
     case 'mysql' :
     case 'mysql2' :

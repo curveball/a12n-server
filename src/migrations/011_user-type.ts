@@ -13,11 +13,17 @@ export async function up(knex: Knex): Promise<void> {
     timestamp: Math.floor(Date.now()/1000)
   });
 
-  await knex.raw(`ALTER TABLE oauth2_clients
-  DROP name`);
-  await knex.raw(`ALTER TABLE users
-  ADD type TINYINT UNSIGNED NOT NULL DEFAULT '1' COMMENT '1 = user, 2 = app'`);
-
+  await knex.schema.alterTable('oauth2_clients', table => {
+    table.dropColumn('name');
+  });
+  await knex.schema.alterTable('users', table => {
+    table
+      .tinyint('type')
+      .unsigned()
+      .unique()
+      .notNullable()
+      .comment('1 = user, 2 = app, 3 = group');
+  });
 
 }
 

@@ -13,9 +13,9 @@ export async function up(knex: Knex): Promise<void> {
     timestamp: Math.floor(Date.now()/1000)
   });
 
-  await knex.raw(`ALTER TABLE user_log CHANGE
-  user_id user_id INT UNSIGNED NULL`);
-
+  await knex.schema.alterTable('user_log', table => {
+    table.integer('user_id', 45).unsigned().nullable().alter();
+  });
 
 }
 

@@ -13,9 +13,9 @@ export async function up(knex: Knex): Promise<void> {
     timestamp: Math.floor(Date.now()/1000)
   });
 
-  await knex.raw(`ALTER TABLE oauth2_tokens 
-  CHANGE oauth2_client_id oauth2_client_id INT UNSIGNED NOT NULL`);
-
+  await knex.schema.alterTable('oauth2_tokens', table => {
+    table.integer('oauth2_client_id').unsigned().notNullable().alter();
+  });
 
 }
 

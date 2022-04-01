@@ -13,14 +13,15 @@ export async function up(knex: Knex): Promise<void> {
     timestamp: Math.floor(Date.now()/1000)
   });
 
-  await knex.raw(`CREATE TABLE user_webauthn (
-  id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
-  user_id INT UNSIGNED NOT NULL,
-  credential_id VARCHAR(2000) NOT NULL,
-  public_key VARCHAR(2000) NOT NULL,
-  counter INT UNSIGNED NOT NULL,
-  created INT UNSIGNED NOT NULL
-)`);
+  await knex.schema.createTable('user_webauthn', table => {
+    table.increments();
+    table.integer('user_id').unsigned().notNullable();
+    table.string('credential_id', 2000).notNullable();
+    table.string('public_key', 2000).notNullable();
+    table.integer('counter').unsigned().notNullable();
+    table.integer('created').unsigned().notNullable();
+  });
+
   await knex.raw(`INSERT INTO server_settings (setting, value) VALUES
 ('registration.mfa.enabled', 'false'),
 ('webauthn.relyingPartyId', '""'),

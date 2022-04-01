@@ -14,7 +14,7 @@ export async function up(knex: Knex): Promise<void> {
   });
 
   await knex.schema.dropTable('oauth2_token');
-  await knex.schema.createTable('oauth2_token', table => {
+  await knex.schema.createTable('oauth2_tokens', table => {
 
     table.increments();
     table.string('oauth2_client_id', 50).notNullable();

@@ -13,11 +13,10 @@ export async function up(knex: Knex): Promise<void> {
     timestamp: Math.floor(Date.now()/1000)
   });
 
-  await knex.raw(`ALTER TABLE user_privileges
-  CHANGE COLUMN privilege scope VARCHAR(50) NOT NULL`);
-  await knex.raw(`ALTER TABLE user_privileges
-  ADD COLUMN resource VARCHAR(255) NOT NULL DEFAULT '*' AFTER user_id`);
-
+  await knex.schema.alterTable('user_privileges', table => {
+    table.renameColumn('privilege', 'scope');
+    table.string('resource', 255).notNullable().defaultTo('*').after('user_id');
+  });
 
 }
 

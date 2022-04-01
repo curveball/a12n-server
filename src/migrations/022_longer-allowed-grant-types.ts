@@ -13,9 +13,9 @@ export async function up(knex: Knex): Promise<void> {
     timestamp: Math.floor(Date.now()/1000)
   });
 
-  await knex.raw(`ALTER TABLE oauth2_clients
-  CHANGE allowed_grant_types allowed_grant_types VARCHAR(69) NOT NULL`);
-
+  await knex.schema.alterTable('oauth2_clients', table => {
+    table.string('allowed_grant_types', 69).notNullable().alter();
+  });
 
 }
 

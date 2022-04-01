@@ -13,9 +13,9 @@ export async function up(knex: Knex): Promise<void> {
     timestamp: Math.floor(Date.now()/1000)
   });
 
-  await knex.raw(`ALTER TABLE user_privileges
-  CHANGE COLUMN scope privilege VARCHAR(50) NOT NULL`);
-
+  await knex.schema.alterTable('user_privileges', table => {
+    table.renameColumn('scope', 'privilege');
+  });
 
 }
 

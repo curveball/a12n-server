@@ -25,11 +25,6 @@ type Settings = {
 
 }
 
-type SettingsRecord = {
-  setting: keyof Settings;
-  value: string;
-}
-
 type SettingsRules = {
   [Setting in keyof Settings]: {
     description: string;
@@ -207,12 +202,9 @@ export async function load(): Promise<void> {
     })
   ) as any;
 
-  // Load database values next
-  const query = 'SELECT setting, value FROM server_settings';
+  console.info('Loading settings');
+  const result = await db('server_settings').select('*');
 
-  // eslint-disable-next-line no-console
-  console.log('Loading settings');
-  const result = await db.query<SettingsRecord>(query);
   for (const row of result) {
 
     if (!isValidSettingName(row.setting)) {

@@ -3,20 +3,13 @@ import { knex, Knex } from 'knex';
 import * as path from 'node:path';
 import './env';
 
-let db: Knex = null as any;
+const db: Knex = knex(getSettings());
 
 export async function init() {
 
-  if (!db) {
-    // eslint-disable-next-line no-console
-    console.log('Connecting to database');
-    db = knex(getSettings());
-
-    // eslint-disable-next-line no-console
-    console.log('Running Migrations');
-    await db.migrate.latest();
-
-  }
+  // eslint-disable-next-line no-console
+  console.log('Running database migrations');
+  await db.migrate.latest();
 
 }
 
@@ -73,4 +66,29 @@ export function getSettings(): Knex.Config {
     pool: { min: 0, max: 10 },
     debug: process.env.DEBUG ? true : false,
   };
+}
+
+type RawMySQLResult<T> = [ T[], [] ];
+interface RawPostgreSQLResult<T> {
+  rows: T[];
+}
+type RawResult<T> = RawMySQLResult<T> | RawPostgreSQLResult<T>;
+
+/**
+ * A shortcut for easily executing select queries.
+ *
+ * Use of this should be phased out, but it helped with the migration from
+ * befre knex.
+ */
+export async function query<T = any>(query: string, params: Knex.ValueDict | Knex.RawBinding[] = []): Promise<T[]> {
+
+  // Knex returns weird typings for the raw function,
+  const result = (await db.raw(query, params)) as RawResult<T>;
+
+  if (db.client.deviceName === 'pg') {
+    return (result as RawPostgreSQLResult<T>).rows;
+  }
+
+  return (result as RawMySQLResult<T>)[0];
+
 }

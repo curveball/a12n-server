@@ -4,6 +4,7 @@ import { Application } from '@curveball/core';
 import mainMw from './main-mw';
 import accessLog from '@curveball/accesslog';
 
+import { init as initDb } from './database';
 import { load } from './server-settings';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -22,6 +23,8 @@ if (!process.env.PUBLIC_URI) {
 }
 
 (async () => {
+
+  await initDb();
 
   await load();
 

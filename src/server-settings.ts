@@ -213,7 +213,7 @@ export async function load(): Promise<void> {
       continue;
     }
 
-    if (!settingsRules[row.setting].fromDb) {
+    if (!(settingsRules as any)[row.setting].fromDb) {
       // eslint-disable-next-line no-console
       console.warn('The setting %s may not be set from the database. We ignored it');
       continue;

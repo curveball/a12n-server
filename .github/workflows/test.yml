@@ -55,9 +55,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       mysql:
-            # Docker Hub image
         image: mysql
-        # Provide the password for postgres
         env:
           MYSQL_USER: a12nserver
           MYSQL_PASSWORD: password
@@ -78,4 +76,31 @@ jobs:
         MYSQL_PASSWORD: password
         MYSQL_DATABASE: a12nserver
         MYSQL_HOST: 127.0.0.1
+      run: make migrate
+  postgres:
+    name: Test Postgres migrations
+    needs: build
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: password
+          MYSQL_DATABASE: a12nserver
+          MYSQL_ROOT_PASSWORD: password
+        ports:
+          - 3306:3306
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm ci
+    - name: Run migrations
+      env:
+        PG_USER: postgres
+        PG_PASSWORD: password
+        PG_DATABASE: postgres
+        PG_HOST: 127.0.0.1
       run: make migrate

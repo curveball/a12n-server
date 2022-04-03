@@ -1,6 +1,6 @@
 import { Knex } from 'knex';
 
-export async function up(knex: Knex): Promise<void> {
+export async function up (knex: Knex): Promise<void> {
 
   if (await knex.schema.hasTable('changelog')) {
     // This migration has been applied
@@ -16,7 +16,7 @@ export async function up(knex: Knex): Promise<void> {
 
   await knex('changelog').insert({
     id: 1,
-    timestamp: Math.floor(Date.now()/1000)
+    timestamp: Math.floor(Date.now() / 1000)
   });
 
   await knex.schema.createTable('users', table => {
@@ -45,7 +45,7 @@ export async function up(knex: Knex): Promise<void> {
 
   await knex.schema.createTable('user_totp', table => {
 
-    table.integer('user_totp').unsigned().notNullable().primary();
+    table.integer('user_id').unsigned().notNullable().primary();
     table.string('secret', 50);
     table.tinyint('failures').unsigned().notNullable().defaultTo(0);
 
@@ -53,7 +53,7 @@ export async function up(knex: Knex): Promise<void> {
 
 }
 
-export async function down(knex: Knex): Promise<void> {
+export async function down (knex: Knex): Promise<void> {
 
   throw new Error('This migration doesn\'t have a "down" script');
 

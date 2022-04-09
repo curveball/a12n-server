@@ -14,7 +14,7 @@ class UserAccessTokenController extends Controller {
   async post(ctx: Context<any>) {
 
     const user = await principalService.findById(+ctx.params.id);
-    if (ctx.state.user.id !== user.id && !await privilegeService.hasPrivilege(ctx, 'admin')) {
+    if (ctx.auth.equals(user) && !await privilegeService.hasPrivilege(ctx, 'admin')) {
       throw new Forbidden('You can only generate OAuth2 access tokens for yourself with this endpoint (unless you have the \'admin\' privilege (which you haven\'t))');
     }
 

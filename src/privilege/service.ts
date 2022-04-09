@@ -63,10 +63,10 @@ export async function hasPrivilege(who: Principal | Context, privilege: string, 
 
   let user;
   if (isContext(who)) {
-    if (!who.state.user) {
+    if (!who.auth.isLoggedIn()) {
       throw new Error('Cannot check privilege for unauthenticated user');
     }
-    user = who.state.user;
+    user = who.auth.principal;
   } else {
     user = who;
   }

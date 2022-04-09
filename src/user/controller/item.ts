@@ -35,7 +35,7 @@ class UserController extends Controller {
     let hasPassword = false;
     const isAdmin = await privilegeService.hasPrivilege(ctx, 'admin');
 
-    if (ctx.state.user.id === principal.id) {
+    if (ctx.auth.equals(principal)) {
       hasControl = true;
     } else if (isAdmin) {
       hasControl = true;

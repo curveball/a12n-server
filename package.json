@@ -87,6 +87,7 @@
     "@curveball/validator": "^0.8.0",
     "@simplewebauthn/browser": "^4.1.0",
     "@simplewebauthn/server": "^4.4.0",
+    "@vscode/sqlite3": "^5.0.8",
     "bcrypt": "^5.0.1",
     "csv-stringify": "^6.0.5",
     "dotenv": "^16.0.0",
@@ -99,8 +100,7 @@
     "nodemailer": "^6.5.0",
     "otplib": "^12.0.1",
     "pg": "^8.7.1",
-    "qrcode": "^1.3.2",
-    "sqlite3": "^5.0.2"
+    "qrcode": "^1.3.2"
   },
   "mocha": {
     "require": "ts-node/register",

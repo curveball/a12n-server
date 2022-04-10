@@ -8,6 +8,9 @@ import { init as initDb } from './database';
 import { load } from './server-settings';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
+require('dotenv').config();
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const pkgInfo = require('../package.json');
 console.info('⚾ %s %s', pkgInfo.name, pkgInfo.version);
 

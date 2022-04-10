@@ -29,7 +29,7 @@ export async function save(webAuthNDevice: NewWebAuthnDevice): Promise<WebAuthnD
       .returning('id');
 
     return {
-      id: result[0],
+      id: result[0].id,
       ...webAuthNDevice
     };
   } else {

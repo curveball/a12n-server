@@ -179,11 +179,12 @@ export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'
       .insert(newPrincipalRecord, 'id')
       .returning('id');
 
-    /* eslint-disable-next-line @typescript-eslint/consistent-type-assertions */
+    // @ts-expect-error Typescript can't figure this out yet
     return ({
-      id: result[0],
+      id: result[0].id,
+      href: `/${principal.type}/${result[0].id}`,
       ...principal
-    }) as T;
+    });
 
   } else {
 

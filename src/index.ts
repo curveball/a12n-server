@@ -5,3 +5,5 @@
  */
 export { default as mainMw } from './main-mw';
 export { load as init } from './server-settings';
+
+import './db-types';

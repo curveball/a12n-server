@@ -1,6 +1,6 @@
 import { NotFound } from '@curveball/http-errors';
 
-import database from '../../database';
+import db, { query } from '../../database';
 import { User } from '../../principal/types';
 
 import { NewWebAuthnDevice, WebAuthnDevice } from './types';
@@ -24,14 +24,12 @@ export async function save(webAuthNDevice: NewWebAuthnDevice): Promise<WebAuthnD
       created: Math.floor(Date.now() / 1000),
     };
 
-    const connection = await database.getConnection();
-
-    const result = await connection<UserWebAuthnRow>('user_webauthn')
+    const result = await db<UserWebAuthnRow>('user_webauthn')
       .insert(newWebAuthnRecord, 'id')
       .returning('id');
 
     return {
-      id: result[0],
+      id: result[0].id,
       ...webAuthNDevice
     };
   } else {
@@ -41,8 +39,7 @@ export async function save(webAuthNDevice: NewWebAuthnDevice): Promise<WebAuthnD
       counter: webAuthNDevice.counter
     };
 
-    const connection = await database.getConnection();
-    await connection('user_webauthn')
+    await db('user_webauthn')
       .where('id', webAuthNDevice.id)
       .update(updateWebAuthnRecord);
 
@@ -51,15 +48,19 @@ export async function save(webAuthNDevice: NewWebAuthnDevice): Promise<WebAuthnD
 }
 
 export async function findDevicesByUser(user: User): Promise<WebAuthnDevice[]> {
-  const query = 'SELECT id, credential_id, public_key, counter FROM user_webauthn WHERE user_id = ?';
-  const result = await database.query(query, [user.id]);
+  const result = await query(
+    'SELECT id, credential_id, public_key, counter FROM user_webauthn WHERE user_id = ?',
+    [user.id]
+  );
 
   return result.map( (row: UserWebAuthnRow) => recordToModel(row, user));
 }
 
 export async function findDeviceByUserAndId(user: User, credentialId: string): Promise<WebAuthnDevice> {
-  const query = 'SELECT id, credential_id, public_key, counter FROM user_webauthn WHERE user_id = ? and credential_id = ?';
-  const result = await database.query(query, [user.id, credentialId]);
+  const result = await query(
+    'SELECT id, credential_id, public_key, counter FROM user_webauthn WHERE user_id = ? and credential_id = ?',
+    [user.id, credentialId]
+  );
 
   if (result.length !== 1) {
     throw new NotFound('Device with id: ' + credentialId + ' not found');
@@ -69,8 +70,10 @@ export async function findDeviceByUserAndId(user: User, credentialId: string): P
 }
 
 export async function hasWebauthn(user: User): Promise<boolean> {
-  const query = 'SELECT credential_id FROM user_webauthn WHERE user_id = ?';
-  const result = await database.query(query, [user.id]);
+  const result = await query(
+    'SELECT credential_id FROM user_webauthn WHERE user_id = ?',
+    [user.id]
+  );
 
   return result.length !== 0;
 }

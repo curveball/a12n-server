@@ -3,6 +3,7 @@ import db from '../database';
 import { Principal } from '../principal/types';
 import { EventType, LogEntry } from './types';
 import * as geoip from 'geoip-lite';
+import { UserLog as UserLogRecord } from 'knex/types/tables';
 
 export function log(eventType: EventType, ctx: Context): Promise<void>;
 export function log(eventType: EventType, ip: string|null, userId: number, userAgent: string|null): Promise<void>;
@@ -16,21 +17,19 @@ export default async function log(
   if (isContext(arg1)) {
     await addLogEntry(
       eventType,
-      arg1.ip(),
+      arg1.ip() ?? '',
       arg1.session.user?.id ?? null,
       arg1.request.headers.get('User-Agent'),
     );
   } else {
-    await addLogEntry(eventType, arg1, arg2!, arg3!);
+    await addLogEntry(eventType, arg1 ?? '', arg2!, arg3 ?? '');
   }
 
 }
 
-export async function addLogEntry(eventType: EventType, ip: string|null, userId: number, userAgent: string|null): Promise<void> {
+export async function addLogEntry(eventType: EventType, ip: string, userId: number, userAgent: string|null): Promise<void> {
 
-  const connection = await db.getConnection();
-
-  await connection('user_log').insert({
+  await db('user_log').insert({
     user_id: userId,
     time: Math.floor(Date.now() / 1000),
     event_type: eventType,
@@ -41,23 +40,12 @@ export async function addLogEntry(eventType: EventType, ip: string|null, userId:
 
 }
 
-type LogRow = {
-  id: number;
-  user_id: number;
-  ip: string;
-  time: number;
-  event_type: EventType;
-  user_agent: string;
-  country: string;
-};
-
 export async function findByUser(user: Principal): Promise<LogEntry[]> {
 
-  const result = await db.query<LogRow>(
-    'SELECT * FROM user_log WHERE user_id = ?',
-    [user.id]
-  );
-  return result.map( (row: LogRow) => {
+  const result = await db('user_log')
+    .select('*')
+    .where({user_id: user.id});
+  return result.map( (row: UserLogRecord) => {
     return {
       time: new Date(row.time * 1000),
       ip: row.ip,

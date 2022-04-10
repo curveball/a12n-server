@@ -1,26 +1,20 @@
 import { OAuth2Client, GrantType } from './types';
 import * as bcrypt from 'bcrypt';
 import * as principalService from '../principal/service';
-import db from '../database';
+import db, { query } from '../database';
 import { Context } from '@curveball/core';
 import { NotFound, Unauthorized } from '@curveball/http-errors';
 import { InvalidRequest } from '../oauth2/errors';
 import parseBasicAuth from './parse-basic-auth';
 import { App } from '../principal/types';
-
-type OAuth2ClientRecord = {
-  id: number;
-  client_id: string;
-  client_secret: Buffer;
-  user_id: number;
-  allowed_grant_types: string;
-};
-
+import { OAuth2Client as OAuth2ClientRecord } from 'knex/types/tables';
 
 export async function findByClientId(clientId: string): Promise<OAuth2Client> {
 
-  const query = 'SELECT id, client_id, client_secret, user_id, allowed_grant_types FROM oauth2_clients WHERE client_id = ?';
-  const result = await db.query(query, [clientId]);
+  const result = await query(
+    'SELECT id, client_id, client_secret, user_id, allowed_grant_types FROM oauth2_clients WHERE client_id = ?',
+    [clientId]
+  );
 
   if (!result.length) {
     throw new NotFound('OAuth2 client_id not recognized');
@@ -35,8 +29,10 @@ export async function findByClientId(clientId: string): Promise<OAuth2Client> {
 
 export async function findById(id: number): Promise<OAuth2Client> {
 
-  const query = 'SELECT id, client_id, client_secret, user_id, allowed_grant_types FROM oauth2_clients WHERE id = ?';
-  const result = await db.query(query, [id]);
+  const result = await query(
+    'SELECT id, client_id, client_secret, user_id, allowed_grant_types FROM oauth2_clients WHERE id = ?',
+    [id]
+  );
 
   if (!result.length) {
     throw new NotFound('OAuth2 id not recognized');
@@ -51,8 +47,10 @@ export async function findById(id: number): Promise<OAuth2Client> {
 
 export async function findByApp(user: App): Promise<OAuth2Client[]> {
 
-  const query = 'SELECT id, client_id, client_secret, user_id, allowed_grant_types FROM oauth2_clients WHERE user_id = ?';
-  const result = await db.query(query, [user.id]);
+  const result = await query(
+    'SELECT id, client_id, client_secret, user_id, allowed_grant_types FROM oauth2_clients WHERE user_id = ?',
+    [user.id]
+  );
 
   return result.map( (record: OAuth2ClientRecord) => mapRecordToModel(record, user));
 
@@ -63,7 +61,7 @@ function mapRecordToModel(record: OAuth2ClientRecord, app: App): OAuth2Client {
   return {
     id: record.id,
     clientId: record.client_id,
-    clientSecret: record.client_secret.toString('utf-8'),
+    clientSecret: record.client_secret,
     app,
     allowedGrantTypes: record.allowed_grant_types.split(' ') as GrantType[],
   };
@@ -120,17 +118,16 @@ export async function create(client: Omit<OAuth2Client, 'id'>, redirectUris: str
 
   const params: Partial<OAuth2ClientRecord> = {
     client_id: client.clientId,
-    client_secret: Buffer.from(client.clientSecret),
+    client_secret: client.clientSecret,
     user_id: client.app.id,
     allowed_grant_types: client.allowedGrantTypes.join(' '),
   };
 
-  const connection = await db.getConnection();
-  const result = await connection<OAuth2ClientRecord>('oauth2_clients')
+  const result = await db('oauth2_clients')
     .insert(params, 'id')
     .returning('id');
 
-  const newClient = await connection<OAuth2ClientRecord, OAuth2ClientRecord>('oauth2_client')
+  const newClient = await db('oauth2_client')
     .select({ id: result })
     .returning('*');
 
@@ -138,7 +135,7 @@ export async function create(client: Omit<OAuth2Client, 'id'>, redirectUris: str
 
   for(const uri of redirectUris) {
 
-    await connection('oauth2_redirect_uris').insert({oauth2_client_id: realClient.id, uri});
+    await db('oauth2_redirect_uris').insert({oauth2_client_id: realClient.id, uri});
 
   }
 

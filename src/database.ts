@@ -2,6 +2,9 @@
 import { knex, Knex } from 'knex';
 import * as path from 'node:path';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+require('dotenv').config();
+
 const db: Knex = knex(getSettings());
 
 export async function init() {

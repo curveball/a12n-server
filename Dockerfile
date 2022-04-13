@@ -11,8 +11,8 @@ COPY templates templates
 COPY schemas schemas
 COPY src src
 
-
-RUN npm i --environment=dev && npx tsc && npm prune --production && rm -r src/
+# --legacy-peer-deps should be removed when all dependencies are marked as stable
+RUN npm i --legacy-peer-deps --environment=dev && npx tsc && npm prune --production && rm -r src/
 
 # Stage 2: run!
 FROM node:16-alpine

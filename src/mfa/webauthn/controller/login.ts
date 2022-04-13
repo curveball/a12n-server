@@ -1,6 +1,6 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { generateAssertionOptions, verifyAssertionResponse } from '@simplewebauthn/server';
+import { generateAuthenticationOptions, verifyAuthenticationResponse } from '@simplewebauthn/server';
 
 import log from '../../../log/service';
 import { EventType } from '../../../log/types';
@@ -14,7 +14,7 @@ class WebAuthnLoginRequestController extends Controller {
   async get(ctx: Context) {
     const { user }: MFALoginSession = ctx.session.mfa || {};
 
-    const assertionOptions = generateAssertionOptions({
+    const authenticationOptions = generateAuthenticationOptions({
       timeout: 60000,
       allowCredentials: (await webauthnService.findDevicesByUser(user)).map(device => ({
         id: device.credentialID,
@@ -27,8 +27,8 @@ class WebAuthnLoginRequestController extends Controller {
       userVerification: 'preferred',
     });
 
-    ctx.session.webAuthnChallengeLogin = assertionOptions.challenge;
-    ctx.response.body = assertionOptions;
+    ctx.session.webAuthnChallengeLogin = authenticationOptions.challenge;
+    ctx.response.body = authenticationOptions;
   }
 
   async post(ctx: Context<any>) {
@@ -42,7 +42,7 @@ class WebAuthnLoginRequestController extends Controller {
 
     let verification;
     try {
-      verification = verifyAssertionResponse({
+      verification = verifyAuthenticationResponse({
         credential: body,
         expectedChallenge,
         expectedOrigin: getSetting('webauthn.expectedOrigin') || new URL(process.env.PUBLIC_URI!).origin,
@@ -53,17 +53,17 @@ class WebAuthnLoginRequestController extends Controller {
           credentialPublicKey: authenticatorDevice.publicKey,
         }
       });
-    } catch (error) {
+    } catch (error: any) {
       log(EventType.totpFailed, ctx.ip(), user.id);
       ctx.status = 400;
       ctx.response.body = { error: error.message };
       return;
     }
 
-    const { verified, assertionInfo } = verification;
+    const { verified, authenticationInfo } = verification;
 
     if (verified) {
-      authenticatorDevice.counter = assertionInfo.newCounter;
+      authenticatorDevice.counter = authenticationInfo.newCounter;
       await webauthnService.save(authenticatorDevice);
     }
 

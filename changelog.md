@@ -1,10 +1,65 @@
 Changelog
 =========
 
-0.19.5 (????-??-??)
+0.20.0 (????-??-??)
+-------------------
+
+* `.env.defaults` is no longer automatically loaded. The file still exists but
+  its only purpose is to provide a template for developers to copy to `.env`.
+
+
+0.19.12 (2022-01-12)
+--------------------
+
+* This release reinstates the v0.19.10 changes after `@curveball/browser` received an updated logo.
+
+
+0.19.11 (2022-01-07)
+--------------------
+
+* This release rolls back the 'app logo' feature. The default setting has cosmetic bugs.
+
+
+0.19.10 (2022-01-07)
+--------------------
+
+* Add app logo to login, registration, lost-password pages.
+* The 'Change password' form now lives on `/change-password` instead of `/changepassword` for consistency with other routes.
+* Small fixes (Bad Gateway copyright notice, copy changes + new cancel button on reset password page).
+* Update dependencies.
+
+
+0.19.9 (2021-10-18)
+-------------------
+
+* Halloween theme. Automatically enables the last week of October.
+* #295: Improved validation for `identity` field on users, groups and apps.
+
+
+0.19.8 (2021-09-09)
 -------------------
 
 * Don't show 'remove member' form on groups if there are no members.
+* The 'create member' API can now also read links from HAL bodies.
+
+
+0.19.7 (2021-06-10)
+-------------------
+
+* Group members are now sorted alphabetically by 'nickname'.
+* Updated dependencies.
+
+
+0.19.6 (2021-06-10)
+-------------------
+
+* This release was botched, do not upgrade to this.
+
+
+0.19.5 (2021-06-10)
+-------------------
+
+* This version was never released.
 
 
 0.19.4 (2021-05-31)

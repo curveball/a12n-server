@@ -1,6 +1,7 @@
 import { Middleware } from '@curveball/core';
 import { NotFound, Unauthorized } from '@curveball/http-errors';
 import * as oauth2Service from './../oauth2/service';
+import { App, User, Principal } from '../principal/types';
 
 const whitelistPath = [
   '/login',
@@ -13,6 +14,50 @@ const whitelistPath = [
   '/introspect',
   '/revoke',
 ];
+
+declare module '@curveball/core' {
+
+  interface Context {
+
+    /**
+     * Authentication info
+     */
+    auth: AuthHelper;
+
+  }
+
+}
+
+class AuthHelper {
+
+  /**
+   * Currently logged in user
+   */
+  public principal: App | User | null;
+
+  constructor(principal: App | User | null) {
+    this.principal = principal;
+  }
+
+  /**
+   * Returns true if there's a logged in user (or app)
+   */
+  isLoggedIn(): this is { principal: App|User } {
+
+    return this.principal !== null;
+
+  }
+
+  /**
+   * Returns true if the logged in user matches the passsed-in principal
+   */
+  equals(principal: Principal): boolean {
+
+    return this.principal?.id === principal.id;
+
+  }
+
+}
 
 
 /**
@@ -52,16 +97,17 @@ export default function(): Middleware {
         }
       }
       // We are logged in!
-      ctx.state.user = token.user;
+      ctx.auth = new AuthHelper(token.user);
 
       return next();
 
     }
 
+    ctx.auth = new AuthHelper(
+      ctx.session.user || null
+    );
     if (ctx.session.user) {
-
       // The user was logged in via a session cookie.
-      ctx.state.user = ctx.session.user;
       return next();
 
     }

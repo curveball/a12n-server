@@ -21,6 +21,7 @@ type Settings = {
   'webauthn.expectedOrigin': string | null;
   'webauthn.relyingPartyId': string | null;
   'webauthn.serviceName': string;
+  'logo_url': string;
 
 }
 
@@ -35,7 +36,11 @@ type SettingsRules = {
 }
 
 const settingsRules: SettingsRules = {
-
+  'logo_url' : {
+    description: 'The application logo to display on the a12nserver pages',
+    fromDb: true,
+    default: '/_hal-browser/assets/curveball-logo.svg'
+  },
   'login.defaultRedirect': {
     description: 'This is the url that the user will be redirected to after the log in to a12nserver, and no other redirect_uri is provided by the application. It\'s a good idea to set this to your application URL',
     fromDb: true,
@@ -197,9 +202,8 @@ export async function load(): Promise<void> {
     })
   ) as any;
 
-  // Load database values next
-  const query = 'SELECT setting, value FROM server_settings';
-  const result: {setting: keyof Settings; value: string}[] = (await db.query(query))[0];
+  console.info('Loading settings');
+  const result = await db('server_settings').select('*');
 
   for (const row of result) {
 
@@ -209,7 +213,7 @@ export async function load(): Promise<void> {
       continue;
     }
 
-    if (!settingsRules[row.setting].fromDb) {
+    if (!(settingsRules as any)[row.setting].fromDb) {
       // eslint-disable-next-line no-console
       console.warn('The setting %s may not be set from the database. We ignored it');
       continue;

@@ -1,4 +1,4 @@
-import database from '../database';
+import db, { query } from '../database';
 import * as principalService from '../principal/service';
 import { Principal, Group } from '../principal/types';
 
@@ -8,12 +8,14 @@ import { Principal, Group } from '../principal/types';
 
 export async function findMembers(group: Group): Promise<Principal[]> {
 
-  const query = `SELECT ${principalService.fieldNames.join(', ')} FROM principals INNER JOIN group_members ON principals.id = group_members.user_id WHERE group_id = ? ORDER BY nickname`;
-  const result = await database.query(query, [group.id]);
+  const result = await query(
+    `SELECT ${principalService.fieldNames.join(', ')} FROM principals INNER JOIN group_members ON principals.id = group_members.user_id WHERE group_id = ? ORDER BY nickname`,
+    [group.id]
+  );
 
   const models = [];
 
-  for (const record of result[0]) {
+  for (const record of result) {
     const model = principalService.recordToModel(record);
     models.push(model);
   }
@@ -25,33 +27,26 @@ export async function findMembers(group: Group): Promise<Principal[]> {
 export async function addMember(group: Group, user: Principal): Promise<void> {
 
   const query = 'INSERT INTO group_members SET group_id = ?, user_id = ?';
-  await database.query(query, [group.id, user.id]);
+  await db.raw(query, [group.id, user.id]);
 
 }
 
 export async function replaceMembers(group: Group, users: Principal[]): Promise<void> {
 
-  const connection = await database.getConnection();
-  await connection.beginTransaction();
-  try {
-    await connection.query('DELETE FROM group_members WHERE group_id = ?', [group.id]);
+  await db.transaction(async trx => {
+    await trx.raw('DELETE FROM group_members WHERE group_id = ?', [group.id]);
     for(const user of users) {
-      await connection.query('INSERT INTO group_members SET group_id = ?, user_id = ?', [group.id, user.id]);
+      await trx.raw('INSERT INTO group_members SET group_id = ?, user_id = ?', [group.id, user.id]);
     }
-    await connection.commit();
-  } catch (err) {
-    await connection.rollback();
-    throw err;
-  } finally {
-    connection.release();
-  }
+    await trx.commit();
+  });
 
 }
 
 export async function removeMember(group: Group, user: Principal): Promise<void> {
 
   const query = 'DELETE FROM group_members WHERE group_id = ? AND user_id = ?';
-  await database.query(query, [group.id, user.id]);
+  await db.raw(query, [group.id, user.id]);
 
 }
 
@@ -61,12 +56,14 @@ export async function removeMember(group: Group, user: Principal): Promise<void>
 
 export async function findGroupsForPrincipal(principal: Principal): Promise<Group[]> {
 
-  const query = `SELECT ${principalService.fieldNames.join(', ')} FROM principals INNER JOIN group_members ON principals.id = group_members.group_id WHERE user_id = ?`;
-  const result = await database.query(query, [principal.id]);
+  const result = await query(
+    `SELECT ${principalService.fieldNames.join(', ')} FROM principals INNER JOIN group_members ON principals.id = group_members.group_id WHERE user_id = ?`,
+    [principal.id]
+  );
 
   const models: Group[] = [];
 
-  for (const record of result[0]) {
+  for (const record of result) {
     const model = principalService.recordToModel(record);
     models.push(model as Group);
   }

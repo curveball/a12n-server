@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcrypt';
 import * as otplib from 'otplib';
-import database from '../database';
+import db from '../database';
 import { User } from '../principal/types';
 
 type PasswordRow = {
@@ -10,7 +10,7 @@ type PasswordRow = {
 export async function createPassword(user: User, password: string): Promise<void> {
 
   const query = 'INSERT INTO user_passwords SET user_id = ?, password = ?';
-  await database.query(query, [
+  await db.raw(query, [
     user.id,
     await bcrypt.hash(password, 12)
   ]);
@@ -22,7 +22,7 @@ export async function updatePassword(user: User, password: string): Promise<void
   const query = 'INSERT INTO user_passwords (password, user_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE password = ?';
   const hashedPw = await bcrypt.hash(password, 12);
 
-  await database.query(query, [hashedPw, user.id, hashedPw]);
+  await db.raw(query, [hashedPw, user.id, hashedPw]);
 
 }
 
@@ -33,10 +33,11 @@ export async function updatePassword(user: User, password: string): Promise<void
  */
 export async function validatePassword(user: User, password: string): Promise<boolean> {
 
-  const query = 'SELECT password FROM user_passwords WHERE user_id = ?';
-  const result = await database.query(query, [user.id]);
+  const result = await db('user_passwords')
+    .select('password')
+    .where('user_id', user.id);
 
-  const hashes = result[0].map( (row: PasswordRow) => row.password );
+  const hashes = result.map( (row: PasswordRow) => row.password );
 
   for (const hash of hashes) {
 
@@ -52,9 +53,11 @@ export async function validatePassword(user: User, password: string): Promise<bo
 
 export async function hasPassword(user: User): Promise<boolean> {
 
-  const query = 'SELECT user_id FROM user_passwords WHERE user_id = ? LIMIT 1';
-  const result = await database.query(query, [user.id]);
-  return result[0].length > 0;
+  const result = await db('user_passwords')
+    .select('user_id')
+    .where('user_id', user.id);
+
+  return result.length > 0;
 
 }
 
@@ -66,14 +69,15 @@ export async function hasPassword(user: User): Promise<boolean> {
  */
 export async function validateTotp(user: User, token: string): Promise<boolean> {
 
-  const query = 'SELECT secret FROM user_totp WHERE user_id = ?';
-  const result = await database.query(query, [user.id]);
+  const result = await db('user_totp')
+    .select('secret')
+    .where('user_id', user.id);
 
-  if (!result[0].length) {
+  if (!result.length) {
     // Not set up
     return false;
   }
-  const secret = result[0][0].secret;
+  const secret = result[0].secret;
 
   return otplib.authenticator.check(token, secret);
 
@@ -86,9 +90,10 @@ export async function validateTotp(user: User, token: string): Promise<boolean> 
  */
 export async function hasTotp(user: User): Promise<boolean> {
 
-  const query = 'SELECT secret FROM user_totp WHERE user_id = ?';
-  const result = await database.query(query, [user.id]);
+  const result = await db('user_totp')
+    .select('secret')
+    .where('user_id', user.id);
 
-  return result[0].length !== 0;
+  return result.length !== 0;
 
 }

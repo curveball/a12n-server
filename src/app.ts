@@ -4,19 +4,15 @@ import { Application } from '@curveball/core';
 import mainMw from './main-mw';
 import accessLog from '@curveball/accesslog';
 
-import { checkPatches } from './database';
+import { init as initDb } from './database';
 import { load } from './server-settings';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const pkgInfo = require('../package.json');
-console.log('⚾ Curveball %s %s', pkgInfo.name, pkgInfo.version);
-
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 require('dotenv').config();
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
-require('dotenv-defaults').config();
+const pkgInfo = require('../package.json');
+console.info('⚾ %s %s', pkgInfo.name, pkgInfo.version);
 
 const port = process.env.PORT ? parseInt(process.env.PORT, 10) :  8531;
 if (!process.env.PUBLIC_URI) {
@@ -26,10 +22,8 @@ if (!process.env.PUBLIC_URI) {
 
 (async () => {
 
-  console.log('Connecting to database');
-  await checkPatches();
+  await initDb();
 
-  console.log('Loading settings');
   await load();
 
   const app = new Application();

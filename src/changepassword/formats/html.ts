@@ -6,7 +6,7 @@ export function changePasswordForm(msg: string, error: string) {
     title: 'Change Password',
     msg: msg,
     error: error,
-    action: '/changepassword',
+    action: '/change-password',
   });
 
 }

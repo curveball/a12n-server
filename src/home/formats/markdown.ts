@@ -1,4 +1,4 @@
-import { User } from '../../principal/types';
+import { App, User } from '../../principal/types';
 import { getSetting } from '../../server-settings';
 import { ServerStats } from '../../types';
 
@@ -21,7 +21,7 @@ function statsBlock(kind: string, count: number): string {
 }
 
 
-export default (version: string, authenticatedUser: User, isAdmin: boolean, serverStats: ServerStats) => {
+export default (version: string, authenticatedUser: User | App, isAdmin: boolean, serverStats: ServerStats) => {
 
   return `
 <div class="statsTray">

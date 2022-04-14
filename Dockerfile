@@ -2,12 +2,16 @@
 FROM node:14-alpine as build-stage
 WORKDIR /opt/app
 
+# Needed for building @vscode/sqlite3 package
+RUN apk add python3 make gcc musl-dev g++
+
 COPY package.json package.json Makefile tsconfig.json ./
 COPY assets assets
 COPY templates templates
-COPY mysql-schema mysql-schema
 COPY schemas schemas
 COPY src src
+
+
 RUN npm i --environment=dev && npx tsc && npm prune --production && rm -r src/
 
 # Stage 2: run!

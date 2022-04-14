@@ -5,14 +5,14 @@ document.addEventListener('DOMContentLoaded', function(){
 
   const { startAttestation, startAssertion } = SimpleWebAuthnBrowser;
 
-  elemBeginRegister && elemBeginRegister.addEventListener('click', async (ev) => {
+  elemBeginRegister?.addEventListener('click', async (ev) => {
 
     ev.preventDefault();
     elemError.innerHTML = '';
     elemError.classList.add('hidden');
     elemBeginRegister.disabled = true;
 
-    const jsonResponse = await makeRequest('/register/mfa/webauthn/attestation', {}, elemBeginRegister);
+    const jsonResponse = await makeRequest('/register/mfa/webauthn/registration', {}, elemBeginRegister);
 
     let attResp;
     try {
@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function(){
       handleError(errorText, elemBeginRegister);
     }
 
-    await makeRequest('/register/mfa/webauthn/attestation', {
+    await makeRequest('/register/mfa/webauthn/n', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function(){
     window.location.href = '/login?msg=Registered+successfully.+Please log in';
   });
 
-  elemBeginLogin && elemBeginLogin.addEventListener('click', async () => {
+  elemBeginLogin?.addEventListener('click', async () => {
     elemError.innerHTML = '';
     elemError.classList.add('hidden');
     elemBeginLogin.disabled = true;

@@ -14,17 +14,17 @@ class HomeController extends Controller {
   @accept('markdown')
   async getMd(ctx: Context) {
 
-    const user = ctx.state.user;
-    const isAdmin = await privilegeService.hasPrivilege(user, 'admin', '*');
-
+    const isAdmin = await privilegeService.hasPrivilege(ctx, 'admin', '*');
     const stats = await getServerStats();
+
+    const user = ctx.auth.principal!;
 
     ctx.response.type = 'text/markdown';
     ctx.response.headers.set('Title', 'Home');
     ctx.response.headers.append('Link', [
       '</>; rel="alternate"; type="application/hal+json"',
       '</logout>; rel="logout"',
-      `</user/${user.id}>; rel="authenticated-as" title="${user.nickname.replace('"','')}"`,
+      `</${user.href}>; rel="authenticated-as" title="${user.nickname.replace('"','')}"`,
     ]);
     ctx.response.body = markdown(version, user, isAdmin, stats);
 
@@ -34,13 +34,12 @@ class HomeController extends Controller {
   @accept('application/hal+json')
   async getJson(ctx: Context) {
 
-    const user = ctx.state.user;
-    const isAdmin = await privilegeService.hasPrivilege(user, 'admin', '*');
+    const isAdmin = await privilegeService.hasPrivilege(ctx, 'admin', '*');
     const stats = await getServerStats();
     ctx.response.headers.append('Link', [
       '</>; rel="alternate"; type="text/markdown"',
     ]);
-    ctx.response.body = hal(version, user, isAdmin, stats);
+    ctx.response.body = hal(version, ctx.auth.principal!, isAdmin, stats);
 
   }
 

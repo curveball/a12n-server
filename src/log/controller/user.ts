@@ -13,7 +13,7 @@ class UserLogController extends Controller {
     const user = await principalService.findById(+ctx.params.id);
     const log = await logService.findByUser(user);
 
-    if (user.id !== ctx.state.user.id) {
+    if (ctx.auth.equals(user)) {
       if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
         throw new Forbidden('Only users with the "admin" privilege may inspect other users\' logs');
       }

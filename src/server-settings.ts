@@ -202,9 +202,8 @@ export async function load(): Promise<void> {
     })
   ) as any;
 
-  // Load database values next
-  const query = 'SELECT setting, value FROM server_settings';
-  const result: {setting: keyof Settings; value: string}[] = (await db.query(query))[0];
+  console.info('Loading settings');
+  const result = await db('server_settings').select('*');
 
   for (const row of result) {
 
@@ -214,7 +213,7 @@ export async function load(): Promise<void> {
       continue;
     }
 
-    if (!settingsRules[row.setting].fromDb) {
+    if (!(settingsRules as any)[row.setting].fromDb) {
       // eslint-disable-next-line no-console
       console.warn('The setting %s may not be set from the database. We ignored it');
       continue;

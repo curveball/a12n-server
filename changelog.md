@@ -6,6 +6,8 @@ Changelog
 
 * Support for the `/.well-known/jwks.json` endpoint, allowing clients to
   discover JWT public keys.
+* OAuth2 secrets are now prefixed with the `secret-token:` uri scheme,
+  allowing github and other systems to detect possible commits of secret data.
 * `.env.defaults` is no longer automatically loaded. The file still exists but
   its only purpose is to provide a template for developers to copy to `.env`.
 

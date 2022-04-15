@@ -4,6 +4,8 @@ Changelog
 0.20.0 (????-??-??)
 -------------------
 
+* Support for the `/.well-known/jwks.json` endpoint, allowing clients to
+  discover JWT public keys.
 * `.env.defaults` is no longer automatically loaded. The file still exists but
   its only purpose is to provide a template for developers to copy to `.env`.
 

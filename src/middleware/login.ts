@@ -13,6 +13,8 @@ const whitelistPath = [
   '/token',
   '/introspect',
   '/revoke',
+  '/.well-known/jwks.json',
+  '/.well-known/oauth-authorization-server',
 ];
 
 declare module '@curveball/core' {

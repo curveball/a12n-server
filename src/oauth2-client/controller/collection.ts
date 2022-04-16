@@ -14,7 +14,7 @@ class ClientCollectionController extends Controller {
   async get(ctx: Context) {
 
     const app = await principalService.findById(+ctx.params.id, 'app');
-    if (app.id !== ctx.state.user.id) {
+    if (ctx.auth.equals(app)) {
       if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
         throw new Forbidden('Only users with the "admin" privilege can inspect OAuth2 clients that are not your own');
       }

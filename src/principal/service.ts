@@ -1,5 +1,5 @@
 import { NotFound, UnprocessableEntity } from '@curveball/http-errors';
-import database from '../database';
+import db, { query } from '../database';
 import { Principal, NewPrincipal, PrincipalType, User, Group, App, PrincipalStats } from './types';
 import { Principal as PrincipalRecord } from 'knex/types/tables';
 import { generatePublicId } from '../crypto';
@@ -22,14 +22,13 @@ export async function findAll(type: 'app'): Promise<App[]>;
 export async function findAll(): Promise<Principal[]>;
 export async function findAll(type?: PrincipalType): Promise<Principal[]> {
 
-  let result;
+  const filters: Record<string, any> = {};
   if (type) {
-    const query = `SELECT ${fieldNames.join(', ')} FROM principals WHERE type = ?`;
-    result = await database.query(query, [userTypeToInt(type)]);
-  } else {
-    const query = `SELECT ${fieldNames.join(', ')} FROM principals`;
-    result = await database.query(query);
+    filters.type = userTypeToInt(type);
   }
+
+  const result = await db('principals')
+    .where(filters);
 
   const principals: Principal[] = [];
   for (const principal of result) {
@@ -41,8 +40,9 @@ export async function findAll(type?: PrincipalType): Promise<Principal[]> {
 
 export async function getPrincipalStats(): Promise<PrincipalStats> {
 
-  const query = 'SELECT type, COUNT(*) as total FROM principals GROUP BY type';
-  const result = await database.query(query);
+  const result = await db<any>('principals')
+    .select(['type', db.raw('COUNT(*) as total')])
+    .groupBy('type');
 
   const principalStats: Record<PrincipalType, number> = {
     user: 0,
@@ -64,8 +64,9 @@ export async function findById(id: number, type: 'app'): Promise<App>;
 export async function findById(id: number): Promise<Principal>;
 export async function findById(id: number, type?: PrincipalType): Promise<Principal> {
 
-  const query = `SELECT ${fieldNames.join(', ')} FROM principals WHERE id = ?`;
-  const result = await database.query(query, [id]);
+  const result = await db('principals')
+    .select(fieldNames)
+    .where({id});
 
   if (result.length !== 1) {
     throw new NotFound(`Principal with id: ${id} not found`);
@@ -99,8 +100,7 @@ export async function findActiveById(id: number): Promise<Principal> {
  */
 export async function hasPrincipals(): Promise<boolean> {
 
-  const query = 'SELECT 1 FROM principals LIMIT 1';
-  const result = await database.query(query);
+  const result = await query('SELECT 1 FROM principals LIMIT 1');
 
   return result.length > 0;
 
@@ -108,8 +108,10 @@ export async function hasPrincipals(): Promise<boolean> {
 
 export async function findByIdentity(identity: string): Promise<Principal> {
 
-  const query = `SELECT ${fieldNames.join(', ')} FROM principals WHERE identity = ?`;
-  const result = await database.query(query, [identity]);
+  const result = await query(
+    `SELECT ${fieldNames.join(', ')} FROM principals WHERE identity = ?`,
+    [identity]
+  );
 
   if (result.length !== 1) {
     throw new NotFound(`Principal with identity: ${identity} not found`);
@@ -149,8 +151,10 @@ export async function findByHref(href: string): Promise<Principal> {
       break;
   }
 
-  const query = `SELECT ${fieldNames.join(', ')} FROM principals WHERE type IN (${typeFilter.map(_ => '?').join(',')}) AND id = ?`;
-  const result = await database.query(query, [...typeFilter, matches[2]]);
+  const result = await query(
+    `SELECT ${fieldNames.join(', ')} FROM principals WHERE type IN (${typeFilter.map(_ => '?').join(',')}) AND id = ?`,
+    [...typeFilter, matches[2]]
+  );
 
   if (result.length !== 1) {
     throw new NotFound('Principal with href: ' + href + ' not found');
@@ -163,9 +167,6 @@ export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'
 
   if (!isExistingPrincipal(principal)) {
 
-    // New principal
-    const connection = await database.getConnection();
-
     const newPrincipalRecord: Omit<PrincipalRecord, 'id'> = {
       identity: principal.identity,
       externalId: await generatePublicId(),
@@ -176,15 +177,16 @@ export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'
       created_at: Date.now(),
     };
 
-    const result = await connection<PrincipalRecord>('principals')
+    const result = await db<PrincipalRecord>('principals')
       .insert(newPrincipalRecord, 'id')
       .returning('id');
 
-    /* eslint-disable-next-line @typescript-eslint/consistent-type-assertions */
+    // @ts-expect-error Typescript can't figure this out yet
     return ({
-      id: result[0],
+      id: result[0].id,
+      href: `/${principal.type}/${result[0].id}`,
       ...principal
-    }) as T;
+    });
 
   } else {
 
@@ -204,9 +206,7 @@ export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'
     };
 
 
-    const connection = await database.getConnection();
-
-    await connection('principals')
+    await db('principals')
       .where('id', principal.id)
       .update(updatePrincipalRecord);
 

@@ -18,7 +18,7 @@ class UserActiveSessions extends Controller {
   async get(ctx: Context<any>) {
 
     const user = await principalService.findById(+ctx.params.id);
-    if (ctx.state.user.id !== user.id && !await privilegeService.hasPrivilege(ctx, 'admin')) {
+    if (ctx.auth.equals(user) && !await privilegeService.hasPrivilege(ctx, 'admin')) {
       throw new Forbidden('You can only use this API for yourself yourself, or if you have \'admin\' privileges');
     }
 

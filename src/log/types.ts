@@ -16,7 +16,7 @@ export type LogEntry = {
   time: Date;
   ip: string;
   eventType: EventType;
-  userAgent: string;
+  userAgent: string | null;
   country: string|null;
 };
 

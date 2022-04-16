@@ -1,6 +1,5 @@
 import { Context } from '@curveball/core';
-import db from '../database';
-import database from '../database';
+import db, { query } from '../database';
 import { Principal } from '../principal/types';
 import { Privilege, PrivilegeMap } from './types';
 
@@ -13,8 +12,10 @@ export async function getPrivilegesForPrincipal(principal: Principal): Promise<P
 
   const recursiveGroupIds = await getRecursiveGroupIds(principal.id);
 
-  const query = `SELECT resource, privilege FROM user_privileges WHERE user_id IN (${recursiveGroupIds.map(_ => '?').join(',')})`;
-  const result = await db.query(query, [...recursiveGroupIds]);
+  const result = await query(
+    `SELECT resource, privilege FROM user_privileges WHERE user_id IN (${recursiveGroupIds.map(_ => '?').join(',')})`,
+    [...recursiveGroupIds]
+  );
 
   return result.reduce( (currentPrivileges: any, row: PrivilegeRow) => {
 
@@ -37,8 +38,10 @@ export async function getPrivilegesForPrincipal(principal: Principal): Promise<P
 
 export async function getImmediatePrivilegesForPrincipal(principal: Principal): Promise<PrivilegeMap> {
 
-  const query = 'SELECT resource, privilege FROM user_privileges WHERE user_id = ?';
-  const result = await db.query(query, [principal.id]);
+  const result = await query(
+    'SELECT resource, privilege FROM user_privileges WHERE user_id = ?',
+    [principal.id]
+  );
 
   return result.reduce( (currentPrivileges: any, row: PrivilegeRow) => {
 
@@ -63,10 +66,10 @@ export async function hasPrivilege(who: Principal | Context, privilege: string, 
 
   let user;
   if (isContext(who)) {
-    if (!who.state.user) {
+    if (!who.auth.isLoggedIn()) {
       throw new Error('Cannot check privilege for unauthenticated user');
     }
-    user = who.state.user;
+    user = who.auth.principal;
   } else {
     user = who;
   }
@@ -86,24 +89,24 @@ function isContext(input: Context| Principal): input is Context {
  */
 export async function findPrivileges(): Promise<Privilege[]> {
 
-  const query = `
+  const result = await query<Privilege>(`
   SELECT privileges.privilege, privileges.description FROM privileges
   UNION ALL
   SELECT DISTINCT user_privileges.privilege, null FROM user_privileges
   LEFT JOIN privileges
   ON privileges.privilege = user_privileges.privilege
-  WHERE privileges.privilege IS NULL
-  `;
-
-  const result = await database.query<Privilege>(query);
+  WHERE privileges.privilege IS NULL`
+  );
 
   return result;
 }
 
 export async function findPrivilege(privilege: string): Promise<Privilege> {
 
-  const query = 'SELECT privilege, description FROM privileges WHERE privilege = ?';
-  const result = await database.query<Privilege>(query, [privilege]);
+  const result = await query<Privilege>(
+    'SELECT privilege, description FROM privileges WHERE privilege = ?',
+    [privilege]
+  );
 
   if (result.length !== 1) {
     return {
@@ -111,38 +114,36 @@ export async function findPrivilege(privilege: string): Promise<Privilege> {
       description: ''
     };
   }
-
   return result[0];
 
 }
 
 export async function replacePrivilegeForUser(user: Principal, privilegeMap: PrivilegeMap): Promise<void> {
 
-  const connection = await database.getConnection();
-  const transaction = await connection.transaction();
+  await db.transaction(async trx => {
 
-  await transaction.raw('DELETE FROM user_privileges WHERE user_id = ?', [ user.id ]);
+    await trx.raw('DELETE FROM user_privileges WHERE user_id = ?', [ user.id ]);
 
-  for (const [ resource, privileges ] of Object.entries(privilegeMap)) {
-    for (const privilege of privileges) {
+    for (const [ resource, privileges ] of Object.entries(privilegeMap)) {
+      for (const privilege of privileges) {
 
-      await transaction('user_privileges').insert({
-        user_id: user.id,
-        privilege,
-        resource,
-      });
+        await trx('user_privileges').insert({
+          user_id: user.id,
+          privilege,
+          resource,
+        });
 
+      }
     }
-  }
 
-  await transaction.commit();
+    await trx.commit();
+
+  });
 }
 
 export async function addPrivilegeForUser(user: Principal, privilege: string, resource: string): Promise<void> {
 
-  const connection = await database.getConnection();
-
-  await connection('user_privileges').insert({
+  await db('user_privileges').insert({
     user_id: user.id,
     privilege,
     resource,
@@ -158,8 +159,8 @@ export async function addPrivilegeForUser(user: Principal, privilege: string, re
  */
 async function getRecursiveGroupIds(principalId: number): Promise<number[]> {
 
-  const query = 'SELECT group_id FROM group_members WHERE user_id = ?';
-  const result: { group_id: number }[] = (await database.query(query, [principalId]));
+  const q = 'SELECT group_id FROM group_members WHERE user_id = ?';
+  const result: { group_id: number }[] = (await query(q, [principalId]));
 
   const ids = [
     principalId

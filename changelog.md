@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.20.0 (????-??-??)
+-------------------
+
+* `.env.defaults` is no longer automatically loaded. The file still exists but
+  its only purpose is to provide a template for developers to copy to `.env`.
+
+
 0.19.12 (2022-01-12)
 --------------------
 

@@ -50,8 +50,10 @@ OAuth2 endpoints
 Other API endpoints
 -------------------
 
-* ${isAdmin?'<a href="/exchange-one-time-token" rel="exchange-one-time-token">Exchange one-time-token</a>':''}
+  ${isAdmin?`* <a href="/settings" rel="settings">Server settings</a>
+* <a href="/exchange-one-time-token" rel="exchange-one-time-token">Exchange one-time-token</a>
 * <a href="/schema" rel="schema-collection">JSON Schema collection</a>
+`:''}
 
 _Version ${version}_
 

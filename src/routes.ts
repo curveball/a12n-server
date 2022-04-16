@@ -33,6 +33,7 @@ import register from './register/controller/user';
 import registerMfa from './register/controller/mfa';
 import registerTotp from './mfa/totp/controller/register';
 import registerWebAuthn from './mfa/webauthn/controller/register';
+import settings from './settings/controller';
 import webAuthnRegistration from './mfa/webauthn/controller/registration';
 import resetPassword from './reset-password/controller/request';
 import resetPasswordRedirect from './reset-password/controller/reset-password';
@@ -88,6 +89,8 @@ const routes = [
   router('/register/mfa/totp', registerTotp),
   router('/register/mfa/webauthn', registerWebAuthn),
   router('/register/mfa/webauthn/registration', webAuthnRegistration),
+
+  router('/settings', settings),
 
   router('/user', users),
   router('/user/byhref/:href', userByHref),

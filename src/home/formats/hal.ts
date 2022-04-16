@@ -45,6 +45,8 @@ export default (version: string, authenticatedUser: Principal, isAdmin: boolean,
         title: 'List of JSON schemas for this API'
       },
 
+
+
       'oauth_server_metadata_uri' : {
         href: '/.well-known/oauth-authorization-server',
         title: 'OAuth 2.0 Authorization Server Metadata'
@@ -71,6 +73,10 @@ export default (version: string, authenticatedUser: Principal, isAdmin: boolean,
     result._links['exchange-one-time-token'] = {
       href: '/exchange-one-time-token',
       title: 'Exchange a one-time token for a Access and Refresh token',
+    };
+    result._links['settings'] = {
+      href: '/settings',
+      title: 'Server settings',
     };
   }
 

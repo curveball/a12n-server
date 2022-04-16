@@ -6,8 +6,7 @@ installed:
 
 1. NodeJS (version 14 or higher) and `npm`.
 2. `git`.
-3. MySQL, PostgreSQL or Sqlite. The latter should only be used for development
-   environments.
+3. MySQL, PostgreSQL or SQLite. SQLite is not recommended for production.
 
 
 If you are deploying in production, we recommend the

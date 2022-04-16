@@ -64,7 +64,7 @@ export function getSettings(): Knex.Config {
 
   if (process.env.PG_DATABASE) {
 
-    // Old way to connect to Postgres
+    console.warn('The PG_* environment variables are deprecated. Use DB_DRIVER=pg, DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE instead');
 
     client = 'pg';
     connection = {
@@ -79,9 +79,11 @@ export function getSettings(): Knex.Config {
       connection.database as string,
     ];
 
+
   } else if (process.env.MYSQL_DATABASE) {
 
-    // Old way to connect to MySQL
+    console.warn('The MYSQL_* environment variables are deprecated. Use DB_DRIVER=mysql, DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE instead');
+
     client = 'mysql2';
     connection = {
       host: process.env.MYSQL_HOST || '127.0.0.1',

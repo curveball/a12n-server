@@ -69,7 +69,7 @@ export const settingsRules: SettingsRules = {
   },
   'redis.uri': {
     description: 'Redis server URI',
-    fromDb: true,
+    fromDb: false,
     default: null,
     env: 'REDIS_URI',
   },

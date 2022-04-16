@@ -32,6 +32,7 @@ Features
   * WebauthN / Yubikeys
 * A simple, flat, permission model.
 * Registration, lost password.
+* [`secret-token:` URI scheme][6]
 
 
 Documentation
@@ -54,3 +55,4 @@ developed.
 [3]: https://tools.ietf.org/html/rfc7636 "Proof Key for Code Exchange by OAuth Public Clients"
 [4]: https://auth0.com/docs/secure/tokens/json-web-tokens/json-web-key-sets
 [5]: https://datatracker.ietf.org/doc/html/rfc7009
+[6]: https://datatracker.ietf.org/doc/html/rfc8959

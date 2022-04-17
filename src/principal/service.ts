@@ -101,7 +101,6 @@ export async function findActiveById(id: number): Promise<Principal> {
 export async function hasPrincipals(): Promise<boolean> {
 
   const result = await query('SELECT 1 FROM principals LIMIT 1');
-
   return result.length > 0;
 
 }

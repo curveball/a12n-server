@@ -4,10 +4,18 @@ Changelog
 0.20.0 (????-??-??)
 -------------------
 
+* Now requires Node 16.
+* Postgres support! (@mihok)
+* Experimental sqlite support.
+* Migrated all database access to Knex.
+* Database migrations are now automatically run on startup, making upgrades a
+  log easier.
 * Support for the `/.well-known/jwks.json` endpoint, allowing clients to
   discover JWT public keys.
 * OAuth2 secrets are now prefixed with the `secret-token:` uri scheme,
   allowing github and other systems to detect possible commits of secret data.
+* A new settings panel for admins, allowing admins to see exactly which
+  settings have been applied. This is currently read-only.
 * `.env.defaults` is no longer automatically loaded. The file still exists but
   its only purpose is to provide a template for developers to copy to `.env`.
 

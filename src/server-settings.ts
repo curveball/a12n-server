@@ -1,10 +1,20 @@
 import db from './database';
 
-type Settings = {
+export type Settings = {
   'login.defaultRedirect': string;
   'registration.enabled': boolean;
   'registration.mfa.enabled': boolean;
   'cors.allowOrigin': string[] | null;
+
+  'db.driver': 'mysql2' | 'pg' | 'sqlite3' | 'mysql';
+  'db.host': string | null;
+  'db.user': string;
+  'db.password': string | null;
+  'db.database': string;
+  'db.filename': string;
+  'db.mysql_instance_connection_name': string | null;
+
+  'redis.uri': null | string;
 
   'smtp.url': null | string;
   'smtp.emailFrom': null | string;
@@ -25,7 +35,7 @@ type Settings = {
 
 }
 
-type SettingsRules = {
+export type SettingsRules = {
   [Setting in keyof Settings]: {
     description: string;
     env?: string;
@@ -35,7 +45,7 @@ type SettingsRules = {
   }
 }
 
-const settingsRules: SettingsRules = {
+export const settingsRules: SettingsRules = {
   'logo_url' : {
     description: 'The application logo to display on the a12nserver pages',
     fromDb: true,
@@ -57,10 +67,67 @@ const settingsRules: SettingsRules = {
     fromDb: true,
     default: true,
   },
+  'redis.uri': {
+    description: 'Redis server URI',
+    fromDb: false,
+    default: null,
+    env: 'REDIS_URI',
+  },
   'cors.allowOrigin': {
     description: 'List of allowed origins that may directly talk to the server. This should only ever be 1st party, trusted domains. By default CORS is not enabled',
     fromDb: true,
     default: null,
+  },
+
+  'db.driver': {
+    description: 'Database client to use. Only "pg", "sqlite3" and "mysql" are supported',
+    fromDb: false,
+    default: 'sqlite3',
+    env: 'DB_CLIENT',
+  },
+
+  'db.host': {
+    description: 'Database hostname. Required for postgres and mysql2, but must be omitted for sqlite',
+    fromDb: false,
+    default: null,
+    env: 'DB_HOST',
+  },
+
+  'db.user': {
+    description: 'Database user. Required for postgres and mysql2.',
+    fromDb: false,
+    default: 'a12nserver',
+    env: 'DB_USER',
+  },
+
+  'db.password': {
+    description: 'Database password',
+    fromDb: false,
+    default: null,
+    env: 'DB_PASSWORD',
+    isSecret: true,
+  },
+
+  'db.database': {
+    description: 'Name of the database. Required for postgres and mysql2',
+    fromDb: false,
+    default: 'a12nserver',
+    env: 'DB_DATABASE',
+  },
+
+  'db.mysql_instance_connection_name': {
+    description: 'MySQL instance connection name. This environment variable allows a Google Cloud installation to automatically discover the MySQL instance, and should normally not be provided manually',
+    fromDb: false,
+    default: null,
+    env: 'MYSQL_INSTANCE_CONNECTION_NAME',
+  },
+
+
+  'db.filename': {
+    description: 'Path to database. Only used by sqlite3 driver',
+    fromDb: false,
+    default: ':memory:',
+    env: 'DB_FILENAME',
   },
 
   'smtp.url' : {
@@ -75,8 +142,6 @@ const settingsRules: SettingsRules = {
     fromDb: true,
     default: null,
   },
-
-
 
   'oauth2.code.expiry': {
     description: 'The expiry time (in seconds) for the \'code\' from the oauth2 authorization code grant type',
@@ -102,6 +167,7 @@ const settingsRules: SettingsRules = {
     env: 'JWT_PRIVATE_KEY',
     fromDb: false,
     default: null,
+    isSecret: true,
   },
 
   'totp': {
@@ -185,7 +251,14 @@ export function requireSetting<T extends keyof Settings>(setting: T): Settings[T
 
 }
 
+export function getSettings(): Settings {
 
+  if (settingsCache === null) {
+    throw new Error('Settings have not been loaded. Call load() first');
+  }
+
+  return settingsCache;
+}
 
 /**
  * Loads or reloads settings from the database.

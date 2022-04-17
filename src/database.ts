@@ -34,7 +34,7 @@ type RawResult<T> = RawMySQLResult<T> | RawPostgreSQLResult<T> | RawSqlite3Resul
  * A shortcut for easily executing select queries.
  *
  * Use of this should be phased out, but it helped with the migration from
- * befre knex.
+ * before knex.
  */
 export async function query<T = any>(query: string, params: Knex.ValueDict | Knex.RawBinding[] = []): Promise<T[]> {
 

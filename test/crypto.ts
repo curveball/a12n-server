@@ -14,9 +14,8 @@ describe('Crypto utilities', () => {
     });
     it('Should generate different length tokens when requested', async () => {
 
-      const token = await generateSecretToken(9);
-
-      expect(token.length).to.equal(Math.ceil(9 / 3) * 4);
+      const token = await generateSecretToken();
+      expect(token.length).to.equal(43);
 
     });
 

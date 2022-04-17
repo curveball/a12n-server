@@ -1,6 +1,6 @@
 import { NotFound } from '@curveball/http-errors';
 
-import db, { query } from '../../database';
+import db, { query, insertAndGetId } from '../../database';
 import { User } from '../../principal/types';
 
 import { NewWebAuthnDevice, WebAuthnDevice } from './types';
@@ -24,12 +24,10 @@ export async function save(webAuthNDevice: NewWebAuthnDevice): Promise<WebAuthnD
       created: Math.floor(Date.now() / 1000),
     };
 
-    const result = await db<UserWebAuthnRow>('user_webauthn')
-      .insert(newWebAuthnRecord, 'id')
-      .returning('id');
+    const result = await insertAndGetId('user_webauthn', newWebAuthnRecord);
 
     return {
-      id: result[0].id,
+      id: result,
       ...webAuthNDevice
     };
   } else {

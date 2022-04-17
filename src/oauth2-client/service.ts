@@ -1,7 +1,7 @@
 import { OAuth2Client, GrantType } from './types';
 import * as bcrypt from 'bcrypt';
 import * as principalService from '../principal/service';
-import db, { query } from '../database';
+import db, { query, insertAndGetId } from '../database';
 import { Context } from '@curveball/core';
 import { NotFound, Unauthorized } from '@curveball/http-errors';
 import { InvalidRequest } from '../oauth2/errors';
@@ -129,13 +129,11 @@ export async function create(client: Omit<OAuth2Client, 'id'>, redirectUris: str
     allowed_grant_types: client.allowedGrantTypes.join(' '),
   };
 
-  const result = await db('oauth2_clients')
-    .insert(params, 'id')
-    .returning('id');
+  const result = await insertAndGetId('oauth2_clients', params);
 
   const newClient = await db('oauth2_client')
-    .select({ id: result })
-    .returning('*');
+    .select('*')
+    .where({ id: result });
 
   const realClient = mapToOauth2Client(newClient[0], client.app, client.allowedGrantTypes);
 

@@ -1,6 +1,6 @@
 import { NotFound, UnprocessableEntity } from '@curveball/http-errors';
-import db, { query } from '../database';
-import { Principal, NewPrincipal, PrincipalType, User, Group, App, PrincipalStats } from './types';
+import db, { query, insertAndGetId } from '../database';
+import { Principal, NewPrincipal, PrincipalType, User, Group, App, PrincipalStats, BasePrincipal } from './types';
 import { Principal as PrincipalRecord } from 'knex/types/tables';
 import { generatePublicId } from '../crypto';
 
@@ -183,13 +183,15 @@ export async function findByHref(href: string): Promise<Principal> {
   return recordToModel(result[0]);
 }
 
-export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href' | 'externalId'> | T): Promise<T> {
+export async function save<T extends PrincipalType>(principal: BasePrincipal<T>|NewPrincipal<T> ): Promise<BasePrincipal<T>> {
 
   if (!isExistingPrincipal(principal)) {
 
+    const externalId = await generatePublicId();
+
     const newPrincipalRecord: Omit<PrincipalRecord, 'id'> = {
       identity: principal.identity,
-      external_id: await generatePublicId(),
+      external_id: externalId,
       nickname: principal.nickname,
       type: userTypeToInt(principal.type),
       active: principal.active ? 1 : 0,
@@ -197,17 +199,14 @@ export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'
       created_at: Date.now(),
     };
 
-    const result = await db<PrincipalRecord>('principals')
-      .insert(newPrincipalRecord, 'id');
-
-    // Compatbility with sqlite and postgres requires this weird line:
-    const newId = result[0].id ?? result[0];
+    const result = await insertAndGetId('principals', newPrincipalRecord);
 
     return {
-      id: newId,
-      href: `/${principal.type}/${newId}`,
+      id: result,
+      href: `/${principal.type}/${result}`,
+      externalId,
       ...principal
-    } as T;
+    };
 
   } else {
 
@@ -282,7 +281,7 @@ export function isIdentityValid(identity: string): boolean {
 
 }
 
-function isExistingPrincipal(user: Principal | NewPrincipal): user is Principal {
+function isExistingPrincipal(user: Principal | NewPrincipal<any>): user is Principal {
 
   return (user as Principal).id !== undefined;
 

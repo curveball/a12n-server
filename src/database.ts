@@ -54,6 +54,22 @@ export async function query<T = any>(query: string, params: Knex.ValueDict | Kne
 
 }
 
+/**
+ * Inserts a single record and return id
+ *
+ * Sadly we need a helper function.
+ */
+export async function insertAndGetId<T extends Record<string, any>> (
+  tableName: string,
+  data: T
+): Promise<number> {
+
+  const result = await db(tableName).insert(data, 'id');
+  return result[0]?.id ?? result[0];
+
+}
+
+
 export function getSettings(): Knex.Config {
 
   let connection: Knex.MySql2ConnectionConfig | Knex.PgConnectionConfig | Knex.Sqlite3ConnectionConfig;

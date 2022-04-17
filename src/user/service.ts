@@ -9,11 +9,10 @@ type PasswordRow = {
 
 export async function createPassword(user: User, password: string): Promise<void> {
 
-  const query = 'INSERT INTO user_passwords SET user_id = ?, password = ?';
-  await db.raw(query, [
-    user.id,
-    await bcrypt.hash(password, 12)
-  ]);
+  await db('user_passwords').insert({
+    user_id: user.id,
+    password: await bcrypt.hash(password, 12)
+  });
 
 }
 

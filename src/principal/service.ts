@@ -168,7 +168,7 @@ export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'
 
     const newPrincipalRecord: Omit<PrincipalRecord, 'id'> = {
       identity: principal.identity,
-      externalId: await generatePublicId(),
+      external_id: await generatePublicId(),
       nickname: principal.nickname,
       type: userTypeToInt(principal.type),
       active: principal.active ? 1 : 0,
@@ -177,15 +177,16 @@ export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'
     };
 
     const result = await db<PrincipalRecord>('principals')
-      .insert(newPrincipalRecord, 'id')
-      .returning('id');
+      .insert(newPrincipalRecord, 'id');
 
-    // @ts-expect-error Typescript can't figure this out yet
-    return ({
-      id: result[0].id,
-      href: `/${principal.type}/${result[0].id}`,
+    // Compatbility with sqlite and postgres requires this weird line:
+    const newId = result[0].id ?? result[0];
+
+    return {
+      id: newId,
+      href: `/${principal.type}/${newId}`,
       ...principal
-    });
+    } as T;
 
   } else {
 
@@ -197,7 +198,7 @@ export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'
 
     principal.modifiedAt = new Date();
 
-    const updatePrincipalRecord: Omit<PrincipalRecord, 'id' | 'created_at' | 'type' | 'externalId'> = {
+    const updatePrincipalRecord: Omit<PrincipalRecord, 'id' | 'created_at' | 'type' | 'external_id'> = {
       identity: principal.identity,
       nickname: principal.nickname,
       active: principal.active ? 1 : 0,
@@ -241,9 +242,9 @@ export function recordToModel(user: PrincipalRecord): Principal {
 
   return {
     id: user.id,
-    href: `/${userTypeIntToUserType(user.type)}/${user.externalId}`,
+    href: `/${userTypeIntToUserType(user.type)}/${user.external_id}`,
     identity: user.identity,
-    externalId: user.externalId,
+    externalId: user.external_id,
     nickname: user.nickname,
     createdAt: new Date(user.created_at),
     modifiedAt: new Date(user.modified_at),

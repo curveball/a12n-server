@@ -9,7 +9,7 @@ class UserEditController extends Controller {
 
   async get(ctx: Context) {
 
-    const user = await principalService.findById(+ctx.params.id);
+    const user = await principalService.findByExternalId(ctx.params.id);
 
     if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
       throw new Forbidden('Only users with the "admin" privilege use this endpoint');
@@ -24,7 +24,7 @@ class UserEditController extends Controller {
   async post(ctx: Context) {
 
     const userBody: any = ctx.request.body;
-    const userOld = await principalService.findById(+ctx.params.id);
+    const userOld = await principalService.findByExternalId(ctx.params.id);
 
     if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
       throw new Forbidden('Only users with the "admin" privilege use this endpoint');

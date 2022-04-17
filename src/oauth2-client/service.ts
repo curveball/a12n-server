@@ -22,8 +22,11 @@ export async function findByClientId(clientId: string): Promise<OAuth2Client> {
 
   const record: OAuth2ClientRecord = result[0];
 
-  const user = await principalService.findActiveById(record.user_id) as App;
-  return mapRecordToModel(record, user);
+  const app = await principalService.findById(record.user_id, 'app');
+  if (!app.active) {
+    throw new Error(`App ${app.nickname} is not active`);
+  }
+  return mapRecordToModel(record, app);
 
 }
 
@@ -40,8 +43,11 @@ export async function findById(id: number): Promise<OAuth2Client> {
 
   const record: OAuth2ClientRecord = result[0];
 
-  const user = await principalService.findActiveById(record.user_id) as App;
-  return mapRecordToModel(record, user);
+  const app = await principalService.findById(record.user_id, 'app');
+  if (!app.active) {
+    throw new Error(`App ${app.nickname} is not active`);
+  }
+  return mapRecordToModel(record, app);
 
 }
 

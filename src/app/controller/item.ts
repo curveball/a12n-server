@@ -26,7 +26,7 @@ class AppController extends Controller {
 
   async get(ctx: Context) {
 
-    const app = await principalService.findById(+ctx.params.id, 'app');
+    const app = await principalService.findByExternalId(ctx.params.id, 'app');
 
     const isAdmin = await privilegeService.hasPrivilege(ctx, 'admin');
 

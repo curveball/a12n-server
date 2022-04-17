@@ -29,7 +29,7 @@ class UserController extends Controller {
 
   async get(ctx: Context) {
 
-    const principal = await principalService.findById(+ctx.params.id);
+    const principal = await principalService.findByExternalId(ctx.params.id);
 
     let hasControl = false;
     let hasPassword = false;
@@ -90,7 +90,7 @@ class UserController extends Controller {
       'https://curveballjs.org/schemas/a12nserver/principal-edit.json'
     );
 
-    const user = await principalService.findById(+ctx.params.id);
+    const user = await principalService.findByExternalId(ctx.params.id);
     user.active = !!ctx.request.body.active;
     user.nickname = ctx.request.body.nickname;
 

@@ -15,7 +15,7 @@ class OneTimeTokenController extends Controller {
       throw new Forbidden('Only users with the "admin" privilege can request for one time token');
     }
 
-    const user = await principalService.findById(+ctx.params.id, 'user');
+    const user = await principalService.findByExternalId(ctx.params.id, 'user');
 
     const token = await createToken(user);
     const url = resolve(process.env.PUBLIC_URI!, 'reset-password/token/' + token.token);

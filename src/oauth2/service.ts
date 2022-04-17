@@ -257,7 +257,10 @@ export async function generateTokenFromCode(client: OAuth2Client, code: string, 
     throw new UnauthorizedClient('The client_id associated with the token did not match with the authenticated client credentials');
   }
 
-  const user = await principalService.findById(codeRecord.user_id) as User;
+  const user = await principalService.findById(codeRecord.user_id, 'user');
+  if (!user.active) {
+    throw new Error(`User ${user.href} is not active`);
+  }
   return generateTokenForUser(client, user, codeRecord.browser_session_id || undefined);
 
 }
@@ -442,7 +445,11 @@ export async function getTokenByAccessToken(accessToken: string): Promise<OAuth2
   }
 
   const row: OAuth2TokenRecord = result[0];
-  const user = await principalService.findActiveById(row.user_id);
+  const user = await principalService.findById(row.user_id);
+
+  if (!user.active) {
+    throw new Error(`Principal ${user.href} is not active`);
+  }
 
   return {
     accessToken: row.access_token,
@@ -475,7 +482,10 @@ export async function getTokenByRefreshToken(refreshToken: string): Promise<OAut
 
   const row: OAuth2TokenRecord = result[0];
 
-  const user = await principalService.findActiveById(row.user_id);
+  const user = await principalService.findById(row.user_id);
+  if (!user.active) {
+    throw new Error(`Principal ${user.href} is not active`);
+  }
 
   return {
     accessToken: row.access_token,

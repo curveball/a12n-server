@@ -81,13 +81,26 @@ export async function findById(id: number, type?: PrincipalType): Promise<Princi
 
 }
 
-export async function findActiveById(id: number): Promise<Principal> {
+export async function findByExternalId(externalId: string, type: 'user'): Promise<User>;
+export async function findByExternalId(externalId: string, type: 'group'): Promise<Group>;
+export async function findByExternalId(externalId: string, type: 'app'): Promise<App>;
+export async function findByExternalId(externalId: string): Promise<Principal>;
+export async function findByExternalId(externalId: string, type?: PrincipalType): Promise<Principal> {
 
-  const user = await findById(id);
-  if (!user.active) {
-    throw new InactivePrincipal(`Principal with identity ${user.identity} is not active`);
+  const result = await db('principals')
+    .select(fieldNames)
+    .where({external_id: externalId});
+
+  if (result.length !== 1) {
+    throw new NotFound(`Principal with id: ${externalId} not found`);
   }
-  return user;
+
+  const principal = recordToModel(result[0]);
+
+  if (type && principal.type !== type) {
+    throw new NotFound(`Principal with id ${externalId} does not have type ${type}`);
+  }
+  return principal;
 
 }
 

@@ -54,8 +54,6 @@ export async function query<T = any>(query: string, params: Knex.ValueDict | Kne
 
 }
 
-
-
 export function getSettings(): Knex.Config {
 
   let connection: Knex.MySql2ConnectionConfig | Knex.PgConnectionConfig | Knex.Sqlite3ConnectionConfig;
@@ -142,7 +140,9 @@ export function getSettings(): Knex.Config {
       case undefined :
         client = 'sqlite3';
 
-        console.warn('No database settings were found, so we\'re creating a sqlite database in the current directory. This is not recommended for production');
+        if (process.env.DB_DRIVER === undefined) {
+          console.warn('No database settings were found, so we\'re creating a sqlite database in the current directory. This is not recommended for production');
+        }
 
         connection = {
           filename: process.env.DB_FILENAME || 'a12nserver.sqlite3'

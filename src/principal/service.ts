@@ -150,7 +150,7 @@ export async function findByIdentity(identity: string): Promise<Principal> {
 export async function findByHref(href: string): Promise<Principal> {
 
   const pathName = getPathName(href);
-  const matches = pathName.match(/^\/(user|app|group)\/([0-9a-zA-Z]+)$/);
+  const matches = pathName.match(/^\/(user|app|group)\/([0-9a-zA-Z_-]+)$/);
 
   if (!matches) {
     return findByIdentity(href);

@@ -9,7 +9,7 @@ class NewClientController extends Controller {
 
   async get(ctx: Context) {
 
-    const user = await principalService.findById(+ctx.params.id, 'app');
+    const user = await principalService.findByExternalId(ctx.params.id, 'app');
     if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
       throw new Forbidden('Only users with the "admin" privilege can add new OAuth2 clients');
     }

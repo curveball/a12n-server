@@ -14,11 +14,7 @@ class UserPasswordController extends Controller {
     }
 
     const userBody: any = ctx.request.body;
-    const user = await principalService.findById(parseInt(ctx.params.id, 10));
-
-    if (user.type !== 'user') {
-      throw new Forbidden('You can only update passwords for users');
-    }
+    const user = await principalService.findByExternalId(ctx.params.id, 'user');
 
     const password = userBody.newPassword;
 

@@ -1,3 +1,4 @@
+process.chdir(__dirname + '/..');
 import { getSettings } from './database';
 import { Knex } from 'knex';
 
@@ -16,7 +17,7 @@ declare module 'knex/types/tables' {
     id: number;
     identity: string;
     type: number;
-    externalId: string;
+    external_id: string;
     nickname: string;
     created_at: number;
     modified_at: number;

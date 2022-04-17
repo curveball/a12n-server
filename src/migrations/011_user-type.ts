@@ -20,7 +20,6 @@ export async function up(knex: Knex): Promise<void> {
     table
       .tinyint('type')
       .unsigned()
-      .unique()
       .notNullable()
       .comment('1 = user, 2 = app, 3 = group');
   });

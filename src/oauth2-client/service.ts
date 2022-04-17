@@ -1,7 +1,7 @@
 import { OAuth2Client, GrantType } from './types';
 import * as bcrypt from 'bcrypt';
 import * as principalService from '../principal/service';
-import db, { query } from '../database';
+import db, { query, insertAndGetId } from '../database';
 import { Context } from '@curveball/core';
 import { NotFound, Unauthorized } from '@curveball/http-errors';
 import { InvalidRequest } from '../oauth2/errors';
@@ -22,8 +22,11 @@ export async function findByClientId(clientId: string): Promise<OAuth2Client> {
 
   const record: OAuth2ClientRecord = result[0];
 
-  const user = await principalService.findActiveById(record.user_id) as App;
-  return mapRecordToModel(record, user);
+  const app = await principalService.findById(record.user_id, 'app');
+  if (!app.active) {
+    throw new Error(`App ${app.nickname} is not active`);
+  }
+  return mapRecordToModel(record, app);
 
 }
 
@@ -40,8 +43,11 @@ export async function findById(id: number): Promise<OAuth2Client> {
 
   const record: OAuth2ClientRecord = result[0];
 
-  const user = await principalService.findActiveById(record.user_id) as App;
-  return mapRecordToModel(record, user);
+  const app = await principalService.findById(record.user_id, 'app');
+  if (!app.active) {
+    throw new Error(`App ${app.nickname} is not active`);
+  }
+  return mapRecordToModel(record, app);
 
 }
 
@@ -123,13 +129,11 @@ export async function create(client: Omit<OAuth2Client, 'id'>, redirectUris: str
     allowed_grant_types: client.allowedGrantTypes.join(' '),
   };
 
-  const result = await db('oauth2_clients')
-    .insert(params, 'id')
-    .returning('id');
+  const result = await insertAndGetId('oauth2_clients', params);
 
   const newClient = await db('oauth2_client')
-    .select({ id: result })
-    .returning('*');
+    .select('*')
+    .where({ id: result });
 
   const realClient = mapToOauth2Client(newClient[0], client.app, client.allowedGrantTypes);
 

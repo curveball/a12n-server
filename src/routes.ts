@@ -45,6 +45,7 @@ import userByHref from './user/controller/by-href';
 import userLog from './log/controller/user';
 import userPassword from './user/controller/password';
 import users from './user/controller/collection';
+import jwks from './jwks/controller';
 
 const routes = [
   router('/', home),
@@ -104,6 +105,7 @@ const routes = [
   router('/reset-password/token/:token', passwordToken),
   router('/reset-password/change-password', resetPasswordRedirect),
 
+  router('/.well-known/jwks.json', jwks),
   router('/.well-known/oauth-authorization-server', oauth2Metadata),
   router('/.well-known/change-password', changePasswordRedirect),
 ];

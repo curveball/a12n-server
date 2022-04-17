@@ -45,6 +45,7 @@ OAuth2 endpoints
 * <a href="/introspect" rel="introspection">Introspection endpoint</a> ([RFC7662][RFC7662])
 * <a href="/token" rel="token">Token endpoint</a>
 * <a href="/.well-known/oauth2-authorization-server" rel="oauth_server_metadata_uri">Authorization Server Metadata</a> ([RFC8414][RFC8414])
+* <a href="/.well-known/jwks.json" rel="jwks">JSON Web Key Sets</a> ([RFC7517][RFC7517])
 
 Other API endpoints
 -------------------
@@ -56,6 +57,7 @@ _Version ${version}_
 
 [RFC7662]: https://tools.ietf.org/html/rfc7662 "OAuth 2.0 Token Introspection"
 [RFC8414]: https://tools.ietf.org/html/rfc8414 "OAuth 2.0 Authorization Server Metadata"
+[RFC7517]: https://tools.ietf.org/html/rfc7517 "JSON Web Key (JWK)"
 `;
 
 };

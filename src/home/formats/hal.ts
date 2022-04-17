@@ -48,6 +48,11 @@ export default (version: string, authenticatedUser: Principal, isAdmin: boolean,
       'oauth_server_metadata_uri' : {
         href: '/.well-known/oauth-authorization-server',
         title: 'OAuth 2.0 Authorization Server Metadata'
+      },
+
+      'jwks': {
+        href: '/.well-known/jwks.json',
+        title: 'JSON Web Key Set (JWKS)',
       }
     },
     version: version,

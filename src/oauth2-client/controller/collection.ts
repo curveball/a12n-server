@@ -64,7 +64,7 @@ class ClientCollectionController extends Controller {
       throw new UnprocessableEntity('You must specify the allowedGrantTypes property');
     }
 
-    const clientSecret = await generateSecretToken();
+    const clientSecret = `secret-token:${await generateSecretToken()}`;
     const newClient: Omit<OAuth2Client,'id'> = {
       clientId,
       app,

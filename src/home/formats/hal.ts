@@ -45,8 +45,6 @@ export default (version: string, authenticatedUser: Principal, isAdmin: boolean,
         title: 'List of JSON schemas for this API'
       },
 
-
-
       'oauth_server_metadata_uri' : {
         href: '/.well-known/oauth-authorization-server',
         title: 'OAuth 2.0 Authorization Server Metadata'

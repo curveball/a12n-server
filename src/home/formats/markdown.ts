@@ -44,7 +44,7 @@ OAuth2 endpoints
 * <a href="/authorize" rel="authorize">Authorization endpoint</a>
 * <a href="/introspect" rel="introspection">Introspection endpoint</a> ([RFC7662][RFC7662])
 * <a href="/token" rel="token">Token endpoint</a>
-* <a href="/.well-known/oauth2-authorization-server" rel="oauth_server_metadata_uri">Authorization Server Metadata</a> ([RFC8414][RFC8414])
+* <a href="/.well-known/oauth-authorization-server" rel="oauth_server_metadata_uri">Authorization Server Metadata</a> ([RFC8414][RFC8414])
 * <a href="/.well-known/jwks.json" rel="jwks">JSON Web Key Sets</a> ([RFC7517][RFC7517])
 
 Other API endpoints

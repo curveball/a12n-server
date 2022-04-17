@@ -56,24 +56,24 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
   if (hasControl) {
     hal.hasPassword = hasPassword;
     hal._links['one-time-token'] = {
-      href: `/user/${user.id}/one-time-token`,
+      href: `${user.href}/one-time-token`,
       title: 'Generate a one-time login token.',
       hints: {
         allow: ['POST'],
       }
     };
     hal._links['access-token'] = {
-      href: `/user/${user.id}/access-token`,
+      href: `${user.href}/access-token`,
       title: 'Generate an access token for this user.',
     };
     hal._links['active-sessions'] = {
-      href: `/user/${user.id}/sessions`,
+      href: `${user.href}/sessions`,
       title: 'Active user sessions'
     };
   }
   if (isAdmin) {
     hal._links['password'] = {
-      href: `/user/${user.id}/password`,
+      href: `${user.href}/password`,
       title: 'Change user\'s password',
       hints: {
         allow: ['PUT'],
@@ -81,12 +81,12 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
     };
 
     hal._links['edit-form'] = {
-      href: `/user/${user.id}/edit`,
+      href: `${user.href}/edit`,
       title: `Edit ${user.nickname}`
     };
 
     hal._links['privileges'] = {
-      href: `/user/${user.id}/edit/privileges`,
+      href: `${user.href}/edit/privileges`,
       title: 'Change privilege policy',
     };
   }

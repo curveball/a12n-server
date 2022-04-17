@@ -76,7 +76,7 @@ export function item(group: Group, privileges: PrivilegeMap, isAdmin: boolean, g
 
   if (isAdmin) {
     hal._links['privileges'] = {
-      href: `/user/${group.id}/edit/privileges`,
+      href: `${group.href}/edit/privileges`,
       title: 'Change privilege policy',
     };
     hal._templates = {

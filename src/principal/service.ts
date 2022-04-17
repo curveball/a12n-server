@@ -9,6 +9,7 @@ export class InactivePrincipal extends Error { }
 export const fieldNames: Array<keyof PrincipalRecord> = [
   'id',
   'identity',
+  'external_id',
   'nickname',
   'created_at',
   'modified_at',
@@ -87,12 +88,19 @@ export async function findByExternalId(externalId: string, type: 'app'): Promise
 export async function findByExternalId(externalId: string): Promise<Principal>;
 export async function findByExternalId(externalId: string, type?: PrincipalType): Promise<Principal> {
 
-  const result = await db('principals')
+  let result = await db('principals')
     .select(fieldNames)
     .where({external_id: externalId});
 
   if (result.length !== 1) {
-    throw new NotFound(`Principal with id: ${externalId} not found`);
+    // Trying to find the principal but now use the id field
+    result = await db('principals')
+      .select(fieldNames)
+      .where({id: externalId});
+
+    if (result.length !== 1) {
+      throw new NotFound(`Principal with id: ${externalId} not found`);
+    }
   }
 
   const principal = recordToModel(result[0]);

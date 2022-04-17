@@ -1,4 +1,5 @@
 import { getSettings } from './database';
+import { Knex } from 'knex';
 
 const settings = getSettings();
 

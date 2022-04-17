@@ -1,0 +1,28 @@
+<form action="{{ action }}" method="post">
+
+  {{# if msg}}
+  <div class="msg info">{{ msg }}</div>
+  {{/if}}
+  {{# if error}}
+  <div class="msg error">{{ error }}</div>
+  {{/if}}
+
+  <fieldset>
+    <label for="nickname">
+      <span>Group name</span>
+      <input type="text" name="nickname" id="nickname" required="required" autocomplete="nickname" />
+    </label>
+
+  </fieldset>
+
+  <fieldset>
+    <label>
+      <button type="submit">Create New Group</button>
+    </label>
+  </fieldset>
+
+  {{#each hiddenFields}}
+  <input type="hidden" name="{{@key}}" value="{{this}}"/>
+  {{/each}}
+
+</form>

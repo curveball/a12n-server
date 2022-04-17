@@ -31,7 +31,7 @@ export function collection(groups: Group[]): HalResource {
         href: group.href,
         title: group.nickname,
       })),
-      'create-form': { href: '/create-user', title: 'Create New Group'},
+      'create-form': { href: '/group/new', title: 'Create New Group'},
     },
     total: groups.length,
   };

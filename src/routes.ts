@@ -9,12 +9,14 @@ import client from './oauth2-client/controller/item';
 import clientNew from './oauth2-client/controller/new';
 import clients from './oauth2-client/controller/collection';
 import createUser from './create-user/controller';
-import groups from './group/controller/collection';
 import group from './group/controller/item';
+import groupNew from './group/controller/new';
 import groupMembers from './group/controller/member-collection';
+import groups from './group/controller/collection';
 import health from './health/controller';
 import home from './home/controller';
 import introspect from './introspect/controller';
+import jwks from './jwks/controller';
 import login from './login/controller/login';
 import loginMfa from './login/controller/mfa';
 import loginWebAuthn from './mfa/webauthn/controller/login';
@@ -33,20 +35,19 @@ import register from './register/controller/user';
 import registerMfa from './register/controller/mfa';
 import registerTotp from './mfa/totp/controller/register';
 import registerWebAuthn from './mfa/webauthn/controller/register';
-import settings from './settings/controller';
-import webAuthnRegistration from './mfa/webauthn/controller/registration';
 import resetPassword from './reset-password/controller/request';
 import resetPasswordRedirect from './reset-password/controller/reset-password';
+import settings from './settings/controller';
 import user from './user/controller/item';
-import userEdit from './user/controller/edit';
-import userEditPrivileges from './user/controller/privileges';
 import userAccessToken from './oauth2/controller/user-access-token';
 import userActiveSessions from './oauth2/controller/active-sessions';
 import userByHref from './user/controller/by-href';
+import userEdit from './user/controller/edit';
+import userEditPrivileges from './user/controller/privileges';
 import userLog from './log/controller/user';
 import userPassword from './user/controller/password';
 import users from './user/controller/collection';
-import jwks from './jwks/controller';
+import webAuthnRegistration from './mfa/webauthn/controller/registration';
 
 const routes = [
   router('/', home),
@@ -76,6 +77,7 @@ const routes = [
   router('/introspect', introspect),
 
   router('/group', groups),
+  router('/group/new', groupNew),
   router('/group/:id', group),
   router('/group/:id/edit', userEdit),
   router('/group/:id/edit/privileges', userEditPrivileges),

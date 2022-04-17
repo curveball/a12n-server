@@ -7,7 +7,7 @@ import { findByApp, create } from '../service';
 import * as principalService from '../../principal/service';
 import { GrantType, OAuth2Client } from '../types';
 import * as bcrypt from 'bcrypt';
-import { generateSecretToken } from '../../crypto';
+import { generatePublicId, generateSecretToken } from '../../crypto';
 
 class ClientCollectionController extends Controller {
 
@@ -55,7 +55,7 @@ class ClientCollectionController extends Controller {
     const redirectUris = ctx.request.body.redirectUris.trim().split(/\r\n|\n/).filter((line:string) => !!line);
 
     if (!clientId) {
-      clientId = `secret-token:${await generateSecretToken(10)}`;
+      clientId = await generatePublicId();
     } else if (clientId.length < 6) {
       throw new UnprocessableEntity('clientId must be at least 6 characters or left empty');
     }
@@ -64,7 +64,7 @@ class ClientCollectionController extends Controller {
       throw new UnprocessableEntity('You must specify the allowedGrantTypes property');
     }
 
-    const clientSecret = await generateSecretToken();
+    const clientSecret = `secret-token:${await generateSecretToken()}`;
     const newClient: Omit<OAuth2Client,'id'> = {
       clientId,
       app,

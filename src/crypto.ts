@@ -11,7 +11,25 @@ import { randomBytes } from 'crypto';
  * The token will use the characters from the base64url character list, which
  * is url-safe.
  */
-export function generateSecretToken(bytes = 32): Promise<string> {
+export function generateSecretToken(): Promise<string> {
+
+  return generateUrlSafeString(32);
+
+}
+
+/**
+ * Generates an id
+ *
+ * The id is not meant to be secret, but is meant to be not numerable, making it
+ * hard to guess (for example) how many users exist.
+ */
+export function generatePublicId(): Promise<string> {
+
+  return generateUrlSafeString(8);
+
+}
+
+function generateUrlSafeString(bytes: number): Promise<string> {
 
   return new Promise<string>((res, rej) => {
 
@@ -34,5 +52,6 @@ export function generateSecretToken(bytes = 32): Promise<string> {
     });
 
   });
+
 
 }

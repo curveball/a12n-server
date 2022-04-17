@@ -18,7 +18,7 @@ Changelog
   settings have been applied. This is currently read-only.
 * `.env.defaults` is no longer automatically loaded. The file still exists but
   its only purpose is to provide a template for developers to copy to `.env`.
-* Updated 'create group' form to be simpler.
+* Updated 'create group' and 'create app' forms to be simpler.
 
 
 0.19.12 (2022-01-12)

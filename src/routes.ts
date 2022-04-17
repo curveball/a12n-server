@@ -1,6 +1,7 @@
 import router from '@curveball/router';
 
 import app from './app/controller/item';
+import appNew from './app/controller/new';
 import apps from './app/controller/collection';
 import blob from './blob/controller';
 import changePassword from './changepassword/controller';
@@ -54,6 +55,7 @@ const routes = [
   router('/assets/:filename', blob),
 
   router('/app', apps),
+  router('/app/new', appNew),
   router('/app/:id', app),
   router('/app/:id/edit', userEdit),
   router('/app/:id/edit/privileges', userEditPrivileges),

@@ -9,7 +9,6 @@ import changePasswordRedirect from './well-known/controller/change-password';
 import client from './oauth2-client/controller/item';
 import clientNew from './oauth2-client/controller/new';
 import clients from './oauth2-client/controller/collection';
-import createUser from './create-user/controller';
 import group from './group/controller/item';
 import groupNew from './group/controller/new';
 import groupMembers from './group/controller/member-collection';
@@ -47,6 +46,7 @@ import userEdit from './user/controller/edit';
 import userEditPrivileges from './user/controller/privileges';
 import userLog from './log/controller/user';
 import userPassword from './user/controller/password';
+import userNew from './user/controller/new';
 import users from './user/controller/collection';
 import webAuthnRegistration from './mfa/webauthn/controller/registration';
 
@@ -67,8 +67,6 @@ const routes = [
   router('/exchange-one-time-token', oneTimeTokenExchange),
   router('/token', oauth2ErrorHandler, oauth2Token),
   router('/revoke', oauth2Revoke),
-
-  router('/create-user', createUser),
 
   router('/login', login),
   router('/login/mfa', loginMfa),
@@ -98,6 +96,7 @@ const routes = [
 
   router('/user', users),
   router('/user/byhref/:href', userByHref),
+  router('/user/new', userNew),
   router('/user/:id', user),
   router('/user/:id/edit', userEdit),
   router('/user/:id/edit/privileges', userEditPrivileges),

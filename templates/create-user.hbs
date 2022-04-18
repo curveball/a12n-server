@@ -18,15 +18,6 @@
       <input type="url" name="identity" id="identity" required="required" autocomplete="url" />
     </label>
 
-    <label for="type">
-      <span>User Type</span>
-      <select name="type" id="type" required="required">
-        {{#each type}}
-        <option value="{{this}}">{{this}}</option>
-        {{/each}}
-      </select>
-    </label>
-
     <label for="active" class="checkbox">
       <span>Activate user account immediately</span>
       <input type="checkbox" name="active" id="active" value="1">

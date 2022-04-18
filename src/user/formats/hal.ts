@@ -11,7 +11,7 @@ export function collection(users: User[]): HalResource {
         href: user.href,
         title: user.nickname,
       })),
-      'create-form': { href: '/create-user', title: 'Create New User'},
+      'create-form': { href: '/user/new', title: 'Create New User', type: 'text/html'},
       'find-by-href': {
         title: 'Find a user through a identity/href (exact match)',
         href: '/user/byhref/{href}',

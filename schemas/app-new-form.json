@@ -1,0 +1,21 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://curveballjs.org/schemas/a12nserver/app-new-form.json",
+  "type": "object",
+  "description": "This is the request body used by the HTML form submission for creating new apps",
+
+  "required": ["nickname", "url"],
+  "additionalProperties": false,
+
+  "properties": {
+    "nickname": {
+      "type": "string",
+      "minLength": 3
+    },
+    "url": {
+      "type": "string",
+      "format": "url",
+      "description": "URL to the application."
+    }
+  }
+}

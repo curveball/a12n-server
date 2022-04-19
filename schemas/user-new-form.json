@@ -1,0 +1,25 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://curveballjs.org/schemas/a12nserver/user-new-form.json",
+  "type": "object",
+  "description": "This is the request body used by the HTML form submission for creating new users",
+
+  "required": ["nickname", "identity"],
+  "additionalProperties": false,
+
+  "properties": {
+    "nickname": {
+      "type": "string",
+      "minLength": 3
+    },
+    "identity": {
+      "type": "string",
+      "format": "url",
+      "description": "Unique identity of the user. Usually a mailto: address"
+    },
+    "active": {
+      "type": "string",
+      "description": "Immediately activate the user. Should be a javascript truthy string for true."
+    }
+  }
+}

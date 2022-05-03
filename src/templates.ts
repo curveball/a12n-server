@@ -9,7 +9,7 @@ type Template = (parameters?: Params) => string;
 
 const templates: Map<string, Template> = new Map();
 
-export function render(name: string, params?: Params): string {
+export function render(name: string, params?: Params, renderLayoutWrapper = true): string {
 
   const layoutTemplate = getTemplate('layout');
   const pageTemplate = getTemplate(name);
@@ -20,10 +20,14 @@ export function render(name: string, params?: Params): string {
     logoUrl: getSetting('logo_url')
   });
 
-  return layoutTemplate({
-    ...newParams,
-    body: pageTemplate(newParams)
-  });
+  if (renderLayoutWrapper) {
+    return layoutTemplate({
+      ...newParams,
+      body: pageTemplate(newParams)
+    });
+  } else {
+    return pageTemplate(newParams);
+  }
 
 }
 

@@ -52,6 +52,7 @@ describe('AuthorizeController', () => {
     clientSecret: 'client-secret',
     app: app,
     allowedGrantTypes: ['authorization_code'],
+    requirePkce: false,
   };
 
 

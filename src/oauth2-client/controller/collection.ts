@@ -70,6 +70,7 @@ class ClientCollectionController extends Controller {
       app,
       allowedGrantTypes: allowedGrantTypes,
       clientSecret: await bcrypt.hash(clientSecret, 12),
+      requirePkce: ctx.request.body.requirePkce ?? false,
     };
 
     const client = await create(newClient, redirectUris);

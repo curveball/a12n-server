@@ -55,6 +55,7 @@ export function item(client: OAuth2Client, redirectUris: string[]): HalResource 
     clientId: client.clientId,
     allowedGrantTypes: client.allowedGrantTypes,
     redirectUris,
+    requirePkce: client.requirePkce,
   };
 
 }

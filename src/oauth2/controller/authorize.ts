@@ -25,9 +25,28 @@ class AuthorizeController extends Controller {
     if (!ctx.query.client_id) {
       throw new InvalidRequest('The "client_id" parameter must be provided');
     }
+
+    const clientId = ctx.query.client_id;
+
+    try {
+      oauth2Client = await findByClientId(clientId);
+    } catch (e) {
+      if (e instanceof NotFound) {
+        throw new InvalidClient('Client id incorrect');
+      } else {
+        // Rethrow
+        throw e;
+      }
+    }
+
     if (!ctx.query.redirect_uri) {
       throw new InvalidRequest('The "redirect_uri" parameter must be provided');
     }
+
+    if (oauth2Client.requirePkce && !ctx.query.code_challenge) {
+      throw new InvalidRequest('This endpoint requires that OAuth2 client support PKCE, and your client did not pass the correct parameters. Either turn off the PKCE requirement for this OAuth2 client, or upgrade to an OAuth2 client library that supports PKCE.');
+    }
+
     if (ctx.query.response_type === 'code') {
       if (!ctx.query.code_challenge && ctx.query.code_challenge_method) {
         throw new InvalidRequest('The "code_challenge" must be provided');
@@ -45,7 +64,7 @@ class AuthorizeController extends Controller {
         codeChallengeMethod = ctx.query.code_challenge ? 'plain' : undefined;
       }
     }
-    const clientId = ctx.query.client_id;
+
     const state = ctx.query.state;
     // const scope = ctx.query.scope;
     const responseType = ctx.query.response_type;
@@ -53,16 +72,7 @@ class AuthorizeController extends Controller {
     const codeChallenge = ctx.query.code_challenge;
     const grantType = responseType === 'code' ? 'authorization_code' : 'implicit';
 
-    try {
-      oauth2Client = await findByClientId(clientId);
-    } catch (e) {
-      if (e instanceof NotFound) {
-        throw new InvalidClient('Client id incorrect');
-      } else {
-        // Rethrow
-        throw e;
-      }
-    }
+
 
     if (!oauth2Client.allowedGrantTypes.includes(grantType)) {
       throw new UnsupportedGrantType('The current client is not allowed to use the ' + grantType + ' grant_type');

@@ -54,6 +54,12 @@ export function newClient(user: App) {
             title: 'Redirect Uris (1 per line)',
             type: 'textarea',
           },
+          {
+            name: 'requirePkce',
+            title: 'Require PKCE support (modern clients support this, but not everyone does)',
+            type: 'checkbox',
+            value: false,
+          },
         ],
       }
     ],

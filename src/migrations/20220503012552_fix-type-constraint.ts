@@ -5,7 +5,7 @@ export async function up(knex: Knex): Promise<void> {
     table
       .boolean('require_pkce');
   });
-  await knex('oauth2_client')
+  await knex('oauth2_clients')
     .update({require_pkce: 0});
 
   await knex.schema.alterTable('oauth2_clients', table => {

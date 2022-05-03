@@ -1,3 +1,5 @@
+import 'knex/types/tables';
+
 /**
  * Sadly inferring these doesn't currently work. Need to research :(
  */

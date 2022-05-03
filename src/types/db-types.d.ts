@@ -1,3 +1,5 @@
+import 'knex/types/tables';
+
 declare module 'knex/types/tables' {
 
   interface GroupMember {

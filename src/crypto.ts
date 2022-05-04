@@ -1,4 +1,4 @@
-import { randomBytes } from 'crypto';
+import * as crypto from 'node:crypto';
 
 /**
  * Centralized place for all crypto-related functions
@@ -33,7 +33,8 @@ export function generatePublicId(): Promise<string> {
  * Generates a cryptographically secure UUIDV4
  */
 export function uuidv4() {
-  const a = crypto.getRandomValues(new Uint16Array(8));
+  // For some reason Typescript doesn't have a type for this.
+  const a = (crypto as any).getRandomValues(new Uint16Array(8));
   let i = 0;
   return '00-0-4-1-000'.replace(/[^-]/g,
     (s:string) => (a[i++] + (+s) * 0x10000 >> +(s)).toString(16).padStart(4, '0')
@@ -53,7 +54,7 @@ function generateUrlSafeString(bytes: number): Promise<string> {
 
   return new Promise<string>((res, rej) => {
 
-    randomBytes(bytes, (err, buf) => {
+    crypto.randomBytes(bytes, (err, buf) => {
 
       if (err) {
         rej(err);

@@ -92,11 +92,11 @@ export async function findByExternalId(externalId: string, type?: PrincipalType)
     .select(fieldNames)
     .where({external_id: externalId});
 
-  if (result.length !== 1) {
+  if (result.length !== 1 && +(externalId)>0) {
     // Trying to find the principal but now use the id field
     result = await db('principals')
       .select(fieldNames)
-      .where({id: externalId});
+      .where({id: +externalId});
 
     if (result.length !== 1) {
       throw new NotFound(`Principal with id: ${externalId} not found`);

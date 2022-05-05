@@ -30,23 +30,11 @@ export function generatePublicId(): Promise<string> {
 }
 
 /**
- * Generates a cryptographically secure UUIDV4
- */
-export function uuidv4() {
-  // For some reason Typescript doesn't have a type for this.
-  const a = (crypto as any).getRandomValues(new Uint16Array(8));
-  let i = 0;
-  return '00-0-4-1-000'.replace(/[^-]/g,
-    (s:string) => (a[i++] + (+s) * 0x10000 >> +(s)).toString(16).padStart(4, '0')
-  );
-}
-
-/**
  * Generates a UUID urn
  */
 export function uuidUrn() {
 
-  return `urn:uuid:${uuidv4()}`;
+  return `urn:uuid:${crypto.randomUUID()}`;
 
 }
 

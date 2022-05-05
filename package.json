@@ -57,7 +57,7 @@
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
     "eslint": "^8.0.1",
-    "hal-types": "^1.7.4",
+    "hal-types": "^1.7.6",
     "mocha": "^9.1.3",
     "nyc": "^15.1.0",
     "sinon": "^13.0.1",

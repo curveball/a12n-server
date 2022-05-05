@@ -31,7 +31,7 @@ class GroupController extends Controller {
 
   async get(ctx: Context) {
 
-    const group = await principalService.findById(+ctx.params.id, 'group');
+    const group = await principalService.findByExternalId(ctx.params.id, 'group');
     const isAdmin = await privilegeService.hasPrivilege(ctx, 'admin');
     const members = await groupService.findMembers(group);
 
@@ -54,7 +54,7 @@ class GroupController extends Controller {
       'https://curveballjs.org/schemas/a12nserver/principal-edit.json'
     );
 
-    const user = await principalService.findById(+ctx.params.id, 'group');
+    const user = await principalService.findByExternalId(ctx.params.id, 'group');
     user.active = !!ctx.request.body.active;
     user.nickname = ctx.request.body.nickname;
 
@@ -72,7 +72,7 @@ class GroupController extends Controller {
     delete (ctx.request.body as any)['csrf-token'];
 
     ctx.request.validate<GroupPatch>('https://curveballjs.org/schemas/a12nserver/group-patch.json');
-    const group = await principalService.findById(+ctx.params.id, 'group');
+    const group = await principalService.findByExternalId(ctx.params.id, 'group');
 
     const memberHref = ctx.request.body.memberHref;
     let member;

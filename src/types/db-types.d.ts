@@ -1,3 +1,5 @@
+import 'knex/types/tables';
+
 declare module 'knex/types/tables' {
 
   interface GroupMember {
@@ -11,6 +13,7 @@ declare module 'knex/types/tables' {
     client_secret: string;
     allowed_grant_types: string;
     user_id: number;
+    require_pkce: number;
   }
 
   interface OAuth2Token {
@@ -27,6 +30,7 @@ declare module 'knex/types/tables' {
 
   interface Principal {
     id: number;
+    external_id: string;
     identity: string;
     type: number;
     nickname: string;

@@ -10,7 +10,7 @@ class UserLogController extends Controller {
 
   async get(ctx: Context) {
 
-    const user = await principalService.findById(+ctx.params.id);
+    const user = await principalService.findByExternalId(ctx.params.id);
     const log = await logService.findByUser(user);
 
     if (ctx.auth.equals(user)) {

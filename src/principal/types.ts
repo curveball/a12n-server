@@ -1,13 +1,13 @@
-export type Principal = User | Group | App;
-export type NewPrincipal = Omit<Principal, 'id' | 'href'>;
+
 
 export type PrincipalType = 'user' | 'app' | 'group';
 export const PrincipalTypeList: PrincipalType[] = ['user', 'app', 'group'];
 
-export type User = {
+export type BasePrincipal<TType extends PrincipalType> = {
   id: number;
   href: string;
-  type: 'user';
+  externalId: string;
+  type: TType;
   identity: string;
   nickname: string;
   createdAt: Date;
@@ -15,21 +15,14 @@ export type User = {
   active: boolean;
 }
 
-export type Group = {
-  id: number;
-  href: string;
-  type: 'group';
-  identity: string;
-  nickname: string;
-  createdAt: Date;
-  modifiedAt: Date;
-  active: boolean;
-}
+export type User = BasePrincipal<'user'>;
+export type Group = BasePrincipal<'group'>;
+export type App = BasePrincipal<'app'>;
 
-export type App = {
-  id: number;
-  href: string;
-  type: 'app';
+export type Principal = User | Group | App;
+
+export type NewPrincipal<TType extends PrincipalType> = {
+  type: TType;
   identity: string;
   nickname: string;
   createdAt: Date;

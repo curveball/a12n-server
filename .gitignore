@@ -1,3 +1,6 @@
+# Default sqlite database path
+/a12nserver.sqlite3
+
 # npm
 /node_modules
 
@@ -11,7 +14,16 @@
 /.nyc_output
 
 # dotenv
-.env
+/.env
+
+# Testing files for other database
+/.env.mysql
+/.env.postgres
+/.env.sqlite
+
+# RSA keys
+/*.key
+/*.key.pub
 
 # etc
 .DS_Store

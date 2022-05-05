@@ -1,0 +1,30 @@
+<form action="{{ action }}" method="post">
+
+  {{# if msg}}
+  <div class="msg info">{{ msg }}</div>
+  {{/if}}
+  {{# if error}}
+  <div class="msg error">{{ error }}</div>
+  {{/if}}
+
+  <fieldset>
+    <label for="nickname">
+      <span>App name</span>
+      <input type="text" name="nickname" id="nickname" required="required" autocomplete="nickname" />
+      <span>URL to app. Leave empty to auto-generate</span>
+      <input type="url" name="url" id="url" placeholder="https://" />
+    </label>
+
+  </fieldset>
+
+  <fieldset>
+    <label>
+      <button type="submit">Create New App</button>
+    </label>
+  </fieldset>
+
+  {{#each hiddenFields}}
+  <input type="hidden" name="{{@key}}" value="{{this}}"/>
+  {{/each}}
+
+</form>

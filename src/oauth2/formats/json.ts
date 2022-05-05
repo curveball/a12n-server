@@ -1,15 +1,19 @@
 import { OAuth2Token } from '../types';
+import { resolve } from 'url';
 
 export function metadata() {
 
+  const publicUri = process.env.PUBLIC_URI!;
+
   return {
-    issuer: '/',
+    issuer: publicUri,
     authorization_endpoint: '/authorize',
     token_endpoint: '/token',
+    jwks_uri: resolve(publicUri, '/.well-known/jwks.json'),
     response_types_supported: ['token', 'code'],
     grant_types_supported: ['client_credentials', 'implicit', 'authorization_code', 'refresh_token'],
     token_endpoint_auth_methods_supported: ['client_secret_basic'],
-    service_documentation: 'https://evertpot.com/',
+    service_documentation: publicUri,
     ui_locales_supported: ['en'],
     introspection_endpoint: '/introspect',
     revocation_endpoint: '/revoke',

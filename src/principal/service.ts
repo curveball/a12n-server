@@ -1,13 +1,15 @@
 import { NotFound, UnprocessableEntity } from '@curveball/http-errors';
-import db, { query } from '../database';
-import { Principal, NewPrincipal, PrincipalType, User, Group, App, PrincipalStats } from './types';
+import db, { query, insertAndGetId } from '../database';
+import { Principal, NewPrincipal, PrincipalType, User, Group, App, PrincipalStats, BasePrincipal } from './types';
 import { Principal as PrincipalRecord } from 'knex/types/tables';
+import { generatePublicId } from '../crypto';
 
 export class InactivePrincipal extends Error { }
 
 export const fieldNames: Array<keyof PrincipalRecord> = [
   'id',
   'identity',
+  'external_id',
   'nickname',
   'created_at',
   'modified_at',
@@ -80,13 +82,33 @@ export async function findById(id: number, type?: PrincipalType): Promise<Princi
 
 }
 
-export async function findActiveById(id: number): Promise<Principal> {
+export async function findByExternalId(externalId: string, type: 'user'): Promise<User>;
+export async function findByExternalId(externalId: string, type: 'group'): Promise<Group>;
+export async function findByExternalId(externalId: string, type: 'app'): Promise<App>;
+export async function findByExternalId(externalId: string): Promise<Principal>;
+export async function findByExternalId(externalId: string, type?: PrincipalType): Promise<Principal> {
 
-  const user = await findById(id);
-  if (!user.active) {
-    throw new InactivePrincipal(`Principal with identity ${user.identity} is not active`);
+  let result = await db('principals')
+    .select(fieldNames)
+    .where({external_id: externalId});
+
+  if (result.length !== 1 && +(externalId)>0) {
+    // Trying to find the principal but now use the id field
+    result = await db('principals')
+      .select(fieldNames)
+      .where({id: +externalId});
+
+    if (result.length !== 1) {
+      throw new NotFound(`Principal with id: ${externalId} not found`);
+    }
   }
-  return user;
+
+  const principal = recordToModel(result[0]);
+
+  if (type && principal.type !== type) {
+    throw new NotFound(`Principal with id ${externalId} does not have type ${type}`);
+  }
+  return principal;
 
 }
 
@@ -100,7 +122,6 @@ export async function findActiveById(id: number): Promise<Principal> {
 export async function hasPrincipals(): Promise<boolean> {
 
   const result = await query('SELECT 1 FROM principals LIMIT 1');
-
   return result.length > 0;
 
 }
@@ -129,7 +150,7 @@ export async function findByIdentity(identity: string): Promise<Principal> {
 export async function findByHref(href: string): Promise<Principal> {
 
   const pathName = getPathName(href);
-  const matches = pathName.match(/^\/(user|app|group)\/([0-9]+)$/);
+  const matches = pathName.match(/^\/(user|app|group)\/([0-9a-zA-Z_-]+)$/);
 
   if (!matches) {
     return findByIdentity(href);
@@ -162,12 +183,15 @@ export async function findByHref(href: string): Promise<Principal> {
   return recordToModel(result[0]);
 }
 
-export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'> | T): Promise<T> {
+export async function save<T extends PrincipalType>(principal: BasePrincipal<T>|NewPrincipal<T> ): Promise<BasePrincipal<T>> {
 
   if (!isExistingPrincipal(principal)) {
 
+    const externalId = await generatePublicId();
+
     const newPrincipalRecord: Omit<PrincipalRecord, 'id'> = {
       identity: principal.identity,
+      external_id: externalId,
       nickname: principal.nickname,
       type: userTypeToInt(principal.type),
       active: principal.active ? 1 : 0,
@@ -175,16 +199,14 @@ export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'
       created_at: Date.now(),
     };
 
-    const result = await db<PrincipalRecord>('principals')
-      .insert(newPrincipalRecord, 'id')
-      .returning('id');
+    const result = await insertAndGetId('principals', newPrincipalRecord);
 
-    // @ts-expect-error Typescript can't figure this out yet
-    return ({
-      id: result[0].id,
-      href: `/${principal.type}/${result[0].id}`,
+    return {
+      id: result,
+      href: `/${principal.type}/${result}`,
+      externalId,
       ...principal
-    });
+    };
 
   } else {
 
@@ -196,7 +218,7 @@ export async function save<T extends Principal>(principal: Omit<T, 'id' | 'href'
 
     principal.modifiedAt = new Date();
 
-    const updatePrincipalRecord: Omit<PrincipalRecord, 'id' | 'created_at' | 'type'> = {
+    const updatePrincipalRecord: Omit<PrincipalRecord, 'id' | 'created_at' | 'type' | 'external_id'> = {
       identity: principal.identity,
       nickname: principal.nickname,
       active: principal.active ? 1 : 0,
@@ -240,8 +262,9 @@ export function recordToModel(user: PrincipalRecord): Principal {
 
   return {
     id: user.id,
-    href: `/${userTypeIntToUserType(user.type)}/${user.id}`,
+    href: `/${userTypeIntToUserType(user.type)}/${user.external_id}`,
     identity: user.identity,
+    externalId: user.external_id,
     nickname: user.nickname,
     createdAt: new Date(user.created_at),
     modifiedAt: new Date(user.modified_at),
@@ -258,7 +281,7 @@ export function isIdentityValid(identity: string): boolean {
 
 }
 
-function isExistingPrincipal(user: Principal | NewPrincipal): user is Principal {
+function isExistingPrincipal(user: Principal | NewPrincipal<any>): user is Principal {
 
   return (user as Principal).id !== undefined;
 

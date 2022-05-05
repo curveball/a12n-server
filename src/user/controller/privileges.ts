@@ -15,7 +15,7 @@ class UserEditPrivilegesController extends Controller {
 
   async get(ctx: Context) {
 
-    const user = await principalService.findById(+ctx.params.id);
+    const user = await principalService.findByExternalId(ctx.params.id);
     const privileges = await privilegeService.getImmediatePrivilegesForPrincipal(user);
 
     await privilegeService.hasPrivilege(ctx, 'admin');
@@ -31,7 +31,7 @@ class UserEditPrivilegesController extends Controller {
 
     const { policyBody } = ctx.request.body;
 
-    const user = await principalService.findById(+ctx.params.id);
+    const user = await principalService.findByExternalId(ctx.params.id);
     await privilegeService.hasPrivilege(ctx, 'admin');
 
     try {

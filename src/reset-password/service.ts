@@ -22,7 +22,7 @@ export async function sendResetPasswordEmail(user: User) {
     name: user.nickname,
     url: process.env.PUBLIC_URI + 'reset-password/token/' + token.token,
     expiryHours: token.ttl / 60 / 60
-  });
+  }, false);
 
   // send mail with defined transport object
   const info = await transporter.sendMail({

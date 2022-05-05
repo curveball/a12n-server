@@ -1,6 +1,7 @@
 import router from '@curveball/router';
 
 import app from './app/controller/item';
+import appNew from './app/controller/new';
 import apps from './app/controller/collection';
 import blob from './blob/controller';
 import changePassword from './changepassword/controller';
@@ -8,13 +9,14 @@ import changePasswordRedirect from './well-known/controller/change-password';
 import client from './oauth2-client/controller/item';
 import clientNew from './oauth2-client/controller/new';
 import clients from './oauth2-client/controller/collection';
-import createUser from './create-user/controller';
-import groups from './group/controller/collection';
 import group from './group/controller/item';
+import groupNew from './group/controller/new';
 import groupMembers from './group/controller/member-collection';
+import groups from './group/controller/collection';
 import health from './health/controller';
 import home from './home/controller';
 import introspect from './introspect/controller';
+import jwks from './jwks/controller';
 import login from './login/controller/login';
 import loginMfa from './login/controller/mfa';
 import loginWebAuthn from './mfa/webauthn/controller/login';
@@ -33,24 +35,27 @@ import register from './register/controller/user';
 import registerMfa from './register/controller/mfa';
 import registerTotp from './mfa/totp/controller/register';
 import registerWebAuthn from './mfa/webauthn/controller/register';
-import webAuthnRegistration from './mfa/webauthn/controller/registration';
 import resetPassword from './reset-password/controller/request';
 import resetPasswordRedirect from './reset-password/controller/reset-password';
+import settings from './settings/controller';
 import user from './user/controller/item';
-import userEdit from './user/controller/edit';
-import userEditPrivileges from './user/controller/privileges';
 import userAccessToken from './oauth2/controller/user-access-token';
 import userActiveSessions from './oauth2/controller/active-sessions';
 import userByHref from './user/controller/by-href';
+import userEdit from './user/controller/edit';
+import userEditPrivileges from './user/controller/privileges';
 import userLog from './log/controller/user';
 import userPassword from './user/controller/password';
+import userNew from './user/controller/new';
 import users from './user/controller/collection';
+import webAuthnRegistration from './mfa/webauthn/controller/registration';
 
 const routes = [
   router('/', home),
   router('/assets/:filename', blob),
 
   router('/app', apps),
+  router('/app/new', appNew),
   router('/app/:id', app),
   router('/app/:id/edit', userEdit),
   router('/app/:id/edit/privileges', userEditPrivileges),
@@ -63,8 +68,6 @@ const routes = [
   router('/token', oauth2ErrorHandler, oauth2Token),
   router('/revoke', oauth2Revoke),
 
-  router('/create-user', createUser),
-
   router('/login', login),
   router('/login/mfa', loginMfa),
   router('/login/mfa/webauthn', loginWebAuthn),
@@ -74,6 +77,7 @@ const routes = [
   router('/introspect', introspect),
 
   router('/group', groups),
+  router('/group/new', groupNew),
   router('/group/:id', group),
   router('/group/:id/edit', userEdit),
   router('/group/:id/edit/privileges', userEditPrivileges),
@@ -88,8 +92,11 @@ const routes = [
   router('/register/mfa/webauthn', registerWebAuthn),
   router('/register/mfa/webauthn/registration', webAuthnRegistration),
 
+  router('/settings', settings),
+
   router('/user', users),
   router('/user/byhref/:href', userByHref),
+  router('/user/new', userNew),
   router('/user/:id', user),
   router('/user/:id/edit', userEdit),
   router('/user/:id/edit/privileges', userEditPrivileges),
@@ -104,6 +111,7 @@ const routes = [
   router('/reset-password/token/:token', passwordToken),
   router('/reset-password/change-password', resetPasswordRedirect),
 
+  router('/.well-known/jwks.json', jwks),
   router('/.well-known/oauth-authorization-server', oauth2Metadata),
   router('/.well-known/change-password', changePasswordRedirect),
 ];

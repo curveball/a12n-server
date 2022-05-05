@@ -26,6 +26,7 @@ describe('AuthorizeController', () => {
 
   const user: User = {
     id: 1,
+    externalId: '1',
     href: '/user/1',
     identity: 'identity',
     nickname: 'nickname',
@@ -36,6 +37,7 @@ describe('AuthorizeController', () => {
   };
   const app: App = {
     id: 1,
+    externalId: '1',
     href: '/app/1',
     identity: 'identity',
     nickname: 'appname',
@@ -50,6 +52,7 @@ describe('AuthorizeController', () => {
     clientSecret: 'client-secret',
     app: app,
     allowedGrantTypes: ['authorization_code'],
+    requirePkce: false,
   };
 
 

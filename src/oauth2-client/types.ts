@@ -33,4 +33,9 @@ export type OAuth2Client = {
    * List of allowed grantTypes this client may use.
    */
   allowedGrantTypes: GrantType[];
+
+  /**
+   * Require PKCE for authorization_code flows.
+   */
+  requirePkce: boolean;
 };

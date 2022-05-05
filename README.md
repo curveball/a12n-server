@@ -25,11 +25,14 @@ Features
   * [OAuth2 discovery document][1].
   * [PKCE][3].
   * [OAuth 2 Token Introspection][2].
+  * [JSON Web Key Sets][4].
+  * [OAuth2 Token Revocation][5]
 * MFA
   * Google Authenticator (TOTP).
   * WebauthN / Yubikeys
 * A simple, flat, permission model.
 * Registration, lost password.
+* [`secret-token:` URI scheme][6]
 
 
 Documentation
@@ -50,3 +53,6 @@ developed.
 [1]: https://tools.ietf.org/html/rfc8414 "OAuth 2.0 Authorization Server Metadata"
 [2]: https://tools.ietf.org/html/rfc7662 "OAuth 2 Token Introspection"
 [3]: https://tools.ietf.org/html/rfc7636 "Proof Key for Code Exchange by OAuth Public Clients"
+[4]: https://auth0.com/docs/secure/tokens/json-web-tokens/json-web-key-sets
+[5]: https://datatracker.ietf.org/doc/html/rfc7009
+[6]: https://datatracker.ietf.org/doc/html/rfc8959

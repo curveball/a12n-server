@@ -1,3 +1,4 @@
+process.chdir(__dirname + '/..');
 import { getSettings } from './database';
 
 const settings = getSettings();

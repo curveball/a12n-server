@@ -34,9 +34,7 @@ if (!process.env.PUBLIC_URI) {
   app.use(mainMw());
 
   app.listen(port);
-
-  console.log('Listening on port', port);
-
+  console.log('Running on \x1b[31m%s\x1b[0m', app.origin + '/');
 
 })().catch( (err) => {
 

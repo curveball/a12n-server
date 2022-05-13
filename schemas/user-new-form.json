@@ -14,7 +14,7 @@
     },
     "identity": {
       "type": "string",
-      "format": "url",
+      "format": "uri",
       "description": "Unique identity of the user. Usually a mailto: address"
     },
     "active": {

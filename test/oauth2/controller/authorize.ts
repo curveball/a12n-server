@@ -88,8 +88,8 @@ describe('AuthorizeController', () => {
     });
 
     it('should pass valid parameters and call code redirect', async() => {
-      const request = new MemoryRequest('GET', '?' + params);
-      const context = new BaseContext(request, new MemoryResponse());
+      const request = new MemoryRequest('GET', '?' + params, 'http://localhost');
+      const context = new BaseContext(request, new MemoryResponse('http://localhost'));
       context.session = {
         user: {}
       };
@@ -103,8 +103,8 @@ describe('AuthorizeController', () => {
     it('should set challenge code method to plain if not provided', async() => {
       params.delete('code_challenge_method');
 
-      const request = new MemoryRequest('GET', '?' + params);
-      const context = new BaseContext(request, new MemoryResponse());
+      const request = new MemoryRequest('GET', '?' + params, 'http://localhost');
+      const context = new BaseContext(request, new MemoryResponse('http://localhost'));
       context.session = {
         user: {}
       };
@@ -119,8 +119,8 @@ describe('AuthorizeController', () => {
       params.delete('code_challenge');
       params.delete('code_challenge_method');
 
-      const request = new MemoryRequest('GET', '?' + params);
-      const context = new BaseContext(request, new MemoryResponse());
+      const request = new MemoryRequest('GET', '?' + params, 'http://localhost');
+      const context = new BaseContext(request, new MemoryResponse('http://localhost'));
       context.session = {
         user: {}
       };
@@ -134,8 +134,8 @@ describe('AuthorizeController', () => {
     it('should fail code challenge validation', async() => {
       params.set('code_challenge_method', 'bogus-method');
 
-      const request = new MemoryRequest('GET', '?' + params);
-      const context = new BaseContext(request, new MemoryResponse());
+      const request = new MemoryRequest('GET', '?' + params, 'http://localhost');
+      const context = new BaseContext(request, new MemoryResponse('http://localhost'));
       context.session = {
         user: {}
       };
@@ -146,8 +146,8 @@ describe('AuthorizeController', () => {
     it('should fail when code method is provided but not challenge', async() => {
       params.delete('code_challenge');
 
-      const request = new MemoryRequest('GET', '?' + params);
-      const context = new BaseContext(request, new MemoryResponse());
+      const request = new MemoryRequest('GET', '?' + params, 'http://localhost');
+      const context = new BaseContext(request, new MemoryResponse('http://localhost'));
       context.session = {
         user: {}
       };

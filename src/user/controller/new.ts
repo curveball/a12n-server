@@ -24,7 +24,7 @@ class CreateUserController extends Controller {
 
   async post(ctx: Context) {
 
-    ctx.request.validate<UserNewForm>('https://curveballjs.org/schemas/a12nserver/group-new-form.json');
+    ctx.request.validate<UserNewForm>('https://curveballjs.org/schemas/a12nserver/user-new-form.json');
     if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
       throw new Forbidden('Only users with the "admin" privilege can create new users');
     }

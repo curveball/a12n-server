@@ -80,6 +80,7 @@
     "@curveball/cors": "^0.1.0",
     "@curveball/http-errors": "^0.4.0",
     "@curveball/links": "^0.1.5",
+    "@curveball/oauth2": "^0.3.2",
     "@curveball/problem": "^0.3.0",
     "@curveball/router": "^0.3.0",
     "@curveball/session": "^0.6.2",

@@ -18,7 +18,7 @@ class OneTimeTokenController extends Controller {
     const user = await principalService.findByExternalId(ctx.params.id, 'user');
 
     const token = await createToken(user);
-    const url = resolve(process.env.PUBLIC_URI!, 'reset-password/token/' + token.token);
+    const url = resolve(ctx.request.origin, 'reset-password/token/' + token.token);
 
     ctx.response.body = hal.oneTimeToken(user, url, token);
 

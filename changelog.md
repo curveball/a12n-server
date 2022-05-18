@@ -1,8 +1,16 @@
 Changelog
 =========
 
-0.20.0 (????-??-??)
--------------------
+0.20.1 (2022-05-17) alpha!
+--------------------------
+
+* `MYSQL_PORT` and `MYSQL_HOST` were ignored. These settings now exist for
+  backwards compatibility, but the backwards compatibility settings had
+  a bug.
+
+
+0.20.0 (2022-05-17) alpha!
+--------------------------
 
 * Now requires Node 16.
 * Postgres support! (@mihok)

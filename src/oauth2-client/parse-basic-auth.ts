@@ -12,11 +12,11 @@ export default function parseBasic(ctx: Context): null | [string, string] {
     return null;
   }
 
-  const decoded = Buffer.from(parts[1], 'base64').toString().split(':', 2);
-  if (decoded.length < 2) {
+  const decodedMatch = Buffer.from(parts[1], 'base64').toString().match(/^([^:]+):(.+)/);
+  if (!decodedMatch) {
     return null;
   }
 
-  return decoded as [string, string];
+  return [decodedMatch[1], decodedMatch[2]] as [string, string];
 
 }

@@ -34,7 +34,7 @@ migrate-rollback:
 	npx knex migrate:rollback --knexfile './dist/knexfile.js'
 
 start-dev:
-	npx tsc-watch --onSuccess 'node dist/app.js'
+	npx tsc-watch --onSuccess 'node --inspect=9339 dist/app.js'
 
 watch:
 	./node_modules/.bin/tsc --watch

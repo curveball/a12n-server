@@ -6,6 +6,7 @@ export type Settings = {
   'registration.mfa.enabled': boolean;
   'cors.allowOrigin': string[] | null;
 
+  /*
   'db.driver': 'mysql2' | 'pg' | 'sqlite3' | 'mysql';
   'db.host': string | null;
   'db.user': string;
@@ -13,6 +14,7 @@ export type Settings = {
   'db.database': string;
   'db.filename': string;
   'db.mysql_instance_connection_name': string | null;
+  */
 
   'redis.uri': null | string;
 
@@ -79,6 +81,7 @@ export const settingsRules: SettingsRules = {
     default: null,
   },
 
+  /*
   'db.driver': {
     description: 'Database client to use. Only "pg", "sqlite3" and "mysql" are supported',
     fromDb: false,
@@ -129,6 +132,7 @@ export const settingsRules: SettingsRules = {
     default: ':memory:',
     env: 'DB_FILENAME',
   },
+  */
 
   'smtp.url' : {
     description: 'The url to the SMTP server. See the node-mailer documentation for possible values',

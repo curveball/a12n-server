@@ -1,8 +1,27 @@
 Changelog
 =========
 
-0.20.0 (????-??-??)
--------------------
+0.20.2 (2022-05-26) alpha!
+--------------------------
+
+* Fix: Parsing HTTP Basic header containing a `:` in the password. This is
+  heavily used in server-to-server oauth2 flows. (@pschwyter)
+* Automatically open a debug connection on port 9339 when running with
+  `make start-dev`. (@pschwyter)
+
+
+🛳️ Ahoi from Halifax! 🛳️
+
+0.20.1 (2022-05-17) alpha!
+--------------------------
+
+* `MYSQL_PORT` and `MYSQL_HOST` were ignored. These settings now exist for
+  backwards compatibility, but the backwards compatibility settings had
+  a bug.
+
+
+0.20.0 (2022-05-17) alpha!
+--------------------------
 
 * Now requires Node 16.
 * Postgres support! (@mihok)

@@ -109,7 +109,6 @@ export function getSettings(): Knex.Config {
 
     if (process.env.MYSQL_INSTANCE_CONNECTION_NAME) {
       (connection as Knex.MySql2ConnectionConfig).socketPath = '/cloudsql/' + process.env.MYSQL_INSTANCE_CONNECTION_NAME;
-    } else {
       delete connection.host;
       delete connection.port;
     }

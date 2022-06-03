@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.20.3 (2022-06-03)
+-------------------
+
+* Hide database settings from 'settings page'.
+
+
 0.20.2 (2022-05-26) alpha!
 --------------------------
 

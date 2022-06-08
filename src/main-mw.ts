@@ -20,7 +20,7 @@ import { join } from 'path';
  * potentially allow a12nserver to be embedded in another curveball
  * application.
  */
-export default function(): Middleware {
+export default function (): Middleware {
 
   if (process.env.PUBLIC_URI === undefined) {
     throw new Error('PUBLIC_URI environment variable must be set.');
@@ -50,10 +50,11 @@ export default function(): Middleware {
         clientOptions: {
           port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT, 10) : 6379,
           host: process.env.REDIS_HOST ? process.env.REDIS_HOST : '127.0.0.1',
+          password: process.env.REDIS_PASSWORD ? process.env.REDIS_PASSWORD : undefined,
         },
       }) : 'memory',
       cookieName: 'A12N',
-      expiry: 60*60*24*7,
+      expiry: 60 * 60 * 24 * 7,
     }),
     login(),
     bodyParser(),

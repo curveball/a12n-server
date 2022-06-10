@@ -1,6 +1,23 @@
 Changelog
 =========
 
+0.20.3 (2022-06-03)
+-------------------
+
+* Hide database settings from 'settings page'.
+
+
+0.20.2 (2022-05-26) alpha!
+--------------------------
+
+* Fix: Parsing HTTP Basic header containing a `:` in the password. This is
+  heavily used in server-to-server oauth2 flows. (@pschwyter)
+* Automatically open a debug connection on port 9339 when running with
+  `make start-dev`. (@pschwyter)
+
+
+🛳️ Ahoi from Halifax! 🛳️
+
 0.20.1 (2022-05-17) alpha!
 --------------------------
 

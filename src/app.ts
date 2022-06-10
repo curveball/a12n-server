@@ -33,7 +33,11 @@ if (!process.env.PUBLIC_URI) {
   }));
   app.use(mainMw());
 
-  app.listen(port);
+  const httpServer = app.listen(port);
+  if (process.env.KEEP_ALIVE_TIMEOUT_MS) {
+    httpServer.keepAliveTimeout = parseInt(process.env.KEEP_ALIVE_TIMEOUT_MS, 10);
+  }
+
   console.log('Running on \x1b[31m%s\x1b[0m', app.origin + '/');
 
 })().catch( (err) => {

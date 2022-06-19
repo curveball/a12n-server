@@ -14,7 +14,7 @@
     },
     "url": {
       "type": "string",
-      "format": "url",
+      "format": "uri",
       "description": "URL to the application."
     }
   }

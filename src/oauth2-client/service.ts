@@ -131,7 +131,7 @@ export async function create(client: Omit<OAuth2Client, 'id'>, redirectUris: str
   const result = await insertAndGetId('oauth2_clients', params);
   for(const uri of redirectUris) {
 
-    await db('oauth2_redirect_uris').insert({oauth2_clients_id: result, uri});
+    await db('oauth2_redirect_uris').insert({oauth2_client_id: result, uri});
 
   }
 

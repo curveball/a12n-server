@@ -17,6 +17,11 @@ export type OAuth2Client = {
   id: number;
 
   /**
+   * Route to this client
+   */
+  href: string;
+
+  /**
    * A string that's used to configure OAuth2 clients.
    */
   clientId: string;

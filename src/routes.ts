@@ -8,6 +8,7 @@ import changePassword from './changepassword/controller';
 import changePasswordRedirect from './well-known/controller/change-password';
 import client from './oauth2-client/controller/item';
 import clientNew from './oauth2-client/controller/new';
+import clientEdit from './oauth2-client/controller/edit';
 import clients from './oauth2-client/controller/collection';
 import group from './group/controller/item';
 import groupNew from './group/controller/new';
@@ -62,6 +63,7 @@ const routes = [
   router('/app/:id/client', clients),
   router('/app/:id/client/new', clientNew),
   router('/app/:id/client/:clientId', client),
+  router('/app/:id/client/:clientId/edit', clientEdit),
 
   router('/authorize', oauth2ErrorHandler, oauth2Authorize),
   router('/exchange-one-time-token', oneTimeTokenExchange),

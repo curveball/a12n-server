@@ -9,7 +9,7 @@
 
   "properties": {
     "_links": {
-      "description": "HAL Links",
+      "description": "HAL Links"
     },
     "nickname": {
       "type": "string",

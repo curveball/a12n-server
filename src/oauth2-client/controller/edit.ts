@@ -2,26 +2,27 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import * as privilegeService from '../../privilege/service';
 import * as hal from '../formats/hal';
-import { Forbidden, UnprocessableEntity } from '@curveball/http-errors';
-import { findByApp, create } from '../service';
+import { Forbidden, NotFound, UnprocessableEntity } from '@curveball/http-errors';
 import * as principalService from '../../principal/service';
-import { GrantType, OAuth2Client } from '../types';
-import * as bcrypt from 'bcrypt';
-import { generatePublicId, generateSecretToken } from '../../crypto';
+import { findByClientId, edit } from '../service';
+import * as oauth2Service from '../../oauth2/service';
+import { GrantType } from '../types';
 
-class ClientCollectionController extends Controller {
+class EditClientController extends Controller {
 
   async get(ctx: Context) {
 
     const app = await principalService.findByExternalId(ctx.params.id, 'app');
-    if (ctx.auth.equals(app)) {
-      if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
-        throw new Forbidden('Only users with the "admin" privilege can inspect OAuth2 clients that are not your own');
-      }
+    if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
+      throw new Forbidden('Only users with the "admin" privilege can add new OAuth2 clients');
     }
 
-    const clients = await findByApp(app);
-    ctx.response.body = hal.collection(app, clients);
+    const client = await findByClientId(ctx.params.clientId);
+    if (client.app.id !== app.id) {
+      throw new NotFound('OAuth2 client not found');
+    }
+
+    ctx.response.body = hal.editForm(client, await oauth2Service.getRedirectUris(client));
 
   }
 
@@ -30,6 +31,10 @@ class ClientCollectionController extends Controller {
     const app = await principalService.findByExternalId(ctx.params.id, 'app');
     if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
       throw new Forbidden('Only users with the "admin" privilege can inspect OAuth2 clients that are not your own');
+    }
+    const client = await findByClientId(ctx.params.clientId);
+    if (client.app.id !== app.id) {
+      throw new NotFound('OAuth2 client not found');
     }
 
     const allowedGrantTypes: GrantType[] = [];
@@ -50,34 +55,20 @@ class ClientCollectionController extends Controller {
       allowedGrantTypes.push('password');
     }
 
-    let clientId = ctx.request.body.clientId;
-
     const redirectUris = ctx.request.body.redirectUris.trim().split(/\r\n|\n/).filter((line:string) => !!line);
-
-    if (!clientId) {
-      clientId = await generatePublicId();
-    } else if (clientId.length < 6) {
-      throw new UnprocessableEntity('clientId must be at least 6 characters or left empty');
-    }
 
     if (!allowedGrantTypes) {
       throw new UnprocessableEntity('You must specify the allowedGrantTypes property');
     }
 
-    const clientSecret = `secret-token:${await generateSecretToken()}`;
-    const newClient: Omit<OAuth2Client,'id'|'href'> = {
-      clientId,
-      app,
-      allowedGrantTypes: allowedGrantTypes,
-      clientSecret: await bcrypt.hash(clientSecret, 12),
-      requirePkce: ctx.request.body.requirePkce ?? false,
-    };
+    client.allowedGrantTypes = allowedGrantTypes;
+    client.requirePkce = ctx.request.body.requirePkce ?? false,
 
-    const client = await create(newClient, redirectUris);
-    ctx.response.body = hal.newClientSuccess(client, redirectUris, clientSecret);
+    await edit(client, redirectUris);
+    ctx.redirect(303, client.href);
 
   }
 
 }
 
-export default new ClientCollectionController();
+export default new EditClientController();

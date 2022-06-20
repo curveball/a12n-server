@@ -48,6 +48,7 @@ describe('AuthorizeController', () => {
   };
   const oauth2Client: OAuth2Client = {
     id: 1,
+    href: app.href + '/client/client-id',
     clientId: 'client-id',
     clientSecret: 'client-secret',
     app: app,

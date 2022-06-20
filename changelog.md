@@ -1,6 +1,18 @@
 Changelog
 =========
 
+0.20.4 (2022-06-19)
+-------------------
+
+* #398: Allow the HTTP/1.1 KeepAlive timeout to be configured using the
+  `KEEP_ALIVE_TIMEOUT_MS` environment variable. (@pschwyter)
+* #397: Add `REDIS_PASSWORD` environment variable to support password-protected
+  redis servers. (@mihok)
+* #400: Fix bug in the 'create app' form.
+* #402: Add form for editing settings on OAuth2 clients.
+* #401: Add schemas for user, app and group endpoints.
+
+
 0.20.3 (2022-06-03)
 -------------------
 

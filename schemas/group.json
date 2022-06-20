@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://curveballjs.org/schemas/a12nserver/group.json",
+  "type": "object",
+  "description": "A group can contain apps, users and other gruops and lets you assign privileges to all its members.",
+
+  "required": ["nickname", "active", "createdAt", "modifiedAt", "type", "privileges"],
+  "additionalProperties": false,
+
+  "properties": {
+    "_links": {
+      "description": "HAL Links",
+    },
+    "nickname": {
+      "type": "string",
+      "minLength": 3,
+      "description": "Human-readable displayname."
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Creation date and time."
+    },
+    "modifiedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time the group was modified."
+    },
+    "type": {
+      "const": "group",
+      "description": "Ether 'user', 'app' or 'group'"
+    },
+    "privileges": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

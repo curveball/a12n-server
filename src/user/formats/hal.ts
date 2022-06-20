@@ -44,6 +44,10 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
         href: group.href,
         title: group.nickname,
       })),
+      'describedby': {
+        href: 'https://curveballjs.org/schemas/a12nserver/user.json',
+        type: 'application/schema+json',
+      }
     },
     nickname: user.nickname,
     active: user.active,

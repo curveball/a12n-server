@@ -41,6 +41,10 @@ export function item(app: App, privileges: PrivilegeMap, isAdmin: boolean, group
       'client-collection': {
         href: `${app.href}/client`,
         title: 'List of OAuth2 client credentials'
+      },
+      'describedby': {
+        href: 'https://curveballjs.org/schemas/a12nserver/app.json',
+        type: 'application/schema+json',
       }
     },
     nickname: app.nickname,

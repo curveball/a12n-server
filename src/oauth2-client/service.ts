@@ -144,6 +144,26 @@ export async function create(client: Omit<OAuth2Client, 'id'|'href'>, redirectUr
 
 }
 
+export async function edit(client: OAuth2Client, redirectUris: string[]): Promise<void> {
+
+  const params: Partial<OAuth2ClientRecord> = {
+    allowed_grant_types: client.allowedGrantTypes.join(' '),
+    require_pkce: client.requirePkce?0:1,
+  };
+
+  await db.transaction(async trx => {
+
+    await trx('oauth2_clients').update(params).where({id: client.id});
+    await trx('oauth2_redirect_uris').delete().where({oauth2_client_id: client.id});
+
+    for(const uri of redirectUris) {
+
+      await trx('oauth2_redirect_uris').insert({oauth2_client_id: client.id, uri});
+
+    }
+  });
+
+}
 
 export async function validateSecret(oauth2Client: OAuth2Client, secret: string): Promise<boolean> {
 

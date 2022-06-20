@@ -65,7 +65,6 @@ export function item(client: OAuth2Client, redirectUris: string[]): HalResource 
 }
 export function editForm(client: OAuth2Client, redirectUris: string[]): HalResource {
 
-  console.log(client.allowedGrantTypes);
   return {
     _links: {
       self: {

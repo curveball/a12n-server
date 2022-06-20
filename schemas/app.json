@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://curveballjs.org/schemas/a12nserver/app.json",
+  "type": "object",
+  "description": "This schema represents an App. An App is a headless user that can may have privileges and credentials applied.",
+
+  "required": ["nickname", "active", "createdAt", "modifiedAt", "type", "privileges"],
+  "additionalProperties": false,
+
+  "properties": {
+    "_links": {
+      "description": "HAL Links",
+    },
+    "nickname": {
+      "type": "string",
+      "minLength": 3,
+      "description": "Human-readable displayname."
+    },
+    "active": {
+      "type": "boolean",
+      "description": "Setting this to false will disable the app."
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Creation date and time."
+    },
+    "modifiedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time the app was modified."
+    },
+    "type": {
+      "const": "app",
+      "description": "Ether 'user', 'app' or 'group'"
+    },
+    "privileges": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

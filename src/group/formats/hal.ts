@@ -64,10 +64,13 @@ export function item(group: Group, privileges: PrivilegeMap, isAdmin: boolean, g
         hints: {
           status: 'deprecated'
         },
+      },
+      'describedby': {
+        href: 'https://curveballjs.org/schemas/a12nserver/group.json',
+        type: 'application/schema+json',
       }
     },
     nickname: group.nickname,
-    active: group.active,
     createdAt: group.createdAt,
     modifiedAt: group.modifiedAt,
     type: group.type,

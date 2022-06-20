@@ -63,6 +63,7 @@ function mapRecordToModel(record: OAuth2ClientRecord, app: App): OAuth2Client {
 
   return {
     id: record.id,
+    href: `${app.href}/client/${record.client_id}`,
     clientId: record.client_id,
     clientSecret: record.client_secret,
     app,
@@ -118,7 +119,7 @@ export async function getOAuth2ClientFromBody(ctx: Context<any>): Promise<OAuth2
 
 }
 
-export async function create(client: Omit<OAuth2Client, 'id'>, redirectUris: string[]): Promise<OAuth2Client> {
+export async function create(client: Omit<OAuth2Client, 'id'|'href'>, redirectUris: string[]): Promise<OAuth2Client> {
 
   const params: Partial<OAuth2ClientRecord> = {
     client_id: client.clientId,
@@ -137,6 +138,7 @@ export async function create(client: Omit<OAuth2Client, 'id'>, redirectUris: str
 
   return {
     id: result,
+    href: `${client.app.href}/client/${client.clientId}`,
     ...client,
   };
 

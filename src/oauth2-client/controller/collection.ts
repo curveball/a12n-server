@@ -65,7 +65,7 @@ class ClientCollectionController extends Controller {
     }
 
     const clientSecret = `secret-token:${await generateSecretToken()}`;
-    const newClient: Omit<OAuth2Client,'id'> = {
+    const newClient: Omit<OAuth2Client,'id'|'href'> = {
       clientId,
       app,
       allowedGrantTypes: allowedGrantTypes,

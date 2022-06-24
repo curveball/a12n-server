@@ -126,7 +126,7 @@ export async function create(client: Omit<OAuth2Client, 'id'|'href'>, redirectUr
     client_secret: client.clientSecret,
     user_id: client.app.id,
     allowed_grant_types: client.allowedGrantTypes.join(' '),
-    require_pkce: client.requirePkce?0:1,
+    require_pkce: client.requirePkce?1:0,
   };
 
   const result = await insertAndGetId('oauth2_clients', params);
@@ -148,7 +148,7 @@ export async function edit(client: OAuth2Client, redirectUris: string[]): Promis
 
   const params: Partial<OAuth2ClientRecord> = {
     allowed_grant_types: client.allowedGrantTypes.join(' '),
-    require_pkce: client.requirePkce?0:1,
+    require_pkce: client.requirePkce?1:0,
   };
 
   await db.transaction(async trx => {

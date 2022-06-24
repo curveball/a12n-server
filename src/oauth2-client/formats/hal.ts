@@ -146,6 +146,7 @@ export function newClientSuccess(client: OAuth2Client, redirectUris: string[] ,s
     clientSecret: secret,
     allowedGrantTypes: client.allowedGrantTypes,
     redirectUris,
+    requirePkce: client.requirePkce
   };
 
 }

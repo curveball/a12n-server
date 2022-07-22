@@ -12,10 +12,19 @@
       "type": "string",
       "minLength": 3
     },
+
     "url": {
-      "type": "string",
-      "format": "uri",
-      "description": "URL to the application."
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to the application."
+        },
+        {
+          "type": "string",
+          "maxLength": 0
+        }
+      ]
     }
   }
 }

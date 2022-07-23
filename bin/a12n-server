@@ -14,7 +14,7 @@ if (!isConfigured()) {
   console.info('a12nserver not configured! Writing default configuration to ".env"');
   fs.copyFileSync(path.join(__dirname + '/../.env.defaults'), path.join(process.cwd(), './.env'));
 
-  // Reloading .denv
+  // Reloading .env
   dotenv.config();
 
 }

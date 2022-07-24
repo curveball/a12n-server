@@ -2,12 +2,13 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import * as privilegeService from '../../privilege/service';
 import * as hal from '../formats/hal';
-import { Forbidden, UnprocessableEntity } from '@curveball/http-errors';
+import { Forbidden, UnprocessableEntity, Conflict, NotFound } from '@curveball/http-errors';
 import { findByApp, create } from '../service';
 import * as principalService from '../../principal/service';
 import { GrantType, OAuth2Client } from '../types';
 import * as bcrypt from 'bcrypt';
 import { generatePublicId, generateSecretToken } from '../../crypto';
+import { findByClientId } from '../../oauth2-client/service';
 
 class ClientCollectionController extends Controller {
 
@@ -72,6 +73,16 @@ class ClientCollectionController extends Controller {
       clientSecret: await bcrypt.hash(clientSecret, 12),
       requirePkce: ctx.request.body.requirePkce ?? false,
     };
+
+    // Verify if client id already exists. Throw error if so.
+    try {
+      await findByClientId(clientId);
+      throw new Conflict('Client ID already exists');
+    } catch (err) {
+      if (!(err instanceof NotFound)) {
+        throw err;
+      }
+    }
 
     const client = await create(newClient, redirectUris);
     ctx.response.body = hal.newClientSuccess(client, redirectUris, clientSecret);

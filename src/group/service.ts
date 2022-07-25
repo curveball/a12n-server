@@ -26,7 +26,7 @@ export async function findMembers(group: Group): Promise<Principal[]> {
 
 export async function addMember(group: Group, user: Principal): Promise<void> {
 
-  const query = 'INSERT INTO group_members SET group_id = ?, user_id = ?';
+  const query = 'INSERT INTO group_members (group_id, user_id) VALUES (?, ?)';
   await db.raw(query, [group.id, user.id]);
 
 }
@@ -36,7 +36,7 @@ export async function replaceMembers(group: Group, users: Principal[]): Promise<
   await db.transaction(async trx => {
     await trx.raw('DELETE FROM group_members WHERE group_id = ?', [group.id]);
     for(const user of users) {
-      await trx.raw('INSERT INTO group_members SET group_id = ?, user_id = ?', [group.id, user.id]);
+      await trx.raw('INSERT INTO group_members (group_id, user_id) VALUES (?, ?)', [group.id, user.id]);
     }
     await trx.commit();
   });

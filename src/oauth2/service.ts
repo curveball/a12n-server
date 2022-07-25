@@ -60,7 +60,7 @@ export async function requireRedirectUri(client: OAuth2Client, redirectUrl: stri
 
 export async function addRedirectUris(client: OAuth2Client, redirectUris: string[]): Promise<void> {
 
-  const query = 'INSERT INTO oauth2_redirect_uris SET oauth2_client_id = ?, uri = ?';
+  const query = 'INSERT INTO oauth2_redirect_uris (oauth2_client_id, uri) VALUES (?, ?)';
   for(const uri of redirectUris) {
     await db.raw(query, [client.id, uri]);
   }

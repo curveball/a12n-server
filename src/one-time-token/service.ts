@@ -15,7 +15,7 @@ const tokenTTL = 7200;
  */
 export async function createToken(user: User): Promise<OneTimeToken> {
   const token = await generateSecretToken();
-  const query = 'INSERT INTO reset_password_token SET user_id = ?, token = ?, expires_at = ?, created_at = ?';
+  const query = 'INSERT INTO reset_password_token (user_id, token, expires_at, created_at) VALUES (?, ?, ?, ?)';
 
   await db.raw(query, [
     user.id,

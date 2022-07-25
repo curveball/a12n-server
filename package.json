@@ -10,6 +10,7 @@
     "start": "node ./dist/app.js",
     "start:watch": "tsc-watch --onSuccess 'node dist/app.js'"
   },
+  "bin": "./bin/a12n-server",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/curveball/a12n-server.git"

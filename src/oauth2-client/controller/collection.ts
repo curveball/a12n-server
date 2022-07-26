@@ -2,14 +2,13 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import * as privilegeService from '../../privilege/service';
 import * as hal from '../formats/hal';
-import { Forbidden, UnprocessableEntity, Conflict, NotFound } from '@curveball/http-errors';
+import { Forbidden, UnprocessableEntity, Conflict } from '@curveball/http-errors';
 import { findByApp, create } from '../service';
 import * as principalService from '../../principal/service';
 import { GrantType, OAuth2Client } from '../types';
 import * as bcrypt from 'bcrypt';
 import { generatePublicId, generateSecretToken } from '../../crypto';
-import { findByClientId } from '../../oauth2-client/service';
-
+import { wrapError, UniqueViolationError } from 'db-errors';
 class ClientCollectionController extends Controller {
 
   async get(ctx: Context) {
@@ -74,18 +73,16 @@ class ClientCollectionController extends Controller {
       requirePkce: ctx.request.body.requirePkce ?? false,
     };
 
-    // Verify if client id already exists. Throw error if so.
+    // If client id already exists in DB, throw error.
     try {
-      await findByClientId(clientId);
-      throw new Conflict('Client ID already exists');
-    } catch (err) {
-      if (!(err instanceof NotFound)) {
-        throw err;
+      const client = await create(newClient, redirectUris);
+      ctx.response.body = hal.newClientSuccess(client, redirectUris, clientSecret);
+    } catch (error: any) {
+      const err = wrapError(error);
+      if (err instanceof UniqueViolationError) {
+        throw new Conflict('Client ID already exists');
       }
     }
-
-    const client = await create(newClient, redirectUris);
-    ctx.response.body = hal.newClientSuccess(client, redirectUris, clientSecret);
 
   }
 

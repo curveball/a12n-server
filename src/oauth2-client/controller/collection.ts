@@ -8,7 +8,8 @@ import * as principalService from '../../principal/service';
 import { GrantType, OAuth2Client } from '../types';
 import * as bcrypt from 'bcrypt';
 import { generatePublicId, generateSecretToken } from '../../crypto';
-import { wrapError, UniqueViolationError } from 'db-errors';
+import { UniqueViolationError } from 'db-errors';
+
 class ClientCollectionController extends Controller {
 
   async get(ctx: Context) {
@@ -78,11 +79,10 @@ class ClientCollectionController extends Controller {
       const client = await create(newClient, redirectUris);
       ctx.response.body = hal.newClientSuccess(client, redirectUris, clientSecret);
     } catch (error: any) {
-      const err = wrapError(error);
-      if (err instanceof UniqueViolationError) {
+      if (error instanceof UniqueViolationError) {
         throw new Conflict('Client ID already exists');
       } else {
-        throw err;
+        throw error;
       }
     }
 

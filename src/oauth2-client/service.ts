@@ -8,6 +8,7 @@ import { InvalidRequest } from '../oauth2/errors';
 import parseBasicAuth from './parse-basic-auth';
 import { App } from '../principal/types';
 import { OAuth2Client as OAuth2ClientRecord } from 'knex/types/tables';
+import { wrapError } from 'db-errors';
 
 export async function findByClientId(clientId: string): Promise<OAuth2Client> {
 
@@ -129,12 +130,21 @@ export async function create(client: Omit<OAuth2Client, 'id'|'href'>, redirectUr
     require_pkce: client.requirePkce?1:0,
   };
 
-  const result = await insertAndGetId('oauth2_clients', params);
-  for(const uri of redirectUris) {
+  let result;
 
-    await db('oauth2_redirect_uris').insert({oauth2_client_id: result, uri});
+  try {
+    result = await insertAndGetId('oauth2_clients', params);
 
+    for(const uri of redirectUris) {
+
+      await db('oauth2_redirect_uris').insert({oauth2_client_id: result, uri});
+
+    }
+
+  } catch (err: any) {
+    throw wrapError(err);
   }
+
 
   return {
     id: result,

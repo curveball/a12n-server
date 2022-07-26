@@ -81,6 +81,8 @@ class ClientCollectionController extends Controller {
       const err = wrapError(error);
       if (err instanceof UniqueViolationError) {
         throw new Conflict('Client ID already exists');
+      } else {
+        throw err;
       }
     }
 

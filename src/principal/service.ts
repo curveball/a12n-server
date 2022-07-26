@@ -172,7 +172,7 @@ export async function findByHref(href: string): Promise<Principal> {
   }
 
   const result = await query(
-    `SELECT ${fieldNames.join(', ')} FROM principals WHERE type IN (${typeFilter.map(_ => '?').join(',')}) AND id = ?`,
+    `SELECT ${fieldNames.join(', ')} FROM principals WHERE type IN (${typeFilter.map(_ => '?').join(',')}) AND external_id = ?`,
     [...typeFilter, matches[2]]
   );
 

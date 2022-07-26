@@ -3,12 +3,12 @@ import * as bcrypt from 'bcrypt';
 import * as principalService from '../principal/service';
 import db, { insertAndGetId } from '../database';
 import { Context } from '@curveball/core';
-import { NotFound, Unauthorized } from '@curveball/http-errors';
+import { NotFound, Unauthorized, Conflict } from '@curveball/http-errors';
 import { InvalidRequest } from '../oauth2/errors';
 import parseBasicAuth from './parse-basic-auth';
 import { App } from '../principal/types';
 import { OAuth2Client as OAuth2ClientRecord } from 'knex/types/tables';
-import { wrapError } from 'db-errors';
+import { wrapError, UniqueViolationError } from 'db-errors';
 
 export async function findByClientId(clientId: string): Promise<OAuth2Client> {
 
@@ -134,7 +134,6 @@ export async function create(client: Omit<OAuth2Client, 'id'|'href'>, redirectUr
 
   try {
     result = await insertAndGetId('oauth2_clients', params);
-
     for(const uri of redirectUris) {
 
       await db('oauth2_redirect_uris').insert({oauth2_client_id: result, uri});
@@ -142,7 +141,13 @@ export async function create(client: Omit<OAuth2Client, 'id'|'href'>, redirectUr
     }
 
   } catch (err: any) {
-    throw wrapError(err);
+    const error =  wrapError(err);
+
+    if (error instanceof UniqueViolationError) {
+      throw new Conflict('Client ID already exists');
+    } else {
+      throw error;
+    }
   }
 
 

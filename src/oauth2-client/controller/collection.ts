@@ -2,13 +2,12 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import * as privilegeService from '../../privilege/service';
 import * as hal from '../formats/hal';
-import { Forbidden, UnprocessableEntity, Conflict } from '@curveball/http-errors';
+import { Forbidden, UnprocessableEntity } from '@curveball/http-errors';
 import { findByApp, create } from '../service';
 import * as principalService from '../../principal/service';
 import { GrantType, OAuth2Client } from '../types';
 import * as bcrypt from 'bcrypt';
 import { generatePublicId, generateSecretToken } from '../../crypto';
-import { UniqueViolationError } from 'db-errors';
 
 class ClientCollectionController extends Controller {
 
@@ -74,17 +73,8 @@ class ClientCollectionController extends Controller {
       requirePkce: ctx.request.body.requirePkce ?? false,
     };
 
-    // If client id already exists in DB, throw error.
-    try {
-      const client = await create(newClient, redirectUris);
-      ctx.response.body = hal.newClientSuccess(client, redirectUris, clientSecret);
-    } catch (error: any) {
-      if (error instanceof UniqueViolationError) {
-        throw new Conflict('Client ID already exists');
-      } else {
-        throw error;
-      }
-    }
+    const client = await create(newClient, redirectUris);
+    ctx.response.body = hal.newClientSuccess(client, redirectUris, clientSecret);
 
   }
 

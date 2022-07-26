@@ -1,0 +1,30 @@
+#!/usr/bin/env node
+
+/* Some eslint overrides since we're in Javascript land here */
+
+/* eslint "@typescript-eslint/no-var-requires": 0 */
+
+const fs = require('node:fs');
+const path = require('node:path');
+const dotenv = require('dotenv');
+
+dotenv.config();
+
+if (!isConfigured()) {
+  console.info('a12nserver not configured! Writing default configuration to ".env"');
+  fs.copyFileSync(path.join(__dirname + '/../.env.defaults'), path.join(process.cwd(), './.env'));
+
+  // Reloading .env
+  dotenv.config();
+
+}
+
+require('../dist/app.js');
+
+function isConfigured() {
+
+  // A very simple heuristic to see if configuration exists.
+  return process.env.MYSQL_HOST !== undefined || process.env.DB_DRIVER !== undefined || fs.existsSync('.env');
+
+}
+

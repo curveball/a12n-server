@@ -21,7 +21,8 @@
     "dist",
     "LICENSE",
     "assets",
-    "templates"
+    "templates",
+    ".env.defaults"
   ],
   "contributors": [
     {

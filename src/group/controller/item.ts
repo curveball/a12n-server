@@ -97,7 +97,18 @@ class GroupController extends Controller {
     }
 
     if (ctx.request.accepts('text/html')) {
-      ctx.redirect(303, group.href);
+      const group = await principalService.findByExternalId(ctx.params.id, 'group');
+      const isAdmin = await privilegeService.hasPrivilege(ctx, 'admin');
+      const members = await groupService.findMembers(group);
+      
+      ctx.response.body = hal.item(
+        group,
+        await privilegeService.getPrivilegesForPrincipal(group),
+        isAdmin,
+        await groupService.findGroupsForPrincipal(group),
+        members,
+      );
+      ctx.redirect(200, group.href);
     } else {
       ctx.status = 204;
     }

@@ -22,7 +22,8 @@
     "LICENSE",
     "assets",
     "templates",
-    ".env.defaults"
+    ".env.defaults",
+    "schemas"
   ],
   "contributors": [
     {

@@ -1,6 +1,17 @@
 Changelog
 =========
 
+0.21.0 (2022-07-27)
+-------------------
+
+* New! Start a fresh a12nserver just by running `npx @curveball/a12n-server`
+* #412: Fixed a few more PostgreSQL bugs (@AminDhouib)
+* #407: Users can be added to groups again with their relative URI (@AminDhouib)
+* #399: When trying to add a new OAuth2 client with an existing `client_id`,
+  the server will now emit a 409 instead of a 500 error. (@AminDhouib)
+* The `requirePkce` flag was not respected when creating a new OAuth2 client.
+
+
 0.20.4 (2022-06-19)
 -------------------
 

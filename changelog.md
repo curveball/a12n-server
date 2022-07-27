@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.21.2 (2022-07-27)
+-------------------
+
+* Adding `schemas` and `.env.defaults` to the NPM package.
+
+
 0.21.0 (2022-07-27)
 -------------------
 

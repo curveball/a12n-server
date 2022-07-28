@@ -97,7 +97,6 @@ class GroupController extends Controller {
     }
 
     if (ctx.request.accepts('text/html')) {
-      const group = await principalService.findByExternalId(ctx.params.id, 'group');
       const isAdmin = await privilegeService.hasPrivilege(ctx, 'admin');
       const members = await groupService.findMembers(group);
 

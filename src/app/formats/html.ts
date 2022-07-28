@@ -1,11 +1,13 @@
 import { render } from '../../templates';
 
-export function createAppForm(msg: string, error: string) {
+export function createAppForm(msg: string, error: string, name: string, url: string) {
 
   return render('create-app', {
     title: 'Create App',
-    msg: msg,
+    msg,
     error,
-    action: '/app/new'
+    action: '/app/new',
+    name,
+    url
   });
 }

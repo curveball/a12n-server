@@ -100,7 +100,7 @@ class GroupController extends Controller {
       const group = await principalService.findByExternalId(ctx.params.id, 'group');
       const isAdmin = await privilegeService.hasPrivilege(ctx, 'admin');
       const members = await groupService.findMembers(group);
-      
+
       ctx.response.body = hal.item(
         group,
         await privilegeService.getPrivilegesForPrincipal(group),

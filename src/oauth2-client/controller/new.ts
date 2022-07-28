@@ -15,7 +15,7 @@ class NewClientController extends Controller {
     }
 
     ctx.response.type = 'application/vnd.siren+json';
-    ctx.response.body = siren.newClient(user);
+    ctx.response.body = siren.newClient(user, ctx.query.client_id);
 
   }
 

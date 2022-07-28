@@ -1,6 +1,6 @@
 import { App } from '../../principal/types';
 
-export function newClient(user: App) {
+export function newClient(user: App, clientIdValue: string) {
 
   const memberHref = `/app/${user.id}`;
 
@@ -22,6 +22,7 @@ export function newClient(user: App) {
           {
             name: 'clientId',
             title: 'Client ID, leave blank to auto-generate',
+            value: clientIdValue,
           },
           {
             name: 'allowAuthorizationCode',

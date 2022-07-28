@@ -1,11 +1,12 @@
 import { render } from '../../templates';
 
-export function createAppForm(msg: string, error: string) {
+export function createAppForm(msg: string, error: string, query: any) {
 
   return render('create-app', {
     title: 'Create App',
-    msg: msg,
+    msg,
     error,
-    action: '/app/new'
+    action: '/app/new',
+    query
   });
 }

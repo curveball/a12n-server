@@ -19,7 +19,7 @@ class CreateAppController extends Controller {
       throw new Forbidden('Only users with the "admin" privilege can create new users');
     }
     ctx.response.type = 'text/html';
-    ctx.response.body = createAppForm(ctx.query.msg, ctx.query.error, ctx.query);
+    ctx.response.body = createAppForm(ctx.query.msg, ctx.query.error, ctx.query.name, ctx.query.url);
   }
 
   async post(ctx: Context) {

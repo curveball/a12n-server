@@ -1,12 +1,25 @@
 import { App } from '../../principal/types';
 
-export function newClient(user: App, query: any ) {
+type newClientQuery = {
+ clientId?: string;
+ allowGrantTypes?: string;
+ redirectUris?: string;
+}
+
+export function newClient(user: App, query: newClientQuery ) {
 
   const memberHref = `/app/${user.id}`;
 
-  let redirectUris = '';
+  let redirectUris: string = '';
   if (query.redirectUris) {
-    redirectUris = query.redirectUris.join('\n');
+    let redirectUrisArray: Array<string> = [];
+    redirectUrisArray = query.redirectUris.split(',');
+    redirectUris = redirectUrisArray.join('\n');
+  }
+
+  let allowGrantTypes: Array<string> = [];
+  if (query.allowGrantTypes) {
+    allowGrantTypes = query.allowGrantTypes.split(',');
   }
 
   return {
@@ -33,31 +46,31 @@ export function newClient(user: App, query: any ) {
             name: 'allowAuthorizationCode',
             title: 'Allow "authorization_code" grant_type (for browser apps) ',
             type: 'checkbox',
-            value: query.allowAuthorizationCode === ''
+            value: allowGrantTypes.includes('authorization_code')
           },
           {
             name: 'allowClientCredentials',
             title: 'Allow "client_credentials" grant_type (for server to server apps) ',
             type: 'checkbox',
-            value: query.allowClientCredentials === ''
+            value: allowGrantTypes.includes('client_credentials')
           },
           {
             name: 'allowPassword',
             title: 'Allow "password" grant_type (trusted applications only)',
             type: 'checkbox',
-            value: query.allowPassword === ''
+            value: allowGrantTypes.includes('password')
           },
           {
             name: 'allowImplicit',
             title: 'Allow "implicit" grant_type (deprecated) ',
             type: 'checkbox',
-            value: query.allowImplicit === ''
+            value: allowGrantTypes.includes('implicit')
           },
           {
             name: 'allowRefreshToken',
             title: 'Allow "refresh_token" grant_type',
             type: 'checkbox',
-            value: query.allowRefreshToken === '',
+            value: allowGrantTypes.includes('refresh_token')
           },
           {
             name: 'redirectUris',
@@ -69,7 +82,7 @@ export function newClient(user: App, query: any ) {
             name: 'requirePkce',
             title: 'Require PKCE support (modern clients support this, but not everyone does)',
             type: 'checkbox',
-            value: query.requirePkce === '',
+            value: allowGrantTypes.includes('requirePkce')
           },
         ],
       }

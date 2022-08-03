@@ -1,6 +1,6 @@
 import { render } from '../../templates';
 
-export function createAppForm(msg: string, error: string, name: string, url: string, clientId: string, allowGrantTypes: string, redirectUris: string) {
+export function createAppForm(msg: string, error: string, name: string, url: string, clientId: string, allowGrantTypes: string, redirectUris: string, requirePkce: string) {
 
   const hiddenFields: Record<string, string> = {};
 
@@ -14,6 +14,10 @@ export function createAppForm(msg: string, error: string, name: string, url: str
 
   if (redirectUris) {
     hiddenFields['redirectUris'] = redirectUris;
+  }
+
+  if (requirePkce) {
+    hiddenFields['requirePkce'] = requirePkce;
   }
 
   return render('create-app', {

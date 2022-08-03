@@ -1,26 +1,19 @@
 import { App } from '../../principal/types';
 
-type newClientQuery = {
+type NewClientQuery = {
  clientId?: string;
  allowGrantTypes?: string;
  redirectUris?: string;
+ requirePkce?: string;
 }
 
-export function newClient(user: App, query: newClientQuery ) {
+export function newClient(user: App, query: NewClientQuery ) {
 
   const memberHref = `/app/${user.id}`;
 
-  let redirectUris: string = '';
-  if (query.redirectUris) {
-    let redirectUrisArray: Array<string> = [];
-    redirectUrisArray = query.redirectUris.split(',');
-    redirectUris = redirectUrisArray.join('\n');
-  }
+  const redirectUris = query.redirectUris ? (query.redirectUris + '').split(',').join('\n') : '';
 
-  let allowGrantTypes: Array<string> = [];
-  if (query.allowGrantTypes) {
-    allowGrantTypes = query.allowGrantTypes.split(',');
-  }
+  const allowGrantTypes = query.allowGrantTypes ? (query.allowGrantTypes + '').split(',') : [];
 
   return {
     properties: {
@@ -82,7 +75,7 @@ export function newClient(user: App, query: newClientQuery ) {
             name: 'requirePkce',
             title: 'Require PKCE support (modern clients support this, but not everyone does)',
             type: 'checkbox',
-            value: allowGrantTypes.includes('requirePkce')
+            value: query.requirePkce === 'true'
           },
         ],
       }

@@ -12,6 +12,7 @@ type AppNewForm = {
   clientId?: string;
   allowGrantTypes?: string;
   redirectUris?: string;
+  requirePkce?: string;
 }
 
 class CreateAppController extends Controller {
@@ -22,7 +23,7 @@ class CreateAppController extends Controller {
       throw new Forbidden('Only users with the "admin" privilege can create new users');
     }
     ctx.response.type = 'text/html';
-    ctx.response.body = createAppForm(ctx.query.msg, ctx.query.error, ctx.query.name, ctx.query.url, ctx.query.clientId, ctx.query.allowGrantTypes, ctx.query.redirectUris);
+    ctx.response.body = createAppForm(ctx.query.msg, ctx.query.error, ctx.query.name, ctx.query.url, ctx.query.clientId, ctx.query.allowGrantTypes, ctx.query.redirectUris, ctx.query.requirePkce);
   }
 
   async post(ctx: Context) {
@@ -49,24 +50,27 @@ class CreateAppController extends Controller {
 
     let newLocation = newApp.href;
 
-    if (ctx.request.body.clientId || ctx.request.body.allowGrantTypes || ctx.request.body.redirectUris ) {
-      newLocation = newLocation + '/client/new?';
+    if (ctx.request.body.clientId || ctx.request.body.allowGrantTypes || ctx.request.body.redirectUris || ctx.request.body.requirePkce ) {
+      const params = {
+        ...(ctx.request.body.clientId && {
+          clientId: ctx.request.body.clientId
+        }),
+        ...(ctx.request.body.allowGrantTypes && {
+          allowGrantTypes: ctx.request.body.allowGrantTypes
+        }),
+        ...(ctx.request.body.redirectUris && {
+          redirectUris: ctx.request.body.redirectUris
+        }),
+        ...(ctx.request.body.requirePkce && {
+          requirePkce: ctx.request.body.requirePkce
+        }),
+      };
+
+      newLocation = `${newLocation}/client/new?${new URLSearchParams(params)}`;
     }
 
-    if (ctx.request.body.clientId) {
-      newLocation = `${newLocation}clientId=${ctx.request.body.clientId}&`;
-    }
-
-    if (ctx.request.body.allowGrantTypes) {
-      newLocation = `${newLocation}allowGrantTypes=${ctx.request.body.allowGrantTypes}&`;
-    }
-
-    if (ctx.request.body.redirectUris) {
-      newLocation = `${newLocation}redirectUris=${ctx.request.body.redirectUris}&`;
-    }
-
+    ctx.response.status = 303;
     ctx.response.headers.set('Location', newLocation);
-
   }
 
 }

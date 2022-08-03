@@ -11,9 +11,9 @@ export function newClient(user: App, query: NewClientQuery ) {
 
   const memberHref = `/app/${user.id}`;
 
-  const redirectUris = query.redirectUris ? (query.redirectUris + '').split(',').join('\n') : '';
+  const redirectUris = query.redirectUris ? query.redirectUris.split(',').join('\n') : '';
 
-  const allowGrantTypes = query.allowGrantTypes ? (query.allowGrantTypes + '').split(',') : [];
+  const allowGrantTypes = query.allowGrantTypes ? query.allowGrantTypes.split(',') : [];
 
   return {
     properties: {

@@ -25,6 +25,18 @@
           "maxLength": 0
         }
       ]
+    },
+    "clientId": {
+      "type": "string"
+    },
+    "allowGrantTypes": {
+      "type": "string"
+    },
+    "redirectUris": {
+      "type": "string"
+    },
+    "requirePkce": {
+      "type": "string"
     }
   }
 }

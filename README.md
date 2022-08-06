@@ -15,6 +15,24 @@ Requirements
 * Node.js 14.x
 * MySQL
 
+Try it out!
+-----------
+
+You can quickly get a test server up and running by running these commands:
+
+```sh
+mkdir a12n-server
+cd a12n-server
+npx @curveball/a12n-server
+```
+
+This will automatically create a configuration file and sqlite database in the
+current directory.
+
+Then, just open [http://localhost:8531/](http://localhost:8531/) to create
+your admin account.
+
+
 Features
 --------
 

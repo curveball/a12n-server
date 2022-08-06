@@ -12,7 +12,7 @@ export function collection(app: App, clients: OAuth2Client[]): HalResource {
         href: `${app.href}/client/${client.clientId}`
       })),
       'create-form': {
-        href: `${app.href}/client/new?allowGrantTypes=refresh_token`,
+        href: `${app.href}/client/new?allowedGrantTypes=refresh_token`,
         title: 'Add new OAuth2 credentials',
         type: 'application/vnd.siren+json',
       },

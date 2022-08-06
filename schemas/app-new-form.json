@@ -29,7 +29,7 @@
     "clientId": {
       "type": "string"
     },
-    "allowGrantTypes": {
+    "allowedGrantTypes": {
       "type": "string"
     },
     "redirectUris": {

@@ -81,6 +81,7 @@ class UserRegistrationController extends Controller {
     if (addMfa && getSetting('registration.mfa.enabled')) {
       ctx.session = {
         registerUser: user,
+        registerContinueUrl: body.continue,
       };
 
       ctx.response.status = 303;

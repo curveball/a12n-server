@@ -120,7 +120,7 @@ export default function(): Middleware {
 
     // Not logged in.
     ctx.status = 303;
-    ctx.response.headers.set('Location', '/login');
+    ctx.response.headers.set('Location', '/login?continue=' + encodeURIComponent(ctx.request.requestTarget));
 
   };
 

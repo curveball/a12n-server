@@ -19,7 +19,9 @@ class LoginController extends Controller {
 
     const firstRun = !(await principalService.hasPrincipals());
     if (firstRun) {
-      ctx.redirect(302, '/register');
+      // The 'continue' query parameter contains the URL we want to redirect to after registration
+      const params = ctx.query.continue ? '?' + new URLSearchParams({continue: ctx.query.continue}) : '';
+      ctx.redirect(302, '/register' + params);
       return;
     }
 

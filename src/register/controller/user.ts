@@ -20,6 +20,7 @@ class UserRegistrationController extends Controller {
       ctx.query.error,
       getSetting('registration.mfa.enabled'),
       firstRun,
+      ctx.query.continue
     );
 
   }
@@ -33,14 +34,20 @@ class UserRegistrationController extends Controller {
 
     if (userPassword !== confirmPassword) {
       ctx.status = 303;
-      ctx.response.headers.set('Location', '/register?error=Password+mismatch.+Please+try+again');
+      ctx.response.headers.set('Location', '/register?' + new URLSearchParams({
+        error: 'Password mismatch. Please try again',
+        ...( body.continue ? {continue: body.continue} : {} )
+      }));
       return;
     }
 
     try {
       await principalService.findByIdentity('mailto:' + body.emailAddress);
       ctx.status = 303;
-      ctx.response.headers.set('Location', '/register?error=User+already+exists');
+      ctx.response.headers.set('Location', '/register?' + new URLSearchParams({
+        error: 'User with this email adddress already exists',
+        ...( body.continue ? {continue: body.continue} : {} )
+      }));
       return;
     } catch (err) {
       if (!(err instanceof NotFound)) {
@@ -82,7 +89,12 @@ class UserRegistrationController extends Controller {
     }
 
     ctx.status = 303;
-    ctx.response.headers.set('Location', '/login?msg=Registration+successful.+Please log in');
+
+    if (body.continue) {
+      ctx.response.headers.set('Location', body.continue);
+    } else {
+      ctx.response.headers.set('Location', '/login?msg=Registration+successful.+Please log in');
+    }
 
   }
 

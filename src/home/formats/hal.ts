@@ -8,7 +8,7 @@ export default (version: string, authenticatedUser: Principal, isAdmin: boolean,
   const result: HalResource = {
     _links: {
       'self': { href: '/', title: 'Home' },
-      'authenticated-as': { href: '/user/' + authenticatedUser.id, title: authenticatedUser.nickname },
+      'authenticated-as': { href: authenticatedUser.href, title: authenticatedUser.nickname },
       'change-password': { href: '/changepassword', title: 'Change password' },
 
       'app-collection': { href: '/app', title: 'List of apps'},

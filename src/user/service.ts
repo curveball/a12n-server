@@ -7,21 +7,22 @@ type PasswordRow = {
   password: Buffer;
 };
 
-export async function createPassword(user: User, password: string): Promise<void> {
+export async function createPassword(user: User, password: string, forceReset: boolean): Promise<void> {
 
   await db('user_passwords').insert({
     user_id: user.id,
-    password: await bcrypt.hash(password, 12)
+    password: await bcrypt.hash(password, 12),
+    force_reset: forceReset
   });
 
 }
 
-export async function updatePassword(user: User, password: string): Promise<void> {
+export async function updatePassword(user: User, password: string, force_reset: boolean): Promise<void> {
 
-  const query = 'INSERT INTO user_passwords (password, user_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE password = ?';
+  const query = 'INSERT INTO user_passwords (password, user_id, force_reset) VALUES (?, ?, ?) ON CONFLICT(user_id) DO UPDATE SET password = ?';
   const hashedPw = await bcrypt.hash(password, 12);
 
-  await db.raw(query, [hashedPw, user.id, hashedPw]);
+  await db.raw(query, [hashedPw, user.id, force_reset, hashedPw]);
 
 }
 

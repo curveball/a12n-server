@@ -40,7 +40,7 @@ class ChangePasswordController extends Controller {
       return;
     }
 
-    await UserService.updatePassword(user, userNewPassword);
+    await UserService.updatePassword(user, userNewPassword, false);
 
     ctx.session = {
       user: user,

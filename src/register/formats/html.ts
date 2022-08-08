@@ -1,6 +1,11 @@
 import { render } from '../../templates';
 
-export function registrationForm(msg: string, error: string, mfaRegistrationEnabled: boolean, firstRunMode: boolean): string {
+export function registrationForm(msg: string, error: string, mfaRegistrationEnabled: boolean, firstRunMode: boolean, continueUrl?: string): string {
+
+  const hiddenFields: Record<string,string> = {};
+  if (continueUrl) {
+    hiddenFields.continue = continueUrl;
+  }
 
   return render('register/user', {
     title: firstRunMode ? 'Create Admin Account' : 'Register',
@@ -8,6 +13,7 @@ export function registrationForm(msg: string, error: string, mfaRegistrationEnab
     error: error,
     action: '/register',
     mfaRegistrationEnabled,
+    hiddenFields,
   });
 
 }

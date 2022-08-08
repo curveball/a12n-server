@@ -53,7 +53,12 @@ class TOTPRegisterController extends Controller {
       user,
       secret
     });
-    return ctx.redirect(303, '/login?msg=Registration+successful.+Please log in');
+    if (ctx.session.registerContinueUrl) {
+      delete ctx.session.registerContinueUrl;
+      return ctx.redirect(303, ctx.session.registerContinueUrl);
+    } else {
+      return ctx.redirect(303, '/login?msg=Registration+successful.+Please log in');
+    }
   }
 }
 

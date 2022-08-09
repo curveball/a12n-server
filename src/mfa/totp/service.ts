@@ -1,7 +1,5 @@
 import { authenticator } from 'otplib';
-
-import { insertAndGetId } from '../../database';
-
+import db from '../../database';
 import { NewTotpDevice, TotpDevice } from './types';
 
 type UserTotpDeviceRow = {
@@ -23,7 +21,7 @@ export async function save(totpDevice: NewTotpDevice): Promise<TotpDevice> {
     created: Math.floor(Date.now() / 1000),
   };
 
-  await insertAndGetId('user_totp', newTotpDeviceRecord);
+  await db('user_totp').insert(newTotpDeviceRecord);
 
   return {
     'failures': 0,

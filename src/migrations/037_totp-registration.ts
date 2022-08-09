@@ -13,7 +13,7 @@ export async function up(knex: Knex): Promise<void> {
     timestamp: Math.floor(Date.now()/1000)
   });
 
-  await knex.raw('INSERT INTO server_settings (setting, value) VALUES (\'totp.serviceName\', \'"Authentication API"\')');
+  await knex.raw('INSERT INTO server_settings (setting, value) VALUES (\'totp.serviceName\', \'"a12n-server"\')');
 
   await knex.schema.alterTable('user_totp', table => {
     table.integer('created').unsigned().notNullable().defaultTo(0);

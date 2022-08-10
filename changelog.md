@@ -1,6 +1,22 @@
 Changelog
 =========
 
+0.21.3 (2022-08-09)
+-------------------
+
+* It's now possible to generate a URI that completely takes a developer through
+  the setup process for creating an OAuth2 client, with all values pre-filled.
+  This makes it very easy for a developer to get their environment up and
+  running without having to know all kinds of OAuth2 details (@AminDhouib).
+* Fixed getting no feedback after changing group members. (@AminDhouib)
+* Fixed the 'authenticated-as' link in the a12n-server home document; it had
+  an extra slash.
+* If you hit an authenticated page after login, you are now redirected back
+  to that page after login.
+* The `/register` endpoint can now take a `?continue=` uri parameter, making
+  it possible to redirect back to any application after registering.
+
+
 0.21.2 (2022-07-27)
 -------------------
 

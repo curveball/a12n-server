@@ -9,7 +9,7 @@ type NewClientQuery = {
 
 export function newClient(user: App, query: NewClientQuery ) {
 
-  const memberHref = `/app/${user.id}`;
+  const memberHref = user.href;
 
   const redirectUris = query.redirectUris ? query.redirectUris.split(',').join('\n') : '';
   const allowedGrantTypes = query.allowedGrantTypes ? query.allowedGrantTypes.split(',') : [];

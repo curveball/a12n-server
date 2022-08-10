@@ -9,7 +9,7 @@ export function collection(app: App, clients: OAuth2Client[]): HalResource {
       self: { href: `${app.href}/client` },
       up: { href: app.href, title: app.nickname},
       item: clients.map( client => ({
-        href: `${app.href}/client/${client.clientId}`
+        href: client.href,
       })),
       'create-form': {
         href: `${app.href}/client/new?allowedGrantTypes=refresh_token`,
@@ -139,7 +139,7 @@ export function newClientSuccess(client: OAuth2Client, redirectUris: string[] ,s
 
   return {
     _links: {
-      self: { href: `${client.app.href}/client/${client.clientId}` },
+      self: { href: client.href },
       collection: { href: `${client.app.href}/client`, title: 'List of OAuth2 clients'},
     },
     clientId: client.clientId,

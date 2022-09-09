@@ -31,8 +31,6 @@ class TokenController extends Controller {
     switch (grantType) {
 
       case 'authorization_code' :
-        oauth2Client = await getOAuth2ClientFromBody(ctx);
-        break;
       case 'refresh_token' :
         if (ctx.request.headers.has('Authorization')) {
           oauth2Client = await getOAuth2ClientFromBasicAuth(ctx);

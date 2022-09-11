@@ -3,7 +3,7 @@ import '@curveball/session';
 
 import { URLSearchParams } from 'url';
 
-import { MemoryRequest, BaseContext, MemoryResponse } from '@curveball/core';
+import { MemoryRequest, Context, MemoryResponse } from '@curveball/core';
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
 import * as sinon from 'sinon';
@@ -90,7 +90,7 @@ describe('AuthorizeController', () => {
 
     it('should pass valid parameters and call code redirect', async() => {
       const request = new MemoryRequest('GET', '?' + params, 'http://localhost');
-      const context = new BaseContext(request, new MemoryResponse('http://localhost'));
+      const context = new Context(request, new MemoryResponse('http://localhost'));
       context.session = {
         user: {}
       };
@@ -105,7 +105,7 @@ describe('AuthorizeController', () => {
       params.delete('code_challenge_method');
 
       const request = new MemoryRequest('GET', '?' + params, 'http://localhost');
-      const context = new BaseContext(request, new MemoryResponse('http://localhost'));
+      const context = new Context(request, new MemoryResponse('http://localhost'));
       context.session = {
         user: {}
       };
@@ -121,7 +121,7 @@ describe('AuthorizeController', () => {
       params.delete('code_challenge_method');
 
       const request = new MemoryRequest('GET', '?' + params, 'http://localhost');
-      const context = new BaseContext(request, new MemoryResponse('http://localhost'));
+      const context = new Context(request, new MemoryResponse('http://localhost'));
       context.session = {
         user: {}
       };
@@ -136,7 +136,7 @@ describe('AuthorizeController', () => {
       params.set('code_challenge_method', 'bogus-method');
 
       const request = new MemoryRequest('GET', '?' + params, 'http://localhost');
-      const context = new BaseContext(request, new MemoryResponse('http://localhost'));
+      const context = new Context(request, new MemoryResponse('http://localhost'));
       context.session = {
         user: {}
       };
@@ -148,7 +148,7 @@ describe('AuthorizeController', () => {
       params.delete('code_challenge');
 
       const request = new MemoryRequest('GET', '?' + params, 'http://localhost');
-      const context = new BaseContext(request, new MemoryResponse('http://localhost'));
+      const context = new Context(request, new MemoryResponse('http://localhost'));
       context.session = {
         user: {}
       };

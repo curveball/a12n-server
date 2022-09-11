@@ -17,7 +17,7 @@ const whitelistPath = [
   '/.well-known/oauth-authorization-server',
 ];
 
-declare module '@curveball/core' {
+declare module '@curveball/kernel' {
 
   interface Context {
 

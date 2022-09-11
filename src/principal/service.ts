@@ -1,12 +1,12 @@
 import { NotFound, UnprocessableEntity } from '@curveball/http-errors';
 import db, { query, insertAndGetId } from '../database';
 import { Principal, NewPrincipal, PrincipalType, User, Group, App, PrincipalStats, BasePrincipal } from './types';
-import { Principal as PrincipalRecord } from 'knex/types/tables';
+import { PrincipalsRecord } from 'knex/types/tables';
 import { generatePublicId } from '../crypto';
 
 export class InactivePrincipal extends Error { }
 
-export const fieldNames: Array<keyof PrincipalRecord> = [
+export const fieldNames: Array<keyof PrincipalsRecord> = [
   'id',
   'identity',
   'external_id',
@@ -189,7 +189,7 @@ export async function save<T extends PrincipalType>(principal: BasePrincipal<T>|
 
     const externalId = await generatePublicId();
 
-    const newPrincipalRecord: Omit<PrincipalRecord, 'id'> = {
+    const newPrincipalsRecord: Omit<PrincipalsRecord, 'id'> = {
       identity: principal.identity,
       external_id: externalId,
       nickname: principal.nickname,
@@ -199,7 +199,7 @@ export async function save<T extends PrincipalType>(principal: BasePrincipal<T>|
       created_at: Date.now(),
     };
 
-    const result = await insertAndGetId('principals', newPrincipalRecord);
+    const result = await insertAndGetId('principals', newPrincipalsRecord);
 
     return {
       id: result,
@@ -218,7 +218,7 @@ export async function save<T extends PrincipalType>(principal: BasePrincipal<T>|
 
     principal.modifiedAt = new Date();
 
-    const updatePrincipalRecord: Omit<PrincipalRecord, 'id' | 'created_at' | 'type' | 'external_id'> = {
+    const updatePrincipalsRecord: Omit<PrincipalsRecord, 'id' | 'created_at' | 'type' | 'external_id'> = {
       identity: principal.identity,
       nickname: principal.nickname,
       active: principal.active ? 1 : 0,
@@ -228,7 +228,7 @@ export async function save<T extends PrincipalType>(principal: BasePrincipal<T>|
 
     await db('principals')
       .where('id', principal.id)
-      .update(updatePrincipalRecord);
+      .update(updatePrincipalsRecord);
 
     return principal;
 
@@ -258,14 +258,14 @@ function userTypeToInt(input: PrincipalType): number {
 
 }
 
-export function recordToModel(user: PrincipalRecord): Principal {
+export function recordToModel(user: PrincipalsRecord): Principal {
 
   return {
     id: user.id,
     href: `/${userTypeIntToUserType(user.type)}/${user.external_id}`,
     identity: user.identity,
     externalId: user.external_id,
-    nickname: user.nickname,
+    nickname: user.nickname!,
     createdAt: new Date(user.created_at),
     modifiedAt: new Date(user.modified_at),
     type: userTypeIntToUserType(user.type),

@@ -7,7 +7,7 @@ import { NotFound, Unauthorized, Conflict } from '@curveball/http-errors';
 import { InvalidRequest } from '../oauth2/errors';
 import parseBasicAuth from './parse-basic-auth';
 import { App } from '../principal/types';
-import { OAuth2Client as OAuth2ClientRecord } from 'knex/types/tables';
+import { Oauth2ClientsRecord } from 'knex/types/tables';
 import { wrapError, UniqueViolationError } from 'db-errors';
 
 export async function findByClientId(clientId: string): Promise<OAuth2Client> {
@@ -20,7 +20,7 @@ export async function findByClientId(clientId: string): Promise<OAuth2Client> {
     throw new NotFound('OAuth2 client_id not recognized');
   }
 
-  const record: OAuth2ClientRecord = result[0];
+  const record: Oauth2ClientsRecord = result[0];
 
   const app = await principalService.findById(record.user_id, 'app');
   if (!app.active) {
@@ -40,7 +40,7 @@ export async function findById(id: number): Promise<OAuth2Client> {
     throw new NotFound('OAuth2 id not recognized');
   }
 
-  const record: OAuth2ClientRecord = result[0];
+  const record: Oauth2ClientsRecord = result[0];
 
   const app = await principalService.findById(record.user_id, 'app');
   if (!app.active) {
@@ -56,11 +56,11 @@ export async function findByApp(app: App): Promise<OAuth2Client[]> {
     .select('*')
     .where('user_id', app.id);
 
-  return result.map( (record: OAuth2ClientRecord) => mapRecordToModel(record, app));
+  return result.map( (record: Oauth2ClientsRecord) => mapRecordToModel(record, app));
 
 }
 
-function mapRecordToModel(record: OAuth2ClientRecord, app: App): OAuth2Client {
+function mapRecordToModel(record: Oauth2ClientsRecord, app: App): OAuth2Client {
 
   return {
     id: record.id,
@@ -122,7 +122,7 @@ export async function getOAuth2ClientFromBody(ctx: Context<any>): Promise<OAuth2
 
 export async function create(client: Omit<OAuth2Client, 'id'|'href'>, redirectUris: string[]): Promise<OAuth2Client> {
 
-  const params: Partial<OAuth2ClientRecord> = {
+  const params: Partial<Oauth2ClientsRecord> = {
     client_id: client.clientId,
     client_secret: client.clientSecret,
     user_id: client.app.id,
@@ -161,7 +161,7 @@ export async function create(client: Omit<OAuth2Client, 'id'|'href'>, redirectUr
 
 export async function edit(client: OAuth2Client, redirectUris: string[]): Promise<void> {
 
-  const params: Partial<OAuth2ClientRecord> = {
+  const params: Partial<Oauth2ClientsRecord> = {
     allowed_grant_types: client.allowedGrantTypes.join(' '),
     require_pkce: client.requirePkce?1:0,
   };

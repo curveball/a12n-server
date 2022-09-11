@@ -3,7 +3,7 @@ import db from '../database';
 import { Principal } from '../principal/types';
 import { EventType, LogEntry } from './types';
 import * as geoip from 'geoip-lite';
-import { UserLog as UserLogRecord } from 'knex/types/tables';
+import { UserLogRecord } from 'knex/types/tables';
 
 export function log(eventType: EventType, ctx: Context): Promise<void>;
 export function log(eventType: EventType, ip: string|null, userId: number, userAgent: string|null): Promise<void>;

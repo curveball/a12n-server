@@ -44,7 +44,10 @@ class OneTimeTokenExchangeController extends Controller {
     }
 
     const client = await oauth2ClientService.findByClientId(ctx.request.body.client_id);
-    const oauth2Token = await oauth2Service.generateTokenForUser(client, user);
+    const oauth2Token = await oauth2Service.generateTokenOneTimeToken({
+      client,
+      principal: user,
+    });
 
     ctx.response.body = tokenResponse(oauth2Token);
 

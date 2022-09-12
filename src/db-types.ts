@@ -50,7 +50,7 @@ export type Oauth2CodesRecord = {
   code: string;
   user_id: number;
   code_challenge: string | null;
-  code_challenge_method: 'plain' | 'S256' | null | null;
+  code_challenge_method: 'plain' | 'S256' | null;
   created: number;
   browser_session_id: string | null;
 }
@@ -69,8 +69,18 @@ export type Oauth2TokensRecord = {
   user_id: number;
   access_token_expires: number;
   refresh_token_expires: number;
-  created: number;
+  created_at: number;
   browser_session_id: string | null;
+
+  /**
+   * 1=implicit, 2=client_credentials, 3=password, 4=authorization_code, 5=authorization_code with secret
+   */
+  grant_type: number | null;
+
+  /**
+   * OAuth2 scopes, comma separated
+   */
+  scope: string | null;
 }
 
 export type PrincipalsRecord = {

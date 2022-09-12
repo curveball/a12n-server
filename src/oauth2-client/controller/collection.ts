@@ -1,12 +1,14 @@
+import * as bcrypt from 'bcrypt';
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import * as privilegeService from '../../privilege/service';
-import * as hal from '../formats/hal';
 import { Forbidden, UnprocessableEntity } from '@curveball/http-errors';
-import { findByApp, create } from '../service';
+
+import * as hal from '../formats/hal';
 import * as principalService from '../../principal/service';
-import { GrantType, OAuth2Client } from '../types';
-import * as bcrypt from 'bcrypt';
+import * as privilegeService from '../../privilege/service';
+import { GrantType } from '../../types';
+import { OAuth2Client } from '../types';
+import { findByApp, create } from '../service';
 import { generatePublicId, generateSecretToken } from '../../crypto';
 
 class ClientCollectionController extends Controller {

@@ -2,24 +2,39 @@ import { App, User } from '../../principal/types';
 import { getSetting } from '../../server-settings';
 import { ServerStats } from '../../types';
 
-
 function statsBlock(kind: string, count: number): string {
 
   return `
 <div class="statsBlock">
 
   <div class="counter">
-    <span class="num">${count}</span>
+    <span class="num">${humanNum(count)}</span>
     <span class="kind">${kind}${count!=1?'s':''}</span>
   </div>
 
-  <div class="actions"><a href="/${kind}" rel="${kind}-collection">Manage</a></div>
+  ${kind!=='token' ? `<div class="actions"><a href="/${kind}" rel="${kind}-collection">Manage</a></div>`: ''}
 
 </div>
 `;
 
 }
 
+function humanNum(i: number): string {
+
+  switch(true) {
+    case i >= 10_000_000 :
+      return (i / 1_000_000).toFixed(0) + 'M';
+    case i >= 1_000_000 :
+      return (i / 1_000_000).toFixed(1) + 'M';
+    case i >= 1_0000 :
+      return (i / 1_000).toFixed(0) + 'K';
+    case i >= 1_000:
+      return (i / 1_000).toFixed(1) + 'K';
+    default :
+      return i.toString();
+  }
+
+}
 
 export default (version: string, authenticatedUser: User | App, isAdmin: boolean, serverStats: ServerStats) => {
 
@@ -28,6 +43,7 @@ export default (version: string, authenticatedUser: User | App, isAdmin: boolean
   ${statsBlock('user', serverStats.user)}
   ${statsBlock('app', serverStats.app)}
   ${statsBlock('group', serverStats.group)}
+  ${statsBlock('token', serverStats.tokensIssued)}
   ${statsBlock('privilege', serverStats.privileges)}
 </div>
 
@@ -63,5 +79,3 @@ _Version ${version}_
 `;
 
 };
-
-

@@ -1,6 +1,5 @@
 import { App } from '../principal/types';
-
-export type GrantType = 'refresh_token' | 'client_credentials' | 'password' | 'implicit' | 'authorization_code';
+import { GrantType } from '../types';
 
 /**
  * The OAuth2 client refers to a single (programmatic) client, accessing

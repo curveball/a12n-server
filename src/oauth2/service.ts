@@ -9,9 +9,9 @@ import { CodeChallengeMethod, OAuth2Code, OAuth2Token } from './types';
 import { OAuth2Client } from '../oauth2-client/types';
 import { generateSecretToken } from '../crypto';
 import { generateJWTAccessToken } from './jwt';
-import { OAuth2Token as OAuth2TokenField } from 'knex/types/tables';
+import { Oauth2TokensRecord, Oauth2CodesRecord } from 'knex/types/tables';
 
-const oauth2TokenFields: (keyof OAuth2TokenField)[] = [
+const oauth2TokenFields: (keyof Oauth2TokensRecord)[] = [
   'id',
   'oauth2_client_id',
   'access_token',
@@ -74,7 +74,7 @@ export async function getActiveTokens(user: App | User): Promise<OAuth2Token[]> 
     .where('user_id', user.id)
     .andWhere('refresh_token_expires', '<', Date.now());
 
-  return result.map((row: OAuth2TokenRecord):OAuth2Token => {
+  return result.map((row: Oauth2TokensRecord):OAuth2Token => {
     return {
       accessToken: row.access_token,
       refreshToken: row.refresh_token,
@@ -242,13 +242,17 @@ export async function generateTokenFromCode(client: OAuth2Client, code: string, 
     throw new InvalidRequest('The supplied code was not recognized');
   }
 
-  const codeRecord: OAuth2CodeRecord = codeResult[0];
+  const codeRecord: Oauth2CodesRecord = codeResult[0];
   const expirySettings = getTokenExpiry();
 
   // Delete immediately.
   await db.raw('DELETE FROM oauth2_codes WHERE id = ?', [codeRecord.id]);
 
-  validatePKCE(codeVerifier, codeRecord.code_challenge, codeRecord.code_challenge_method);
+  validatePKCE(
+    codeVerifier,
+    codeRecord.code_challenge ?? undefined,
+    codeRecord.code_challenge_method ?? 'S256',
+  );
 
   if (codeRecord.created + expirySettings.code < Math.floor(Date.now() / 1000)) {
     throw new InvalidRequest('The supplied code has expired');
@@ -403,28 +407,6 @@ export async function generateCodeForUser(
 
 }
 
-type OAuth2TokenRecord = {
-  oauth2_client_id: number;
-  access_token: string;
-  refresh_token: string;
-  user_id: number;
-  access_token_expires: number;
-  refresh_token_expires: number;
-  created: number;
-  browser_session_id: string | null;
-};
-
-type OAuth2CodeRecord = {
-  id: number;
-  client_id: number;
-  code: string;
-  user_id: number;
-  code_challenge: string|undefined;
-  code_challenge_method: CodeChallengeMethod;
-  created: number;
-  browser_session_id: string | null;
-};
-
 /**
  * Returns Token information for an existing Access Token.
  *
@@ -444,7 +426,7 @@ export async function getTokenByAccessToken(accessToken: string): Promise<OAuth2
     throw new NotFound('Access token not recognized');
   }
 
-  const row: OAuth2TokenRecord = result[0];
+  const row: Oauth2TokensRecord = result[0];
   const user = await principalService.findById(row.user_id);
 
   if (!user.active) {
@@ -480,7 +462,7 @@ export async function getTokenByRefreshToken(refreshToken: string): Promise<OAut
     throw new NotFound('Refresh token not recognized');
   }
 
-  const row: OAuth2TokenRecord = result[0];
+  const row = result[0];
 
   const user = await principalService.findById(row.user_id);
   if (!user.active) {

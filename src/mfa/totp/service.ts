@@ -1,12 +1,7 @@
 import { authenticator } from 'otplib';
 import db from '../../database';
 import { NewTotpDevice, TotpDevice } from './types';
-
-type UserTotpDeviceRow = {
-  user_id: number;
-  secret: string;
-  created: number;
-};
+import { UserTotpRecord } from 'knex/types/tables';
 
 export function generateSecret(): string {
   const secret = authenticator.generateSecret();
@@ -15,7 +10,7 @@ export function generateSecret(): string {
 }
 
 export async function save(totpDevice: NewTotpDevice): Promise<TotpDevice> {
-  const newTotpDeviceRecord: Partial<UserTotpDeviceRow> = {
+  const newTotpDeviceRecord: Partial<UserTotpRecord> = {
     user_id: totpDevice.user.id,
     secret: totpDevice.secret,
     created: Math.floor(Date.now() / 1000),

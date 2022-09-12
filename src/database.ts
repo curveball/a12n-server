@@ -1,18 +1,17 @@
 /* eslint no-console: 0 */
 import { knex, Knex } from 'knex';
 import * as path from 'node:path';
+import * as dotenv from 'dotenv';
+import './db-types';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-require('dotenv').config();
+dotenv.config();
 
 let settings: Knex.Config | null = null;
 const db: Knex = knex(getSettings());
 
-
 export async function init() {
 
-  // eslint-disable-next-line no-console
-  console.log('Running database migrations');
+  console.info('Running database migrations');
   await db.migrate.latest();
 
 }

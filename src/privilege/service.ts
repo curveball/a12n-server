@@ -2,11 +2,7 @@ import { Context } from '@curveball/core';
 import db, { query } from '../database';
 import { Principal } from '../principal/types';
 import { Privilege, PrivilegeMap } from './types';
-
-type PrivilegeRow = {
-  resource: string;
-  privilege: string;
-};
+import { UserPrivilegesRecord } from 'knex/types/tables';
 
 export async function getPrivilegesForPrincipal(principal: Principal): Promise<PrivilegeMap> {
 
@@ -17,7 +13,7 @@ export async function getPrivilegesForPrincipal(principal: Principal): Promise<P
     [...recursiveGroupIds]
   );
 
-  return result.reduce( (currentPrivileges: any, row: PrivilegeRow) => {
+  return result.reduce( (currentPrivileges: any, row: UserPrivilegesRecord) => {
 
     const privileges = Object.assign({}, currentPrivileges);
 
@@ -43,7 +39,7 @@ export async function getImmediatePrivilegesForPrincipal(principal: Principal): 
     [principal.id]
   );
 
-  return result.reduce( (currentPrivileges: any, row: PrivilegeRow) => {
+  return result.reduce( (currentPrivileges: any, row: UserPrivilegesRecord) => {
 
     const privileges = Object.assign({}, currentPrivileges);
 

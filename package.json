@@ -62,6 +62,7 @@
     "eslint": "^8.0.1",
     "hal-types": "^1.7.6",
     "mocha": "^10.0.0",
+    "mysql-types-generator": "^1.0.3",
     "nyc": "^15.1.0",
     "sinon": "^14.0.0",
     "ts-node": "^10.0.0",

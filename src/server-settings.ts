@@ -295,7 +295,7 @@ export async function load(): Promise<void> {
       console.warn('The setting %s may not be set from the database. We ignored it');
       continue;
     }
-    (settings as any)[row.setting] = JSON.parse(row.value);
+    (settings as any)[row.setting] = row.value!==null ? JSON.parse(row.value): null;
 
   }
 

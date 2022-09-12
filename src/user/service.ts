@@ -3,10 +3,6 @@ import * as otplib from 'otplib';
 import db from '../database';
 import { User } from '../principal/types';
 
-type PasswordRow = {
-  password: Buffer;
-};
-
 export async function createPassword(user: User, password: string): Promise<void> {
 
   await db('user_passwords').insert({
@@ -36,11 +32,11 @@ export async function validatePassword(user: User, password: string): Promise<bo
     .select('password')
     .where('user_id', user.id);
 
-  const hashes = result.map( (row: PasswordRow) => row.password );
+  const hashes = result.map( row => row.password );
 
   for (const hash of hashes) {
 
-    if (await bcrypt.compare(password, hash.toString('utf-8'))) {
+    if (await bcrypt.compare(password, hash)) {
       return true;
     }
 

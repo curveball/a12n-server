@@ -7,7 +7,6 @@ on:
   push:
     branches: [ main ]
   pull_request:
-    branches: [ main ]
 
 jobs:
   build:
@@ -103,4 +102,19 @@ jobs:
         PG_PASSWORD: password
         PG_DATABASE: a12nserver
         PG_HOST: 127.0.0.1
+      run: make migrate
+  sqlite:
+    name: Test Sqlite migrations
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+    - run: npm ci
+    - name: Run migrations
+      env:
+        DB_DRIVER: sqlite3
       run: make migrate

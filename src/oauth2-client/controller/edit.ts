@@ -6,7 +6,7 @@ import { Forbidden, NotFound, UnprocessableEntity } from '@curveball/http-errors
 import * as principalService from '../../principal/service';
 import { findByClientId, edit } from '../service';
 import * as oauth2Service from '../../oauth2/service';
-import { GrantType } from '../types';
+import { GrantType } from '../../types';
 
 class EditClientController extends Controller {
 

@@ -101,10 +101,12 @@ class AuthorizeController extends Controller {
 
   async tokenRedirect(ctx: Context, oauth2Client: OAuth2Client, redirectUri: string, state: string|undefined) {
 
-    const token = await oauth2Service.generateTokenForUser(
-      oauth2Client,
-      ctx.session.user
-    );
+    const token = await oauth2Service.generateTokenImplicit({
+      client: oauth2Client,
+      scope: ctx.params.scope?.split(' ') ?? null,
+      principal: ctx.session.user,
+      browserSessionId: ctx.sessionId!,
+    });
 
     ctx.status = 302;
     ctx.response.headers.set('Cache-Control', 'no-cache');
@@ -129,7 +131,7 @@ class AuthorizeController extends Controller {
     codeChallengeMethod: 'S256' | 'plain' | undefined
   ) {
 
-    const code = await oauth2Service.generateCodeForUser(
+    const code = await oauth2Service.generateAuthorizationCode(
       oauth2Client,
       ctx.session.user,
       codeChallenge,

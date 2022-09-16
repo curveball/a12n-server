@@ -99,7 +99,7 @@ export default function(): Middleware {
         }
       }
       // We are logged in!
-      ctx.auth = new AuthHelper(token.user);
+      ctx.auth = new AuthHelper(token.principal);
 
       return next();
 

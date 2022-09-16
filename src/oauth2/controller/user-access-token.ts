@@ -21,7 +21,9 @@ class UserAccessTokenController extends Controller {
     if (user.type !== 'user') {
       throw new BadRequest('This API can only be used for principals of type \'user\'');
     }
-    const token = await oauth2Service.generateTokenForUserNoClient(user);
+    const token = await oauth2Service.generateTokenDeveloperToken({
+      principal: user,
+    });
 
     ctx.response.body = {
       access_token: token.accessToken,

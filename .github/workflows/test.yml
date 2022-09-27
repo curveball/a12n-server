@@ -75,7 +75,7 @@ jobs:
         MYSQL_PASSWORD: password
         MYSQL_DATABASE: a12nserver
         MYSQL_HOST: 127.0.0.1
-      run: make migrate
+      run: make knex-migrate
   postgres:
     name: Test Postgres migrations
     needs: build
@@ -102,7 +102,7 @@ jobs:
         PG_PASSWORD: password
         PG_DATABASE: a12nserver
         PG_HOST: 127.0.0.1
-      run: make migrate
+      run: make knex-migrate
   sqlite:
     name: Test Sqlite migrations
     needs: build
@@ -117,4 +117,4 @@ jobs:
     - name: Run migrations
       env:
         DB_DRIVER: sqlite3
-      run: make migrate
+      run: make knex-migrate

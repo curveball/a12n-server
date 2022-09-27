@@ -27,7 +27,7 @@ fix:
 
 lint-fix: fix
 
-knex-migrate:
+knex-migrate: dist/build
 	cd dist; npx knex migrate:latest
 
 knex-make-migration:

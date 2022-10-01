@@ -75,7 +75,7 @@ export async function getActiveTokens(user: App | User): Promise<OAuth2Token[]> 
   const result = await db('oauth2_tokens')
     .select(oauth2TokenFields)
     .where('user_id', user.id)
-    .andWhere('refresh_token_expires', '<', Date.now());
+    .andWhere('refresh_token_expires', '>', Math.floor(Date.now()/1000));
 
   return result.map(row => tokenRecordToModel(row, user));
 

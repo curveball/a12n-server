@@ -1,14 +1,14 @@
 /* eslint no-console: 0 */
 import { Application } from '@curveball/core';
-
-import mainMw from './main-mw';
 import accessLog from '@curveball/accesslog';
 
+import mainMw from './main-mw';
 import { init as initDb } from './database';
 import { load } from './server-settings';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-require('dotenv').config();
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pkgInfo = require('../package.json');

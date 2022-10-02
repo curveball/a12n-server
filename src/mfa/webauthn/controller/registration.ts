@@ -4,7 +4,7 @@ import { generateRegistrationOptions, verifyRegistrationResponse } from '@simple
 
 import * as webAuthnService from '../service';
 import { getSetting } from '../../../server-settings';
-import { User } from '../../../principal/types';
+import { User } from '../../../types';
 
 
 class WebAuthnAttestationController extends Controller {

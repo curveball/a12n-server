@@ -1,5 +1,5 @@
 import { PrivilegeMap } from '../../privilege/types';
-import { Principal, Group, User } from '../../principal/types';
+import { Principal, Group, User } from '../../types';
 import { HalResource } from 'hal-types';
 
 export function collection(users: User[]): HalResource {

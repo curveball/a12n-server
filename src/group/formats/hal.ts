@@ -1,4 +1,4 @@
-import { Group, Principal } from '../../principal/types';
+import { Group, Principal } from '../../types';
 import { HalResource, HalFormsTemplate } from 'hal-types';
 import { PrivilegeMap } from '../../privilege/types';
 

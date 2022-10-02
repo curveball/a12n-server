@@ -1,5 +1,5 @@
 import { PrivilegeMap } from '../../privilege/types';
-import { Group, App } from '../../principal/types';
+import { Group, App } from '../../types';
 import { HalResource } from 'hal-types';
 
 export function collection(apps: App[]): HalResource {

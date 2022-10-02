@@ -2,7 +2,7 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 
 import { registrationForm } from '../formats/html';
-import { User } from '../../../principal/types';
+import { User } from '../../../types';
 
 
 class WebAuthnRegisterController extends Controller {

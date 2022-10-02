@@ -1,4 +1,4 @@
-import { User, App } from '../principal/types';
+import { User, App } from '../types';
 import { OAuth2Client } from '../oauth2-client/types';
 import { generateSecretToken } from '../crypto';
 import { getSetting } from '../server-settings';

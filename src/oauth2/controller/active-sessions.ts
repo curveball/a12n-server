@@ -9,7 +9,7 @@ import * as oauth2Service from '../service';
 import * as oauth2ClientService from '../../oauth2-client/service';
 import * as privilegeService from '../../privilege/service';
 
-import { Principal, User, App } from '../../principal/types';
+import { Principal, User, App } from '../../types';
 import { OAuth2Client } from '../../oauth2-client/types';
 
 import { OAuth2Token } from '../types';

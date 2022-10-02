@@ -1,5 +1,4 @@
-import { App } from '../principal/types';
-import { GrantType } from '../types';
+import { App, GrantType } from '../types';
 
 /**
  * The OAuth2 client refers to a single (programmatic) client, accessing

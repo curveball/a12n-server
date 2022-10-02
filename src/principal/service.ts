@@ -1,6 +1,7 @@
 import { NotFound, UnprocessableEntity } from '@curveball/http-errors';
 import db, { query, insertAndGetId } from '../database';
-import { Principal, NewPrincipal, PrincipalType, User, Group, App, PrincipalStats, BasePrincipal } from './types';
+import { NewPrincipal, PrincipalStats } from './types';
+import { Principal, PrincipalType, User, Group, App, BasePrincipal } from '../types';
 import { PrincipalsRecord } from 'knex/types/tables';
 import { generatePublicId } from '../crypto';
 

@@ -4,7 +4,7 @@ import { Context } from '@curveball/core';
 import { mfaRegistrationForm } from '../formats/html';
 
 import { getSetting } from '../../server-settings';
-import { User } from '../../principal/types';
+import { User } from '../../types';
 
 
 class MFAController extends Controller {

@@ -1,7 +1,7 @@
 import * as bcrypt from 'bcrypt';
 import * as otplib from 'otplib';
 import db from '../database';
-import { User } from '../principal/types';
+import { User } from '../types';
 
 export async function createPassword(user: User, password: string): Promise<void> {
 

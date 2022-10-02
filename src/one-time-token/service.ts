@@ -1,5 +1,5 @@
 import { OneTimeToken } from './types';
-import { User } from '../principal/types';
+import { User } from '../types';
 import db from '../database';
 import * as principalService from '../principal/service';
 import { BadRequest } from '@curveball/http-errors';

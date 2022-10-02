@@ -1,6 +1,6 @@
 import { Context } from '@curveball/core';
 import db, { query } from '../database';
-import { Principal } from '../principal/types';
+import { Principal } from '../types';
 import { Privilege, PrivilegeMap } from './types';
 import { UserPrivilegesRecord } from 'knex/types/tables';
 

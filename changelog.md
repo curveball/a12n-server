@@ -8,6 +8,8 @@ Changelog
   `implicit` flows.
 * Fixed some bugs in the 'active sessions' report, and add columns for
   `grant_type`, and `scope`.
+* Common types, such `User`, `App`, `Group` types have been moved to
+  `src/types.ts` for easier access.
 
 
 0.22.0 (2022-09-27)

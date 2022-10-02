@@ -6,7 +6,7 @@ import * as principalService from '../../principal/service';
 import * as userService from '../../user/service';
 import { registrationForm } from '../formats/html';
 import * as privilegeService from '../../privilege/service';
-import { User } from '../../principal/types';
+import { User } from '../../types';
 
 class UserRegistrationController extends Controller {
 

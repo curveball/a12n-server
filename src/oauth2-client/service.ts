@@ -9,8 +9,7 @@ import * as principalService from '../principal/service';
 import db, { insertAndGetId } from '../database';
 import { InvalidRequest } from '../oauth2/errors';
 import parseBasicAuth from './parse-basic-auth';
-import { App } from '../principal/types';
-import { GrantType } from '../types';
+import { App, GrantType } from '../types';
 
 export async function findByClientId(clientId: string): Promise<OAuth2Client> {
 

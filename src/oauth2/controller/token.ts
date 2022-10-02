@@ -4,7 +4,7 @@ import log from '../../log/service';
 import { EventType } from '../../log/types';
 import * as principalService from '../../principal/service';
 import * as userService from '../../user/service';
-import { User } from '../../principal/types';
+import { User } from '../../types';
 import { InvalidGrant, InvalidRequest, UnsupportedGrantType } from '../errors';
 import * as oauth2Service from '../service';
 import { OAuth2Client } from '../../oauth2-client/types';

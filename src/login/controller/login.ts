@@ -9,7 +9,7 @@ import * as webAuthnService from '../../mfa/webauthn/service';
 import { getSetting } from '../../server-settings';
 import * as principalService from '../../principal/service';
 import * as userService from '../../user/service';
-import { User } from '../../principal/types';
+import { User } from '../../types';
 import { isValidRedirect } from '../utilities';
 import { loginForm } from '../formats/html';
 

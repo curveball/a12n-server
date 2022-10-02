@@ -1,7 +1,7 @@
 import { NotFound } from '@curveball/http-errors';
 
 import db, { query, insertAndGetId } from '../../database';
-import { User } from '../../principal/types';
+import { User } from '../../types';
 import { NewWebAuthnDevice, WebAuthnDevice } from './types';
 import { UserWebauthnRecord } from 'knex/types/tables';
 

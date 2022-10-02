@@ -1,5 +1,4 @@
-import { App, User } from '../principal/types';
-import { GrantType } from '../types';
+import { App, User, GrantType } from '../types';
 
 export type OAuth2Token = {
 

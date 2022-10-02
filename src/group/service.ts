@@ -1,6 +1,6 @@
 import db, { query } from '../database';
 import * as principalService from '../principal/service';
-import { Principal, Group } from '../principal/types';
+import { Principal, Group } from '../types';
 
 /**
  * Finding group members

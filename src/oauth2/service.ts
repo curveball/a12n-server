@@ -3,14 +3,13 @@ import * as crypto from 'crypto';
 import db, { query } from '../database';
 import { getSetting } from '../server-settings';
 import * as principalService from '../principal/service';
-import { User, App } from '../principal/types';
 import { InvalidGrant, InvalidRequest, UnauthorizedClient } from './errors';
 import { CodeChallengeMethod, OAuth2Code, OAuth2Token } from './types';
 import { OAuth2Client } from '../oauth2-client/types';
 import { generateSecretToken } from '../crypto';
 import { generateJWTAccessToken } from './jwt';
 import { Oauth2TokensRecord, Oauth2CodesRecord } from 'knex/types/tables';
-import { GrantType } from '../types';
+import { App, User, GrantType } from '../types';
 
 const oauth2TokenFields: (keyof Oauth2TokensRecord)[] = [
   'id',

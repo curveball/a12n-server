@@ -48,11 +48,16 @@ export type Oauth2CodesRecord = {
   id: number;
   client_id: number;
   code: string;
-  user_id: number;
+  principal_id: number;
   code_challenge: string | null;
   code_challenge_method: 'plain' | 'S256' | null;
-  created: number;
+  created_at: number;
   browser_session_id: string | null;
+
+  /**
+   * OAuth2 scopes, space separated
+   */
+  scope: string | null;
 }
 
 export type Oauth2RedirectUrisRecord = {

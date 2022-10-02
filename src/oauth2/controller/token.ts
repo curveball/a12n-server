@@ -89,7 +89,6 @@ class TokenController extends Controller {
       client: oauth2Client,
       code: ctx.request.body.code,
       codeVerifier: ctx.request.body.code_verifier,
-      scope: ctx.request.body.scope?.split(' ') ?? null,
       secretUsed,
     });
 

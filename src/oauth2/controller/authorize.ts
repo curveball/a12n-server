@@ -72,8 +72,6 @@ class AuthorizeController extends Controller {
     const codeChallenge = ctx.query.code_challenge;
     const grantType = responseType === 'code' ? 'authorization_code' : 'implicit';
 
-
-
     if (!oauth2Client.allowedGrantTypes.includes(grantType)) {
       throw new UnsupportedGrantType('The current client is not allowed to use the ' + grantType + ' grant_type');
     }
@@ -103,7 +101,7 @@ class AuthorizeController extends Controller {
 
     const token = await oauth2Service.generateTokenImplicit({
       client: oauth2Client,
-      scope: ctx.params.scope?.split(' ') ?? null,
+      scope: ctx.query.scope?.split(' ') ?? null,
       principal: ctx.session.user,
       browserSessionId: ctx.sessionId!,
     });
@@ -131,13 +129,14 @@ class AuthorizeController extends Controller {
     codeChallengeMethod: 'S256' | 'plain' | undefined
   ) {
 
-    const code = await oauth2Service.generateAuthorizationCode(
-      oauth2Client,
-      ctx.session.user,
-      codeChallenge,
-      codeChallengeMethod,
-      ctx.sessionId!,
-    );
+    const code = await oauth2Service.generateAuthorizationCode({
+      client: oauth2Client,
+      principal: ctx.session.user,
+      scope: ctx.query.scope?.split(' ') ?? null,
+      codeChallenge: codeChallenge,
+      codeChallengeMethod: codeChallengeMethod,
+      browserSessionId: ctx.sessionId!,
+    });
 
     ctx.status = 302;
     ctx.response.headers.set('Cache-Control', 'no-cache');

@@ -134,7 +134,6 @@ export function generateTokenPassword(options: GenerateTokenPasswordOptions): Pr
 
 type GenerateTokenAuthorizationCodeOptions = {
   client: OAuth2Client;
-  scope: string[] | null;
   code: string;
   codeVerifier?: string;
   secretUsed: boolean;
@@ -151,17 +150,20 @@ type GenerateTokenAuthorizationCodeOptions = {
  */
 export async function generateTokenAuthorizationCode(options: GenerateTokenAuthorizationCodeOptions): Promise<OAuth2Token> {
 
-  const codeResult = await query(
-    'SELECT * FROM oauth2_codes WHERE code = ?',
-    [options.code]
-  );
+  const codeResult = await db<Oauth2CodesRecord>('oauth2_codes')
+    .first()
+    .where({code: options.code});
 
-  if (!codeResult.length) {
+  if (!codeResult) {
     throw new InvalidRequest('The supplied code was not recognized');
   }
 
-  const codeRecord: Oauth2CodesRecord = codeResult[0];
+  const codeRecord = codeResult;
   const expirySettings = getTokenExpiry();
+
+  await db('oauth2_codes')
+    .delete()
+    .where({code: codeRecord.code});
 
   // Delete immediately.
   await db.raw('DELETE FROM oauth2_codes WHERE id = ?', [codeRecord.id]);
@@ -172,20 +174,21 @@ export async function generateTokenAuthorizationCode(options: GenerateTokenAutho
     codeRecord.code_challenge_method ?? 'S256',
   );
 
-  if (codeRecord.created + expirySettings.code < Math.floor(Date.now() / 1000)) {
+  if (codeRecord.created_at + expirySettings.code < Math.floor(Date.now() / 1000)) {
     throw new InvalidRequest('The supplied code has expired');
   }
   if (codeRecord.client_id !== options.client.id) {
     throw new UnauthorizedClient('The client_id associated with the token did not match with the authenticated client credentials');
   }
 
-  const user = await principalService.findById(codeRecord.user_id, 'user');
+  const user = await principalService.findById(codeRecord.principal_id, 'user');
   if (!user.active) {
     throw new Error(`User ${user.href} is not active`);
   }
   return generateTokenInternal({
     grantType: 'authorization_code',
     principal: user,
+    scope: codeRecord.scope?.split(' ') || null,
     ...options,
   });
 
@@ -429,30 +432,33 @@ export async function revokeToken(token: OAuth2Token): Promise<void> {
 
 }
 
+type GenerateAuthorizationCodeOptions = {
+  client: OAuth2Client;
+  principal: User;
+  scope: string[] | null;
+  codeChallenge: string|undefined;
+  codeChallengeMethod: CodeChallengeMethod|undefined;
+  browserSessionId: string;
+}
 /**
  * This function is used for the authorization_code grant flow.
  *
  * This function creates an code for a user. The code is later exchanged for
  * a oauth2 access token.
  */
-export async function generateAuthorizationCode(
-  client: OAuth2Client,
-  user: User,
-  codeChallenge: string|undefined,
-  codeChallengeMethod: CodeChallengeMethod|undefined,
-  browserSessionId: string,
-): Promise<OAuth2Code> {
+export async function generateAuthorizationCode(options: GenerateAuthorizationCodeOptions): Promise<OAuth2Code> {
 
   const code = await generateSecretToken();
   await db('oauth2_codes')
     .insert({
-      client_id: client.id,
-      user_id: user.id,
+      client_id: options.client.id,
+      principal_id: options.principal.id,
       code: code,
-      code_challenge: codeChallenge,
-      code_challenge_method: codeChallengeMethod,
-      browser_session_id: browserSessionId,
-      created: Math.floor(Date.now() / 1000),
+      code_challenge: options.codeChallenge,
+      code_challenge_method: options.codeChallengeMethod,
+      scope: options.scope?.join(' '),
+      browser_session_id: options.browserSessionId,
+      created_at: Math.floor(Date.now() / 1000),
     });
 
   return {

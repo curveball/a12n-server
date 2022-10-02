@@ -1,6 +1,15 @@
 Changelog
 =========
 
+0.22.1 (????-??-??)
+-------------------
+
+* 'scope' wasn't supported yet correctly in the `authorization_code` and
+  `implicit` flows.
+* Fixed some bugs in the 'active sessions' report, and add columns for
+  `grant_type`, and `scope`.
+
+
 0.22.0 (2022-09-27)
 -------------------
 

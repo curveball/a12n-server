@@ -51,7 +51,11 @@ export function item(userAppPermissions: UserAppPermission): HalResource {
       collection: {
         href: `${user.href}/app-permission`,
         title: 'List of apps for this user'
-      }
+      },
+      describedby: {
+        href: 'https://curveballjs.org/schemas/a12nserver/user-app-permissions.json',
+        type: 'application/schema+json'
+      },
     },
     scope: userAppPermissions.scope,
     createdAt: userAppPermissions.createdAt.toISOString(),

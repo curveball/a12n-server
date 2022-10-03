@@ -9,6 +9,7 @@ import { OAuth2Client } from '../../oauth2-client/types';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
 import { findByClientId } from '../../oauth2-client/service';
+import * as userAppPermissions from '../../user-app-permissions/service';
 
 class AuthorizeController extends Controller {
 
@@ -83,12 +84,19 @@ class AuthorizeController extends Controller {
       throw err;
     }
 
+    const scope: string[] = ctx.query.scope ? ctx.query.scope.split(' ') : [];
+
     if (ctx.session.user !== undefined) {
 
+      await userAppPermissions.setPermissions(
+        oauth2Client.app,
+        ctx.session.user,
+        scope,
+      );
       if (responseType === 'token') {
-        return this.tokenRedirect(ctx, oauth2Client, redirectUri, state);
+        return this.tokenRedirect(ctx, oauth2Client, redirectUri, state, scope);
       } else {
-        return this.codeRedirect(ctx, oauth2Client, redirectUri, state, codeChallenge, codeChallengeMethod);
+        return this.codeRedirect(ctx, oauth2Client, redirectUri, state, scope, codeChallenge, codeChallengeMethod);
       }
 
     } else {
@@ -97,11 +105,11 @@ class AuthorizeController extends Controller {
 
   }
 
-  async tokenRedirect(ctx: Context, oauth2Client: OAuth2Client, redirectUri: string, state: string|undefined) {
+  async tokenRedirect(ctx: Context, oauth2Client: OAuth2Client, redirectUri: string, state: string|undefined, scope: string[]|null) {
 
     const token = await oauth2Service.generateTokenImplicit({
       client: oauth2Client,
-      scope: ctx.query.scope?.split(' ') ?? null,
+      scope,
       principal: ctx.session.user,
       browserSessionId: ctx.sessionId!,
     });
@@ -125,14 +133,15 @@ class AuthorizeController extends Controller {
     oauth2Client: OAuth2Client,
     redirectUri: string,
     state: string|undefined,
+    scope: string[] | null,
     codeChallenge: string|undefined,
-    codeChallengeMethod: 'S256' | 'plain' | undefined
+    codeChallengeMethod: 'S256' | 'plain' | undefined,
   ) {
 
     const code = await oauth2Service.generateAuthorizationCode({
       client: oauth2Client,
       principal: ctx.session.user,
-      scope: ctx.query.scope?.split(' ') ?? null,
+      scope,
       codeChallenge: codeChallenge,
       codeChallengeMethod: codeChallengeMethod,
       browserSessionId: ctx.sessionId!,

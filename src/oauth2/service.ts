@@ -1,5 +1,6 @@
 import { NotFound } from '@curveball/http-errors';
 import * as crypto from 'crypto';
+
 import db, { query } from '../database';
 import { getSetting } from '../server-settings';
 import * as principalService from '../principal/service';
@@ -10,6 +11,7 @@ import { generateSecretToken } from '../crypto';
 import { generateJWTAccessToken } from './jwt';
 import { Oauth2TokensRecord, Oauth2CodesRecord } from 'knex/types/tables';
 import { App, User, GrantType } from '../types';
+import * as userAppPermissionsService from '../user-app-permissions/service';
 
 const oauth2TokenFields: (keyof Oauth2TokensRecord)[] = [
   'id',
@@ -303,10 +305,14 @@ async function generateTokenInternal(options: GenerateTokenOptions): Promise<OAu
 
   await db('oauth2_tokens').insert(record);
 
+  if (options.client && options.principal.type === 'user') {
+    await userAppPermissionsService.updateLastUse(options.principal, options.client.app);
+  }
+
   return {
     accessToken,
     refreshToken,
-    grantType: 'implicit',
+    grantType: options.grantType as OAuth2Token['grantType'],
     secretUsed: false,
     accessTokenExpires,
     refreshTokenExpires,

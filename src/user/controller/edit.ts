@@ -9,7 +9,7 @@ class UserEditController extends Controller {
 
   async get(ctx: Context) {
 
-    const user = await principalService.findByExternalId(ctx.params.id);
+    const user = await principalService.findByExternalId(ctx.params.id, 'user');
 
     if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
       throw new Forbidden('Only users with the "admin" privilege use this endpoint');

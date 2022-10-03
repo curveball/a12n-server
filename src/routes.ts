@@ -42,6 +42,8 @@ import settings from './settings/controller';
 import user from './user/controller/item';
 import userAccessToken from './oauth2/controller/user-access-token';
 import userActiveSessions from './oauth2/controller/active-sessions';
+import userAppPermissionItem from './user-app-permissions/controller/user-item';
+import userAppPermissionCollection from './user-app-permissions/controller/user-collection';
 import userByHref from './user/controller/by-href';
 import userEdit from './user/controller/edit';
 import userEditPrivileges from './user/controller/privileges';
@@ -107,6 +109,8 @@ const routes = [
   router('/user/:id/one-time-token', oneTimeToken),
   router('/user/:id/access-token', userAccessToken),
   router('/user/:id/sessions', userActiveSessions),
+  router('/user/:id/app-permission', userAppPermissionCollection),
+  router('/user/:id/app-permission/:appId', userAppPermissionItem),
 
   router('/change-password', changePassword),
   router('/reset-password', resetPassword),

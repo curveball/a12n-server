@@ -14,7 +14,7 @@ import * as oauth2ClientService from '../../../src/oauth2-client/service';
 import * as principalService from '../../../src/principal/service';
 import * as userService from '../../../src/user/service';
 import * as serverSettings from '../../../src/server-settings';
-import { User, App } from '../../../src/principal/types';
+import { User, App } from '../../../src/types';
 import { OAuth2Client } from '../../../src/oauth2-client/types';
 import authorize from '../../../src/oauth2/controller/authorize';
 

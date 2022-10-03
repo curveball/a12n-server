@@ -18,7 +18,7 @@ export function collection(user: User, userAppPermissions: UserAppPermission[]):
       item: userAppPermissions.map( item => {
         return {
           title: item.app.nickname,
-          href: `${user.href}/app-permission/${item.app.id}`
+          href: `${user.href}/app-permission/${item.app.externalId}`
         };
       })
     },
@@ -37,7 +37,7 @@ export function item(userAppPermissions: UserAppPermission): HalResource {
   return {
     _links: {
       self: {
-        href: `${user.href}/app-permissions/${app.id}`,
+        href: `${user.href}/app-permissions/${app.externalId}`,
         title: `${app.nickname} permissions for ${user.nickname}`,
       },
       user: {

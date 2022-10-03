@@ -61,7 +61,7 @@ class TokenController extends Controller {
 
     const token = await oauth2Service.generateTokenClientCredentials({
       client: oauth2Client,
-      scope: ctx.request.body.scope?.split(' ') ?? null,
+      scope: ctx.request.body.scope?.split(' ') ?? [],
     });
 
     ctx.response.type = 'application/json';

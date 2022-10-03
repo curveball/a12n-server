@@ -105,7 +105,7 @@ class AuthorizeController extends Controller {
 
   }
 
-  async tokenRedirect(ctx: Context, oauth2Client: OAuth2Client, redirectUri: string, state: string|undefined, scope: string[]|null) {
+  async tokenRedirect(ctx: Context, oauth2Client: OAuth2Client, redirectUri: string, state: string|undefined, scope: string[]) {
 
     const token = await oauth2Service.generateTokenImplicit({
       client: oauth2Client,
@@ -133,7 +133,7 @@ class AuthorizeController extends Controller {
     oauth2Client: OAuth2Client,
     redirectUri: string,
     state: string|undefined,
-    scope: string[] | null,
+    scope: string[],
     codeChallenge: string|undefined,
     codeChallengeMethod: 'S256' | 'plain' | undefined,
   ) {

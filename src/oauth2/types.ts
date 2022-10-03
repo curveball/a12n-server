@@ -54,7 +54,7 @@ export type OAuth2Token = {
   /**
    * OAuth2 scopes
    */
-  scope: string[]|null;
+  scope: string[];
 
   /**
    * If the token was created via a browser-flow, such as implicit or

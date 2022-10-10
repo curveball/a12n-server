@@ -16,7 +16,9 @@ export async function generateJWTAccessToken(user: User|App, client: OAuth2Clien
   const jwt = await new SignJWT({
     scope: scopes.join(' '),
   })
-    .setProtectedHeader({alg: 'RS256'})
+    .setProtectedHeader({
+      alg: 'RS256'
+    })
     .setIssuedAt()
     .setIssuer(origin)
     .setAudience(client.app.href)

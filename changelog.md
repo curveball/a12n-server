@@ -10,6 +10,7 @@ Changelog
   `grant_type`, and `scope`.
 * Common types, such `User`, `App`, `Group` types have been moved to
   `src/types.ts` for easier access.
+* We're now keeping track of which scopes were granted to which apps per user.
 
 
 0.22.0 (2022-09-27)

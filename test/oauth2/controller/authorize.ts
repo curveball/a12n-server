@@ -6,6 +6,7 @@ import { URLSearchParams } from 'url';
 import { MemoryRequest, Context, MemoryResponse } from '@curveball/core';
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
+import * as  sinonChai from 'sinon-chai';
 import * as sinon from 'sinon';
 
 import { InvalidRequest } from '../../../src/oauth2/errors';
@@ -13,12 +14,16 @@ import * as oauth2Service from '../../../src/oauth2/service';
 import * as oauth2ClientService from '../../../src/oauth2-client/service';
 import * as principalService from '../../../src/principal/service';
 import * as userService from '../../../src/user/service';
+import * as userAppPermissionService from '../../../src/user-app-permissions/service';
 import * as serverSettings from '../../../src/server-settings';
 import { User, App } from '../../../src/types';
 import { OAuth2Client } from '../../../src/oauth2-client/types';
 import authorize from '../../../src/oauth2/controller/authorize';
 
+
 chai.use(chaiAsPromised);
+chai.use(sinonChai);
+
 const expect = chai.expect;
 
 describe('AuthorizeController', () => {
@@ -68,6 +73,7 @@ describe('AuthorizeController', () => {
     sandbox.stub(userService, 'validatePassword').returns(Promise.resolve(true));
     sandbox.stub(userService, 'hasTotp').returns(Promise.resolve(false));
     sandbox.stub(serverSettings, 'getSetting').returns(true);
+    sandbox.stub(userAppPermissionService, 'setPermissions').returns(Promise.resolve(undefined));
   });
 
   afterEach(() => {
@@ -96,9 +102,15 @@ describe('AuthorizeController', () => {
       };
 
       await authorize.get(context);
-      expect(codeRedirectMock.calledOnceWithExactly(
-        context, oauth2Client, 'redirect-uri', 'state', 'challenge-code', 'S256'
-      )).to.be.true;
+      expect(codeRedirectMock).to.have.been.calledWithExactly(
+        context,
+        oauth2Client,
+        'redirect-uri',
+        'state',
+        [],
+        'challenge-code',
+        'S256'
+      );
     });
 
     it('should set challenge code method to plain if not provided', async() => {
@@ -111,9 +123,15 @@ describe('AuthorizeController', () => {
       };
 
       await authorize.get(context);
-      expect(codeRedirectMock.calledOnceWithExactly(
-        context, oauth2Client, 'redirect-uri', 'state', 'challenge-code', 'plain'
-      )).to.be.true;
+      expect(codeRedirectMock).to.have.been.calledWithExactly(
+        context,
+        oauth2Client,
+        'redirect-uri',
+        'state',
+        [],
+        'challenge-code',
+        'plain'
+      );
     });
 
     it('should pass valid parameters and call code redirect without PKCE', async() => {
@@ -127,9 +145,15 @@ describe('AuthorizeController', () => {
       };
 
       await authorize.get(context);
-      expect(codeRedirectMock.calledOnceWithExactly(
-        context, oauth2Client, 'redirect-uri', 'state', undefined, undefined
-      )).to.be.true;
+      expect(codeRedirectMock).to.have.been.calledWithExactly(
+        context,
+        oauth2Client,
+        'redirect-uri',
+        'state',
+        [],
+        undefined,
+        undefined,
+      );
     });
 
     it('should fail code challenge validation', async() => {

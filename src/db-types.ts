@@ -1,3 +1,4 @@
+import 'knex';
 
 declare module 'knex/types/tables' {
 
@@ -12,6 +13,7 @@ interface Tables {
   privileges: PrivilegesRecord;
   reset_password_token: ResetPasswordTokenRecord;
   server_settings: ServerSettingsRecord;
+  user_app_permissions: UserAppPermissionsRecord;
   user_log: UserLogRecord;
   user_passwords: UserPasswordsRecord;
   user_privileges: UserPrivilegesRecord;
@@ -119,6 +121,40 @@ export type ResetPasswordTokenRecord = {
 export type ServerSettingsRecord = {
   setting: string;
   value: string | null;
+}
+
+export type UserAppPermissionsRecord = {
+  id: number;
+
+  /**
+   * Reference to the app / OAuth2 client
+   */
+  app_id: number;
+
+  /**
+   * User / Resource owner
+   */
+  user_id: number;
+
+  /**
+   * Scopes that were requested
+   */
+  scope: string | null;
+
+  /**
+   * When the user first gave permission to the app
+   */
+  created_at: number;
+
+  /**
+   * Last time the set of permissions were changed
+   */
+  modified_at: number;
+
+  /**
+   * Last time this application issued or refreshed an access token
+   */
+  last_used_at: number;
 }
 
 export type UserLogRecord = {

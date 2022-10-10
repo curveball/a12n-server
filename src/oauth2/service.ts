@@ -1,5 +1,6 @@
 import { NotFound } from '@curveball/http-errors';
 import * as crypto from 'crypto';
+
 import db, { query } from '../database';
 import { getSetting } from '../server-settings';
 import * as principalService from '../principal/service';
@@ -10,6 +11,7 @@ import { generateSecretToken } from '../crypto';
 import { generateJWTAccessToken } from './jwt';
 import { Oauth2TokensRecord, Oauth2CodesRecord } from 'knex/types/tables';
 import { App, User, GrantType } from '../types';
+import * as userAppPermissionsService from '../user-app-permissions/service';
 
 const oauth2TokenFields: (keyof Oauth2TokensRecord)[] = [
   'id',
@@ -83,7 +85,7 @@ export async function getActiveTokens(user: App | User): Promise<OAuth2Token[]> 
 type GenerateTokenImplicitOptions = {
   client: OAuth2Client;
   principal: User;
-  scope: string[] | null;
+  scope: string[];
   browserSessionId: string;
 }
 
@@ -100,7 +102,7 @@ export function generateTokenImplicit(options: GenerateTokenImplicitOptions): Pr
 
 type GenerateTokenClientCredentialsOptions = {
   client: OAuth2Client;
-  scope: string[] | null;
+  scope: string[];
 }
 
 /**
@@ -118,7 +120,7 @@ export function generateTokenClientCredentials(options: GenerateTokenClientCrede
 type GenerateTokenPasswordOptions = {
   client: OAuth2Client;
   principal: User;
-  scope: string[] | null;
+  scope: string[];
 }
 /**
  * Generates a token for the 'implicit' GrantType
@@ -187,7 +189,7 @@ export async function generateTokenAuthorizationCode(options: GenerateTokenAutho
   return generateTokenInternal({
     grantType: 'authorization_code',
     principal: user,
-    scope: codeRecord.scope?.split(' ') || null,
+    scope: codeRecord.scope?.split(' ') || [],
     ...options,
   });
 
@@ -224,7 +226,7 @@ export function generateTokenDeveloperToken(options: GenerateTokenDeveloperToken
     ...options,
     secretUsed: false,
     client,
-    scope: null,
+    scope: [],
   });
 }
 
@@ -240,7 +242,7 @@ export function generateTokenOneTimeToken(options: GenerateTokenOneTimeTokenOpti
     grantType: 'developer-token',
     ...options,
     secretUsed: false,
-    scope: null,
+    scope: [],
   });
 }
 
@@ -256,7 +258,7 @@ type GenerateTokenOptions = {
   grantType: GrantType | null;
   client: OAuth2Client;
   principal: App |User;
-  scope: string[] | null;
+  scope: string[];
   browserSessionId?: string;
   secretUsed: boolean;
 }
@@ -281,7 +283,7 @@ async function generateTokenInternal(options: GenerateTokenOptions): Promise<OAu
       options.principal,
       options.client,
       expirySettings.accessToken,
-      []
+      options.scope,
     );
   } else {
     accessToken = await generateSecretToken();
@@ -303,10 +305,14 @@ async function generateTokenInternal(options: GenerateTokenOptions): Promise<OAu
 
   await db('oauth2_tokens').insert(record);
 
+  if (options.client && options.principal.type === 'user') {
+    await userAppPermissionsService.updateLastUse(options.principal, options.client.app);
+  }
+
   return {
     accessToken,
     refreshToken,
-    grantType: 'implicit',
+    grantType: options.grantType as OAuth2Token['grantType'],
     secretUsed: false,
     accessTokenExpires,
     refreshTokenExpires,
@@ -434,7 +440,7 @@ export async function revokeToken(token: OAuth2Token): Promise<void> {
 type GenerateAuthorizationCodeOptions = {
   client: OAuth2Client;
   principal: User;
-  scope: string[] | null;
+  scope: string[];
   codeChallenge: string|undefined;
   codeChallengeMethod: CodeChallengeMethod|undefined;
   browserSessionId: string;
@@ -581,7 +587,7 @@ function tokenRecordToModel(token: Oauth2TokensRecord, principal: User | App): O
     grantType,
     secretUsed,
 
-    scope: token.scope?.split(' ') ?? null,
+    scope: token.scope?.split(' ') ?? [],
 
     principal,
     clientId: token.oauth2_client_id,

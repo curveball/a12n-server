@@ -44,6 +44,7 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
         href: group.href,
         title: group.nickname,
       })),
+
       'describedby': {
         href: 'https://curveballjs.org/schemas/a12nserver/user.json',
         type: 'application/schema+json',
@@ -74,6 +75,10 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
       href: `${user.href}/sessions`,
       title: 'Active user sessions'
     };
+    hal._links['app-permission-collection'] = {
+      href: `${user.href}/app-permission`,
+      title: 'App Permissions',
+    };
   }
   if (isAdmin) {
     hal._links['password'] = {
@@ -99,7 +104,7 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
 
 }
 
-export function edit(user: Principal): HalResource {
+export function edit(user: User): HalResource {
   return {
     _links: {
       self: {

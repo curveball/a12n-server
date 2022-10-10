@@ -114,6 +114,36 @@ export async function findByExternalId(externalId: string, type?: PrincipalType)
 }
 
 /**
+ * Find multiple principals.
+ *
+ * This function returns the principals as a map, index by their id.
+ * This is a helper function typically used by other services to find large numbers
+ * of joined principals from other tables fast.
+ *
+ * If any of the ids in the list is duplicated, they are de-duplicated here.
+ * if any of the provided ids are not found, this function will error.
+ */
+export async function findMany(ids: number[]): Promise<Map<number,Principal>> {
+
+  const records = await db('principals')
+    .select()
+    .whereIn('id', ids);
+
+  const result = new Map<number, Principal>(records.map(
+    record => [record.id, recordToModel(record)]
+  ));
+
+  for (const id of ids) {
+    if (!result.has(id)) {
+      throw new NotFound(`Principal with ${id} not found`);
+    }
+  }
+
+  return result;
+
+}
+
+/**
  * Returns true if more than 1 principal exists in the system.
  *
  * If there are 0 principals, this puts a12nserver in setup mode, which allows a

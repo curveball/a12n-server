@@ -12,7 +12,7 @@ class UserAppPermissionsItem extends Controller {
 
     const user = await principalService.findByExternalId(ctx.params.id, 'user');
     if (ctx.auth.equals(user) && !await privilegeService.hasPrivilege(ctx, 'admin')) {
-      throw new Forbidden('You can only use this API for yourself yourself, or if you have \'admin\' privileges');
+      throw new Forbidden('You can only use this API for yourself, or if you have \'admin\' privileges');
     }
     const app = await principalService.findByExternalId(ctx.params.appId, 'app');
 

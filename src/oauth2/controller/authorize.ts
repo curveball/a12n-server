@@ -35,13 +35,6 @@ class AuthorizeController extends Controller {
       throw new InvalidRequest('The "redirect_uri" parameter must be provided');
     }
 
-    if (params.responseType === 'code') {
-
-      if (oauth2Client.requirePkce && !params.codeChallenge) {
-        throw new InvalidRequest('This endpoint requires that OAuth2 client support PKCE, and your client did not pass the correct parameters. Either turn off the PKCE requirement for this OAuth2 client, or upgrade to an OAuth2 client library that supports PKCE.');
-      }
-    }
-
     const grantType = params.responseType === 'code' ? 'authorization_code' : 'implicit';
 
     if (!oauth2Client.allowedGrantTypes.includes(grantType)) {
@@ -55,21 +48,26 @@ class AuthorizeController extends Controller {
       throw err;
     }
 
-    if (ctx.session.user !== undefined) {
+    if (ctx.session.user === undefined) {
+      // Use is not logged in, we need to send them through the login process
+      // first. The user will come back here after.
+      this.redirectToLogin(ctx, {'continue': ctx.request.requestTarget});
+      return;
+    }
 
-      await userAppPermissions.setPermissions(
-        oauth2Client.app,
-        ctx.session.user,
-        params.scope,
-      );
-      if (params.responseType === 'token') {
-        return this.tokenRedirect(ctx, oauth2Client, params);
-      } else {
-        return this.codeRedirect(ctx, oauth2Client, params);
-      }
-
+    await userAppPermissions.setPermissions(
+      oauth2Client.app,
+      ctx.session.user,
+      params.scope,
+    );
+    if (params.responseType === 'token') {
+      return this.tokenRedirect(ctx, oauth2Client, params);
     } else {
-      return this.redirectToLogin(ctx, {'continue': ctx.request.requestTarget});
+
+      if (oauth2Client.requirePkce && !params.codeChallenge) {
+        throw new InvalidRequest('This endpoint requires that OAuth2 client support PKCE, and your client did not pass the correct parameters. Either turn off the PKCE requirement for this OAuth2 client, or upgrade to an OAuth2 client library that supports PKCE.');
+      }
+      return this.codeRedirect(ctx, oauth2Client, params);
     }
 
   }

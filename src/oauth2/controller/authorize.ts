@@ -17,20 +17,11 @@ class AuthorizeController extends Controller {
 
     ctx.response.type = 'text/html';
 
+    const params = parseAuthorizationQuery(ctx.query);
     let oauth2Client;
-    let codeChallengeMethod: CodeChallengeMethod|undefined = undefined;
-
-    if (!['token', 'code'].includes(ctx.query.response_type)) {
-      throw new InvalidRequest('The "response_type" parameter must be provided, and must be "token" or "code"');
-    }
-    if (!ctx.query.client_id) {
-      throw new InvalidRequest('The "client_id" parameter must be provided');
-    }
-
-    const clientId = ctx.query.client_id;
 
     try {
-      oauth2Client = await findByClientId(clientId);
+      oauth2Client = await findByClientId(params.clientId);
     } catch (e) {
       if (e instanceof NotFound) {
         throw new InvalidClient('Client id incorrect');
@@ -40,63 +31,41 @@ class AuthorizeController extends Controller {
       }
     }
 
-    if (!ctx.query.redirect_uri) {
+    if (!params.redirectUri) {
       throw new InvalidRequest('The "redirect_uri" parameter must be provided');
     }
 
-    if (oauth2Client.requirePkce && !ctx.query.code_challenge) {
-      throw new InvalidRequest('This endpoint requires that OAuth2 client support PKCE, and your client did not pass the correct parameters. Either turn off the PKCE requirement for this OAuth2 client, or upgrade to an OAuth2 client library that supports PKCE.');
-    }
+    if (params.responseType === 'code') {
 
-    if (ctx.query.response_type === 'code') {
-      if (!ctx.query.code_challenge && ctx.query.code_challenge_method) {
-        throw new InvalidRequest('The "code_challenge" must be provided');
-      }
-      if (ctx.query.code_challenge_method) {
-        switch(ctx.query.code_challenge_method) {
-          case 'S256':
-          case 'plain':
-            codeChallengeMethod = ctx.query.code_challenge_method;
-            break;
-          default:
-            throw new InvalidRequest('The "code_challenge_method" must be "plain" or "S256"');
-        }
-      } else {
-        codeChallengeMethod = ctx.query.code_challenge ? 'plain' : undefined;
+      if (oauth2Client.requirePkce && !params.codeChallenge) {
+        throw new InvalidRequest('This endpoint requires that OAuth2 client support PKCE, and your client did not pass the correct parameters. Either turn off the PKCE requirement for this OAuth2 client, or upgrade to an OAuth2 client library that supports PKCE.');
       }
     }
 
-    const state = ctx.query.state;
-    // const scope = ctx.query.scope;
-    const responseType = ctx.query.response_type;
-    const redirectUri = ctx.query.redirect_uri;
-    const codeChallenge = ctx.query.code_challenge;
-    const grantType = responseType === 'code' ? 'authorization_code' : 'implicit';
+    const grantType = params.responseType === 'code' ? 'authorization_code' : 'implicit';
 
     if (!oauth2Client.allowedGrantTypes.includes(grantType)) {
       throw new UnsupportedGrantType('The current client is not allowed to use the ' + grantType + ' grant_type');
     }
 
     try {
-      await oauth2Service.requireRedirectUri(oauth2Client, redirectUri);
+      await oauth2Service.requireRedirectUri(oauth2Client, params.redirectUri);
     } catch (err) {
       log(EventType.oauth2BadRedirect, ctx);
       throw err;
     }
-
-    const scope: string[] = ctx.query.scope ? ctx.query.scope.split(' ') : [];
 
     if (ctx.session.user !== undefined) {
 
       await userAppPermissions.setPermissions(
         oauth2Client.app,
         ctx.session.user,
-        scope,
+        params.scope,
       );
-      if (responseType === 'token') {
-        return this.tokenRedirect(ctx, oauth2Client, redirectUri, state, scope);
+      if (params.responseType === 'token') {
+        return this.tokenRedirect(ctx, oauth2Client, params);
       } else {
-        return this.codeRedirect(ctx, oauth2Client, redirectUri, state, scope, codeChallenge, codeChallengeMethod);
+        return this.codeRedirect(ctx, oauth2Client, params);
       }
 
     } else {
@@ -105,11 +74,11 @@ class AuthorizeController extends Controller {
 
   }
 
-  async tokenRedirect(ctx: Context, oauth2Client: OAuth2Client, redirectUri: string, state: string|undefined, scope: string[]) {
+  async tokenRedirect(ctx: Context, oauth2Client: OAuth2Client, params: AuthorizeParamsToken) {
 
     const token = await oauth2Service.generateTokenImplicit({
       client: oauth2Client,
-      scope,
+      scope: params.scope,
       principal: ctx.session.user,
       browserSessionId: ctx.sessionId!,
     });
@@ -118,11 +87,11 @@ class AuthorizeController extends Controller {
     ctx.response.headers.set('Cache-Control', 'no-cache');
     ctx.response.headers.set(
       'Location',
-      redirectUri + '#' + querystring.stringify({
+      params.redirectUri + '#' + querystring.stringify({
         access_token: token.accessToken,
         token_type: token.tokenType,
         expires_in: token.accessTokenExpires - Math.round(Date.now() / 1000),
-        state: state
+        state: params.state
       })
     );
 
@@ -131,19 +100,15 @@ class AuthorizeController extends Controller {
   async codeRedirect(
     ctx: Context,
     oauth2Client: OAuth2Client,
-    redirectUri: string,
-    state: string|undefined,
-    scope: string[],
-    codeChallenge: string|undefined,
-    codeChallengeMethod: 'S256' | 'plain' | undefined,
+    params: AuthorizeParamsCode
   ) {
 
     const code = await oauth2Service.generateAuthorizationCode({
       client: oauth2Client,
       principal: ctx.session.user,
-      scope,
-      codeChallenge: codeChallenge,
-      codeChallengeMethod: codeChallengeMethod,
+      scope: params.scope,
+      codeChallenge: params.codeChallenge,
+      codeChallengeMethod: params.codeChallengeMethod,
       browserSessionId: ctx.sessionId!,
     });
 
@@ -151,9 +116,9 @@ class AuthorizeController extends Controller {
     ctx.response.headers.set('Cache-Control', 'no-cache');
     ctx.response.headers.set(
       'Location',
-      redirectUri + '?' + querystring.stringify({
+      params.redirectUri + '?' + querystring.stringify({
         code: code.code,
-        state: state
+        state: params.state
       })
     );
 
@@ -172,3 +137,73 @@ class AuthorizeController extends Controller {
 }
 
 export default new AuthorizeController();
+
+type AuthorizeParamsCode = {
+  responseType: 'code';
+  clientId: string;
+  redirectUri?: string;
+  scope: string[];
+  state?: string;
+  codeChallenge?: string;
+  codeChallengeMethod?: CodeChallengeMethod;
+};
+
+type AuthorizeParamsToken = {
+  responseType: 'token';
+  clientId: string;
+  redirectUri?: string;
+  scope: string[];
+  state?: string;
+}
+
+type AuthorizeParams = AuthorizeParamsCode | AuthorizeParamsToken;
+
+function parseAuthorizationQuery(query: Record<string, string>): AuthorizeParams {
+
+  if (!['token', 'code'].includes(query.response_type)) {
+    throw new InvalidRequest('The "response_type" parameter must be provided, and must be "token" or "code"');
+  }
+  const responseType: 'code' | 'token' = query.response_type as any;
+  if (!query.client_id) {
+    throw new InvalidRequest('The "client_id" parameter must be provided');
+  }
+  const clientId = query.client_id;
+
+  if (responseType === 'token') {
+    return {
+      responseType,
+      clientId,
+      redirectUri: query.redirect_uri ?? undefined,
+      state: query.state ?? undefined,
+      scope: query.scope ? query.scope.split(' ') : []
+    };
+  }
+
+  if (!query.code_challenge && query.code_challenge_method) {
+    throw new InvalidRequest('The "code_challenge" must be provided');
+  }
+  let codeChallengeMethod: CodeChallengeMethod|undefined = undefined;
+  const codeChallenge: string|undefined = query.code_challenge;
+  if (query.code_challenge_method) {
+    switch(query.code_challenge_method) {
+      case 'S256':
+      case 'plain':
+        codeChallengeMethod = query.code_challenge_method;
+        break;
+      default:
+        throw new InvalidRequest('The "code_challenge_method" must be "plain" or "S256"');
+    }
+  } else {
+    codeChallengeMethod = query.code_challenge ? 'plain' : undefined;
+  }
+
+  return {
+    responseType,
+    clientId,
+    redirectUri: query.redirect_uri ?? undefined,
+    state: query.state ?? undefined,
+    scope: query.scope ? query.scope.split(' ') : [],
+    codeChallenge,
+    codeChallengeMethod,
+  };
+}

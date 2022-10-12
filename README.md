@@ -45,6 +45,7 @@ Features
   * [OAuth 2 Token Introspection][2].
   * [JSON Web Key Sets][4].
   * [OAuth2 Token Revocation][5]
+  * [RFC 9068][7] - JSON Web Token (JWT) Profile for OAuth 2.0 Access Tokens
 * MFA
   * Google Authenticator (TOTP).
   * WebauthN / Yubikeys
@@ -74,3 +75,4 @@ developed.
 [4]: https://auth0.com/docs/secure/tokens/json-web-tokens/json-web-key-sets
 [5]: https://datatracker.ietf.org/doc/html/rfc7009
 [6]: https://datatracker.ietf.org/doc/html/rfc8959
+[7]: https://www.rfc-editor.org/rfc/rfc9068 "JSON Web Token (JWT) Profile for OAuth 2.0 Access Tokens"

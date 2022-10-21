@@ -105,11 +105,15 @@ describe('AuthorizeController', () => {
       expect(codeRedirectMock).to.have.been.calledWithExactly(
         context,
         oauth2Client,
-        'redirect-uri',
-        'state',
-        [],
-        'challenge-code',
-        'S256'
+        {
+          responseType: 'code',
+          clientId: 'client-id',
+          redirectUri: 'redirect-uri',
+          state: 'state',
+          scope: [],
+          codeChallenge: 'challenge-code',
+          codeChallengeMethod: 'S256'
+        }
       );
     });
 
@@ -126,11 +130,15 @@ describe('AuthorizeController', () => {
       expect(codeRedirectMock).to.have.been.calledWithExactly(
         context,
         oauth2Client,
-        'redirect-uri',
-        'state',
-        [],
-        'challenge-code',
-        'plain'
+        {
+          responseType: 'code',
+          clientId: 'client-id',
+          redirectUri: 'redirect-uri',
+          state: 'state',
+          scope: [],
+          codeChallenge: 'challenge-code',
+          codeChallengeMethod: 'plain'
+        }
       );
     });
 
@@ -148,11 +156,15 @@ describe('AuthorizeController', () => {
       expect(codeRedirectMock).to.have.been.calledWithExactly(
         context,
         oauth2Client,
-        'redirect-uri',
-        'state',
-        [],
-        undefined,
-        undefined,
+        {
+          responseType: 'code',
+          clientId: 'client-id',
+          redirectUri: 'redirect-uri',
+          state: 'state',
+          scope: [],
+          codeChallenge: undefined,
+          codeChallengeMethod: undefined
+        }
       );
     });
 

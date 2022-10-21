@@ -109,7 +109,9 @@
     "sqlite3": "^5.0.6"
   },
   "mocha": {
-    "require": "ts-node/register",
+    "require": [
+      "ts-node/register"
+    ],
     "recursive": true,
     "extension": [
       "ts",

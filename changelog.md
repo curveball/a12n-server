@@ -11,6 +11,7 @@ Changelog
 * Common types, such `User`, `App`, `Group` types have been moved to
   `src/types.ts` for easier access.
 * We're now keeping track of which scopes were granted to which apps per user.
+* Support for RFC 9068: A standard format for JWT OAuth2 Access Tokens.
 
 
 0.22.0 (2022-09-27)

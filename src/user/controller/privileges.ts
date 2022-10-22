@@ -11,9 +11,9 @@ type PolicyForm = {
   policyBody: string;
 }
 type PrincipalPatchPrivilege = {
-  action: 'add',
-  resource: '*' | string,
-  privilege: string
+  action: 'add';
+  resource: '*' | string;
+  privilege: string;
 }
 
 class UserEditPrivilegesController extends Controller {

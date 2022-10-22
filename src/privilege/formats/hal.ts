@@ -1,25 +1,23 @@
 import { Privilege } from '../types';
+import { HalResource } from 'hal-types';
 
-export function collection(privileges: Privilege[]) {
+export function collection(privileges: Privilege[]): HalResource {
 
-  const hal: any = {
+  return {
     _links: {
       self: { href: '/privilege' },
-      item: [],
+      item: privileges.map(privilege => ({
+        href: '/privilege/' + privilege.privilege,
+        title: privilege.description
+      })),
     },
+    total: privileges.length,
   };
 
-  for (const privilege of privileges) {
-    hal._links.item.push({
-      href: '/privilege/' + privilege.privilege,
-      title: privilege.description
-    });
-  }
-  return hal;
 }
 
-export function item(privilege: Privilege) {
-  const hal: any = {
+export function item(privilege: Privilege): HalResource {
+  return {
     _links: {
       self: {href: '/privilege/' + privilege.privilege},
       collection: {href: '/privilege', title: 'Privilege Collection'}
@@ -27,7 +25,4 @@ export function item(privilege: Privilege) {
     privilege: privilege.privilege,
     description: privilege.description
   };
-
-
-  return hal;
 }

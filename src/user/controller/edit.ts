@@ -30,8 +30,6 @@ class UserEditController extends Controller {
       throw new Forbidden('Only users with the "admin" privilege use this endpoint');
     }
 
-    delete userBody['csrf-token'];
-
     const userUpdated = Object.assign({}, userOld, {
       ...userBody,
       active: userBody.active === 'true' ? true : false,

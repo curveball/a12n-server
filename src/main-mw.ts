@@ -9,6 +9,7 @@ import { RedisStore } from '@curveball/session-redis';
 import { invokeMiddlewares, Middleware } from '@curveball/core';
 
 import login from './middleware/login';
+import csrf from './middleware/csrf';
 import routes from './routes';
 import { getSetting } from './server-settings';
 import { join } from 'path';
@@ -58,6 +59,7 @@ export default function (): Middleware {
     }),
     login(),
     bodyParser(),
+    csrf(),
     links(),
     validator({
       schemaPath: join(__dirname, '../schemas'),

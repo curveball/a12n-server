@@ -12,6 +12,8 @@ Changelog
   `src/types.ts` for easier access.
 * We're now keeping track of which scopes were granted to which apps per user.
 * Support for RFC 9068: A standard format for JWT OAuth2 Access Tokens.
+* Centralize CSRF token handling (for old browsers).
+* Added a new 'add privilege' action, which is helpful for API clients.
 
 
 0.22.0 (2022-09-27)

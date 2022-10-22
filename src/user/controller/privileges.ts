@@ -10,19 +10,26 @@ import * as principalService from '../../principal/service';
 type PolicyForm = {
   policyBody: string;
 }
+type PrincipalPatchPrivilege = {
+  action: 'add';
+  resource: '*' | string;
+  privilege: string;
+}
 
 class UserEditPrivilegesController extends Controller {
 
   async get(ctx: Context) {
 
     const user = await principalService.findByExternalId(ctx.params.id);
-    const privileges = await privilegeService.getImmediatePrivilegesForPrincipal(user);
+    const userPrivileges = await privilegeService.getImmediatePrivilegesForPrincipal(user);
+    const privileges = await privilegeService.findPrivileges();
 
     await privilegeService.hasPrivilege(ctx, 'admin');
 
     ctx.response.body = hal.editPrivileges(
       user,
-      privileges
+      userPrivileges,
+      privileges.map( privilege => privilege.privilege ),
     );
 
   }
@@ -31,21 +38,50 @@ class UserEditPrivilegesController extends Controller {
 
     const { policyBody } = ctx.request.body;
 
-    const user = await principalService.findByExternalId(ctx.params.id);
+    const principal = await principalService.findByExternalId(ctx.params.id);
     await privilegeService.hasPrivilege(ctx, 'admin');
 
     try {
       const policy = JSON.parse(policyBody) as PrivilegeMap;
 
-      await privilegeService.replacePrivilegeForUser(user, policy);
+      await privilegeService.replacePrivilegeForUser(principal, policy);
     } catch (err: any) {
       throw new BadRequest(err);
     }
 
-    ctx.redirect(303, `/user/${user.id}`);
+    ctx.redirect(303, principal.href);
 
   }
 
+
+  async patch(ctx: Context) {
+
+    ctx.request.validate<PrincipalPatchPrivilege>('https://curveballjs.org/schemas/a12nserver/principal-patch-privilege.json');
+    const principal = await principalService.findByExternalId(ctx.params.id);
+    await privilegeService.hasPrivilege(ctx, 'admin');
+
+    await privilegeService.addPrivilegeForUser(
+      principal,
+      ctx.request.body.privilege,
+      ctx.request.body.resource,
+    );
+
+    ctx.status = 200;
+    ctx.response.body = {
+      _links: {
+        principal: {
+          href: principal.href,
+          title: principal.nickname,
+        },
+        up: {
+          href: `${principal.href}/edit/privileges`,
+          title: 'Back to privileges',
+        }
+      },
+      title: 'Privileges updated',
+    };
+
+  }
 }
 
 export default new UserEditPrivilegesController();

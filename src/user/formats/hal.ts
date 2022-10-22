@@ -151,20 +151,21 @@ export function edit(user: User): HalResource {
   };
 }
 
-export function editPrivileges(user: Principal, privileges: PrivilegeMap): HalResource {
+export function editPrivileges(principal: Principal, userPrivileges: PrivilegeMap, privileges: string[]): HalResource {
   return {
     _links: {
       self: {
-        href: `${user.href}/edit/privileges`,
+        href: `${principal.href}/edit/privileges`,
+        title: `Edit privileges for ${principal.nickname}`,
       },
       up: {
-        href: user.href,
+        href: principal.href,
         title: 'Cancel',
       },
     },
     _templates: {
-      default: {
-        title: `Edit privilege policy for ${user.nickname}`,
+      edit: {
+        title: `Edit privilege policy for ${principal.nickname}`,
         method: 'POST',
         contentType: 'application/x-www-form-urlencoded',
         properties: [
@@ -174,8 +175,36 @@ export function editPrivileges(user: Principal, privileges: PrivilegeMap): HalRe
             type: 'textarea',
             cols: 100,
             rows: 20,
-            value: JSON.stringify(privileges, undefined, 2),
+            value: JSON.stringify(userPrivileges, undefined, 2),
           },
+        ],
+      },
+      add: {
+        title: 'Add a single privilege',
+        method: 'PATCH',
+        contentType: 'application/json',
+        target: `${principal.href}/edit/privileges`,
+        properties: [
+          {
+            name: 'privilege',
+            prompt: 'Privilege',
+            required: true,
+            options: {
+              inline: privileges
+            }
+          },
+          {
+            name: 'resource',
+            prompt: 'Resource (uri)',
+            required: true,
+            type: 'url',
+            placeHolder: 'https://my-api/resource/foo',
+          },
+          {
+            name: 'action',
+            type: 'hidden',
+            value: 'add'
+          }
         ],
       },
     },

@@ -18,9 +18,7 @@ export default function(): Middleware {
       ctx.validateCsrf();
     }
 
-    if (ctx.request.body['csrf-token']) {
-      delete ctx.request.body['csrf-token'];
-    }
+    delete ctx.request.body?.['csrf-token'];
     return next();
 
   };

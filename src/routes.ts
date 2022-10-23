@@ -32,6 +32,7 @@ import oneTimeTokenExchange from './one-time-token/controller/exchange';
 import passwordToken from './reset-password/controller/token';
 import privilegeCollection from './privilege/controller/collection';
 import privilegeItem from './privilege/controller/item';
+import privilegeSearch from './privilege/controller/search';
 import register from './register/controller/user';
 import registerMfa from './register/controller/mfa';
 import registerTotp from './mfa/totp/controller/register';
@@ -89,6 +90,7 @@ const routes = [
 
   router('/privilege', privilegeCollection),
   router('/privilege/:id', privilegeItem),
+  router('/privilege-search', privilegeSearch),
 
   router('/register', register),
   router('/register/mfa', registerMfa),

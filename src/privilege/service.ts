@@ -1,8 +1,9 @@
 import { Context } from '@curveball/core';
 import db, { query } from '../database';
 import { Principal } from '../types';
-import { Privilege, PrivilegeMap } from './types';
+import { Privilege, PrivilegeMap, PrivilegeEntry } from './types';
 import { UserPrivilegesRecord } from 'knex/types/tables';
+import * as principalService from '../principal/service';
 
 export async function getPrivilegesForPrincipal(principal: Principal): Promise<PrivilegeMap> {
 
@@ -29,6 +30,22 @@ export async function getPrivilegesForPrincipal(principal: Principal): Promise<P
     return privileges;
 
   }, {});
+
+}
+
+export async function findPrivilegesForResource(resource: string): Promise<PrivilegeEntry[]> {
+
+  const records = await db('user_privileges')
+    .select('*')
+    .where({resource}).orWhere({resource: '*'});
+
+  const principals = await principalService.findMany(records.map(record => record.user_id));
+
+  return records.map(record => ({
+    privilege: record.privilege,
+    resource: record.resource,
+    principal: principals.get(record.user_id)!,
+  }));
 
 }
 
@@ -99,10 +116,9 @@ export async function findPrivileges(): Promise<Privilege[]> {
 
 export async function findPrivilege(privilege: string): Promise<Privilege> {
 
-  const result = await query<Privilege>(
-    'SELECT privilege, description FROM privileges WHERE privilege = ?',
-    [privilege]
-  );
+  const result = await db('privileges')
+    .select('*')
+    .where({privilege});
 
   if (result.length !== 1) {
     return {

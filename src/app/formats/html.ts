@@ -1,32 +1,46 @@
 import { render } from '../../templates';
 
-export function createAppForm(msg: string, error: string, name: string, url: string, clientId: string, allowedGrantTypes: string, redirectUris: string, requirePkce: string) {
+type Options = {
+  csrfToken: string;
+  msg: string|undefined;
+  error: string|undefined;
+  name: string|undefined;
+  url: string|undefined;
+  clientId: string|undefined;
+  allowedGrantTypes: string|undefined;
+  redirectUris: string|undefined;
+  requirePkce: string|undefined;
+}
 
-  const hiddenFields: Record<string, string> = {};
+export function createAppForm(options: Options) {
 
-  if (clientId) {
-    hiddenFields['clientId'] = clientId;
+  const hiddenFields: Record<string, string> = {
+    'csrf-token': options.csrfToken,
+  };
+
+  if (options.clientId) {
+    hiddenFields['clientId'] = options.clientId;
   }
 
-  if (allowedGrantTypes) {
-    hiddenFields['allowedGrantTypes'] = allowedGrantTypes;
+  if (options.allowedGrantTypes) {
+    hiddenFields['allowedGrantTypes'] = options.allowedGrantTypes;
   }
 
-  if (redirectUris) {
-    hiddenFields['redirectUris'] = redirectUris;
+  if (options.redirectUris) {
+    hiddenFields['redirectUris'] = options.redirectUris;
   }
 
-  if (requirePkce) {
-    hiddenFields['requirePkce'] = requirePkce;
+  if (options.requirePkce) {
+    hiddenFields['requirePkce'] = options.requirePkce;
   }
 
   return render('create-app', {
     title: 'Create App',
-    msg,
-    error,
+    msg: options.msg,
+    error: options.error,
     action: '/app/new',
-    name,
-    url,
+    name: options.name,
+    url: options.url,
     hiddenFields
   });
 }

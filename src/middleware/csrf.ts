@@ -1,6 +1,7 @@
 import { Middleware } from '@curveball/kernel';
 
 const safeMethods = ['GET', 'OPTIONS', 'REPORT', 'HEAD', 'SEARCH', 'QUERY'];
+const safePaths = ['/login', '/logout', '/authorize'];
 
 export default function(): Middleware {
 
@@ -14,7 +15,7 @@ export default function(): Middleware {
      */
     if (!ctx.session.user) return next();
 
-    if (!safeMethods.includes(ctx.method)) {
+    if (!safeMethods.includes(ctx.method) && !safePaths.includes(ctx.path)) {
       ctx.validateCsrf();
     }
 

@@ -23,7 +23,18 @@ class CreateAppController extends Controller {
       throw new Forbidden('Only users with the "admin" privilege can create new users');
     }
     ctx.response.type = 'text/html';
-    ctx.response.body = createAppForm(ctx.query.msg, ctx.query.error, ctx.query.nickname, ctx.query.url, ctx.query.clientId, ctx.query.allowedGrantTypes, ctx.query.redirectUris, ctx.query.requirePkce);
+
+    ctx.response.body = createAppForm({
+      csrfToken: await ctx.getCsrf(),
+      msg: ctx.query.msg,
+      error: ctx.query.error,
+      name: ctx.query.name,
+      url: ctx.query.url,
+      clientId: ctx.query.clientId,
+      allowedGrantTypes: ctx.query.allowedGrantTypes,
+      redirectUris: ctx.query.redirectUris,
+      requirePkce: ctx.query.requirePkce
+    });
   }
 
   async post(ctx: Context) {

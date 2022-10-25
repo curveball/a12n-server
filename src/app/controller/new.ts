@@ -28,7 +28,7 @@ class CreateAppController extends Controller {
       csrfToken: await ctx.getCsrf(),
       msg: ctx.query.msg,
       error: ctx.query.error,
-      name: ctx.query.nickname,
+      nickname: ctx.query.nickname,
       url: ctx.query.url,
       clientId: ctx.query.clientId,
       allowedGrantTypes: ctx.query.allowedGrantTypes,

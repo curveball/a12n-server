@@ -4,7 +4,7 @@ type Options = {
   csrfToken: string;
   msg: string|undefined;
   error: string|undefined;
-  name: string|undefined;
+  nickname: string|undefined;
   url: string|undefined;
   clientId: string|undefined;
   allowedGrantTypes: string|undefined;
@@ -39,7 +39,7 @@ export function createAppForm(options: Options) {
     msg: options.msg,
     error: options.error,
     action: '/app/new',
-    name: options.name,
+    nickname: options.nickname,
     url: options.url,
     hiddenFields
   });

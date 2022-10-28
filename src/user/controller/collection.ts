@@ -54,7 +54,7 @@ class UserCollectionController extends Controller {
     });
 
     ctx.response.status = 201;
-    ctx.response.headers.set('Location', `/user/${user.id}`);
+    ctx.response.headers.set('Location', user.href);
   }
 
 }

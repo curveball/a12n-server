@@ -14,6 +14,7 @@ Changelog
 * Support for RFC 9068: A standard format for JWT OAuth2 Access Tokens.
 * Centralize CSRF token handling (for old browsers).
 * Added a new 'add privilege' action, which is helpful for API clients.
+* Fix bug: Incorrect url in `Location` header when creating a new user.
 
 
 0.22.0 (2022-09-27)

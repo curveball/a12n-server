@@ -1,6 +1,6 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { NotFound } from '@curveball/http-errors';
+import { NotFound, NotImplemented } from '@curveball/http-errors';
 import * as querystring from 'querystring';
 import { InvalidClient, InvalidRequest, UnsupportedGrantType } from '../errors';
 import * as oauth2Service from '../service';
@@ -11,6 +11,14 @@ import { EventType } from '../../log/types';
 import { findByClientId } from '../../oauth2-client/service';
 import * as userAppPermissions from '../../user-app-permissions/service';
 
+/**
+ * The Authorize controller is responsible for handing requests to the oauth2
+ * authorize endpoint.
+ *
+ * There are 2 oauth2 grant types handled here: 'implicit' and
+ * 'authorization_code'. Implicit is disabled by default and will probably
+ * be removed from a future version.
+ */
 class AuthorizeController extends Controller {
 
   async get(ctx: Context) {
@@ -136,14 +144,21 @@ class AuthorizeController extends Controller {
 
 export default new AuthorizeController();
 
+type AuthorizeParamsDisplay = 'page' | 'popup' | 'touch' | 'wap';
+
 type AuthorizeParamsCode = {
   responseType: 'code';
   clientId: string;
   redirectUri?: string;
   scope: string[];
   state?: string;
+
+  // PCKE extension
   codeChallenge?: string;
   codeChallengeMethod?: CodeChallengeMethod;
+
+  // OpenID Connect extension
+  display?: AuthorizeParamsDisplay;
 };
 
 type AuthorizeParamsToken = {
@@ -156,6 +171,9 @@ type AuthorizeParamsToken = {
 
 type AuthorizeParams = AuthorizeParamsCode | AuthorizeParamsToken;
 
+/**
+ * The sole goal of this function parse and validate query string parameters.
+ */
 function parseAuthorizationQuery(query: Record<string, string>): AuthorizeParams {
 
   if (!['token', 'code'].includes(query.response_type)) {
@@ -166,6 +184,28 @@ function parseAuthorizationQuery(query: Record<string, string>): AuthorizeParams
     throw new InvalidRequest('The "client_id" parameter must be provided');
   }
   const clientId = query.client_id;
+
+  /**
+   * These are all OpenID parameters that we don't support right now. We're
+   * throwing an error to make sure we're not incorrectly implementing
+   * OpenID Connect while this is still in progress.
+   */
+  const notSupportedParams = [
+    'response_mode',
+    'nonce',
+    'prompt',
+    'max_age',
+    'ui_locales',
+    'id_token_hint',
+    'login_hint',
+    'acr_values',
+  ];
+
+  for(const param of notSupportedParams) {
+    if (param in query) {
+      throw new NotImplemented(`The "${param}" parameter is currently not implemented. Want support for this? Open a ticket.`);
+    }
+  }
 
   if (responseType === 'token') {
     return {
@@ -195,6 +235,11 @@ function parseAuthorizationQuery(query: Record<string, string>): AuthorizeParams
     codeChallengeMethod = query.code_challenge ? 'plain' : undefined;
   }
 
+  const displayOptions = ['page', 'popup', 'touch', 'wap'] as const;
+  const display =
+    query.display && displayOptions.includes(query.display as any) ?
+    query.display as AuthorizeParamsDisplay : undefined;
+
   return {
     responseType,
     clientId,
@@ -203,5 +248,7 @@ function parseAuthorizationQuery(query: Record<string, string>): AuthorizeParams
     scope: query.scope ? query.scope.split(' ') : [],
     codeChallenge,
     codeChallengeMethod,
+
+    display
   };
 }

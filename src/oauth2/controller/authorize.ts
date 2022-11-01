@@ -194,7 +194,6 @@ function parseAuthorizationQuery(query: Record<string, string>): AuthorizeParams
    */
   const notSupportedParams = [
     'response_mode',
-    'nonce',
     'prompt',
     'max_age',
     'ui_locales',

@@ -54,6 +54,9 @@ export async function generateJWTIDToken(options: IDTokenOptions) {
     nonce: options.nonce,
 
   })
+    .setProtectedHeader({
+      alg: 'RS256',
+    })
     .setIssuedAt()
     .setIssuer(getGlobalOrigin())
     .setAudience(options.client.clientId)

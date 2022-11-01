@@ -10,6 +10,7 @@ import log from '../../log/service';
 import { EventType } from '../../log/types';
 import { findByClientId } from '../../oauth2-client/service';
 import * as userAppPermissions from '../../user-app-permissions/service';
+import { generateJWTIDToken } from '../jwt';
 
 /**
  * The Authorize controller is responsible for handing requests to the oauth2
@@ -43,7 +44,7 @@ class AuthorizeController extends Controller {
       throw new InvalidRequest('The "redirect_uri" parameter must be provided');
     }
 
-    const grantType = params.responseType === 'code' ? 'authorization_code' : 'implicit';
+    const grantType = params.responseType === 'token' ? 'implicit' :  'authorization_code';
 
     if (!oauth2Client.allowedGrantTypes.includes(grantType)) {
       throw new UnsupportedGrantType('The current client is not allowed to use the ' + grantType + ' grant_type');
@@ -119,14 +120,26 @@ class AuthorizeController extends Controller {
       nonce: params.nonce,
     });
 
+    const redirectParams: Record<string, string> = {
+      code: code.code,
+    };
+    if (params.state) redirectParams.state = params.state;
+
+    if (params.responseType === 'code id_token') {
+      redirectParams.id_token = await generateJWTIDToken({
+        principal: ctx.session.user,
+        client: oauth2Client,
+        // TODO FIX THIS
+        expiry: 600,
+        nonce: params.nonce ?? null,
+      });
+    }
+
     ctx.status = 302;
     ctx.response.headers.set('Cache-Control', 'no-cache');
     ctx.response.headers.set(
       'Location',
-      params.redirectUri + '?' + querystring.stringify({
-        code: code.code,
-        state: params.state
-      })
+      params.redirectUri + '?' + querystring.stringify(redirectParams)
     );
 
   }
@@ -148,7 +161,7 @@ export default new AuthorizeController();
 type AuthorizeParamsDisplay = 'page' | 'popup' | 'touch' | 'wap';
 
 type AuthorizeParamsCode = {
-  responseType: 'code';
+  responseType: 'code' | 'code id_token';
   clientId: string;
   redirectUri?: string;
   scope: string[];
@@ -178,7 +191,7 @@ type AuthorizeParams = AuthorizeParamsCode | AuthorizeParamsToken;
  */
 function parseAuthorizationQuery(query: Record<string, string>): AuthorizeParams {
 
-  if (!['token', 'code'].includes(query.response_type)) {
+  if (!['token', 'code', 'code id_token'].includes(query.response_type)) {
     throw new InvalidRequest('The "response_type" parameter must be provided, and must be "token" or "code"');
   }
   const responseType: 'code' | 'token' = query.response_type as any;
@@ -193,7 +206,6 @@ function parseAuthorizationQuery(query: Record<string, string>): AuthorizeParams
    * OpenID Connect while this is still in progress.
    */
   const notSupportedParams = [
-    'response_mode',
     'prompt',
     'max_age',
     'ui_locales',
@@ -218,6 +230,8 @@ function parseAuthorizationQuery(query: Record<string, string>): AuthorizeParams
     };
   }
 
+  const scope = query.scope ? query.scope.split(' ') : [];
+
   if (!query.code_challenge && query.code_challenge_method) {
     throw new InvalidRequest('The "code_challenge" must be provided');
   }
@@ -241,7 +255,9 @@ function parseAuthorizationQuery(query: Record<string, string>): AuthorizeParams
     query.display && displayOptions.includes(query.display as any) ?
     query.display as AuthorizeParamsDisplay : undefined;
 
-  const scope = query.scope ? query.scope.split(' ') : [];
+  if (query.responseMode && query.responseMode !== 'query') {
+    throw new NotImplemented('The only supported value for "response_mode" is currently "query"');
+  }
 
   return {
     responseType,

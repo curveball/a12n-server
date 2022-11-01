@@ -149,7 +149,7 @@ type GenerateTokenAuthorizationCodeOptions = {
  *
  * The resource owner then exchanges that code for an access and refresh token.
  */
-export async function generateTokenAuthorizationCode(options: GenerateTokenAuthorizationCodeOptions): Promise<OAuth2Token & {idToken?: string}> {
+export async function generateTokenAuthorizationCode(options: GenerateTokenAuthorizationCodeOptions): Promise<OAuth2Token> {
 
   const codeResult = await db<Oauth2CodesRecord>('oauth2_codes')
     .first()

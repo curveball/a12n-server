@@ -1,19 +1,25 @@
 import { OAuth2Token } from '../types';
 import { resolve } from 'url';
+import { getGlobalOrigin } from '@curveball/kernel';
 
 export function metadata() {
 
-  const publicUri = process.env.PUBLIC_URI!;
-
   return {
-    issuer: publicUri,
+    issuer: getGlobalOrigin(),
     authorization_endpoint: '/authorize',
+
     token_endpoint: '/token',
-    jwks_uri: resolve(publicUri, '/.well-known/jwks.json'),
+    token_endpoint_auth_methods_supported: ['client_secret_basic'],
+    token_endpoint_auth_signing_alg_values_supported: ['RS256'],
+
+    jwks_uri: resolve(getGlobalOrigin(), '/.well-known/jwks.json'),
+
+    id_token_signing_alg_values_supported: ['RS256'],
+
     response_types_supported: ['token', 'code'],
     grant_types_supported: ['client_credentials', 'implicit', 'authorization_code', 'refresh_token'],
-    token_endpoint_auth_methods_supported: ['client_secret_basic'],
-    service_documentation: publicUri,
+
+    service_documentation: getGlobalOrigin(),
     ui_locales_supported: ['en'],
     introspection_endpoint: '/introspect',
     revocation_endpoint: '/revoke',
@@ -21,13 +27,12 @@ export function metadata() {
   };
 
 }
-
-
-export function tokenResponse(token: OAuth2Token | Omit<OAuth2Token, 'clientId'>) {
+export function tokenResponse(token: OAuth2Token) {
   return {
     access_token: token.accessToken,
     token_type: token.tokenType,
     expires_in: token.accessTokenExpires - Math.round(Date.now() / 1000),
     refresh_token: token.refreshToken,
+    id_token: token.idToken,
   };
 }

@@ -14,10 +14,11 @@ export function metadata() {
 
     jwks_uri: resolve(getGlobalOrigin(), '/.well-known/jwks.json'),
 
-    id_token_signing_alg_values_supported: ['RS256'],
+    scopes_supported: ['openid'],
 
-    response_types_supported: ['token', 'code'],
+    response_types_supported: ['token', 'code', 'code id_token'],
     grant_types_supported: ['client_credentials', 'implicit', 'authorization_code', 'refresh_token'],
+    id_token_signing_alg_values_supported: ['RS256'],
 
     service_documentation: getGlobalOrigin(),
     ui_locales_supported: ['en'],

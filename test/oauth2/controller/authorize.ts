@@ -114,6 +114,7 @@ describe('AuthorizeController', () => {
           codeChallenge: 'challenge-code',
           codeChallengeMethod: 'S256',
           display: undefined,
+          nonce: undefined,
         }
       );
     });
@@ -140,6 +141,7 @@ describe('AuthorizeController', () => {
           codeChallenge: 'challenge-code',
           codeChallengeMethod: 'plain',
           display: undefined,
+          nonce: undefined,
         }
       );
     });
@@ -167,6 +169,7 @@ describe('AuthorizeController', () => {
           codeChallenge: undefined,
           codeChallengeMethod: undefined,
           display: undefined,
+          nonce: undefined,
         }
       );
     });

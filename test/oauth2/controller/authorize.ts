@@ -112,7 +112,8 @@ describe('AuthorizeController', () => {
           state: 'state',
           scope: [],
           codeChallenge: 'challenge-code',
-          codeChallengeMethod: 'S256'
+          codeChallengeMethod: 'S256',
+          display: undefined,
         }
       );
     });
@@ -137,7 +138,8 @@ describe('AuthorizeController', () => {
           state: 'state',
           scope: [],
           codeChallenge: 'challenge-code',
-          codeChallengeMethod: 'plain'
+          codeChallengeMethod: 'plain',
+          display: undefined,
         }
       );
     });
@@ -163,7 +165,8 @@ describe('AuthorizeController', () => {
           state: 'state',
           scope: [],
           codeChallenge: undefined,
-          codeChallengeMethod: undefined
+          codeChallengeMethod: undefined,
+          display: undefined,
         }
       );
     });

@@ -116,6 +116,7 @@ class AuthorizeController extends Controller {
       codeChallenge: params.codeChallenge,
       codeChallengeMethod: params.codeChallengeMethod,
       browserSessionId: ctx.sessionId!,
+      nonce: params.nonce,
     });
 
     ctx.status = 302;
@@ -158,6 +159,7 @@ type AuthorizeParamsCode = {
   codeChallengeMethod?: CodeChallengeMethod;
 
   // OpenID Connect extension
+  nonce?: string;
   display?: AuthorizeParamsDisplay;
 };
 
@@ -240,15 +242,18 @@ function parseAuthorizationQuery(query: Record<string, string>): AuthorizeParams
     query.display && displayOptions.includes(query.display as any) ?
     query.display as AuthorizeParamsDisplay : undefined;
 
+  const scope = query.scope ? query.scope.split(' ') : [];
+
   return {
     responseType,
     clientId,
     redirectUri: query.redirect_uri ?? undefined,
     state: query.state ?? undefined,
-    scope: query.scope ? query.scope.split(' ') : [],
+    scope,
     codeChallenge,
     codeChallengeMethod,
 
-    display
+    display,
+    nonce: query.nonce ?? undefined,
   };
 }

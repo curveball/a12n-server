@@ -8,7 +8,7 @@ import { InvalidGrant, InvalidRequest, UnauthorizedClient } from './errors';
 import { CodeChallengeMethod, OAuth2Code, OAuth2Token } from './types';
 import { OAuth2Client } from '../oauth2-client/types';
 import { generateSecretToken } from '../crypto';
-import { generateJWTAccessToken } from './jwt';
+import { generateJWTAccessToken, generateJWTIDToken } from './jwt';
 import { Oauth2TokensRecord, Oauth2CodesRecord } from 'knex/types/tables';
 import { App, User, GrantType } from '../types';
 import * as userAppPermissionsService from '../user-app-permissions/service';
@@ -149,7 +149,7 @@ type GenerateTokenAuthorizationCodeOptions = {
  *
  * The resource owner then exchanges that code for an access and refresh token.
  */
-export async function generateTokenAuthorizationCode(options: GenerateTokenAuthorizationCodeOptions): Promise<OAuth2Token> {
+export async function generateTokenAuthorizationCode(options: GenerateTokenAuthorizationCodeOptions): Promise<OAuth2Token & {idToken?: string}> {
 
   const codeResult = await db<Oauth2CodesRecord>('oauth2_codes')
     .first()
@@ -186,12 +186,30 @@ export async function generateTokenAuthorizationCode(options: GenerateTokenAutho
   if (!user.active) {
     throw new Error(`User ${user.href} is not active`);
   }
-  return generateTokenInternal({
+  const scope = codeRecord.scope?.split(' ') || [];
+  const result = generateTokenInternal({
     grantType: 'authorization_code',
     principal: user,
-    scope: codeRecord.scope?.split(' ') || [],
+    scope,
     ...options,
   });
+
+  if (scope.includes('openid')) {
+    const idToken = await generateJWTIDToken({
+      client: options.client,
+      principal: user,
+      // TODO: PLACEHOLDER!
+      expiry: expirySettings.accessToken,
+      nonce: codeRecord.nonce,
+    });
+    return {
+      ...result,
+      id_token: idToken,
+    };
+  } else {
+    return result;
+  }
+
 
 }
 
@@ -279,12 +297,12 @@ async function generateTokenInternal(options: GenerateTokenOptions): Promise<OAu
   let accessToken: string;
 
   if (getSetting('jwt.privateKey')!==null && options.client) {
-    accessToken = await generateJWTAccessToken(
-      options.principal,
-      options.client,
-      expirySettings.accessToken,
-      options.scope,
-    );
+    accessToken = await generateJWTAccessToken({
+      principal: options.principal,
+      client: options.client,
+      expiry: expirySettings.accessToken,
+      scope: options.scope,
+    });
   } else {
     accessToken = await generateSecretToken();
   }
@@ -444,6 +462,7 @@ type GenerateAuthorizationCodeOptions = {
   codeChallenge: string|undefined;
   codeChallengeMethod: CodeChallengeMethod|undefined;
   browserSessionId: string;
+  nonce: string | undefined;
 }
 /**
  * This function is used for the authorization_code grant flow.
@@ -464,6 +483,7 @@ export async function generateAuthorizationCode(options: GenerateAuthorizationCo
       scope: options.scope?.join(' '),
       browser_session_id: options.browserSessionId,
       created_at: Math.floor(Date.now() / 1000),
+      nonce: options.nonce,
     });
 
   return {

@@ -85,6 +85,7 @@
     "@curveball/core": "^0.20.0",
     "@curveball/cors": "^0.2.0",
     "@curveball/http-errors": "^0.4.0",
+    "@curveball/kernel": "^0.20.1",
     "@curveball/links": "^0.2.0",
     "@curveball/problem": "^0.4.0",
     "@curveball/router": "^0.5.0",

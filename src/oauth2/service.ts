@@ -187,7 +187,7 @@ export async function generateTokenAuthorizationCode(options: GenerateTokenAutho
     throw new Error(`User ${user.href} is not active`);
   }
   const scope = codeRecord.scope?.split(' ') || [];
-  const result = generateTokenInternal({
+  const result = await generateTokenInternal({
     grantType: 'authorization_code',
     principal: user,
     scope,
@@ -204,7 +204,7 @@ export async function generateTokenAuthorizationCode(options: GenerateTokenAutho
     });
     return {
       ...result,
-      id_token: idToken,
+      idToken: idToken,
     };
   } else {
     return result;

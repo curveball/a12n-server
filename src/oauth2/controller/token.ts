@@ -98,6 +98,7 @@ class TokenController extends Controller {
       token_type: token.tokenType,
       expires_in: token.accessTokenExpires - Math.round(Date.now() / 1000),
       refresh_token: token.refreshToken,
+      id_token: token.idToken,
     };
 
   }

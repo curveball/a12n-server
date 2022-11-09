@@ -62,6 +62,11 @@ export type OAuth2Token = {
    * id.
    */
   browserSessionId?: string;
+
+  /**
+   * OpenID Connect idToken
+   */
+  idToken?: string;
 };
 
 export type OAuth2Code = {

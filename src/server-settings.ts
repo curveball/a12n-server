@@ -25,6 +25,8 @@ export type Settings = {
   'oauth2.accessToken.expiry': number;
   'oauth2.refreshToken.expiry': number;
 
+  'oidc.idToken.expiry': number;
+
   'jwt.privateKey': string | null;
 
   'totp': 'enabled' | 'required' | 'disabled';
@@ -164,6 +166,12 @@ export const settingsRules: SettingsRules = {
     env: 'OAUTH2_REFRESHTOKEN_EXPIRY',
     fromDb: true,
     default: 3600*6,
+  },
+  'oidc.idToken.expiry' : {
+    description: 'OpenID Connect ID Token expiry time (in seconds)',
+    env: 'OICD_IDTOKEN_EXPIRY',
+    fromDb: true,
+    default: 3600*10,
   },
 
   'jwt.privateKey': {

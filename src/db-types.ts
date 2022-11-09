@@ -60,6 +60,11 @@ export type Oauth2CodesRecord = {
    * OAuth2 scopes, space separated
    */
   scope: string | null;
+
+  /**
+   * OpenID Connect Nonce
+   */
+  nonce: string | null;
 }
 
 export type Oauth2RedirectUrisRecord = {
@@ -154,7 +159,7 @@ export type UserAppPermissionsRecord = {
   /**
    * Last time this application issued or refreshed an access token
    */
-  last_used_at: number;
+  last_used_at: number | null;
 }
 
 export type UserLogRecord = {

@@ -198,8 +198,6 @@ export async function generateTokenAuthorizationCode(options: GenerateTokenAutho
     const idToken = await generateJWTIDToken({
       client: options.client,
       principal: user,
-      // TODO: PLACEHOLDER!
-      expiry: expirySettings.accessToken,
       nonce: codeRecord.nonce,
     });
     return {

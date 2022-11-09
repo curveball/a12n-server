@@ -129,8 +129,6 @@ class AuthorizeController extends Controller {
       redirectParams.id_token = await generateJWTIDToken({
         principal: ctx.session.user,
         client: oauth2Client,
-        // TODO FIX THIS
-        expiry: 600,
         nonce: params.nonce ?? null,
       });
     }

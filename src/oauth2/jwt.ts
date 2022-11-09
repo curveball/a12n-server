@@ -42,7 +42,6 @@ export async function generateJWTAccessToken(options: AccessTokenOptions): Promi
 type IDTokenOptions = {
   principal: User|App;
   client: OAuth2Client;
-  expiry: number;
   nonce: null | string;
 }
 
@@ -61,7 +60,7 @@ export async function generateJWTIDToken(options: IDTokenOptions) {
     .setIssuer(getGlobalOrigin())
     .setAudience(options.client.clientId)
     .setSubject(options.principal.href)
-    .setExpirationTime(Math.floor(Date.now() / 1000) + options.expiry)
+    .setExpirationTime(Math.floor(Date.now() / 1000) + getSetting('oidc.idToken.expiry'))
     .sign(privateKey);
 
   return jwt;

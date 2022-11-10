@@ -234,7 +234,7 @@ export async function save<T extends PrincipalType>(principal: BasePrincipal<T>|
 
     return {
       id: result,
-      href: `/${principal.type}/${result}`,
+      href: `/${principal.type}/${externalId}`,
       externalId,
       ...principal
     };

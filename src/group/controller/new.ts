@@ -18,7 +18,11 @@ class CreateGroupController extends Controller {
       throw new Forbidden('Only users with the "admin" privilege can create new users');
     }
     ctx.response.type = 'text/html';
-    ctx.response.body = createGroupForm(ctx.query.msg, ctx.query.error);
+    ctx.response.body = createGroupForm({
+      csrfToken: await ctx.getCsrf(),
+      msg: ctx.query.msg,
+      error: ctx.query.error
+    });
   }
 
   async post(ctx: Context) {

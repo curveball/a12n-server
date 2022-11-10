@@ -15,6 +15,7 @@ Changelog
 * Centralize CSRF token handling (for old browsers).
 * Added a new 'add privilege' action, which is helpful for API clients.
 * Fix bug: Incorrect url in `Location` header when creating a new user.
+* #448: Fix 'create group' form.
 
 
 0.22.0 (2022-09-27)

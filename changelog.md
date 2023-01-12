@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.22.1 (2022-01-12)
+0.23.0 (2022-01-12)
 -------------------
 
 * Update knex. Knex had a massive SQL injection vulnerability.

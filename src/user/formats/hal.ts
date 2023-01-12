@@ -198,7 +198,7 @@ export function editPrivileges(principal: Principal, userPrivileges: PrivilegeMa
             prompt: 'Resource (uri)',
             required: true,
             type: 'url',
-            placeHolder: 'https://my-api/resource/foo',
+            placeholder: 'https://my-api/resource/foo',
           },
           {
             name: 'action',

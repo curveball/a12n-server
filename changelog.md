@@ -1,9 +1,10 @@
 Changelog
 =========
 
-0.22.1 (????-??-??)
+0.22.1 (2022-01-12)
 -------------------
 
+* Update knex. Knex had a massive SQL injection vulnerability.
 * 'scope' wasn't supported yet correctly in the `authorization_code` and
   `implicit` flows.
 * Fixed some bugs in the 'active sessions' report, and add columns for

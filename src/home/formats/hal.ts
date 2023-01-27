@@ -8,7 +8,7 @@ export default (version: string, authenticatedUser: Principal, isAdmin: boolean,
     _links: {
       'self': { href: '/', title: 'Home' },
       'authenticated-as': { href: authenticatedUser.href, title: authenticatedUser.nickname },
-      'change-password': { href: '/changepassword', title: 'Change password' },
+      'change-password': { href: '/change-password', title: 'Change password' },
 
       'app-collection': { href: '/app', title: 'List of apps'},
       'user-collection': { href: '/user', title: 'List of users'},

@@ -5,6 +5,7 @@ import { EventType } from '../log/types';
 import * as UserService from '../user/service';
 import { User } from '../types';
 import { changePasswordForm } from './formats/html';
+import { commonPasswords } from './10k-most-common';
 
 class ChangePasswordController extends Controller {
 
@@ -21,6 +22,14 @@ class ChangePasswordController extends Controller {
     const currentPassword = ctx.request.body.currentPassword;
     const userNewPassword = ctx.request.body.newPassword;
     const confirmNewPassword = ctx.request.body.confirmNewPassword;
+
+    if (commonPasswords.has(userNewPassword)) {
+      ctx.redirect(
+        303,
+        '/change-password?error=You\'re+not+allowed+to+use+a+common+password.'
+      );
+      return;
+    }
 
     if (!await UserService.validatePassword(user, currentPassword)) {
       ctx.status = 303;

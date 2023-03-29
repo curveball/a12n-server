@@ -5,6 +5,7 @@ Changelog
 -------------------
 
 * Fix 500 error on /authorize endpoint when using Sqlite
+* Fix CSRF error on create user form
 
 
 0.23.0 (2022-01-12)
@@ -29,12 +30,11 @@ Changelog
 -------------------
 
 Warning note for upgraders. This release has a database migration on the
-`oauth2_tokens` table. For most users this is the largest table, some
-downtime may be expected while the server runs its migrations.
+`oauth2_tokens` table. For most users this is the largest table, some downtime
+may be expected while the server runs its migrations.
 
-* #425: Using a `client_secret` is now supported with `authorization_code`,
-  and it's read from either the request body or HTTP Basic Authorization
-  header.
+* #425: Using a `client_secret` is now supported with `authorization_code`, and
+  it's read from either the request body or HTTP Basic Authorization header.
 * The service now keeps track when issuing access tokens, whether those tokens
   have used a `client_secret` or not, which `grant_type` was used to issue them
   and what scopes were requested. This work is done to better support OAuth2

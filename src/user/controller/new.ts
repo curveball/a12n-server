@@ -19,7 +19,11 @@ class CreateUserController extends Controller {
       throw new Forbidden('Only users with the "admin" privilege can create new users');
     }
     ctx.response.type = 'text/html';
-    ctx.response.body = createUserForm(ctx.query.msg, ctx.query.error);
+    ctx.response.body = createUserForm({
+      msg: ctx.query.msg,
+      error: ctx.query.error,
+      csrfToken: await ctx.getCsrf()
+    });
   }
 
   async post(ctx: Context) {

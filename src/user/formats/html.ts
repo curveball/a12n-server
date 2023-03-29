@@ -1,11 +1,22 @@
 import { render } from '../../templates';
 
-export function createUserForm(msg: string, error: string) {
+type Options = {
+  csrfToken: string;
+  msg: string|undefined;
+  error: string|undefined;
+}
+
+export function createUserForm(options: Options) {
+
+  const hiddenFields: Record<string, string> = {
+    'csrf-token': options.csrfToken,
+  };
 
   return render('create-user', {
     title: 'Create User',
-    msg: msg,
-    error,
-    action: '/user/new'
+    msg: options.msg,
+    error: options.error,
+    action: '/user/new',
+    hiddenFields,
   });
 }

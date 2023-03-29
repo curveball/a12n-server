@@ -12,8 +12,8 @@ The project implements OAuth2 standards where applicable.
 Requirements
 ------------
 
-* Node.js 14.x
-* MySQL
+* Node.js 16.x
+* MySQL, Postgres or Sqlite
 
 Try it out!
 -----------

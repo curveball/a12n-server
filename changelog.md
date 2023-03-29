@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.23.1 (????-??-??)
+0.23.1 (2023-03-29)
 -------------------
 
 * Fix 500 error on /authorize endpoint when using Sqlite
@@ -32,7 +32,6 @@ Changelog
 Warning note for upgraders. This release has a database migration on the
 `oauth2_tokens` table. For most users this is the largest table, some downtime
 may be expected while the server runs its migrations.
-
 * #425: Using a `client_secret` is now supported with `authorization_code`, and
   it's read from either the request body or HTTP Basic Authorization header.
 * The service now keeps track when issuing access tokens, whether those tokens

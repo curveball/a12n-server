@@ -481,7 +481,7 @@ export async function generateAuthorizationCode(options: GenerateAuthorizationCo
       scope: options.scope?.join(' '),
       browser_session_id: options.browserSessionId,
       created_at: Math.floor(Date.now() / 1000),
-      nonce: options.nonce,
+      nonce: options.nonce ?? null,
     });
 
   return {

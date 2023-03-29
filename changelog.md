@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.23.1 (????-??-??)
+-------------------
+
+* Fix 500 error on /authorize endpoint when using Sqlite
+
+
 0.23.0 (2022-01-12)
 -------------------
 
@@ -50,12 +56,12 @@ downtime may be expected while the server runs its migrations.
   This makes it very easy for a developer to get their environment up and
   running without having to know all kinds of OAuth2 details (@AminDhouib).
 * Fixed getting no feedback after changing group members. (@AminDhouib)
-* Fixed the 'authenticated-as' link in the a12n-server home document; it had
-  an extra slash.
-* If you hit an authenticated page after login, you are now redirected back
-  to that page after login.
-* The `/register` endpoint can now take a `?continue=` uri parameter, making
-  it possible to redirect back to any application after registering.
+* Fixed the 'authenticated-as' link in the a12n-server home document; it had an
+  extra slash.
+* If you hit an authenticated page after login, you are now redirected back to
+  that page after login.
+* The `/register` endpoint can now take a `?continue=` uri parameter, making it
+  possible to redirect back to any application after registering.
 
 
 0.21.2 (2022-07-27)
@@ -69,7 +75,8 @@ downtime may be expected while the server runs its migrations.
 
 * New! Start a fresh a12nserver just by running `npx @curveball/a12n-server`
 * #412: Fixed a few more PostgreSQL bugs (@AminDhouib)
-* #407: Users can be added to groups again with their relative URI (@AminDhouib)
+* #407: Users can be added to groups again with their relative URI
+  (@AminDhouib)
 * #399: When trying to add a new OAuth2 client with an existing `client_id`,
   the server will now emit a 409 instead of a 500 error. (@AminDhouib)
 * The `requirePkce` flag was not respected when creating a new OAuth2 client.
@@ -99,19 +106,18 @@ downtime may be expected while the server runs its migrations.
 * Released with Alpha tag.
 * Fix: Parsing HTTP Basic header containing a `:` in the password. This is
   heavily used in server-to-server oauth2 flows. (@pschwyter)
-* Automatically open a debug connection on port 9339 when running with
-  `make start-dev`. (@pschwyter)
-
+* Automatically open a debug connection on port 9339 when running with `make
+  start-dev`. (@pschwyter)
 
 🛳️ Ahoi from Halifax! 🛳️
+
 
 0.20.1 (2022-05-17)
 -------------------
 
 * Released with Alpha tag.
 * `MYSQL_PORT` and `MYSQL_HOST` were ignored. These settings now exist for
-  backwards compatibility, but the backwards compatibility settings had
-  a bug.
+  backwards compatibility, but the backwards compatibility settings had a bug.
 
 
 0.20.0 (2022-05-17)
@@ -126,8 +132,8 @@ downtime may be expected while the server runs its migrations.
   lot easier.
 * Support for the `/.well-known/jwks.json` endpoint, allowing clients to
   discover JWT public keys.
-* OAuth2 secrets are now prefixed with the `secret-token:` uri scheme,
-  allowing github and other systems to detect possible commits of secret data.
+* OAuth2 secrets are now prefixed with the `secret-token:` uri scheme, allowing
+  github and other systems to detect possible commits of secret data.
 * A new settings panel for admins, allowing admins to see exactly which
   settings have been applied. This is currently read-only.
 * `.env.defaults` is no longer automatically loaded. The file still exists but
@@ -140,21 +146,25 @@ downtime may be expected while the server runs its migrations.
 0.19.12 (2022-01-12)
 --------------------
 
-* This release reinstates the v0.19.10 changes after `@curveball/browser` received an updated logo.
+* This release reinstates the v0.19.10 changes after `@curveball/browser`
+  received an updated logo.
 
 
 0.19.11 (2022-01-07)
 --------------------
 
-* This release rolls back the 'app logo' feature. The default setting has cosmetic bugs.
+* This release rolls back the 'app logo' feature. The default setting has
+  cosmetic bugs.
 
 
 0.19.10 (2022-01-07)
 --------------------
 
 * Add app logo to login, registration, lost-password pages.
-* The 'Change password' form now lives on `/change-password` instead of `/changepassword` for consistency with other routes.
-* Small fixes (Bad Gateway copyright notice, copy changes + new cancel button on reset password page).
+* The 'Change password' form now lives on `/change-password` instead of
+  `/changepassword` for consistency with other routes.
+* Small fixes (Bad Gateway copyright notice, copy changes + new cancel button
+  on reset password page).
 * Update dependencies.
 
 
@@ -192,7 +202,7 @@ downtime may be expected while the server runs its migrations.
 
 
 0.19.4 (2021-05-31)
---------------------
+-------------------
 
 * Fix link to schema collection on home document.
 * Add Curl to Docker image as it's a common health check tool.
@@ -208,8 +218,7 @@ downtime may be expected while the server runs its migrations.
 0.19.2 (2021-05-28)
 -------------------
 
-* Fix: bug in JSON schema for group members. Inconsistent property
-  names.
+* Fix: bug in JSON schema for group members. Inconsistent property names.
 * Renamed userHref to memberHref.
 
 
@@ -241,15 +250,15 @@ downtime may be expected while the server runs its migrations.
 0.18.3 (2021-04-20)
 -------------------
 
-* `updatePassword` now supports creating a password without having an
-  existing password.
+* `updatePassword` now supports creating a password without having an existing
+  password.
 
 
 0.18.2 (2021-04-15)
 -------------------
 
-* Activating users did not correctly check for "admin" privileges. This is
-  now fixed.
+* Activating users did not correctly check for "admin" privileges. This is now
+  fixed.
 * Added support for `PUT` on `/users/123`
 * Allowing users to be activated using the `token-exchange` API.
 
@@ -265,7 +274,8 @@ downtime may be expected while the server runs its migrations.
 -------------------
 
 * Added UIs for editing user information. (@mihok)
-* Added preliminary support for JWT bearer tokens ([draft-ietf-oauth-access-token-jwt-12][oauth2-jwt]).
+* Added preliminary support for JWT bearer tokens
+  ([draft-ietf-oauth-access-token-jwt-12][oauth2-jwt]).
 * Added a new markdown-based home document, which will be a bit more user-
   friendly for non-devs.
 * Added UI for setting privileges. (@mihok)
@@ -278,6 +288,7 @@ downtime may be expected while the server runs its migrations.
 -------------------
 
 * Added a `/user/:id/password` endpoint. This allows an admin to easily
+
 change a user's password.
 
 
@@ -297,8 +308,8 @@ change a user's password.
 
 * Privileges assigned to groups are now inherited by all users who are part of
   that group, allowing the use of groups as 'roles'.
-* Added a `/user/by-href/:href` endpoint, allowing API clients to look up
-  users by their 'identity' like their email address.
+* Added a `/user/by-href/:href` endpoint, allowing API clients to look up users
+  by their 'identity' like their email address.
 * Added a `hasPassword` property to each user. This is only visible on 'your
   own' user or if you are an admin.
 * The `/token-exchange` endpoint for one-time tokes now requires a `client_id`
@@ -322,8 +333,8 @@ change a user's password.
   of 'lost password' features.
 * Added an 'active sessions' API. This API lists all currently active
   access/refresh tokens for a user.
-* Added an 'access token' endpoint, allowing you to generate a new access
-  token if you had an already valid session.
+* Added an 'access token' endpoint, allowing you to generate a new access token
+  if you had an already valid session.
 
 
 0.15.5 (2021-02-23)
@@ -345,7 +356,7 @@ change a user's password.
 
 
 0.15.2 (2021-02-23)
-------------------
+-------------------
 
 * Added one-time-token API, allowing clients to get temporary login tokens for
   use with lost-password emails, invite emails.
@@ -354,8 +365,8 @@ change a user's password.
 0.15.1 (2021-02-18)
 -------------------
 
-* When updating the list group members, it's now possible to specify members
-  by using absolute URIs.
+* When updating the list group members, it's now possible to specify members by
+  using absolute URIs.
 * Updated to latest curveball APIs
 
 
@@ -403,8 +414,8 @@ change a user's password.
 -------------------
 
 * Now requires Node 14, due to the use of `fs/promises`.
-* The 'logout' feature will now expire any OAuth2 codes and tokens if they
-  were initiated by the current browser session.
+* The 'logout' feature will now expire any OAuth2 codes and tokens if they were
+  initiated by the current browser session.
 * The 'logout' endpoint now has support for a `continue` query parameter, to
   let the user get redirected back to a new endpoint after logout.
 * Now using an 'ip to country' database to figure out where users are logging
@@ -459,16 +470,15 @@ change a user's password.
 * WebauthN and TOTP MFA are now enabled by default.
 * No longer using `unpkg` for browser dependencies.
 * Upgraded from `hal-browser` to `@curveball/browser`.
-* Better error messaging in the OAuth2 flow when a `redirect_uri` is
-  incorrect.
+* Better error messaging in the OAuth2 flow when a `redirect_uri` is incorrect.
 
 
 0.13.0 (2020-09-29)
 -------------------
 
 * Support for WebauthN / Yubikeys (@mhum)
-* Logging in is now a multi-step process, with 2FA (Webauthn/Yubikey/TOTP)
-  as the second step. (@mhum)
+* Logging in is now a multi-step process, with 2FA (Webauthn/Yubikey/TOTP) as
+  the second step. (@mhum)
 * It's now possible to setup 2FA during registration. (@mhum)
 * `/validate-bearer` and `/validate-totp` endpoints have been removed.
 * Support for OAuth2 PKCE (@mhum)
@@ -494,11 +504,11 @@ change a user's password.
 0.12.5 (2020-03-03)
 -------------------
 
-* Now using `@curveball/accesslog`, which also colorizes CLI output when
-  viewed on a terminal.
+* Now using `@curveball/accesslog`, which also colorizes CLI output when viewed
+  on a terminal.
 * A list of privileges are now returned from the 'introspect' endpoint.
-* An error will be thrown when the server is used as a middleware (instead
-  of standalone) and no `PUBLIC_URI` environment variable is set.
+* An error will be thrown when the server is used as a middleware (instead of
+  standalone) and no `PUBLIC_URI` environment variable is set.
 
 
 0.12.4 (2020-03-02)
@@ -506,10 +516,12 @@ change a user's password.
 
 * Added user links to accessToken
 
+
 0.12.3 (2020-03-02)
 -------------------
 
 * Added user links URL to introspect for 'authenticated-as' link
+
 
 0.12.2 (2020-03-02)
 -------------------
@@ -526,8 +538,8 @@ change a user's password.
 0.12.0 (2020-01-22)
 -------------------
 
-* Added a `/privileges` endpoint to easily find out what kind of privileges
-  are used in the system.
+* Added a `/privileges` endpoint to easily find out what kind of privileges are
+  used in the system.
 * The server now has an `admin` privilege, which is required to create new
   users or find information about other users.
 * Users that are not yet marked `active` now show up in the `/users`
@@ -617,8 +629,8 @@ change a user's password.
 * Login form will now have a link to the registration screen, if registration
   was enabled.
 * Small design tweaks in Login screen.
-* BC break: Links such as `sa:logout`, `sa:token`, `sa:validate-bearer` now
-  all have their `sa:` prefix dropped.
+* BC break: Links such as `sa:logout`, `sa:token`, `sa:validate-bearer` now all
+  have their `sa:` prefix dropped.
 * The 'validate-bearer' endpont is now deprecated, as the the token
   introspection endpoint has the same features.
 
@@ -648,8 +660,8 @@ change a user's password.
 * Switched to `@curveball/controller` for all controllers, simplifying the
   source a bit.
 * Better installation documentation.
-* A database bug: not enough space for creating OAuth2 clients that have
-  access to many grant types.
+* A database bug: not enough space for creating OAuth2 clients that have access
+  to many grant types.
 
 
 0.4.4 (2019-03-27)
@@ -679,7 +691,7 @@ change a user's password.
 * `refresh_token` can now be used without a client secret.
 * `authorization_code` no longer requires a client secret.
 * `authorization_code` grant now returns a refresh token.
-*  The token endpoint now returns cors headers.
+* The token endpoint now returns cors headers.
 
 
 0.4.0 (2019-03-12)
@@ -718,8 +730,8 @@ change a user's password.
 0.3.2 (2018-11-01)
 ------------------
 
-* The entire application now also exposes itself as a middleware, so it
-  can be customized and integrated into other curveball apps.
+* The entire application now also exposes itself as a middleware, so it can be
+  customized and integrated into other curveball apps.
 
 
 0.3.1 (2018-11-01)

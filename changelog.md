@@ -32,6 +32,7 @@ Changelog
 Warning note for upgraders. This release has a database migration on the
 `oauth2_tokens` table. For most users this is the largest table, some downtime
 may be expected while the server runs its migrations.
+
 * #425: Using a `client_secret` is now supported with `authorization_code`, and
   it's read from either the request body or HTTP Basic Authorization header.
 * The service now keeps track when issuing access tokens, whether those tokens
@@ -286,8 +287,8 @@ may be expected while the server runs its migrations.
 0.17.2 (2021-03-26)
 -------------------
 
-* Added a `/user/:id/password` endpoint. This allows an admin to easily
-  change a user's password.
+* Added a `/user/:id/password` endpoint. This allows an admin to easily change
+  a user's password.
 
 
 0.17.1 (2021-03-14)

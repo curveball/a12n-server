@@ -170,7 +170,7 @@ may be expected while the server runs its migrations.
 0.19.9 (2021-10-18)
 -------------------
 
-* Halloween theme. Automatically enables the last week of October.
+* Halloween theme. Automatically enabled the last week of October.
 * #295: Improved validation for `identity` field on users, groups and apps.
 
 
@@ -287,8 +287,7 @@ may be expected while the server runs its migrations.
 -------------------
 
 * Added a `/user/:id/password` endpoint. This allows an admin to easily
-
-change a user's password.
+  change a user's password.
 
 
 0.17.1 (2021-03-14)

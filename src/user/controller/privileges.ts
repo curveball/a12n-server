@@ -21,15 +21,15 @@ class UserEditPrivilegesController extends Controller {
   async get(ctx: Context) {
 
     const user = await principalService.findByExternalId(ctx.params.id);
-    const userPrivileges = await privilegeService.getImmediatePrivilegesForPrincipal(user);
-    const privileges = await privilegeService.findPrivileges();
+    const immediatePrivileges = await privilegeService.getImmediatePrivilegesForPrincipal(user);
+    const privilegeTypes = await privilegeService.findPrivileges();
 
     await privilegeService.hasPrivilege(ctx, 'admin');
 
     ctx.response.body = hal.editPrivileges(
       user,
-      userPrivileges,
-      privileges.map( privilege => privilege.privilege ),
+      immediatePrivileges,
+      privilegeTypes.map( privilege => privilege.privilege ),
     );
 
   }

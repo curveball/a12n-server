@@ -34,7 +34,7 @@ export async function getPrivilegesForPrincipal(principal: Principal): Promise<P
 
 }
 
-export async function getPrivileges(who: Context | Principal | 'insecure'): Promise<LazyPrivilegeBox> {
+export async function get(who: Context | Principal | 'insecure'): Promise<LazyPrivilegeBox> {
 
   const box = new LazyPrivilegeBox(who);
   await box.ready();
@@ -82,15 +82,17 @@ export async function getImmediatePrivilegesForPrincipal(principal: Principal): 
 
   }, {});
 
+
 }
 
+/*
 export async function hasPrivilege(who: Principal | Context, privilege: string, resource: string = '*'): Promise<boolean> {
 
-  const box = new LazyPrivilegeBox(who);
-  await box.ready();
+  const box = await get(who);
   return box.has(privilege, resource);
 
 }
+*/
 
 /**
  * Helper class for checking privileges.

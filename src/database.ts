@@ -74,6 +74,7 @@ export function getSettings(): Knex.Config {
   let connection: Knex.MySql2ConnectionConfig | Knex.PgConnectionConfig | Knex.Sqlite3ConnectionConfig;
   let client;
   let searchPath;
+  let useNullAsDefault: undefined|true = undefined;
 
   if (process.env.PG_DATABASE) {
 
@@ -159,8 +160,9 @@ export function getSettings(): Knex.Config {
         }
 
         connection = {
-          filename: process.env.DB_FILENAME || 'a12nserver.sqlite3'
+          filename: process.env.DB_FILENAME || 'a12nserver.sqlite3',
         };
+        useNullAsDefault = true;
         break;
 
       default:
@@ -181,6 +183,7 @@ export function getSettings(): Knex.Config {
     },
     pool: { min: 0, max: 10 },
     debug: process.env.DEBUG ? true : false,
+    useNullAsDefault: useNullAsDefault,
   };
 
   return settings;

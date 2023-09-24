@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.23.2 (????-??-??)
+-------------------
+
+* Update to curveball 0.21
+
+
 0.23.1 (2023-03-29)
 -------------------
 
@@ -32,6 +38,7 @@ Changelog
 Warning note for upgraders. This release has a database migration on the
 `oauth2_tokens` table. For most users this is the largest table, some downtime
 may be expected while the server runs its migrations.
+
 * #425: Using a `client_secret` is now supported with `authorization_code`, and
   it's read from either the request body or HTTP Basic Authorization header.
 * The service now keeps track when issuing access tokens, whether those tokens
@@ -170,7 +177,7 @@ may be expected while the server runs its migrations.
 0.19.9 (2021-10-18)
 -------------------
 
-* Halloween theme. Automatically enables the last week of October.
+* Halloween theme. Automatically enabled the last week of October.
 * #295: Improved validation for `identity` field on users, groups and apps.
 
 
@@ -286,9 +293,8 @@ may be expected while the server runs its migrations.
 0.17.2 (2021-03-26)
 -------------------
 
-* Added a `/user/:id/password` endpoint. This allows an admin to easily
-
-change a user's password.
+* Added a `/user/:id/password` endpoint. This allows an admin to easily change
+  a user's password.
 
 
 0.17.1 (2021-03-14)

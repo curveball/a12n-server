@@ -14,7 +14,7 @@ export class PrivilegedPrincipalService {
   private privileges: LazyPrivilegeBox;
 
   constructor(actor: Principal | 'insecure') {
-    
+
     this.privileges = new LazyPrivilegeBox(actor);
 
   }

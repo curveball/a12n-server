@@ -1,4 +1,4 @@
-import { Knex } from "knex";
+import { Knex } from 'knex';
 
 
 export async function up(knex: Knex): Promise<void> {
@@ -21,7 +21,7 @@ export async function up(knex: Knex): Promise<void> {
     type: 3, // Group
     modified_at: Date.now(),
     external_id: '$all',
-    system: 1, 
+    system: 1,
   });
 
 }
@@ -29,7 +29,7 @@ export async function up(knex: Knex): Promise<void> {
 
 export async function down(knex: Knex): Promise<void> {
 
-  throw new Error('Reverting this migration is not supported.'); 
+  throw new Error('Reverting this migration is not supported.');
 
 }
 

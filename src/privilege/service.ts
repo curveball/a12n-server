@@ -247,7 +247,7 @@ async function getRecursiveGroupIds(principalId: number): Promise<number[]> {
 async function getPrivilegesForPrincipal(principal: Principal): Promise<PrivilegeMap> {
 
   const recursiveGroupIds = await getRecursiveGroupIds(principal.id);
-  recursiveGroupIds.push(await getAllGroupId());
+  if (principal.type === 'user') recursiveGroupIds.push(await getAllUsersGroupId());
 
   const result = await query(
     `SELECT resource, privilege FROM user_privileges WHERE user_id IN (${recursiveGroupIds.map(_ => '?').join(',')})`,
@@ -273,14 +273,14 @@ async function getPrivilegesForPrincipal(principal: Principal): Promise<Privileg
 
 }
 
-let allGroupId: number|null = null;
+let allUsersGroupId: number|null = null;
 
 /**
  * Returns the set of privileges for the $all group
  */
-async function getAllGroupId() {
+async function getAllUsersGroupId() {
 
-  if (allGroupId) return allGroupId;
+  if (allUsersGroupId) return allUsersGroupId;
   const allPrincipal = await db('principals')
     .select('id')
     .first()
@@ -292,7 +292,7 @@ async function getAllGroupId() {
   if (!allPrincipal) {
     throw new Error('Could not find the $all group in the database!');
   }
-  allGroupId = allPrincipal.id;
-  return allGroupId;
+  allUsersGroupId = allPrincipal.id;
+  return allUsersGroupId;
 
 }

@@ -7,6 +7,8 @@ Changelog
 * Update to curveball 0.21
 * Refactored the privilege system to make internally easier to use. There
   should be no end-user effects to this.
+* Added a system group principal , which allows admins to set privileges for
+  every user in the system.
 
 
 0.23.1 (2023-03-29)

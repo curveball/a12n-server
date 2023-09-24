@@ -38,7 +38,8 @@ describe('AuthorizeController', () => {
     createdAt: new Date(1),
     modifiedAt: new Date(1),
     type: 'user',
-    active: true
+    active: true,
+    system: false,
   };
   const app: App = {
     id: 1,
@@ -49,7 +50,8 @@ describe('AuthorizeController', () => {
     createdAt: new Date(1),
     modifiedAt: new Date(1),
     type: 'app',
-    active: true
+    active: true,
+    system: false,
   };
   const oauth2Client: OAuth2Client = {
     id: 1,

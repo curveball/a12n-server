@@ -37,13 +37,21 @@ class GroupController extends Controller {
 
     const principalPrivileges = await privilegeService.get(group);
 
-    ctx.response.body = hal.item(
-      group,
-      principalPrivileges.getAll(),
-      isAdmin,
-      await groupService.findGroupsForPrincipal(group),
-      members,
-    );
+    if (group.system && group.externalId === '$all') {
+      ctx.response.body = hal.itemAllUsers(
+        group,
+        principalPrivileges.getAll(),
+        isAdmin,
+      );
+    } else {
+      ctx.response.body = hal.item(
+        group,
+        principalPrivileges.getAll(),
+        isAdmin,
+        await groupService.findGroupsForPrincipal(group),
+        members,
+      );
+    }
 
   }
 

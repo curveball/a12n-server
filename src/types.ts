@@ -37,6 +37,7 @@ export type BasePrincipal<TType extends PrincipalType> = {
   createdAt: Date;
   modifiedAt: Date;
   active: boolean;
+  system: boolean;
 }
 
 /**

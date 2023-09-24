@@ -235,6 +235,7 @@ export function generateTokenDeveloperToken(options: GenerateTokenDeveloperToken
       type: 'app',
       nickname: 'a12n-server system user',
       active: true,
+      system: true,
     }
   };
   return generateTokenInternal({

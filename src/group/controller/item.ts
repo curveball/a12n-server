@@ -4,7 +4,7 @@ import * as privilegeService from '../../privilege/service';
 import * as hal from '../formats/hal';
 import * as principalService from '../../principal/service';
 import * as groupService from '../../group/service';
-import { Forbidden, NotFound, Conflict } from '@curveball/http-errors';
+import { NotFound, Conflict } from '@curveball/http-errors';
 
 type EditPrincipalBody = {
   nickname: string;
@@ -32,12 +32,14 @@ class GroupController extends Controller {
   async get(ctx: Context) {
 
     const group = await principalService.findByExternalId(ctx.params.id, 'group');
-    const isAdmin = await privilegeService.hasPrivilege(ctx, 'admin');
+    const isAdmin = ctx.privileges.has('admin');
     const members = await groupService.findMembers(group);
+
+    const principalPrivileges = await privilegeService.get(group);
 
     ctx.response.body = hal.item(
       group,
-      await privilegeService.getPrivilegesForPrincipal(group),
+      principalPrivileges.getAll(),
       isAdmin,
       await groupService.findGroupsForPrincipal(group),
       members,
@@ -47,9 +49,7 @@ class GroupController extends Controller {
 
   async put(ctx: Context) {
 
-    if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
-      throw new Forbidden('Only users with the "admin" privilege may edit users');
-    }
+    ctx.privileges.require('admin');
     ctx.request.validate<EditPrincipalBody>(
       'https://curveballjs.org/schemas/a12nserver/principal-edit.json'
     );
@@ -95,12 +95,13 @@ class GroupController extends Controller {
     }
 
     if (ctx.request.accepts('text/html')) {
-      const isAdmin = await privilegeService.hasPrivilege(ctx, 'admin');
+      const isAdmin = ctx.privileges.has('admin');
       const members = await groupService.findMembers(group);
+      const principalPrivileges = await privilegeService.get(group);
 
       ctx.response.body = hal.item(
         group,
-        await privilegeService.getPrivilegesForPrincipal(group),
+        principalPrivileges.getAll(),
         isAdmin,
         await groupService.findGroupsForPrincipal(group),
         members,

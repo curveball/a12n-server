@@ -1,7 +1,6 @@
 import { Controller, method, accept } from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { Forbidden } from '@curveball/http-errors';
-import * as privilegeService from '../privilege/service';
 import { getSettings, settingsRules } from '../server-settings';
 import * as hal from './formats/hal';
 import * as csv from './formats/csv';
@@ -12,7 +11,7 @@ class SettingsController extends Controller {
   @accept('application/hal+json')
   async getJson(ctx: Context) {
 
-    if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
+    if (!ctx.privileges.has('admin')) {
       throw new Forbidden('Only users with the "admin" privilege can inspect OAuth2 clients that are not your own');
     }
 
@@ -30,7 +29,7 @@ class SettingsController extends Controller {
   @accept('csv')
   async getCsv(ctx: Context) {
 
-    if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
+    if (!ctx.privileges.has('admin')) {
       throw new Forbidden('Only users with the "admin" privilege can inspect OAuth2 clients that are not your own');
     }
     ctx.response.links.add({

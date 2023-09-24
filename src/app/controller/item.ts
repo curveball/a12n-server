@@ -28,11 +28,12 @@ class AppController extends Controller {
 
     const app = await principalService.findByExternalId(ctx.params.id, 'app');
 
-    const isAdmin = await privilegeService.hasPrivilege(ctx, 'admin');
+    const isAdmin = ctx.privileges.has('admin');
 
+    const principalPrivileges = await privilegeService.get(app);
     ctx.response.body = hal.item(
       app,
-      await privilegeService.getPrivilegesForPrincipal(app),
+      principalPrivileges.getAll(),
       isAdmin,
       await groupService.findGroupsForPrincipal(app),
     );
@@ -41,7 +42,7 @@ class AppController extends Controller {
 
   async put(ctx: Context) {
 
-    if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
+    if (!ctx.privileges.has('admin')) {
       throw new Forbidden('Only users with the "admin" privilege may edit users');
     }
     ctx.request.validate<EditPrincipalBody>(

@@ -1,7 +1,5 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { Forbidden } from '@curveball/http-errors';
-import * as privilegeService from '../../privilege/service';
 import * as principalService from '../../principal/service';
 import { createGroupForm } from '../formats/html';
 import { uuidUrn } from '../../crypto';
@@ -14,9 +12,7 @@ class CreateGroupController extends Controller {
 
   async get(ctx: Context) {
 
-    if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
-      throw new Forbidden('Only users with the "admin" privilege can create new users');
-    }
+    ctx.privileges.require('admin');
     ctx.response.type = 'text/html';
     ctx.response.body = createGroupForm({
       csrfToken: await ctx.getCsrf(),
@@ -29,9 +25,7 @@ class CreateGroupController extends Controller {
 
     ctx.request.validate<GroupNewForm>('https://curveballjs.org/schemas/a12nserver/group-new-form.json');
 
-    if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
-      throw new Forbidden('Only users with the "admin" privilege can create new users');
-    }
+    ctx.privileges.require('admin');
 
     const nickname = ctx.request.body.nickname;
 

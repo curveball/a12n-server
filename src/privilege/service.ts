@@ -6,34 +6,10 @@ import { UserPrivilegesRecord } from 'knex/types/tables';
 import * as principalService from '../principal/service';
 import { Forbidden } from '@curveball/http-errors';
 
-export async function getPrivilegesForPrincipal(principal: Principal): Promise<PrivilegeMap> {
 
-  const recursiveGroupIds = await getRecursiveGroupIds(principal.id);
-
-  const result = await query(
-    `SELECT resource, privilege FROM user_privileges WHERE user_id IN (${recursiveGroupIds.map(_ => '?').join(',')})`,
-    [...recursiveGroupIds]
-  );
-
-  return result.reduce( (currentPrivileges: any, row: UserPrivilegesRecord) => {
-
-    const privileges = Object.assign({}, currentPrivileges);
-
-    // eslint-disable-next-line no-prototype-builtins
-    if (privileges.hasOwnProperty(row.resource)) {
-      if (privileges[row.resource].indexOf(row.privilege) === -1) {
-        privileges[row.resource].push(row.privilege);
-      }
-    } else {
-      privileges[row.resource] = [row.privilege];
-    }
-
-    return privileges;
-
-  }, {});
-
-}
-
+/**
+ * Returns all privileges associated with a single principal.
+ */
 export async function get(who: Context | Principal | 'insecure'): Promise<LazyPrivilegeBox> {
 
   const box = new LazyPrivilegeBox(who);
@@ -42,6 +18,9 @@ export async function get(who: Context | Principal | 'insecure'): Promise<LazyPr
 
 }
 
+/**
+ * Returns all privileges defined on a single resource.
+ */
 export async function findPrivilegesForResource(resource: string): Promise<PrivilegeEntry[]> {
 
   const records = await db('user_privileges')
@@ -58,6 +37,10 @@ export async function findPrivilegesForResource(resource: string): Promise<Privi
 
 }
 
+/**
+ * Get all the privileges assigned to a principal, excluding privileges
+ * the principal inherited by being part of a group.
+ */
 export async function getImmediatePrivilegesForPrincipal(principal: Principal): Promise<PrivilegeMap> {
 
   const result = await query(
@@ -84,15 +67,6 @@ export async function getImmediatePrivilegesForPrincipal(principal: Principal): 
 
 
 }
-
-/*
-export async function hasPrivilege(who: Principal | Context, privilege: string, resource: string = '*'): Promise<boolean> {
-
-  const box = await get(who);
-  return box.has(privilege, resource);
-
-}
-*/
 
 /**
  * Helper class for checking privileges.
@@ -269,3 +243,32 @@ async function getRecursiveGroupIds(principalId: number): Promise<number[]> {
   return ids;
 
 }
+
+async function getPrivilegesForPrincipal(principal: Principal): Promise<PrivilegeMap> {
+
+  const recursiveGroupIds = await getRecursiveGroupIds(principal.id);
+
+  const result = await query(
+    `SELECT resource, privilege FROM user_privileges WHERE user_id IN (${recursiveGroupIds.map(_ => '?').join(',')})`,
+    [...recursiveGroupIds]
+  );
+
+  return result.reduce( (currentPrivileges: any, row: UserPrivilegesRecord) => {
+
+    const privileges = Object.assign({}, currentPrivileges);
+
+    // eslint-disable-next-line no-prototype-builtins
+    if (privileges.hasOwnProperty(row.resource)) {
+      if (privileges[row.resource].indexOf(row.privilege) === -1) {
+        privileges[row.resource].push(row.privilege);
+      }
+    } else {
+      privileges[row.resource] = [row.privilege];
+    }
+
+    return privileges;
+
+  }, {});
+
+}
+

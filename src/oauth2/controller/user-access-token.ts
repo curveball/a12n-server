@@ -7,14 +7,12 @@ import { EventType } from '../../log/types';
 import * as principalService from '../../principal/service';
 import * as oauth2Service from '../service';
 
-import * as privilegeService from '../../privilege/service';
-
 class UserAccessTokenController extends Controller {
 
   async post(ctx: Context<any>) {
 
     const user = await principalService.findByExternalId(ctx.params.id);
-    if (ctx.auth.equals(user) && !await privilegeService.hasPrivilege(ctx, 'admin')) {
+    if (ctx.auth.equals(user) && !ctx.privileges.has('admin')) {
       throw new Forbidden('You can only generate OAuth2 access tokens for yourself with this endpoint (unless you have the \'admin\' privilege (which you haven\'t))');
     }
 

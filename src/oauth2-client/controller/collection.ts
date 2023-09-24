@@ -5,7 +5,6 @@ import { Forbidden, UnprocessableEntity } from '@curveball/http-errors';
 
 import * as hal from '../formats/hal';
 import * as principalService from '../../principal/service';
-import * as privilegeService from '../../privilege/service';
 import { GrantType } from '../../types';
 import { OAuth2Client } from '../types';
 import { findByApp, create } from '../service';
@@ -17,7 +16,7 @@ class ClientCollectionController extends Controller {
 
     const app = await principalService.findByExternalId(ctx.params.id, 'app');
     if (ctx.auth.equals(app)) {
-      if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
+      if (!ctx.privileges.has('admin')) {
         throw new Forbidden('Only users with the "admin" privilege can inspect OAuth2 clients that are not your own');
       }
     }
@@ -30,7 +29,7 @@ class ClientCollectionController extends Controller {
   async post(ctx: Context<any>) {
 
     const app = await principalService.findByExternalId(ctx.params.id, 'app');
-    if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
+    if (!ctx.privileges.has('admin')) {
       throw new Forbidden('Only users with the "admin" privilege can inspect OAuth2 clients that are not your own');
     }
 

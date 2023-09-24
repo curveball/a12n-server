@@ -83,7 +83,8 @@ export function recordToModel(user: PrincipalsRecord): Principal {
     createdAt: new Date(user.created_at),
     modifiedAt: new Date(user.modified_at),
     type: userTypeIntToUserType(user.type),
-    active: !!user.active
+    active: !!user.active,
+    system: !!user.system,
   };
 
 }

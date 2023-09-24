@@ -53,3 +53,6 @@ inspect: build
 
 inspect-brk: build
 	node --inspect-brk dist/app.js
+
+src/db-types.js:
+	./bin/generate-db-types.mjs

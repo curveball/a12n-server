@@ -15,7 +15,8 @@ export const fieldNames: Array<keyof PrincipalsRecord> = [
   'created_at',
   'modified_at',
   'type',
-  'active'
+  'active',
+  'system',
 ];
 
 export async function findAll(type: 'user'): Promise<User[]>;
@@ -228,6 +229,7 @@ export async function save<T extends PrincipalType>(principal: BasePrincipal<T>|
       active: principal.active ? 1 : 0,
       modified_at: Date.now(),
       created_at: Date.now(),
+      system: 0,
     };
 
     const result = await insertAndGetId('principals', newPrincipalsRecord);
@@ -236,7 +238,8 @@ export async function save<T extends PrincipalType>(principal: BasePrincipal<T>|
       id: result,
       href: `/${principal.type}/${externalId}`,
       externalId,
-      ...principal
+      system: false,
+      ...principal,
     };
 
   } else {
@@ -249,7 +252,7 @@ export async function save<T extends PrincipalType>(principal: BasePrincipal<T>|
 
     principal.modifiedAt = new Date();
 
-    const updatePrincipalsRecord: Omit<PrincipalsRecord, 'id' | 'created_at' | 'type' | 'external_id'> = {
+    const updatePrincipalsRecord: Omit<PrincipalsRecord, 'id' | 'created_at' | 'type' | 'external_id' | 'system'> = {
       identity: principal.identity,
       nickname: principal.nickname,
       active: principal.active ? 1 : 0,
@@ -300,7 +303,8 @@ export function recordToModel(user: PrincipalsRecord): Principal {
     createdAt: new Date(user.created_at),
     modifiedAt: new Date(user.modified_at),
     type: userTypeIntToUserType(user.type),
-    active: !!user.active
+    active: !!user.active,
+    system: !!user.system,
   };
 
 }

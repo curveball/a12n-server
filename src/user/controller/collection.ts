@@ -1,7 +1,6 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { BadRequest, Conflict, Forbidden, NotFound } from '@curveball/http-errors';
-import * as privilegeService from '../../privilege/service';
 import * as hal from '../formats/hal';
 import * as principalService from '../../principal/service';
 
@@ -22,7 +21,7 @@ class UserCollectionController extends Controller {
 
   async post(ctx: Context) {
 
-    if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
+    if (!ctx.privileges.has('admin')) {
       throw new Forbidden('Only users with the "admin" privilege may create new users');
     }
 

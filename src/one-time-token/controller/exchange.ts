@@ -5,7 +5,6 @@ import { Forbidden, UnprocessableEntity } from '@curveball/http-errors';
 
 import { tokenResponse } from '../../oauth2/formats/json';
 
-import * as privilegeService from '../../privilege/service';
 import * as tokenService from '../service';
 import * as oauth2Service from '../../oauth2/service';
 import * as oauth2ClientService from '../../oauth2-client/service';
@@ -21,9 +20,7 @@ class OneTimeTokenExchangeController extends Controller {
 
   async post(ctx: Context<OtteRequest>) {
 
-    if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
-      throw new Forbidden('Only users with the "admin" privilege use this endpoint');
-    }
+    ctx.privileges.require('admin');
 
     if (!ctx.request.body.token) {
       throw new UnprocessableEntity('A token must be provided for the exchange');

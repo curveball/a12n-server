@@ -24,6 +24,7 @@ class GroupMemberCollectionController extends Controller {
   async put(ctx: Context) {
 
     const group = await userService.findById(+ctx.params.id, 'group');
+    ctx.privileges.require('admin');
 
     if (!ctx.request.links.has('item')) {
       throw new UnprocessableEntity('"item" link relationship not found');
@@ -51,6 +52,7 @@ class GroupMemberCollectionController extends Controller {
   async post(ctx: Context<any>) {
 
     const group = await userService.findById(+ctx.params.id, 'group');
+    ctx.privileges.require('admin');
 
     if (ctx.request.body.operation === undefined) {
       throw new UnprocessableEntity('You must specify an "operation" property');

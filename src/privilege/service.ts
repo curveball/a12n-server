@@ -4,35 +4,23 @@ import { Principal } from '../types';
 import { Privilege, PrivilegeMap, PrivilegeEntry } from './types';
 import { UserPrivilegesRecord } from 'knex/types/tables';
 import * as principalService from '../principal/service';
+import { Forbidden } from '@curveball/http-errors';
 
-export async function getPrivilegesForPrincipal(principal: Principal): Promise<PrivilegeMap> {
 
-  const recursiveGroupIds = await getRecursiveGroupIds(principal.id);
+/**
+ * Returns all privileges associated with a single principal.
+ */
+export async function get(who: Context | Principal | 'insecure'): Promise<LazyPrivilegeBox> {
 
-  const result = await query(
-    `SELECT resource, privilege FROM user_privileges WHERE user_id IN (${recursiveGroupIds.map(_ => '?').join(',')})`,
-    [...recursiveGroupIds]
-  );
-
-  return result.reduce( (currentPrivileges: any, row: UserPrivilegesRecord) => {
-
-    const privileges = Object.assign({}, currentPrivileges);
-
-    // eslint-disable-next-line no-prototype-builtins
-    if (privileges.hasOwnProperty(row.resource)) {
-      if (privileges[row.resource].indexOf(row.privilege) === -1) {
-        privileges[row.resource].push(row.privilege);
-      }
-    } else {
-      privileges[row.resource] = [row.privilege];
-    }
-
-    return privileges;
-
-  }, {});
+  const box = new LazyPrivilegeBox(who);
+  await box.ready();
+  return box;
 
 }
 
+/**
+ * Returns all privileges defined on a single resource.
+ */
 export async function findPrivilegesForResource(resource: string): Promise<PrivilegeEntry[]> {
 
   const records = await db('user_privileges')
@@ -49,6 +37,10 @@ export async function findPrivilegesForResource(resource: string): Promise<Privi
 
 }
 
+/**
+ * Get all the privileges assigned to a principal, excluding privileges
+ * the principal inherited by being part of a group.
+ */
 export async function getImmediatePrivilegesForPrincipal(principal: Principal): Promise<PrivilegeMap> {
 
   const result = await query(
@@ -73,27 +65,93 @@ export async function getImmediatePrivilegesForPrincipal(principal: Principal): 
 
   }, {});
 
+
 }
 
-export async function hasPrivilege(who: Principal | Context, privilege: string, resource: string = '*'): Promise<boolean> {
+/**
+ * Helper class for checking privileges.
+ *
+ * This class represents the set of privileges for a user.
+ * It mostly operates synchronously, but it loads privileges asynchronously.
+ *
+ * To ensure it's fully loaded await the ready() function.
+ */
+export class LazyPrivilegeBox {
 
-  let user;
-  if (isContext(who)) {
-    if (!who.auth.isLoggedIn()) {
-      throw new Error('Cannot check privilege for unauthenticated user');
+  who: Principal | 'insecure' | 'public';
+  privileges: PrivilegeMap | null = null;
+  private init: Promise<unknown> | null;
+
+  constructor(who: Principal | Context | 'insecure') {
+
+    if (isContext(who)) {
+      if (!who.auth.isLoggedIn()) {
+        this.who = 'public';
+      } else {
+        this.who = who.auth.principal;
+      }
+    } else {
+      this.who = who;
     }
-    user = who.auth.principal;
-  } else {
-    user = who;
+    this.init = this.reload();
   }
 
-  const privileges = await getPrivilegesForPrincipal(user);
+  getAll(): PrivilegeMap {
 
-  return privileges['*']?.includes(privilege) || privileges[resource]?.includes(privilege) || false;
+    if (this.privileges === null) {
+      throw new Error('List of privileges have not been loaded');
+    }
+    return this.privileges;
+
+  }
+
+  has(privilege: string, resource: string = '*'): boolean {
+
+    if (this.who === 'public') return false;
+    if (this.who === 'insecure') return true;
+
+    const privileges = this.getAll();
+    return privileges['*']?.includes(privilege) || privileges[resource]?.includes(privilege) || false;
+
+  }
+
+  require(privilege: string, resource: string = '*'): void {
+
+    if (!this.has(privilege, resource)) {
+      if (this.who === 'public') {
+        throw new Forbidden('You must be authenticated for this operation');
+      }
+      throw new Forbidden(`The currently logged in user must have the "${privilege}" privilege on the "${resource}" to do this`);
+    }
+  }
+
+  /**
+   * Await the result of this function to ensure that privleges have been loaded.
+   */
+  async ready(): Promise<void> {
+
+    await this.init;
+
+  }
+
+  /**
+   * Reloads privileges from the database
+   */
+  async reload(): Promise<PrivilegeMap> {
+
+    if (this.who === 'insecure' || this.who === 'public') {
+      this.privileges = {};
+    } else {
+      this.privileges = await getPrivilegesForPrincipal(this.who);
+    }
+    return this.privileges;
+
+  }
 
 }
 
-function isContext(input: Context| Principal): input is Context {
+
+function isContext(input: Context| Principal | 'insecure'): input is Context {
   return (input as any).request !== undefined && (input as any).response !== undefined;
 }
 
@@ -185,3 +243,32 @@ async function getRecursiveGroupIds(principalId: number): Promise<number[]> {
   return ids;
 
 }
+
+async function getPrivilegesForPrincipal(principal: Principal): Promise<PrivilegeMap> {
+
+  const recursiveGroupIds = await getRecursiveGroupIds(principal.id);
+
+  const result = await query(
+    `SELECT resource, privilege FROM user_privileges WHERE user_id IN (${recursiveGroupIds.map(_ => '?').join(',')})`,
+    [...recursiveGroupIds]
+  );
+
+  return result.reduce( (currentPrivileges: any, row: UserPrivilegesRecord) => {
+
+    const privileges = Object.assign({}, currentPrivileges);
+
+    // eslint-disable-next-line no-prototype-builtins
+    if (privileges.hasOwnProperty(row.resource)) {
+      if (privileges[row.resource].indexOf(row.privilege) === -1) {
+        privileges[row.resource].push(row.privilege);
+      }
+    } else {
+      privileges[row.resource] = [row.privilege];
+    }
+
+    return privileges;
+
+  }, {});
+
+}
+

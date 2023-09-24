@@ -8,7 +8,7 @@ class PrivilegeSearchController extends Controller {
 
   async get(ctx: Context) {
 
-    await privilegeService.hasPrivilege(ctx, 'admin');
+    ctx.privileges.require('admin');
 
     if (ctx.query === undefined) {
       throw new BadRequest('The \'resource\' query parameter must be specified');

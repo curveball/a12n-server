@@ -1,7 +1,6 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { BadRequest, Conflict, Forbidden, NotFound, UnprocessableEntity } from '@curveball/http-errors';
-import * as privilegeService from '../../privilege/service';
+import { BadRequest, Conflict, NotFound, UnprocessableEntity } from '@curveball/http-errors';
 import * as hal from '../formats/hal';
 import * as principalService from '../../principal/service';
 
@@ -22,9 +21,7 @@ class UserCollectionController extends Controller {
 
   async post(ctx: Context) {
 
-    if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
-      throw new Forbidden('Only users with the "admin" privilege may app new apps');
-    }
+    ctx.privileges.require('admin');
 
     ctx.request.validate<NewPrincipalBody>(
       'https://curveballjs.org/schemas/a12nserver/new-principal.json'

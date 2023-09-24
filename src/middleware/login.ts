@@ -2,6 +2,7 @@ import { Middleware } from '@curveball/core';
 import { NotFound, Unauthorized } from '@curveball/http-errors';
 import * as oauth2Service from './../oauth2/service';
 import { App, User, Principal } from '../types';
+import * as privilegeService from '../privilege/service';
 
 const whitelistPath = [
   '/login',
@@ -25,6 +26,8 @@ declare module '@curveball/kernel' {
      * Authentication info
      */
     auth: AuthHelper;
+
+    privileges: privilegeService.LazyPrivilegeBox;
 
   }
 
@@ -108,6 +111,9 @@ export default function(): Middleware {
     ctx.auth = new AuthHelper(
       ctx.session.user || null
     );
+    if (ctx.auth.principal) {
+      ctx.privileges = await privilegeService.get(ctx.auth.principal);
+    }
     if (ctx.session.user) {
       // The user was logged in via a session cookie.
       return next();

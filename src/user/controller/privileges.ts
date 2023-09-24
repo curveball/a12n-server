@@ -21,15 +21,15 @@ class UserEditPrivilegesController extends Controller {
   async get(ctx: Context) {
 
     const user = await principalService.findByExternalId(ctx.params.id);
-    const userPrivileges = await privilegeService.getImmediatePrivilegesForPrincipal(user);
-    const privileges = await privilegeService.findPrivileges();
+    const immediatePrivileges = await privilegeService.getImmediatePrivilegesForPrincipal(user);
+    const privilegeTypes = await privilegeService.findPrivileges();
 
-    await privilegeService.hasPrivilege(ctx, 'admin');
+    ctx.privileges.require('admin');
 
     ctx.response.body = hal.editPrivileges(
       user,
-      userPrivileges,
-      privileges.map( privilege => privilege.privilege ),
+      immediatePrivileges,
+      privilegeTypes.map( privilege => privilege.privilege ),
     );
 
   }
@@ -39,7 +39,7 @@ class UserEditPrivilegesController extends Controller {
     const { policyBody } = ctx.request.body;
 
     const principal = await principalService.findByExternalId(ctx.params.id);
-    await privilegeService.hasPrivilege(ctx, 'admin');
+    ctx.privileges.require('admin');
 
     try {
       const policy = JSON.parse(policyBody) as PrivilegeMap;
@@ -58,7 +58,7 @@ class UserEditPrivilegesController extends Controller {
 
     ctx.request.validate<PrincipalPatchPrivilege>('https://curveballjs.org/schemas/a12nserver/principal-patch-privilege.json');
     const principal = await principalService.findByExternalId(ctx.params.id);
-    await privilegeService.hasPrivilege(ctx, 'admin');
+    ctx.privileges.require('admin');
 
     await privilegeService.addPrivilegeForUser(
       principal,

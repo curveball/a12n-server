@@ -3,7 +3,7 @@ import { Context } from '@curveball/core';
 import { NotFound, BadRequest } from '@curveball/http-errors';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
-import { PrincipalService } from '../../principal/privileged-service';
+import { PrincipalService } from '../../principal/service';
 import { resetPasswordRequestForm } from '../formats/html';
 import { sendResetPasswordEmail } from '../service';
 

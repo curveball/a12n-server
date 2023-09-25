@@ -7,7 +7,7 @@ import { EventType } from '../../log/types';
 import { MFALoginSession } from '../../mfa/types';
 import * as webAuthnService from '../../mfa/webauthn/service';
 import { getSetting } from '../../server-settings';
-import { hasUsers, PrincipalService } from '../../principal/privileged-service';
+import { hasUsers, PrincipalService } from '../../principal/service';
 import * as userService from '../../user/service';
 import { User } from '../../types';
 import { isValidRedirect } from '../utilities';

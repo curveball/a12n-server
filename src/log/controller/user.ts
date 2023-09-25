@@ -1,7 +1,7 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { Forbidden } from '@curveball/http-errors';
-import { PrincipalService } from '../../principal/privileged-service';
+import { PrincipalService } from '../../principal/service';
 import csv from '../formats/csv';
 import * as logService from '../service';
 

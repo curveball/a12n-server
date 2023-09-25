@@ -1,7 +1,7 @@
 import db from '../database';
 import { App, User } from '../types';
 import { UserAppPermission } from './types';
-import { PrincipalService } from '../principal/privileged-service';
+import { PrincipalService } from '../principal/service';
 import { UserAppPermissionsRecord } from 'knex/types/tables';
 import { NotFound } from '@curveball/http-errors';
 

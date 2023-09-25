@@ -4,7 +4,7 @@ import { Forbidden, NotFound, NotImplemented } from '@curveball/http-errors';
 
 import * as csv from '../formats/csv';
 
-import { PrincipalService } from '../../principal/privileged-service';
+import { PrincipalService } from '../../principal/service';
 import * as oauth2Service from '../service';
 import * as oauth2ClientService from '../../oauth2-client/service';
 

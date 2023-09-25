@@ -2,7 +2,7 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { BadRequest, Conflict, NotFound } from '@curveball/http-errors';
 import * as hal from '../formats/hal';
-import { PrincipalService } from '../../principal/privileged-service';
+import { PrincipalService } from '../../principal/service';
 
 type NewPrincipalBody = {
   nickname: string;

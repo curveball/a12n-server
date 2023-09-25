@@ -2,7 +2,7 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import * as hal from '../formats/hal';
 import { Forbidden } from '@curveball/http-errors';
-import { PrincipalService } from '../../principal/privileged-service';
+import { PrincipalService } from '../../principal/service';
 import * as userAppPermissionService from '../service';
 
 class UserAppPermissionsItem extends Controller {

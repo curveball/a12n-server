@@ -5,7 +5,7 @@ import { Oauth2ClientsRecord } from 'knex/types/tables';
 import { wrapError, UniqueViolationError } from 'db-errors';
 
 import { OAuth2Client } from './types';
-import { PrincipalService } from '../principal/privileged-service';
+import { PrincipalService } from '../principal/service';
 import db, { insertAndGetId } from '../database';
 import { InvalidRequest } from '../oauth2/errors';
 import parseBasicAuth from './parse-basic-auth';

@@ -1,7 +1,7 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { NotFound, UnprocessableEntity } from '@curveball/http-errors';
-import { PrincipalService, isIdentityValid } from '../../principal/privileged-service';
+import { PrincipalService, isIdentityValid } from '../../principal/service';
 import { createUserForm } from '../formats/html';
 
 type UserNewForm = {

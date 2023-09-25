@@ -8,7 +8,7 @@ import { tokenResponse } from '../../oauth2/formats/json';
 import * as tokenService from '../service';
 import * as oauth2Service from '../../oauth2/service';
 import * as oauth2ClientService from '../../oauth2-client/service';
-import { PrincipalService } from '../../principal/privileged-service';
+import { PrincipalService } from '../../principal/service';
 
 type OtteRequest = {
   activateUser?: boolean;

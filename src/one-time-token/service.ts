@@ -1,7 +1,7 @@
 import { OneTimeToken } from './types';
 import { User } from '../types';
 import db from '../database';
-import { PrincipalService } from '../principal/privileged-service';
+import { PrincipalService } from '../principal/service';
 import { BadRequest } from '@curveball/http-errors';
 import { generateSecretToken } from '../crypto';
 

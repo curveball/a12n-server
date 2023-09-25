@@ -2,7 +2,7 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import * as siren from '../formats/siren';
 import { Forbidden } from '@curveball/http-errors';
-import { PrincipalService } from '../../principal/privileged-service';
+import { PrincipalService } from '../../principal/service';
 
 class NewClientController extends Controller {
 

@@ -4,7 +4,7 @@ import { Forbidden } from '@curveball/http-errors';
 
 import log from '../../log/service';
 import { EventType } from '../../log/types';
-import { PrincipalService } from '../../principal/privileged-service';
+import { PrincipalService } from '../../principal/service';
 import * as oauth2Service from '../service';
 
 class UserAccessTokenController extends Controller {

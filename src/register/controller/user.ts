@@ -2,7 +2,7 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { Forbidden, NotFound } from '@curveball/http-errors';
 import { getSetting } from '../../server-settings';
-import { PrincipalService, hasUsers } from '../../principal/privileged-service';
+import { PrincipalService, hasUsers } from '../../principal/service';
 import * as userService from '../../user/service';
 import { registrationForm } from '../formats/html';
 import * as privilegeService from '../../privilege/service';

@@ -5,7 +5,7 @@ import * as userHal from '../formats/hal';
 import * as appHal from '../../app/formats/hal';
 import * as groupHal from '../../group/formats/hal';
 import * as userService from '../service';
-import { PrincipalService } from '../../principal/privileged-service';
+import { PrincipalService } from '../../principal/service';
 
 type EditPrincipalBody = {
   nickname: string;

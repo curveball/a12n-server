@@ -3,7 +3,7 @@ import db, { query } from '../database';
 import { Principal } from '../types';
 import { Privilege, PrivilegeMap, PrivilegeEntry } from './types';
 import { UserPrivilegesRecord } from 'knex/types/tables';
-import { PrincipalService } from '../principal/privileged-service';
+import { PrincipalService } from '../principal/service';
 import { Forbidden } from '@curveball/http-errors';
 
 

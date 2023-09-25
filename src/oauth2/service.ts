@@ -3,7 +3,7 @@ import * as crypto from 'crypto';
 
 import db, { query } from '../database';
 import { getSetting } from '../server-settings';
-import { PrincipalService } from '../principal/privileged-service';
+import { PrincipalService } from '../principal/service';
 import { InvalidGrant, InvalidRequest, UnauthorizedClient } from './errors';
 import { CodeChallengeMethod, OAuth2Code, OAuth2Token } from './types';
 import { OAuth2Client } from '../oauth2-client/types';

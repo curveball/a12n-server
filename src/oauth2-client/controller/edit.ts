@@ -2,7 +2,7 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import * as hal from '../formats/hal';
 import { Forbidden, NotFound, UnprocessableEntity } from '@curveball/http-errors';
-import { PrincipalService } from '../../principal/privileged-service';
+import { PrincipalService } from '../../principal/service';
 import { findByClientId, edit } from '../service';
 import * as oauth2Service from '../../oauth2/service';
 import { GrantType } from '../../types';

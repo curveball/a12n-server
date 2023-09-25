@@ -3,7 +3,7 @@ import { Context } from '@curveball/core';
 import * as hal from '../formats/hal';
 import { Forbidden, NotFound } from '@curveball/http-errors';
 import { findByClientId } from '../service';
-import { PrincipalService } from '../../principal/privileged-service';
+import { PrincipalService } from '../../principal/service';
 import * as oauth2Service from '../../oauth2/service';
 
 class ClientController extends Controller {

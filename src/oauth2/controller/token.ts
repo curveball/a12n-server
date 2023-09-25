@@ -2,7 +2,7 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
-import { PrincipalService } from '../../principal/privileged-service';
+import { PrincipalService } from '../../principal/service';
 import * as userService from '../../user/service';
 import { User } from '../../types';
 import { InvalidGrant, InvalidRequest, UnsupportedGrantType } from '../errors';

@@ -23,7 +23,7 @@ class UserEditPrivilegesController extends Controller {
     const principalService = new PrincipalService(ctx.privileges);
     const user = await principalService.findByExternalId(ctx.params.id);
     const immediatePrivileges = await privilegeService.getImmediatePrivilegesForPrincipal(user);
-    const privilegeTypes = await privilegeService.findPrivileges();
+    const privilegeTypes = await privilegeService.findPrivilegeTypes();
 
     ctx.privileges.require('admin');
 

@@ -1,7 +1,7 @@
 import { Context } from '@curveball/core';
 import db, { query } from '../database';
 import { Principal } from '../types';
-import { Privilege, PrivilegeMap, PrivilegeEntry } from './types';
+import { Privilege, PrivilegeMap, PrivilegeEntry, InternalPrivilege } from './types';
 import { UserPrivilegesRecord } from 'knex/types/tables';
 import { PrincipalService } from '../principal/service';
 import { Forbidden } from '@curveball/http-errors';
@@ -108,7 +108,7 @@ export class LazyPrivilegeBox {
 
   }
 
-  has(privilege: string, resource: string = '*'): boolean {
+  has(privilege: InternalPrivilege, resource: string = '*'): boolean {
 
     if (this.who === 'public') return false;
     if (this.who === 'insecure') return true;
@@ -118,7 +118,7 @@ export class LazyPrivilegeBox {
 
   }
 
-  require(privilege: string, resource: string = '*'): void {
+  require(privilege: InternalPrivilege, resource: string = '*'): void {
 
     if (!this.has(privilege, resource)) {
       if (this.who === 'public') {
@@ -172,7 +172,7 @@ function isContext(input: Context| Principal | 'insecure'): input is Context {
 /**
  * Returns the list of 'privilege types'
  */
-export async function findPrivileges(): Promise<Privilege[]> {
+export async function findPrivilegeTypes(): Promise<Privilege[]> {
 
   const result = await query<Privilege>(`
   SELECT privileges.privilege, privileges.description FROM privileges
@@ -186,7 +186,7 @@ export async function findPrivileges(): Promise<Privilege[]> {
   return result;
 }
 
-export async function findPrivilege(privilege: string): Promise<Privilege> {
+export async function findPrivilegeType(privilege: string): Promise<Privilege> {
 
   const result = await db('privileges')
     .select('*')

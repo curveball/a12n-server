@@ -71,7 +71,7 @@ describe('AuthorizeController', () => {
     sandbox.stub(oauth2Service, 'validateRedirectUri').returns(Promise.resolve(true));
     sandbox.stub(oauth2Service, 'requireRedirectUri').returns(Promise.resolve());
     codeRedirectMock = sandbox.stub(authorize, 'codeRedirect');
-    sandbox.stub(principalService, 'findByIdentity').returns(Promise.resolve(user));
+    sandbox.stub(principalService.PrincipalService.prototype, 'findByIdentity').returns(Promise.resolve(user));
     sandbox.stub(userService, 'validatePassword').returns(Promise.resolve(true));
     sandbox.stub(userService, 'hasTotp').returns(Promise.resolve(false));
     sandbox.stub(serverSettings, 'getSetting').returns(true);

@@ -1,7 +1,7 @@
 import db from '../database';
 import { App, User } from '../types';
 import { UserAppPermission } from './types';
-import * as principalService from '../principal/service';
+import { PrincipalService } from '../principal/service';
 import { UserAppPermissionsRecord } from 'knex/types/tables';
 import { NotFound } from '@curveball/http-errors';
 
@@ -56,11 +56,14 @@ export async function setPermissions(app: App, user: User, scope: string[]): Pro
  */
 export async function findByUser(user: User): Promise<UserAppPermission[]> {
 
+  const principalService = new PrincipalService('insecure');
   const records = await db('user_app_permissions')
     .select()
     .where({user_id: user.id});
 
-  const apps = await principalService.findMany(records.map(record => record.app_id)) as Map<number, App>;
+  const apps = await principalService.findMany(
+    records.map(record => record.app_id)
+  ) as Map<number, App>;
 
   return records.map( record => recordToModel(
     record,

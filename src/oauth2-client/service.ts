@@ -5,7 +5,7 @@ import { Oauth2ClientsRecord } from 'knex/types/tables';
 import { wrapError, UniqueViolationError } from 'db-errors';
 
 import { OAuth2Client } from './types';
-import * as principalService from '../principal/service';
+import { PrincipalService } from '../principal/service';
 import db, { insertAndGetId } from '../database';
 import { InvalidRequest } from '../oauth2/errors';
 import parseBasicAuth from './parse-basic-auth';
@@ -23,6 +23,7 @@ export async function findByClientId(clientId: string): Promise<OAuth2Client> {
 
   const record: Oauth2ClientsRecord = result[0];
 
+  const principalService = new PrincipalService('insecure');
   const app = await principalService.findById(record.user_id, 'app');
   if (!app.active) {
     throw new Error(`App ${app.nickname} is not active`);
@@ -43,6 +44,7 @@ export async function findById(id: number): Promise<OAuth2Client> {
 
   const record: Oauth2ClientsRecord = result[0];
 
+  const principalService = new PrincipalService('insecure');
   const app = await principalService.findById(record.user_id, 'app');
   if (!app.active) {
     throw new Error(`App ${app.nickname} is not active`);

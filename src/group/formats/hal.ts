@@ -47,25 +47,18 @@ export function item(group: Group, privileges: PrivilegeMap, isAdmin: boolean, g
 
   const hal: HalResource = {
     _links: {
-      'self': {href: group.href, title: group.nickname },
-      'me': { href: group.identity, title: group.nickname },
-      'up' : { href: '/group', title: 'List of groups' },
-      'group': groups.map( group => ({
+      self: {href: group.href, title: group.nickname },
+      me: { href: group.identity, title: group.nickname },
+      up : { href: '/group', title: 'List of groups' },
+      group: groups.map( group => ({
         href: group.href,
         title: group.nickname,
       })),
-      'member': members.map( member => ({
+      member: members.map( member => ({
         href: member.href,
         title: member.nickname
       })),
-      'member-collection': {
-        href: `${group.href}/member`,
-        title: 'Group member',
-        hints: {
-          status: 'deprecated'
-        },
-      },
-      'describedby': {
+      describedby: {
         href: 'https://curveballjs.org/schemas/a12nserver/group.json',
         type: 'application/schema+json',
       }

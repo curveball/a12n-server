@@ -452,7 +452,10 @@ function userTypeIntToUserType(input: number): PrincipalType {
 
 }
 
-function getPathName(href: string): string {
+/**
+ * @private Only exported for testing purposes.
+ */
+export function getPathName(href: string): string {
 
   let url;
 

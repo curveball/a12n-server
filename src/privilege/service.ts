@@ -114,7 +114,7 @@ export class LazyPrivilegeBox {
     if (this.who === 'insecure') return true;
 
     const privileges = this.getAll();
-    return privileges['*']?.includes(privilege) || privileges[resource]?.includes(privilege) || false;
+    return privileges['*']?.includes(privilege) || privileges[resource]?.includes(privilege) || privileges['*']?.includes('admin') || privileges[resource]?.includes('admin') || false;
 
   }
 

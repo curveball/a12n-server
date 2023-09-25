@@ -159,7 +159,7 @@ export class PrincipalService {
         throw new NotFound(`Principal with id: ${externalId} not found`);
       }
     }
-    
+
 
     const principal = recordToModel(result as PrincipalsRecord);
 

@@ -1,7 +1,21 @@
 import { LazyPrivilegeBox } from '../privilege/service';
-import { Principal, PrincipalType, User, Group, App } from '../types';
-import db from '../database';
+import {
+  App,
+  BasePrincipal,
+  Group,
+  NewPrincipal,
+  Principal,
+  PrincipalStats,
+  PrincipalType,
+  User,
+} from '../types';
+import db, {insertAndGetId} from '../database';
 import { PrincipalsRecord } from 'knex/types/tables';
+import {
+  NotFound,
+  UnprocessableEntity,
+} from '@curveball/http-errors';
+import { generatePublicId } from '../crypto';
 
 /**
  * This class provides a wrapper around the principal service APIs.
@@ -9,13 +23,25 @@ import { PrincipalsRecord } from 'knex/types/tables';
  * It ensures that the caller (the personal or app that's logged in) has
  * the appropriate privileges to read the associated data.
  */
-export class PrivilegedPrincipalService {
+export class PrincipalService {
 
   private privileges: LazyPrivilegeBox;
 
-  constructor(actor: Principal | 'insecure') {
+  /**
+   * Set up the principal service.
+   *
+   * You must pass the privileges for the current user, so we can check if
+   * the user is allowed to perform the requests.
+   *
+   * If the string 'insecure' is passed, no privileges will be checked.
+   */
+  constructor(privileges: LazyPrivilegeBox|'insecure') {
 
-    this.privileges = new LazyPrivilegeBox(actor);
+    if (privileges === 'insecure') {
+      this.privileges = new LazyPrivilegeBox(privileges);
+    } else {
+      this.privileges = privileges;
+    }
 
   }
 
@@ -25,6 +51,7 @@ export class PrivilegedPrincipalService {
   async findAll(): Promise<Principal[]>;
   async findAll(type?: PrincipalType): Promise<Principal[]> {
 
+    this.privileges.require('a12n:principals:list');
     const filters: Record<string, any> = {};
     if (type) {
       filters.type = userTypeToInt(type);
@@ -41,12 +68,218 @@ export class PrivilegedPrincipalService {
 
   }
 
-  async checkPrivilege(privilege: string, resource: string) {
+  async findByIdentity(identity: string): Promise<Principal> {
 
-    await this.privileges.ready();
-    this.privileges.require(privilege, resource);
+    this.privileges.require('a12n:principals:list');
+    const result = await db('principals')
+      .where({identity})
+      .first();
+
+    if (!result) {
+      throw new NotFound(`Principal with identity: ${identity} not found`);
+    }
+
+    return recordToModel(result);
 
   }
+
+  async save<T extends PrincipalType>(principal: BasePrincipal<T>|NewPrincipal<T> ): Promise<BasePrincipal<T>> {
+
+    if (!isExistingPrincipal(principal)) {
+
+      this.privileges.require('a12n:principals:create');
+      const externalId = await generatePublicId();
+
+      const newPrincipalsRecord: Omit<PrincipalsRecord, 'id'> = {
+        identity: principal.identity,
+        external_id: externalId,
+        nickname: principal.nickname,
+        type: userTypeToInt(principal.type),
+        active: principal.active ? 1 : 0,
+        modified_at: Date.now(),
+        created_at: Date.now(),
+        system: 0,
+      };
+
+      const result = await insertAndGetId('principals', newPrincipalsRecord);
+
+      return {
+        id: result,
+        href: `/${principal.type}/${externalId}`,
+        externalId,
+        system: false,
+        ...principal,
+      };
+
+    } else {
+
+      // Update user
+      this.privileges.require('a12n:principals:update', principal.href);
+      if (!isIdentityValid(principal.identity)) {
+        throw new UnprocessableEntity('Identity must be a valid URI');
+      }
+
+      principal.modifiedAt = new Date();
+
+      const updatePrincipalsRecord: Omit<PrincipalsRecord, 'id' | 'created_at' | 'type' | 'external_id' | 'system'> = {
+        identity: principal.identity,
+        nickname: principal.nickname,
+        active: principal.active ? 1 : 0,
+        modified_at: principal.modifiedAt.getTime(),
+      };
+
+
+      await db('principals')
+        .where('id', principal.id)
+        .update(updatePrincipalsRecord);
+
+      return principal;
+
+    }
+  }
+  async findByExternalId(externalId: string, type: 'user'): Promise<User>;
+  async findByExternalId(externalId: string, type: 'group'): Promise<Group>;
+  async findByExternalId(externalId: string, type: 'app'): Promise<App>;
+  async findByExternalId(externalId: string): Promise<Principal>;
+  async findByExternalId(externalId: string, type?: PrincipalType): Promise<Principal> {
+
+    let result = await db('principals')
+      .select()
+      .where({external_id: externalId})
+      .first();
+
+    if (!result && +(externalId)>0) {
+      // Trying to find the principal but now use the id field
+      result = await db('principals')
+        .select()
+        .where({id: +externalId})
+        .first();
+
+      if (!result) {
+        throw new NotFound(`Principal with id: ${externalId} not found`);
+      }
+    }
+    
+
+    const principal = recordToModel(result as PrincipalsRecord);
+
+    if (!this.privileges.isPrincipal(principal)) this.privileges.require('a12n:principals:list');
+
+    if (type && principal.type !== type) {
+      throw new NotFound(`Principal with id ${externalId} does not have type ${type}`);
+    }
+    return principal;
+
+  }
+
+  /**
+   * Finds a principal by its href'.
+   *
+   * This can be a string like /user/1, or a full url.
+   * It can also be the uri listed in the 'identity' field.
+   */
+  async findByHref(href: string): Promise<Principal> {
+
+    this.privileges.require('a12n:principals:list');
+    const pathName = getPathName(href);
+    const matches = pathName.match(/^\/(user|app|group)\/([0-9a-zA-Z_-]+)$/);
+
+    if (!matches) {
+      return this.findByIdentity(href);
+    }
+
+    let typeFilter;
+    switch(matches[1] as 'user' | 'app' | 'group') {
+      case 'user' :
+        // Backwards compatibility
+        typeFilter = [1,2,3];
+        break;
+      case 'app' :
+        typeFilter = [2];
+        break;
+      case 'group' :
+        // Backwards compatibility
+        typeFilter = [3];
+        break;
+    }
+
+    const result = await db('principals')
+      .select()
+      .whereIn('type', typeFilter)
+      .andWhere({external_id: matches[2]})
+      .first();
+
+    if (!result) {
+      throw new NotFound('Principal with href: ' + href + ' not found');
+    }
+
+    return recordToModel(result);
+  }
+
+}
+/**
+ * Returns true if more than 1 principal exists in the system.
+ *
+ * If there are 0 principals, this puts a12nserver in setup mode, which allows a
+ * person to create the first user in the system, automatically activate it
+ * and make them an admin.
+ */
+export async function hasUsers(): Promise<boolean> {
+
+  const result = await db('principals')
+    .select('id')
+    .where({type: 1})
+    .first();
+  return !!result;
+
+}
+export function isIdentityValid(identity: string): boolean {
+
+  const regex = /^(?:[A-Za-z]+:\S*$)?/;
+  return regex.test(identity);
+
+}
+export async function getPrincipalStats(): Promise<PrincipalStats> {
+
+  const result = await db<any>('principals')
+    .select(['type', db.raw('COUNT(*) as total')])
+    .groupBy('type');
+
+  const principalStats: Record<PrincipalType, number> = {
+    user: 0,
+    app: 0,
+    group: 0
+  };
+
+  for (const principal of result) {
+    principalStats[userTypeIntToUserType(principal.type)] = principal.total;
+  }
+
+  return principalStats;
+
+}
+
+
+function recordToModel(user: PrincipalsRecord): Principal {
+
+  return {
+    id: user.id,
+    href: `/${userTypeIntToUserType(user.type)}/${user.external_id}`,
+    identity: user.identity,
+    externalId: user.external_id,
+    nickname: user.nickname!,
+    createdAt: new Date(user.created_at),
+    modifiedAt: new Date(user.modified_at),
+    type: userTypeIntToUserType(user.type),
+    active: !!user.active,
+    system: !!user.system,
+  };
+
+}
+
+function isExistingPrincipal(user: Principal | NewPrincipal<any>): user is Principal {
+
+  return (user as Principal).id !== undefined;
 
 }
 
@@ -72,19 +305,15 @@ function userTypeIntToUserType(input: number): PrincipalType {
 
 }
 
-export function recordToModel(user: PrincipalsRecord): Principal {
+function getPathName(href: string): string {
 
-  return {
-    id: user.id,
-    href: `/${userTypeIntToUserType(user.type)}/${user.external_id}`,
-    identity: user.identity,
-    externalId: user.external_id,
-    nickname: user.nickname!,
-    createdAt: new Date(user.created_at),
-    modifiedAt: new Date(user.modified_at),
-    type: userTypeIntToUserType(user.type),
-    active: !!user.active,
-    system: !!user.system,
-  };
+  let url;
+
+  try {
+    url = new URL(href);
+  } catch {
+    return href;
+  }
+  return url.pathname;
 
 }

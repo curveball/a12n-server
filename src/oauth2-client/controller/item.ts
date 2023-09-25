@@ -3,13 +3,14 @@ import { Context } from '@curveball/core';
 import * as hal from '../formats/hal';
 import { Forbidden, NotFound } from '@curveball/http-errors';
 import { findByClientId } from '../service';
-import * as principalService from '../../principal/service';
+import { PrincipalService } from '../../principal/privileged-service';
 import * as oauth2Service from '../../oauth2/service';
 
 class ClientController extends Controller {
 
   async get(ctx: Context) {
 
+    const principalService = new PrincipalService(ctx.privileges);
     const user = await principalService.findByExternalId(ctx.params.id, 'app');
     if (ctx.auth.equals(user)) {
       if (!ctx.privileges.has('admin')) {

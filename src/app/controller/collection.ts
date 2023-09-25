@@ -2,7 +2,7 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { BadRequest, Conflict, NotFound, UnprocessableEntity } from '@curveball/http-errors';
 import * as hal from '../formats/hal';
-import * as principalService from '../../principal/service';
+import { PrincipalService } from '../../principal/privileged-service';
 
 type NewPrincipalBody = {
   nickname: string;
@@ -14,6 +14,7 @@ class UserCollectionController extends Controller {
 
   async get(ctx: Context) {
 
+    const principalService = new PrincipalService(ctx.privileges);
     const apps = await principalService.findAll('app');
     ctx.response.body = hal.collection(apps);
 
@@ -21,7 +22,7 @@ class UserCollectionController extends Controller {
 
   async post(ctx: Context) {
 
-    ctx.privileges.require('admin');
+    const principalService = new PrincipalService(ctx.privileges);
 
     ctx.request.validate<NewPrincipalBody>(
       'https://curveballjs.org/schemas/a12nserver/new-principal.json'

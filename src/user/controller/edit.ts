@@ -1,12 +1,13 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import * as hal from '../formats/hal';
-import * as principalService from '../../principal/service';
+import { PrincipalService } from '../../principal/privileged-service';
 
 class UserEditController extends Controller {
 
   async get(ctx: Context) {
 
+    const principalService = new PrincipalService(ctx.privileges);
     const user = await principalService.findByExternalId(ctx.params.id, 'user');
 
     ctx.privileges.require('admin');
@@ -19,6 +20,7 @@ class UserEditController extends Controller {
 
   async post(ctx: Context) {
 
+    const principalService = new PrincipalService(ctx.privileges);
     const userBody: any = ctx.request.body;
     const userOld = await principalService.findByExternalId(ctx.params.id);
 

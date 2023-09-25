@@ -1,6 +1,6 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import * as principalService from '../../principal/service';
+import { PrincipalService } from '../../principal/privileged-service';
 import { createAppForm } from '../formats/html';
 import { uuidUrn } from '../../crypto';
 
@@ -37,7 +37,7 @@ class CreateAppController extends Controller {
 
     ctx.request.validate<AppNewForm>('https://curveballjs.org/schemas/a12nserver/app-new-form.json');
 
-    ctx.privileges.require('admin');
+    const principalService = new PrincipalService(ctx.privileges);
 
     const nickname = ctx.request.body.nickname;
     const identity = ctx.request.body.url || uuidUrn();

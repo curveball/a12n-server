@@ -8,7 +8,7 @@ import { tokenResponse } from '../../oauth2/formats/json';
 import * as tokenService from '../service';
 import * as oauth2Service from '../../oauth2/service';
 import * as oauth2ClientService from '../../oauth2-client/service';
-import * as principalService from '../../principal/service';
+import { PrincipalService } from '../../principal/privileged-service';
 
 type OtteRequest = {
   activateUser?: boolean;
@@ -21,6 +21,7 @@ class OneTimeTokenExchangeController extends Controller {
   async post(ctx: Context<OtteRequest>) {
 
     ctx.privileges.require('admin');
+    const principalService = new PrincipalService(ctx.privileges);
 
     if (!ctx.request.body.token) {
       throw new UnprocessableEntity('A token must be provided for the exchange');

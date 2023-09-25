@@ -2,7 +2,7 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import * as privilegeService from '../../privilege/service';
 import * as hal from '../formats/hal';
-import * as principalService from '../../principal/service';
+import { PrincipalService } from '../../principal/privileged-service';
 import * as groupService from '../../group/service';
 import { NotFound, Conflict } from '@curveball/http-errors';
 
@@ -31,6 +31,7 @@ class GroupController extends Controller {
 
   async get(ctx: Context) {
 
+    const principalService = new PrincipalService(ctx.privileges);
     const group = await principalService.findByExternalId(ctx.params.id, 'group');
     const isAdmin = ctx.privileges.has('admin');
     const members = await groupService.findMembers(group);
@@ -57,7 +58,7 @@ class GroupController extends Controller {
 
   async put(ctx: Context) {
 
-    ctx.privileges.require('admin');
+    const principalService = new PrincipalService(ctx.privileges);
     ctx.request.validate<EditPrincipalBody>(
       'https://curveballjs.org/schemas/a12nserver/principal-edit.json'
     );
@@ -77,6 +78,7 @@ class GroupController extends Controller {
    */
   async patch(ctx: Context) {
 
+    const principalService = new PrincipalService(ctx.privileges);
     ctx.request.validate<GroupPatch>('https://curveballjs.org/schemas/a12nserver/group-patch.json');
     const group = await principalService.findByExternalId(ctx.params.id, 'group');
 

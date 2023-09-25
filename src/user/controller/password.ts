@@ -1,6 +1,6 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import * as principalService from '../../principal/service';
+import { PrincipalService } from '../../principal/privileged-service';
 import * as userService from '../service';
 
 class UserPasswordController extends Controller {
@@ -10,6 +10,7 @@ class UserPasswordController extends Controller {
     ctx.privileges.require('admin');
 
     const userBody: any = ctx.request.body;
+    const principalService = new PrincipalService(ctx.privileges);
     const user = await principalService.findByExternalId(ctx.params.id, 'user');
 
     const password = userBody.newPassword;

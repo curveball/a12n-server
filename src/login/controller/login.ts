@@ -7,7 +7,7 @@ import { EventType } from '../../log/types';
 import { MFALoginSession } from '../../mfa/types';
 import * as webAuthnService from '../../mfa/webauthn/service';
 import { getSetting } from '../../server-settings';
-import * as principalService from '../../principal/service';
+import { hasUsers, PrincipalService } from '../../principal/privileged-service';
 import * as userService from '../../user/service';
 import { User } from '../../types';
 import { isValidRedirect } from '../utilities';
@@ -17,7 +17,7 @@ class LoginController extends Controller {
 
   async get(ctx: Context) {
 
-    const firstRun = !(await principalService.hasPrincipals());
+    const firstRun = !(await hasUsers());
     if (firstRun) {
       // The 'continue' query parameter contains the URL we want to redirect to after registration
       const params = ctx.query.continue ? '?' + new URLSearchParams({continue: ctx.query.continue}) : '';
@@ -39,6 +39,7 @@ class LoginController extends Controller {
 
   async post(ctx: Context<any>) {
 
+    const principalService = new PrincipalService('insecure');
     let user: User;
     try {
       user = await principalService.findByIdentity('mailto:' + ctx.request.body.userName) as User;

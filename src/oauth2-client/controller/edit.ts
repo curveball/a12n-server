@@ -2,7 +2,7 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import * as hal from '../formats/hal';
 import { Forbidden, NotFound, UnprocessableEntity } from '@curveball/http-errors';
-import * as principalService from '../../principal/service';
+import { PrincipalService } from '../../principal/privileged-service';
 import { findByClientId, edit } from '../service';
 import * as oauth2Service from '../../oauth2/service';
 import { GrantType } from '../../types';
@@ -11,6 +11,7 @@ class EditClientController extends Controller {
 
   async get(ctx: Context) {
 
+    const principalService = new PrincipalService(ctx.privileges);
     const app = await principalService.findByExternalId(ctx.params.id, 'app');
     if (!ctx.privileges.has('admin')) {
       throw new Forbidden('Only users with the "admin" privilege can add new OAuth2 clients');
@@ -27,6 +28,7 @@ class EditClientController extends Controller {
 
   async post(ctx: Context<any>) {
 
+    const principalService = new PrincipalService(ctx.privileges);
     const app = await principalService.findByExternalId(ctx.params.id, 'app');
     if (!ctx.privileges.has('admin')) {
       throw new Forbidden('Only users with the "admin" privilege can inspect OAuth2 clients that are not your own');

@@ -4,7 +4,7 @@ import { Context } from '@curveball/core';
 import { Forbidden, UnprocessableEntity } from '@curveball/http-errors';
 
 import * as hal from '../formats/hal';
-import * as principalService from '../../principal/service';
+import { PrincipalService } from '../../principal/privileged-service';
 import { GrantType } from '../../types';
 import { OAuth2Client } from '../types';
 import { findByApp, create } from '../service';
@@ -14,6 +14,7 @@ class ClientCollectionController extends Controller {
 
   async get(ctx: Context) {
 
+    const principalService = new PrincipalService(ctx.privileges);
     const app = await principalService.findByExternalId(ctx.params.id, 'app');
     if (ctx.auth.equals(app)) {
       if (!ctx.privileges.has('admin')) {
@@ -28,6 +29,7 @@ class ClientCollectionController extends Controller {
 
   async post(ctx: Context<any>) {
 
+    const principalService = new PrincipalService(ctx.privileges);
     const app = await principalService.findByExternalId(ctx.params.id, 'app');
     if (!ctx.privileges.has('admin')) {
       throw new Forbidden('Only users with the "admin" privilege can inspect OAuth2 clients that are not your own');

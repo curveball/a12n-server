@@ -2,7 +2,7 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { Forbidden, NotFound } from '@curveball/http-errors';
 import { getSetting } from '../../server-settings';
-import * as principalService from '../../principal/service';
+import { PrincipalService, hasUsers } from '../../principal/privileged-service';
 import * as userService from '../../user/service';
 import { registrationForm } from '../formats/html';
 import * as privilegeService from '../../privilege/service';
@@ -12,7 +12,7 @@ class UserRegistrationController extends Controller {
 
   async get(ctx: Context) {
 
-    const firstRun = !(await principalService.hasPrincipals());
+    const firstRun = !(await hasUsers());
 
     ctx.response.type = 'text/html';
     ctx.response.body = registrationForm(
@@ -27,10 +27,17 @@ class UserRegistrationController extends Controller {
 
   async post(ctx: Context) {
 
+    const firstRun = !(await hasUsers());
+
     const body: any = ctx.request.body;
     const userPassword = body.password;
     const confirmPassword = body.confirmPassword;
     const addMfa = 'addMfa' in body;
+
+    /**
+     * We use an 'insecure' context for registration because it's anonymous
+     */
+    const principalService = new PrincipalService('insecure');
 
     if (userPassword !== confirmPassword) {
       ctx.status = 303;
@@ -54,8 +61,6 @@ class UserRegistrationController extends Controller {
         throw err;
       }
     }
-
-    const firstRun = !(await principalService.hasPrincipals());
 
     const user: User = await principalService.save({
       identity: 'mailto:' + body.emailAddress,
@@ -107,7 +112,6 @@ class UserRegistrationController extends Controller {
     return super.dispatch(ctx);
 
   }
-
 
 }
 

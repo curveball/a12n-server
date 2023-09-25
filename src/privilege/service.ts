@@ -148,6 +148,17 @@ export class LazyPrivilegeBox {
 
   }
 
+  /**
+   * Returns true if the passed principal matches principal associated with
+   * the current set of privileges.
+   */
+  isPrincipal(principal: Principal): boolean {
+
+    if (this.who === 'insecure' || this.who === 'public') return false;
+    return this.who.id === principal.id;
+
+  }
+
 }
 
 

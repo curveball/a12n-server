@@ -2,7 +2,7 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
-import * as principalService from '../../principal/service';
+import { PrincipalService } from '../../principal/privileged-service';
 import * as userService from '../../user/service';
 import { User } from '../../types';
 import { InvalidGrant, InvalidRequest, UnsupportedGrantType } from '../errors';
@@ -106,6 +106,7 @@ class TokenController extends Controller {
   async password(oauth2Client: OAuth2Client, ctx: Context<any>) {
 
     let user: User;
+    const principalService = new PrincipalService('insecure');
     try {
       user = await principalService.findByIdentity('mailto:' + ctx.request.body.username) as User;
       if (user.type !== 'user') {

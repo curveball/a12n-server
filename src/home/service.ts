@@ -1,5 +1,5 @@
 import { ServerStats } from '../types';
-import { getPrincipalStats } from '../principal/service';
+import { getPrincipalStats } from '../principal/privileged-service';
 import { findPrivileges } from '../privilege/service';
 import { lastTokenId } from '../oauth2/service';
 

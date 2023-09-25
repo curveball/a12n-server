@@ -4,7 +4,7 @@ import { BadRequest } from '@curveball/http-errors';
 import * as privilegeService from '../../privilege/service';
 import { PrivilegeMap } from '../../privilege/types';
 import * as hal from '../formats/hal';
-import * as principalService from '../../principal/service';
+import { PrincipalService } from '../../principal/privileged-service';
 // import * as groupService from '../../group/service';
 
 type PolicyForm = {
@@ -20,6 +20,7 @@ class UserEditPrivilegesController extends Controller {
 
   async get(ctx: Context) {
 
+    const principalService = new PrincipalService(ctx.privileges);
     const user = await principalService.findByExternalId(ctx.params.id);
     const immediatePrivileges = await privilegeService.getImmediatePrivilegesForPrincipal(user);
     const privilegeTypes = await privilegeService.findPrivileges();
@@ -38,6 +39,7 @@ class UserEditPrivilegesController extends Controller {
 
     const { policyBody } = ctx.request.body;
 
+    const principalService = new PrincipalService(ctx.privileges);
     const principal = await principalService.findByExternalId(ctx.params.id);
     ctx.privileges.require('admin');
 
@@ -57,6 +59,7 @@ class UserEditPrivilegesController extends Controller {
   async patch(ctx: Context) {
 
     ctx.request.validate<PrincipalPatchPrivilege>('https://curveballjs.org/schemas/a12nserver/principal-patch-privilege.json');
+    const principalService = new PrincipalService(ctx.privileges);
     const principal = await principalService.findByExternalId(ctx.params.id);
     ctx.privileges.require('admin');
 

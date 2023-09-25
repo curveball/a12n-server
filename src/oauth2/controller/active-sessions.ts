@@ -4,7 +4,7 @@ import { Forbidden, NotFound, NotImplemented } from '@curveball/http-errors';
 
 import * as csv from '../formats/csv';
 
-import * as principalService from '../../principal/service';
+import { PrincipalService } from '../../principal/privileged-service';
 import * as oauth2Service from '../service';
 import * as oauth2ClientService from '../../oauth2-client/service';
 
@@ -42,6 +42,7 @@ class ActiveSessions extends Controller {
 
   private async getData(ctx: Context): Promise<[Principal, OAuth2Token[], Map<number, OAuth2Client|null>]> {
 
+    const principalService = new PrincipalService(ctx.privileges);
     const principal = await principalService.findByExternalId(ctx.params.id);
     if (ctx.auth.equals(principal) && !ctx.privileges.has('admin')) {
       throw new Forbidden('You can only use this API for yourself yourself, or if you have \'admin\' privileges');

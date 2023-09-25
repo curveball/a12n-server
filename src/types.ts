@@ -60,3 +60,24 @@ export type App = BasePrincipal<'app'>;
  * Any principal
  */
 export type Principal = User | Group | App;
+
+/**
+ * Structure of a principal before it's inserted in the database.
+ */
+export type NewPrincipal<TType extends PrincipalType> = {
+  type: TType;
+  identity: string;
+  nickname: string;
+  createdAt: Date;
+  modifiedAt: Date;
+  active: boolean;
+}
+
+/**
+ * Principal statistics
+ */
+export type PrincipalStats = {
+  user: number;
+  app: number;
+  group: number;
+};

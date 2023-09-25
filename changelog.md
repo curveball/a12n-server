@@ -15,6 +15,11 @@ Changelog
   2021 and is now finally removed. If you still depended on this endpoint, all
   the related information can be found on the /group/x endpoint. This endpoint
   also has operations for modifying the members list.
+* By default this server will no longer allow new users and apps to see the
+  full list of other users, groups and apps. Any applications relying on this
+  behavior need to give the relevant users the `a12n:principals:list`
+  privilege. To get the old behavior, simply add this privilege to the new
+  `$all` group.
 
 
 0.23.1 (2023-03-29)

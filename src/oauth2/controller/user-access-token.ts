@@ -1,5 +1,6 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
+import { Forbidden } from '@curveball/http-errors';
 
 import log from '../../log/service';
 import { EventType } from '../../log/types';
@@ -12,6 +13,10 @@ class UserAccessTokenController extends Controller {
 
     const principalService = new PrincipalService(ctx.privileges);
     const user = await principalService.findByExternalId(ctx.params.id, 'user');
+
+    if (ctx.auth.equals(user) && !ctx.privileges.has('admin')) {
+      throw new Forbidden('You can only generate OAuth2 access tokens for yourself with this endpoint (unless you have the \'admin\' privilege (which you haven\'t))');
+    }
 
     const token = await oauth2Service.generateTokenDeveloperToken({
       principal: user,

@@ -10,6 +10,11 @@ Changelog
 * Added a system group principal , which allows admins to set privileges for
   every user in the system.
 * Fix Sqlite startup warning.
+* The `/group/x/members` collection and associated operations and links have
+  been removed. This endpoint had been marked deprecated in version 0.19 in May
+  2021 and is now finally removed. If you still depended on this endpoint, all
+  the related information can be found on the /group/x endpoint. This endpoint
+  also has operations for modifying the members list.
 
 
 0.23.1 (2023-03-29)

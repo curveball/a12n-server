@@ -3,7 +3,6 @@ import { Context } from '@curveball/core';
 import * as privilegeService from '../../privilege/service';
 import * as hal from '../formats/hal';
 import { PrincipalService } from '../../principal/privileged-service';
-import * as groupService from '../../group/service';
 import { NotFound, Conflict } from '@curveball/http-errors';
 
 type EditPrincipalBody = {
@@ -34,7 +33,7 @@ class GroupController extends Controller {
     const principalService = new PrincipalService(ctx.privileges);
     const group = await principalService.findByExternalId(ctx.params.id, 'group');
     const isAdmin = ctx.privileges.has('admin');
-    const members = await groupService.findMembers(group);
+    const members = await principalService.findMembers(group);
 
     const principalPrivileges = await privilegeService.get(group);
 
@@ -49,7 +48,7 @@ class GroupController extends Controller {
         group,
         principalPrivileges.getAll(),
         isAdmin,
-        await groupService.findGroupsForPrincipal(group),
+        await principalService.findGroupsForPrincipal(group),
         members,
       );
     }
@@ -97,23 +96,23 @@ class GroupController extends Controller {
 
     switch (ctx.request.body.operation) {
       case 'add-member':
-        await groupService.addMember(group, member);
+        await principalService.addMember(group, member);
         break;
       case 'remove-member':
-        await groupService.removeMember(group, member);
+        await principalService.removeMember(group, member);
         break;
     }
 
     if (ctx.request.accepts('text/html')) {
       const isAdmin = ctx.privileges.has('admin');
-      const members = await groupService.findMembers(group);
+      const members = await principalService.findMembers(group);
       const principalPrivileges = await privilegeService.get(group);
 
       ctx.response.body = hal.item(
         group,
         principalPrivileges.getAll(),
         isAdmin,
-        await groupService.findGroupsForPrincipal(group),
+        await principalService.findGroupsForPrincipal(group),
         members,
       );
       ctx.redirect(200, group.href);

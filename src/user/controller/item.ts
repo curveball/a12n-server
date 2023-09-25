@@ -5,7 +5,6 @@ import * as userHal from '../formats/hal';
 import * as appHal from '../../app/formats/hal';
 import * as groupHal from '../../group/formats/hal';
 import * as userService from '../service';
-import * as groupService from '../../group/service';
 import { PrincipalService } from '../../principal/privileged-service';
 
 type EditPrincipalBody = {
@@ -56,16 +55,16 @@ class UserController extends Controller {
           hasControl,
           hasPassword,
           isAdmin,
-          await groupService.findGroupsForPrincipal(principal),
+          await principalService.findGroupsForPrincipal(principal),
         );
         break;
       case 'group' : {
-        const members = await groupService.findMembers(principal);
+        const members = await principalService.findMembers(principal);
         ctx.response.body = groupHal.item(
           principal,
           principalPrivileges.getAll(),
           isAdmin,
-          await groupService.findGroupsForPrincipal(principal),
+          await principalService.findGroupsForPrincipal(principal),
           members,
         );
         break;
@@ -75,7 +74,7 @@ class UserController extends Controller {
           principal,
           principalPrivileges.getAll(),
           isAdmin,
-          await groupService.findGroupsForPrincipal(principal),
+          await principalService.findGroupsForPrincipal(principal),
         );
         break;
     }

@@ -3,7 +3,7 @@ import db, { query } from '../database';
 import { Principal } from '../types';
 import { Privilege, PrivilegeMap, PrivilegeEntry } from './types';
 import { UserPrivilegesRecord } from 'knex/types/tables';
-import * as principalService from '../principal/service';
+import { PrincipalService } from '../principal/privileged-service';
 import { Forbidden } from '@curveball/http-errors';
 
 
@@ -23,11 +23,14 @@ export async function get(who: Context | Principal | 'insecure'): Promise<LazyPr
  */
 export async function findPrivilegesForResource(resource: string): Promise<PrivilegeEntry[]> {
 
+  const principalService = new PrincipalService('insecure');
   const records = await db('user_privileges')
     .select('*')
     .where({resource}).orWhere({resource: '*'});
 
-  const principals = await principalService.findMany(records.map(record => record.user_id));
+  const principals = await principalService.findMany(
+    records.map(record => record.user_id)
+  );
 
   return records.map(record => ({
     privilege: record.privilege,

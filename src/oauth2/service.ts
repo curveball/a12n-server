@@ -3,7 +3,7 @@ import * as crypto from 'crypto';
 
 import db, { query } from '../database';
 import { getSetting } from '../server-settings';
-import * as principalService from '../principal/service';
+import { PrincipalService } from '../principal/privileged-service';
 import { InvalidGrant, InvalidRequest, UnauthorizedClient } from './errors';
 import { CodeChallengeMethod, OAuth2Code, OAuth2Token } from './types';
 import { OAuth2Client } from '../oauth2-client/types';
@@ -182,6 +182,7 @@ export async function generateTokenAuthorizationCode(options: GenerateTokenAutho
     throw new UnauthorizedClient('The client_id associated with the token did not match with the authenticated client credentials');
   }
 
+  const principalService = new PrincipalService('insecure');
   const user = await principalService.findById(codeRecord.principal_id, 'user');
   if (!user.active) {
     throw new Error(`User ${user.href} is not active`);
@@ -511,6 +512,7 @@ export async function getTokenByAccessToken(accessToken: string): Promise<OAuth2
   }
 
   const row: Oauth2TokensRecord = result[0];
+  const principalService = new PrincipalService('insecure');
   const principal = await principalService.findById(row.user_id);
 
   if (!principal.active) {
@@ -541,6 +543,7 @@ export async function getTokenByRefreshToken(refreshToken: string): Promise<OAut
 
   const row = result[0];
 
+  const principalService = new PrincipalService('insecure');
   const principal = await principalService.findById(row.user_id);
   if (!principal.active) {
     throw new Error(`Principal ${principal.href} is not active`);

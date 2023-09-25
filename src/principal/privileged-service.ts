@@ -216,6 +216,153 @@ export class PrincipalService {
     return recordToModel(result);
   }
 
+  /**
+   * Find multiple principals.
+   *
+   * This function returns the principals as a map, index by their id.
+   * This is a helper function typically used by other services to find large numbers
+   * of joined principals from other tables fast.
+   *
+   * If any of the ids in the list is duplicated, they are de-duplicated here.
+   * if any of the provided ids are not found, this function will error.
+   */
+  async findMany(ids: number[]): Promise<Map<number,Principal>> {
+
+    this.privileges.require('a12n:principals:list');
+    const records = await db('principals')
+      .select()
+      .whereIn('id', ids);
+
+    const result = new Map<number, Principal>(records.map(
+      record => [record.id, recordToModel(record)]
+    ));
+
+    for (const id of ids) {
+      if (!result.has(id)) {
+        throw new NotFound(`Principal with ${id} not found`);
+      }
+    }
+
+    return result;
+
+  }
+
+  async findById(id: number, type: 'user'): Promise<User>;
+  async findById(id: number, type: 'group'): Promise<Group>;
+  async findById(id: number, type: 'app'): Promise<App>;
+  async findById(id: number): Promise<Principal>;
+  async findById(id: number, type?: PrincipalType): Promise<Principal> {
+
+    this.privileges.require('a12n:principals:list');
+    const result = await db('principals')
+      .select()
+      .where({id});
+
+    if (result.length !== 1) {
+      throw new NotFound(`Principal with id: ${id} not found`);
+    }
+
+    const principal = recordToModel(result[0]);
+
+    if (type && principal.type !== type) {
+      throw new NotFound(`Principal with id ${id} does not have type ${type}`);
+    }
+    return principal;
+
+  }
+
+  /**
+   * Returns the list of members of a group
+   */
+  async findMembers(group: Group): Promise<Principal[]> {
+
+    this.privileges.require('a12n:principals:list');
+
+    const result = await db('principals')
+      .select('principals.*')
+      .innerJoin('group_members', { 'principals.id': 'group_members.user_id'})
+      .where({group_id: group.id})
+      .orderBy('nickname');
+
+    const models = [];
+
+    for (const record of result) {
+      const model = recordToModel(record);
+      models.push(model);
+    }
+
+    return models;
+
+  }
+
+  async addMember(group: Group, user: Principal): Promise<void> {
+
+    this.privileges.require('admin');
+
+    await db('group_members').insert({
+      group_id: group.id,
+      user_id: user.id
+    });
+
+  }
+
+  async replaceMembers(group: Group, users: Principal[]): Promise<void> {
+
+    this.privileges.require('admin');
+    await db.transaction(async trx => {
+      await trx('group_members')
+        .delete()
+        .where({
+          group_id: group.id
+        });
+
+      for(const user of users) {
+        await trx('groupmembers')
+          .insert({
+            group_id: group.id,
+            user_id: user.id
+          });
+      }
+      await trx.commit();
+    });
+
+  }
+
+  async removeMember(group: Group, user: Principal): Promise<void> {
+
+    this.privileges.require('admin');
+    await db('group_members')
+      .delete()
+      .where({
+        group_id: group.id,
+        user_id: user.id,
+      });
+
+  }
+
+  /**
+   * Returns a list of groups for which the principal is a member
+   */
+  async findGroupsForPrincipal(principal: Principal): Promise<Group[]> {
+
+    this.privileges.require('admin');
+    const result = await db('principals')
+      .select('principals.*')
+      .innerJoin('group_members', { 'principals.id': 'group_members.group_id'})
+      .where({user_id: principal.id})
+      .orderBy('nickname');
+
+    const models: Group[] = [];
+
+    for (const record of result) {
+      const model = recordToModel(record);
+      models.push(model as Group);
+    }
+
+    return models;
+
+  }
+
 }
 /**
  * Returns true if more than 1 principal exists in the system.

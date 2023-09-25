@@ -3,7 +3,6 @@ import { Context } from '@curveball/core';
 import * as privilegeService from '../../privilege/service';
 import * as hal from '../formats/hal';
 import { PrincipalService } from '../../principal/privileged-service';
-import * as groupService from '../../group/service';
 
 type EditPrincipalBody = {
   nickname: string;
@@ -35,7 +34,7 @@ class AppController extends Controller {
       app,
       principalPrivileges.getAll(),
       isAdmin,
-      await groupService.findGroupsForPrincipal(app),
+      await principalService.findGroupsForPrincipal(app),
     );
 
   }

@@ -14,3 +14,9 @@ export type PrivilegeEntry = {
   resource: string;
   principal: Principal;
 }
+
+export type InternalPrivilege =
+  'admin' |
+  'a12n:principals:list' |
+  'a12n:principals:create' |
+  'a12n:principals:update';

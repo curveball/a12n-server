@@ -12,7 +12,6 @@ import clientEdit from './oauth2-client/controller/edit';
 import clients from './oauth2-client/controller/collection';
 import group from './group/controller/item';
 import groupNew from './group/controller/new';
-import groupMembers from './group/controller/member-collection';
 import groups from './group/controller/collection';
 import health from './health/controller';
 import home from './home/controller';
@@ -86,7 +85,6 @@ const routes = [
   router('/group/:id', group),
   router('/group/:id/edit', userEdit),
   router('/group/:id/edit/privileges', userEditPrivileges),
-  router('/group/:id/member', groupMembers),
 
   router('/privilege', privilegeCollection),
   router('/privilege/:id', privilegeItem),

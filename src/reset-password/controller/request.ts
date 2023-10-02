@@ -3,7 +3,7 @@ import { Context } from '@curveball/core';
 import { NotFound, BadRequest } from '@curveball/http-errors';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
-import * as principalService from '../../principal/service';
+import { PrincipalService } from '../../principal/service';
 import { resetPasswordRequestForm } from '../formats/html';
 import { sendResetPasswordEmail } from '../service';
 
@@ -25,6 +25,9 @@ class ResetPasswordRequestController extends Controller {
 
   async post(ctx: Context<any>) {
 
+    // Insecure means there are no privilege restrictions in doing this.
+    // Normally findByIdentity is protected but for this specific case it's public.
+    const principalService = new PrincipalService('insecure');
     let user;
     try {
       user = await principalService.findByIdentity('mailto:' + ctx.request.body.emailAddress);

@@ -1,7 +1,7 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { NotFound, UnprocessableEntity } from '@curveball/http-errors';
-import * as principalService from '../../principal/service';
+import { PrincipalService, isIdentityValid } from '../../principal/service';
 import { createUserForm } from '../formats/html';
 
 type UserNewForm = {
@@ -27,12 +27,12 @@ class CreateUserController extends Controller {
   async post(ctx: Context) {
 
     ctx.request.validate<UserNewForm>('https://curveballjs.org/schemas/a12nserver/user-new-form.json');
-    ctx.privileges.require('admin');
+    const principalService = new PrincipalService(ctx.privileges);
 
     const identity = ctx.request.body.identity;
     const nickname = ctx.request.body.nickname;
 
-    if (!principalService.isIdentityValid(identity)) {
+    if (!isIdentityValid(identity)) {
       throw new UnprocessableEntity('Identity must be a valid URI');
     }
 

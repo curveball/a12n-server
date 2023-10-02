@@ -1,9 +1,9 @@
 import { Context } from '@curveball/core';
 import db, { query } from '../database';
 import { Principal } from '../types';
-import { Privilege, PrivilegeMap, PrivilegeEntry } from './types';
+import { Privilege, PrivilegeMap, PrivilegeEntry, InternalPrivilege } from './types';
 import { UserPrivilegesRecord } from 'knex/types/tables';
-import * as principalService from '../principal/service';
+import { PrincipalService } from '../principal/service';
 import { Forbidden } from '@curveball/http-errors';
 
 
@@ -23,11 +23,14 @@ export async function get(who: Context | Principal | 'insecure'): Promise<LazyPr
  */
 export async function findPrivilegesForResource(resource: string): Promise<PrivilegeEntry[]> {
 
+  const principalService = new PrincipalService('insecure');
   const records = await db('user_privileges')
     .select('*')
     .where({resource}).orWhere({resource: '*'});
 
-  const principals = await principalService.findMany(records.map(record => record.user_id));
+  const principals = await principalService.findMany(
+    records.map(record => record.user_id)
+  );
 
   return records.map(record => ({
     privilege: record.privilege,
@@ -105,17 +108,17 @@ export class LazyPrivilegeBox {
 
   }
 
-  has(privilege: string, resource: string = '*'): boolean {
+  has(privilege: InternalPrivilege, resource: string = '*'): boolean {
 
     if (this.who === 'public') return false;
     if (this.who === 'insecure') return true;
 
     const privileges = this.getAll();
-    return privileges['*']?.includes(privilege) || privileges[resource]?.includes(privilege) || false;
+    return privileges['*']?.includes(privilege) || privileges[resource]?.includes(privilege) || privileges['*']?.includes('admin') || privileges[resource]?.includes('admin') || false;
 
   }
 
-  require(privilege: string, resource: string = '*'): void {
+  require(privilege: InternalPrivilege, resource: string = '*'): void {
 
     if (!this.has(privilege, resource)) {
       if (this.who === 'public') {
@@ -148,6 +151,17 @@ export class LazyPrivilegeBox {
 
   }
 
+  /**
+   * Returns true if the passed principal matches principal associated with
+   * the current set of privileges.
+   */
+  isPrincipal(principal: Principal): boolean {
+
+    if (this.who === 'insecure' || this.who === 'public') return false;
+    return this.who.id === principal.id;
+
+  }
+
 }
 
 
@@ -158,7 +172,7 @@ function isContext(input: Context| Principal | 'insecure'): input is Context {
 /**
  * Returns the list of 'privilege types'
  */
-export async function findPrivileges(): Promise<Privilege[]> {
+export async function findPrivilegeTypes(): Promise<Privilege[]> {
 
   const result = await query<Privilege>(`
   SELECT privileges.privilege, privileges.description FROM privileges
@@ -172,7 +186,7 @@ export async function findPrivileges(): Promise<Privilege[]> {
   return result;
 }
 
-export async function findPrivilege(privilege: string): Promise<Privilege> {
+export async function findPrivilegeType(privilege: string): Promise<Privilege> {
 
   const result = await db('privileges')
     .select('*')

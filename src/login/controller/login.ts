@@ -17,11 +17,15 @@ class LoginController extends Controller {
 
   async get(ctx: Context) {
 
+    const continueParam = ctx.query.continue ? '?' + new URLSearchParams({continue: ctx.query.continue}) : '';
+    const registrationUri = '/register' + continueParam;
+    const resetPasswordUri = '/reset-password' + continueParam;
+
     const firstRun = !(await principalService.hasPrincipals());
+
     if (firstRun) {
       // The 'continue' query parameter contains the URL we want to redirect to after registration
-      const params = ctx.query.continue ? '?' + new URLSearchParams({continue: ctx.query.continue}) : '';
-      ctx.redirect(302, '/register' + params);
+      ctx.redirect(302, registrationUri);
       return;
     }
 
@@ -31,8 +35,11 @@ class LoginController extends Controller {
       ctx.query.error,
       {
         continue: ctx.query.continue,
+
       },
-      getSetting('registration.enabled')
+      getSetting('registration.enabled'),
+      registrationUri,
+      resetPasswordUri,
     );
 
   }

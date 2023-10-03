@@ -20,6 +20,8 @@ Changelog
   behavior need to give the relevant users the `a12n:principals:list`
   privilege. To get the old behavior, simply add this privilege to the new
   `$all` group.
+* The 'password' flow now also tracks apps that are granted access to user
+  accounts
 
 
 0.23.1 (2023-03-29)

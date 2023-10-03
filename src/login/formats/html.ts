@@ -1,7 +1,7 @@
 import { render } from '../../templates';
 type KeyValue = { [key: string]: string };
 
-export function loginForm(msg: string, error: string, hiddenFields: KeyValue, registrationEnabled: boolean, registrationUri: string, lostPasswordUri: string): string {
+export function loginForm(msg: string, error: string, hiddenFields: KeyValue, registrationEnabled: boolean, registrationUri: string, resetPasswordUri: string): string {
   return render('login', {
     title: 'Login',
     msg: msg,
@@ -10,7 +10,7 @@ export function loginForm(msg: string, error: string, hiddenFields: KeyValue, re
     action: '/login',
     registrationEnabled,
     registrationUri,
-    lostPasswordUri,
+    resetPasswordUri,
   });
 
 }

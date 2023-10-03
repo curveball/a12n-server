@@ -12,6 +12,7 @@ import {
   getOAuth2ClientFromBasicAuth,
   getOAuth2ClientFromBody,
 } from '../../oauth2-client/service';
+import * as userAppPermissions from '../../user-app-permissions/service';
 
 class TokenController extends Controller {
 
@@ -129,6 +130,12 @@ class TokenController extends Controller {
     log(EventType.loginSuccess, ctx);
 
     const scope = ctx.request.body.scope?.split(' ') ?? null;
+
+    await userAppPermissions.setPermissions(
+      oauth2Client.app,
+      user,
+      scope,
+    );
 
     const token = await oauth2Service.generateTokenPassword({
       client: oauth2Client,

@@ -22,6 +22,8 @@ Changelog
   `$all` group.
 * When a user goes from login to registration, the "continue" link will be
   remembered.
+* The 'password' flow now also tracks apps that are granted access to user
+  accounts
 
 
 0.23.1 (2023-03-29)

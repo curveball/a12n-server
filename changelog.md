@@ -1,8 +1,8 @@
 Changelog
 =========
 
-0.23.2 (????-??-??)
--------------------
+0.24.0-alpha.0 (2023-10-04)
+---------------------------
 
 * Update to curveball 0.21
 * Refactored the privilege system to make internally easier to use. There

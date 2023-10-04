@@ -26,6 +26,8 @@ Changelog
   accounts
 * When using the Redis session backend, CSRF tokens would not get stored
   correctly, causing some browser operations to fail.
+* a12n-server will now report a better process name in linux process lists.
+* The server now picks up the `CURVEBALL_ORIGIN` environment variable.
 
 
 0.23.1 (2023-03-29)

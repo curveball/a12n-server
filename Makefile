@@ -27,11 +27,11 @@ fix:
 
 lint-fix: fix
 
-migrate: build
-	npx knex migrate:latest --knexfile './dist/knexfile.js'
+knex-migrate: dist/build
+	cd dist; npx knex migrate:latest
 
-migrate-rollback:
-	npx knex migrate:rollback --knexfile './dist/knexfile.js'
+knex-make-migration:
+	cd src; npx knex migrate:make migration_name -x ts
 
 start-dev:
 	npx tsc-watch --onSuccess 'node --inspect=9339 dist/app.js'
@@ -53,3 +53,6 @@ inspect: build
 
 inspect-brk: build
 	node --inspect-brk dist/app.js
+
+src/db-types.js:
+	./bin/generate-db-types.mjs

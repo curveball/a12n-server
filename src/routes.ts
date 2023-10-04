@@ -8,10 +8,10 @@ import changePassword from './changepassword/controller';
 import changePasswordRedirect from './well-known/controller/change-password';
 import client from './oauth2-client/controller/item';
 import clientNew from './oauth2-client/controller/new';
+import clientEdit from './oauth2-client/controller/edit';
 import clients from './oauth2-client/controller/collection';
 import group from './group/controller/item';
 import groupNew from './group/controller/new';
-import groupMembers from './group/controller/member-collection';
 import groups from './group/controller/collection';
 import health from './health/controller';
 import home from './home/controller';
@@ -31,6 +31,7 @@ import oneTimeTokenExchange from './one-time-token/controller/exchange';
 import passwordToken from './reset-password/controller/token';
 import privilegeCollection from './privilege/controller/collection';
 import privilegeItem from './privilege/controller/item';
+import privilegeSearch from './privilege/controller/search';
 import register from './register/controller/user';
 import registerMfa from './register/controller/mfa';
 import registerTotp from './mfa/totp/controller/register';
@@ -41,6 +42,8 @@ import settings from './settings/controller';
 import user from './user/controller/item';
 import userAccessToken from './oauth2/controller/user-access-token';
 import userActiveSessions from './oauth2/controller/active-sessions';
+import userAppPermissionItem from './user-app-permissions/controller/user-item';
+import userAppPermissionCollection from './user-app-permissions/controller/user-collection';
 import userByHref from './user/controller/by-href';
 import userEdit from './user/controller/edit';
 import userEditPrivileges from './user/controller/privileges';
@@ -62,6 +65,7 @@ const routes = [
   router('/app/:id/client', clients),
   router('/app/:id/client/new', clientNew),
   router('/app/:id/client/:clientId', client),
+  router('/app/:id/client/:clientId/edit', clientEdit),
 
   router('/authorize', oauth2ErrorHandler, oauth2Authorize),
   router('/exchange-one-time-token', oneTimeTokenExchange),
@@ -81,10 +85,10 @@ const routes = [
   router('/group/:id', group),
   router('/group/:id/edit', userEdit),
   router('/group/:id/edit/privileges', userEditPrivileges),
-  router('/group/:id/member', groupMembers),
 
   router('/privilege', privilegeCollection),
   router('/privilege/:id', privilegeItem),
+  router('/privilege-search', privilegeSearch),
 
   router('/register', register),
   router('/register/mfa', registerMfa),
@@ -105,6 +109,8 @@ const routes = [
   router('/user/:id/one-time-token', oneTimeToken),
   router('/user/:id/access-token', userAccessToken),
   router('/user/:id/sessions', userActiveSessions),
+  router('/user/:id/app-permission', userAppPermissionCollection),
+  router('/user/:id/app-permission/:appId', userAppPermissionItem),
 
   router('/change-password', changePassword),
   router('/reset-password', resetPassword),

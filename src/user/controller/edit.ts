@@ -1,19 +1,16 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import * as privilegeService from '../../privilege/service';
 import * as hal from '../formats/hal';
-import { Forbidden } from '@curveball/http-errors';
-import * as principalService from '../../principal/service';
+import { PrincipalService } from '../../principal/service';
 
 class UserEditController extends Controller {
 
   async get(ctx: Context) {
 
-    const user = await principalService.findByExternalId(ctx.params.id);
+    const principalService = new PrincipalService(ctx.privileges);
+    const user = await principalService.findByExternalId(ctx.params.id, 'user');
 
-    if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
-      throw new Forbidden('Only users with the "admin" privilege use this endpoint');
-    }
+    ctx.privileges.require('admin');
 
     ctx.response.body = hal.edit(
       user,
@@ -23,14 +20,11 @@ class UserEditController extends Controller {
 
   async post(ctx: Context) {
 
+    const principalService = new PrincipalService(ctx.privileges);
     const userBody: any = ctx.request.body;
     const userOld = await principalService.findByExternalId(ctx.params.id);
 
-    if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
-      throw new Forbidden('Only users with the "admin" privilege use this endpoint');
-    }
-
-    delete userBody['csrf-token'];
+    ctx.privileges.require('admin');
 
     const userUpdated = Object.assign({}, userOld, {
       ...userBody,

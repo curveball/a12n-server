@@ -1,5 +1,5 @@
 import { HalResource } from 'hal-types';
-import { User } from '../../principal/types';
+import { User } from '../../types';
 import { OneTimeToken } from '../types';
 
 export function oneTimeToken(user: User, url: string, token: OneTimeToken): HalResource {

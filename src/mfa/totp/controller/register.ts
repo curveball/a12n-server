@@ -5,7 +5,7 @@ import * as QRCode from 'qrcode';
 
 import { generateSecret, save } from '../service';
 import { registrationForm } from '../formats/html';
-import { User } from '../../../principal/types';
+import { User } from '../../../types';
 import { getSetting } from '../../../server-settings';
 
 
@@ -53,7 +53,12 @@ class TOTPRegisterController extends Controller {
       user,
       secret
     });
-    return ctx.redirect(303, '/login?msg=Registration+successful.+Please log in');
+    if (ctx.session.registerContinueUrl) {
+      delete ctx.session.registerContinueUrl;
+      return ctx.redirect(303, ctx.session.registerContinueUrl);
+    } else {
+      return ctx.redirect(303, '/login?msg=Registration+successful.+Please log in');
+    }
   }
 }
 

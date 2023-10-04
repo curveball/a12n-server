@@ -26,7 +26,7 @@ export async function up(knex: Knex): Promise<void> {
 ('registration.mfa.enabled', 'false'),
 ('webauthn.relyingPartyId', '""'),
 ('webauthn.expectedOrigin', '""'),
-('webauthn.serviceName', '"Authentication API"')`);
+('webauthn.serviceName', '"a12n-server"')`);
 
 
 }

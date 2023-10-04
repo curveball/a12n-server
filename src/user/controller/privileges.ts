@@ -4,25 +4,33 @@ import { BadRequest } from '@curveball/http-errors';
 import * as privilegeService from '../../privilege/service';
 import { PrivilegeMap } from '../../privilege/types';
 import * as hal from '../formats/hal';
-import * as principalService from '../../principal/service';
+import { PrincipalService } from '../../principal/service';
 // import * as groupService from '../../group/service';
 
 type PolicyForm = {
   policyBody: string;
+}
+type PrincipalPatchPrivilege = {
+  action: 'add';
+  resource: '*' | string;
+  privilege: string;
 }
 
 class UserEditPrivilegesController extends Controller {
 
   async get(ctx: Context) {
 
+    const principalService = new PrincipalService(ctx.privileges);
     const user = await principalService.findByExternalId(ctx.params.id);
-    const privileges = await privilegeService.getImmediatePrivilegesForPrincipal(user);
+    const immediatePrivileges = await privilegeService.getImmediatePrivilegesForPrincipal(user);
+    const privilegeTypes = await privilegeService.findPrivilegeTypes();
 
-    await privilegeService.hasPrivilege(ctx, 'admin');
+    ctx.privileges.require('admin');
 
     ctx.response.body = hal.editPrivileges(
       user,
-      privileges
+      immediatePrivileges,
+      privilegeTypes.map( privilege => privilege.privilege ),
     );
 
   }
@@ -31,21 +39,52 @@ class UserEditPrivilegesController extends Controller {
 
     const { policyBody } = ctx.request.body;
 
-    const user = await principalService.findByExternalId(ctx.params.id);
-    await privilegeService.hasPrivilege(ctx, 'admin');
+    const principalService = new PrincipalService(ctx.privileges);
+    const principal = await principalService.findByExternalId(ctx.params.id);
+    ctx.privileges.require('admin');
 
     try {
       const policy = JSON.parse(policyBody) as PrivilegeMap;
 
-      await privilegeService.replacePrivilegeForUser(user, policy);
+      await privilegeService.replacePrivilegeForUser(principal, policy);
     } catch (err: any) {
       throw new BadRequest(err);
     }
 
-    ctx.redirect(303, `/user/${user.id}`);
+    ctx.redirect(303, principal.href);
 
   }
 
+
+  async patch(ctx: Context) {
+
+    ctx.request.validate<PrincipalPatchPrivilege>('https://curveballjs.org/schemas/a12nserver/principal-patch-privilege.json');
+    const principalService = new PrincipalService(ctx.privileges);
+    const principal = await principalService.findByExternalId(ctx.params.id);
+    ctx.privileges.require('admin');
+
+    await privilegeService.addPrivilegeForUser(
+      principal,
+      ctx.request.body.privilege,
+      ctx.request.body.resource,
+    );
+
+    ctx.status = 200;
+    ctx.response.body = {
+      _links: {
+        principal: {
+          href: principal.href,
+          title: principal.nickname,
+        },
+        up: {
+          href: `${principal.href}/edit/privileges`,
+          title: 'Back to privileges',
+        }
+      },
+      title: 'Privileges updated',
+    };
+
+  }
 }
 
 export default new UserEditPrivilegesController();

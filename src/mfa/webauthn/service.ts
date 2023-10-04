@@ -1,22 +1,14 @@
 import { NotFound } from '@curveball/http-errors';
 
 import db, { query, insertAndGetId } from '../../database';
-import { User } from '../../principal/types';
-
+import { User } from '../../types';
 import { NewWebAuthnDevice, WebAuthnDevice } from './types';
+import { UserWebauthnRecord } from 'knex/types/tables';
 
-type UserWebAuthnRow = {
-  id: number;
-  user_id: number;
-  credential_id: string;
-  public_key: string;
-  counter: number;
-  created: number;
-};
 
 export async function save(webAuthNDevice: NewWebAuthnDevice): Promise<WebAuthnDevice> {
   if (!isExistingDevice(webAuthNDevice)) {
-    const newWebAuthnRecord: Partial<UserWebAuthnRow> = {
+    const newWebAuthnRecord: Partial<UserWebauthnRecord> = {
       user_id: webAuthNDevice.user.id,
       credential_id: webAuthNDevice.credentialID.toString('base64'),
       public_key: webAuthNDevice.publicKey.toString('base64'),
@@ -31,7 +23,7 @@ export async function save(webAuthNDevice: NewWebAuthnDevice): Promise<WebAuthnD
       ...webAuthNDevice
     };
   } else {
-    const updateWebAuthnRecord: Partial<UserWebAuthnRow> = {
+    const updateWebAuthnRecord: Partial<UserWebauthnRecord> = {
       credential_id: webAuthNDevice.credentialID.toString('base64'),
       public_key: webAuthNDevice.publicKey.toString('base64'),
       counter: webAuthNDevice.counter
@@ -51,7 +43,7 @@ export async function findDevicesByUser(user: User): Promise<WebAuthnDevice[]> {
     [user.id]
   );
 
-  return result.map( (row: UserWebAuthnRow) => recordToModel(row, user));
+  return result.map( (row: UserWebauthnRecord) => recordToModel(row, user));
 }
 
 export async function findDeviceByUserAndId(user: User, credentialId: string): Promise<WebAuthnDevice> {
@@ -76,7 +68,7 @@ export async function hasWebauthn(user: User): Promise<boolean> {
   return result.length !== 0;
 }
 
-export function recordToModel(userWebAuthn: UserWebAuthnRow, user: User): WebAuthnDevice {
+export function recordToModel(userWebAuthn: UserWebauthnRecord, user: User): WebAuthnDevice {
   return {
     id: userWebAuthn.id,
     user: user,

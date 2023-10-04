@@ -1,48 +1,89 @@
-import Controller from '@curveball/controller';
+import Controller, { accept, method } from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { Forbidden, NotFound } from '@curveball/http-errors';
+import { Forbidden, NotFound, NotImplemented } from '@curveball/http-errors';
 
 import * as csv from '../formats/csv';
 
-import * as principalService from '../../principal/service';
+import { PrincipalService } from '../../principal/service';
 import * as oauth2Service from '../service';
 import * as oauth2ClientService from '../../oauth2-client/service';
-import * as privilegeService from '../../privilege/service';
 
-import { Principal, User, App } from '../../principal/types';
-
+import { Principal, User, App } from '../../types';
 import { OAuth2Client } from '../../oauth2-client/types';
 
-class UserActiveSessions extends Controller {
+import { OAuth2Token } from '../types';
 
-  async get(ctx: Context<any>) {
+class ActiveSessions extends Controller {
 
-    const user = await principalService.findByExternalId(ctx.params.id);
-    if (ctx.auth.equals(user) && !await privilegeService.hasPrivilege(ctx, 'admin')) {
+  @accept('text/csv')
+  @method('GET')
+  async getCsv(ctx: Context) {
+
+    const [, tokens, clients] = await this.getData(ctx);
+
+    ctx.status = 200;
+    ctx.response.type = 'text/csv';
+    ctx.response.body = csv.activeSessions(tokens, clients);
+    ctx.response.links.add({
+      rel: 'alternate',
+      href: ctx.path,
+      type: 'application/json',
+    });
+
+  }
+
+  @accept('json')
+  @method('GET')
+  async getHal(ctx: Context) {
+
+    throw new NotImplemented('This feature is not yet implemented');
+
+  }
+
+  private async getData(ctx: Context): Promise<[Principal, OAuth2Token[], Map<number, OAuth2Client|null>]> {
+
+    const principalService = new PrincipalService(ctx.privileges);
+    const principal = await principalService.findByExternalId(ctx.params.id);
+    if (ctx.auth.equals(principal) && !ctx.privileges.has('admin')) {
       throw new Forbidden('You can only use this API for yourself yourself, or if you have \'admin\' privileges');
     }
 
-    if (!assertNotGroup(user)) {
+    if (!assertNotGroup(principal)) {
       throw new NotFound('This endpoint only exists for users and apps');
     }
 
-    const tokens = await oauth2Service.getActiveTokens(user);
+    const tokens = await oauth2Service.getActiveTokens(principal);
 
-    const clients = new Map<number, OAuth2Client>();
+    const clients = new Map<number, OAuth2Client|null>();
     for(const token of tokens) {
-      clients.set(
-        token.clientId,
-        await oauth2ClientService.findById(token.clientId)
-      );
+
+      if (token.clientId !== 0 && !clients.has(token.clientId)) {
+
+        try {
+          const client = await oauth2ClientService.findById(token.clientId);
+          clients.set(
+            token.clientId,
+            client,
+          );
+        } catch (e: any) {
+          if (e instanceof NotFound) {
+            console.warn('Encountered an active token in the database, with no associated oauth2 client');
+            clients.set(token.clientId, null);
+          } else {
+            throw e;
+          }
+        }
+
+      }
     }
 
-    ctx.response.status = 200;
-    ctx.response.type = 'text/csv';
-    ctx.response.body = csv.activeSessions(tokens, clients);
+    return [principal, tokens, clients];
 
   }
 
 }
+
+
 
 function assertNotGroup(input: Principal): input is User | App {
 
@@ -50,5 +91,4 @@ function assertNotGroup(input: Principal): input is User | App {
 
 }
 
-
-export default new UserActiveSessions();
+export default new ActiveSessions();

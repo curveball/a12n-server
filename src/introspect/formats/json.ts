@@ -9,12 +9,12 @@ export function accessToken(token: OAuth2Token, privileges: PrivilegeMap) {
     scope: Object.values(privileges).join(' '),
     privileges: privileges,
     client_id: token.clientId,
-    username: token.user.nickname,
+    username: token.principal.nickname,
     token_type: 'bearer',
     exp: token.accessTokenExpires,
     _links: {
       'authenticated-as': {
-        href: url.resolve(process.env.PUBLIC_URI!, '/user/' + token.user.id),
+        href: url.resolve(process.env.PUBLIC_URI!, token.principal.href),
       }
     }
   };
@@ -28,11 +28,11 @@ export function refreshToken(token: OAuth2Token, privileges: PrivilegeMap) {
     scope: Object.values(privileges).join(' '),
     privileges: privileges,
     client_id: token.clientId,
-    username: token.user.nickname,
+    username: token.principal.nickname,
     token_type: 'refresh_token',
     _links: {
       'authenticated-as': {
-        href: url.resolve(process.env.PUBLIC_URI!, '/user/' + token.user.id),
+        href: url.resolve(process.env.PUBLIC_URI!, token.principal.href),
       }
     }
   };

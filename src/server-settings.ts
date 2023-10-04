@@ -6,6 +6,7 @@ export type Settings = {
   'registration.mfa.enabled': boolean;
   'cors.allowOrigin': string[] | null;
 
+  /*
   'db.driver': 'mysql2' | 'pg' | 'sqlite3' | 'mysql';
   'db.host': string | null;
   'db.user': string;
@@ -13,6 +14,7 @@ export type Settings = {
   'db.database': string;
   'db.filename': string;
   'db.mysql_instance_connection_name': string | null;
+  */
 
   'redis.uri': null | string;
 
@@ -22,6 +24,8 @@ export type Settings = {
   'oauth2.code.expiry': number;
   'oauth2.accessToken.expiry': number;
   'oauth2.refreshToken.expiry': number;
+
+  'oidc.idToken.expiry': number;
 
   'jwt.privateKey': string | null;
 
@@ -79,6 +83,7 @@ export const settingsRules: SettingsRules = {
     default: null,
   },
 
+  /*
   'db.driver': {
     description: 'Database client to use. Only "pg", "sqlite3" and "mysql" are supported',
     fromDb: false,
@@ -129,6 +134,7 @@ export const settingsRules: SettingsRules = {
     default: ':memory:',
     env: 'DB_FILENAME',
   },
+  */
 
   'smtp.url' : {
     description: 'The url to the SMTP server. See the node-mailer documentation for possible values',
@@ -160,6 +166,12 @@ export const settingsRules: SettingsRules = {
     env: 'OAUTH2_REFRESHTOKEN_EXPIRY',
     fromDb: true,
     default: 3600*6,
+  },
+  'oidc.idToken.expiry' : {
+    description: 'OpenID Connect ID Token expiry time (in seconds)',
+    env: 'OICD_IDTOKEN_EXPIRY',
+    fromDb: true,
+    default: 3600*10,
   },
 
   'jwt.privateKey': {
@@ -291,7 +303,7 @@ export async function load(): Promise<void> {
       console.warn('The setting %s may not be set from the database. We ignored it');
       continue;
     }
-    (settings as any)[row.setting] = JSON.parse(row.value);
+    (settings as any)[row.setting] = row.value!==null ? JSON.parse(row.value): null;
 
   }
 

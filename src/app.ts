@@ -1,14 +1,14 @@
 /* eslint no-console: 0 */
 import { Application } from '@curveball/core';
-
-import mainMw from './main-mw';
 import accessLog from '@curveball/accesslog';
 
+import mainMw from './main-mw';
 import { init as initDb } from './database';
 import { load } from './server-settings';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-require('dotenv').config();
+import * as dotenv from 'dotenv';
+
+dotenv.config();
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const pkgInfo = require('../package.json');
@@ -35,7 +35,11 @@ if (!process.env.PUBLIC_URI) {
   }));
   app.use(mainMw());
 
-  app.listen(port);
+  const httpServer = app.listen(port);
+  if (process.env.KEEP_ALIVE_TIMEOUT_MS) {
+    httpServer.keepAliveTimeout = parseInt(process.env.KEEP_ALIVE_TIMEOUT_MS, 10);
+  }
+
   console.log('Running on \x1b[31m%s\x1b[0m', app.origin + '/');
 
 })().catch( (err) => {

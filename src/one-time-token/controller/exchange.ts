@@ -5,11 +5,10 @@ import { Forbidden, UnprocessableEntity } from '@curveball/http-errors';
 
 import { tokenResponse } from '../../oauth2/formats/json';
 
-import * as privilegeService from '../../privilege/service';
 import * as tokenService from '../service';
 import * as oauth2Service from '../../oauth2/service';
 import * as oauth2ClientService from '../../oauth2-client/service';
-import * as principalService from '../../principal/service';
+import { PrincipalService } from '../../principal/service';
 
 type OtteRequest = {
   activateUser?: boolean;
@@ -21,9 +20,8 @@ class OneTimeTokenExchangeController extends Controller {
 
   async post(ctx: Context<OtteRequest>) {
 
-    if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
-      throw new Forbidden('Only users with the "admin" privilege use this endpoint');
-    }
+    ctx.privileges.require('admin');
+    const principalService = new PrincipalService(ctx.privileges);
 
     if (!ctx.request.body.token) {
       throw new UnprocessableEntity('A token must be provided for the exchange');
@@ -44,7 +42,10 @@ class OneTimeTokenExchangeController extends Controller {
     }
 
     const client = await oauth2ClientService.findByClientId(ctx.request.body.client_id);
-    const oauth2Token = await oauth2Service.generateTokenForUser(client, user);
+    const oauth2Token = await oauth2Service.generateTokenOneTimeToken({
+      client,
+      principal: user,
+    });
 
     ctx.response.body = tokenResponse(oauth2Token);
 

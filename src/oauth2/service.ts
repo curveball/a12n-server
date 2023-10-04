@@ -1,17 +1,19 @@
 import { NotFound } from '@curveball/http-errors';
 import * as crypto from 'crypto';
+
 import db, { query } from '../database';
 import { getSetting } from '../server-settings';
-import * as principalService from '../principal/service';
-import { User, App } from '../principal/types';
+import { PrincipalService } from '../principal/service';
 import { InvalidGrant, InvalidRequest, UnauthorizedClient } from './errors';
 import { CodeChallengeMethod, OAuth2Code, OAuth2Token } from './types';
 import { OAuth2Client } from '../oauth2-client/types';
 import { generateSecretToken } from '../crypto';
-import { generateJWTAccessToken } from './jwt';
-import { OAuth2Token as OAuth2TokenField } from 'knex/types/tables';
+import { generateJWTAccessToken, generateJWTIDToken } from './jwt';
+import { Oauth2TokensRecord, Oauth2CodesRecord } from 'knex/types/tables';
+import { App, User, GrantType } from '../types';
+import * as userAppPermissionsService from '../user-app-permissions/service';
 
-const oauth2TokenFields: (keyof OAuth2TokenField)[] = [
+const oauth2TokenFields: (keyof Oauth2TokensRecord)[] = [
   'id',
   'oauth2_client_id',
   'access_token',
@@ -19,8 +21,10 @@ const oauth2TokenFields: (keyof OAuth2TokenField)[] = [
   'user_id',
   'access_token_expires',
   'refresh_token_expires',
-  'created',
+  'created_at',
   'browser_session_id',
+  'scope',
+  'grant_type',
 ];
 
 export async function getRedirectUris(client: OAuth2Client): Promise<string[]> {
@@ -60,7 +64,7 @@ export async function requireRedirectUri(client: OAuth2Client, redirectUrl: stri
 
 export async function addRedirectUris(client: OAuth2Client, redirectUris: string[]): Promise<void> {
 
-  const query = 'INSERT INTO oauth2_redirect_uris SET oauth2_client_id = ?, uri = ?';
+  const query = 'INSERT INTO oauth2_redirect_uris (oauth2_client_id, uri) VALUES (?, ?)';
   for(const uri of redirectUris) {
     await db.raw(query, [client.id, uri]);
   }
@@ -72,154 +76,68 @@ export async function getActiveTokens(user: App | User): Promise<OAuth2Token[]> 
   const result = await db('oauth2_tokens')
     .select(oauth2TokenFields)
     .where('user_id', user.id)
-    .andWhere('refresh_token_expires', '<', Date.now());
+    .andWhere('refresh_token_expires', '>', Math.floor(Date.now()/1000));
 
-  return result.map((row: OAuth2TokenRecord):OAuth2Token => {
-    return {
-      accessToken: row.access_token,
-      refreshToken: row.refresh_token,
-
-      accessTokenExpires: row.access_token_expires,
-      refreshTokenExpires: row.refresh_token_expires,
-      tokenType: 'bearer',
-      user,
-      clientId: row.oauth2_client_id,
-    };
-  });
+  return result.map(row => tokenRecordToModel(row, user));
 
 }
 
-/**
- * This function is used for the implicit grant oauth2 flow.
- *
- * This function creates an access token for a specific user.
- */
-export async function generateTokenForUser(client: OAuth2Client, user: App | User, browserSessionId?: string): Promise<OAuth2Token> {
-
-  if (!user.active) {
-    throw new Error ('Cannot generate token for inactive user');
-  }
-
-  const expirySettings = getTokenExpiry();
-  const accessTokenExpires = Math.floor(Date.now() / 1000) + expirySettings.accessToken;
-  const refreshTokenExpires = Math.floor(Date.now() / 1000) + expirySettings.refreshToken;
-
-  let accessToken: string;
-
-  if (getSetting('jwt.privateKey')!==null) {
-    accessToken = await generateJWTAccessToken(
-      user,
-      client,
-      expirySettings.accessToken,
-      []
-    );
-  } else {
-    accessToken = await generateSecretToken();
-  }
-  const refreshToken = await generateSecretToken();
-
-  await db('oauth2_tokens')
-    .insert({
-      oauth2_client_id: client.id,
-      access_token: accessToken,
-      refresh_token: refreshToken,
-      user_id: user.id,
-      access_token_expires: accessTokenExpires,
-      refresh_token_expires: refreshTokenExpires,
-      browser_session_id: browserSessionId || null,
-      created: Math.trunc(Date.now() / 1000),
-    });
-
-  return {
-    accessToken,
-    refreshToken,
-    accessTokenExpires,
-    refreshTokenExpires,
-    tokenType: 'bearer',
-    user,
-    clientId: client.id,
-  };
-
+type GenerateTokenImplicitOptions = {
+  client: OAuth2Client;
+  principal: User;
+  scope: string[];
+  browserSessionId: string;
 }
 
 /**
- * This function is used to create arbitrary access tokens, by the currently logged in user.
- *
- * There is no specific OAuth2 flow for this.
+ * Generates a token for the 'implicit' GrantType
  */
-export async function generateTokenForUserNoClient(user: User): Promise<Omit<OAuth2Token, 'clientId'>> {
-  if (!user.active) {
-    throw new Error ('Cannot generate token for inactive user');
-  }
-  const accessToken = await generateSecretToken();
-  const refreshToken = await generateSecretToken();
-
-  const expirySettings = getTokenExpiry();
-
-  const accessTokenExpires = Math.floor(Date.now() / 1000) + expirySettings.accessToken;
-  const refreshTokenExpires = Math.floor(Date.now() / 1000) + expirySettings.refreshToken;
-
-  await db('oauth2_tokens').insert({
-    oauth2_client_id: 0,
-    access_token: accessToken,
-    refresh_token: refreshToken,
-    user_id: user.id,
-    access_token_expires: accessTokenExpires,
-    refresh_token_expires: refreshTokenExpires,
-    browser_session_id: null,
-    created: Math.floor(Date.now() / 1000),
+export function generateTokenImplicit(options: GenerateTokenImplicitOptions): Promise<OAuth2Token> {
+  return generateTokenInternal({
+    grantType: 'implicit',
+    secretUsed: false,
+    ...options,
   });
-
-  return {
-    accessToken,
-    refreshToken,
-    accessTokenExpires,
-    refreshTokenExpires,
-    tokenType: 'bearer',
-    user,
-  };
-
 }
 
+type GenerateTokenClientCredentialsOptions = {
+  client: OAuth2Client;
+  scope: string[];
+}
 
 /**
- * This function is used for the client_credentials oauth2 flow.
- *
- * In this flow there is not a 3rd party (resource owner). There is simply 2
- * clients talk to each other.
- *
- * The client acts on behalf of itself, not someone else.
+ * Generates a token for the 'implicit' GrantType
  */
-export async function generateTokenForClient(client: OAuth2Client): Promise<OAuth2Token> {
-
-  const accessToken = await generateSecretToken();
-  const refreshToken = await generateSecretToken();
-
-  const expirySettings = getTokenExpiry();
-
-  const accessTokenExpires = Math.floor(Date.now() / 1000) + expirySettings.accessToken;
-  const refreshTokenExpires = Math.floor(Date.now() / 1000) + expirySettings.refreshToken;
-
-  await db('oauth2_tokens').insert({
-    oauth2_client_id: client.id,
-    access_token: accessToken,
-    refresh_token: refreshToken,
-    user_id: client.app.id,
-    access_token_expires: accessTokenExpires,
-    refresh_token_expires: refreshTokenExpires,
-    created: Math.floor(Date.now() / 1000),
+export function generateTokenClientCredentials(options: GenerateTokenClientCredentialsOptions): Promise<OAuth2Token> {
+  return generateTokenInternal({
+    grantType: 'client_credentials',
+    principal: options.client.app,
+    secretUsed: true,
+    ...options,
   });
+}
 
-  return {
-    accessToken,
-    refreshToken,
-    accessTokenExpires,
-    refreshTokenExpires,
-    tokenType: 'bearer',
-    user: client.app,
-    clientId: client.id,
-  };
+type GenerateTokenPasswordOptions = {
+  client: OAuth2Client;
+  principal: User;
+  scope: string[];
+}
+/**
+ * Generates a token for the 'implicit' GrantType
+ */
+export function generateTokenPassword(options: GenerateTokenPasswordOptions): Promise<OAuth2Token> {
+  return generateTokenInternal({
+    grantType: 'password',
+    ...options,
+    secretUsed: true,
+  });
+}
 
+type GenerateTokenAuthorizationCodeOptions = {
+  client: OAuth2Client;
+  code: string;
+  codeVerifier?: string;
+  secretUsed: boolean;
 }
 
 /**
@@ -231,37 +149,196 @@ export async function generateTokenForClient(client: OAuth2Client): Promise<OAut
  *
  * The resource owner then exchanges that code for an access and refresh token.
  */
-export async function generateTokenFromCode(client: OAuth2Client, code: string, codeVerifier: string|undefined): Promise<OAuth2Token> {
+export async function generateTokenAuthorizationCode(options: GenerateTokenAuthorizationCodeOptions): Promise<OAuth2Token> {
 
-  const codeResult = await query(
-    'SELECT * FROM oauth2_codes WHERE code = ?',
-    [code]
-  );
+  const codeResult = await db<Oauth2CodesRecord>('oauth2_codes')
+    .first()
+    .where({code: options.code});
 
-  if (!codeResult.length) {
+  if (!codeResult) {
     throw new InvalidRequest('The supplied code was not recognized');
   }
 
-  const codeRecord: OAuth2CodeRecord = codeResult[0];
+  const codeRecord = codeResult;
   const expirySettings = getTokenExpiry();
+
+  await db('oauth2_codes')
+    .delete()
+    .where({code: codeRecord.code});
 
   // Delete immediately.
   await db.raw('DELETE FROM oauth2_codes WHERE id = ?', [codeRecord.id]);
 
-  validatePKCE(codeVerifier, codeRecord.code_challenge, codeRecord.code_challenge_method);
+  validatePKCE(
+    options.codeVerifier,
+    codeRecord.code_challenge ?? undefined,
+    codeRecord.code_challenge_method ?? 'S256',
+  );
 
-  if (codeRecord.created + expirySettings.code < Math.floor(Date.now() / 1000)) {
+  if (codeRecord.created_at + expirySettings.code < Math.floor(Date.now() / 1000)) {
     throw new InvalidRequest('The supplied code has expired');
   }
-  if (codeRecord.client_id !== client.id) {
+  if (codeRecord.client_id !== options.client.id) {
     throw new UnauthorizedClient('The client_id associated with the token did not match with the authenticated client credentials');
   }
 
-  const user = await principalService.findById(codeRecord.user_id, 'user');
+  const principalService = new PrincipalService('insecure');
+  const user = await principalService.findById(codeRecord.principal_id, 'user');
   if (!user.active) {
     throw new Error(`User ${user.href} is not active`);
   }
-  return generateTokenForUser(client, user, codeRecord.browser_session_id || undefined);
+  const scope = codeRecord.scope?.split(' ') || [];
+  const result = await generateTokenInternal({
+    grantType: 'authorization_code',
+    principal: user,
+    scope,
+    ...options,
+  });
+
+  if (scope.includes('openid')) {
+    const idToken = await generateJWTIDToken({
+      client: options.client,
+      principal: user,
+      nonce: codeRecord.nonce,
+    });
+    return {
+      ...result,
+      idToken: idToken,
+    };
+  } else {
+    return result;
+  }
+
+
+}
+
+type GenerateTokenDeveloperTokenOptions = {
+  principal: User;
+}
+/**
+ * Generates a token for the 'implicit' GrantType
+ */
+export function generateTokenDeveloperToken(options: GenerateTokenDeveloperTokenOptions): Promise<OAuth2Token> {
+  const client: OAuth2Client = {
+    id: 0,
+    clientId: 'system',
+    clientSecret: '',
+    allowedGrantTypes: [],
+    requirePkce: false,
+    href: '/system/client',
+    app: {
+      id: 0,
+      href:'/system',
+      externalId: 'system',
+      identity: 'https://curveballjs.org/a12nserver',
+      createdAt: new Date('2018-11-01T140000Z'),
+      modifiedAt: new Date('2022-09-11T020000Z'),
+      type: 'app',
+      nickname: 'a12n-server system user',
+      active: true,
+      system: true,
+    }
+  };
+  return generateTokenInternal({
+    grantType: 'developer-token',
+    ...options,
+    secretUsed: false,
+    client,
+    scope: [],
+  });
+}
+
+type GenerateTokenOneTimeTokenOptions = {
+  client: OAuth2Client;
+  principal: User;
+}
+/**
+ * Generates a token for the 'implicit' GrantType
+ */
+export function generateTokenOneTimeToken(options: GenerateTokenOneTimeTokenOptions): Promise<OAuth2Token> {
+  return generateTokenInternal({
+    grantType: 'developer-token',
+    ...options,
+    secretUsed: false,
+    scope: [],
+  });
+}
+
+type GenerateTokenOptions = {
+
+  /**
+   * The `null` case should be removed from a future version. This is
+   * supported because we used to not store grant_type, and we want to be able
+   * to refresh those old tokens.
+   *
+   * Goal is to remove this Summer 2023
+   */
+  grantType: GrantType | null;
+  client: OAuth2Client;
+  principal: App |User;
+  scope: string[];
+  browserSessionId?: string;
+  secretUsed: boolean;
+}
+
+/**
+ * Don't export this function, use or write a more specific function for each grantType
+ */
+async function generateTokenInternal(options: GenerateTokenOptions): Promise<OAuth2Token> {
+
+  if (!options.principal.active) {
+    throw new Error ('Cannot generate token for inactive user');
+  }
+
+  const expirySettings = getTokenExpiry();
+  const accessTokenExpires = Math.floor(Date.now() / 1000) + expirySettings.accessToken;
+  const refreshTokenExpires = Math.floor(Date.now() / 1000) + expirySettings.refreshToken;
+
+  let accessToken: string;
+
+  if (getSetting('jwt.privateKey')!==null && options.client) {
+    accessToken = await generateJWTAccessToken({
+      principal: options.principal,
+      client: options.client,
+      expiry: expirySettings.accessToken,
+      scope: options.scope,
+    });
+  } else {
+    accessToken = await generateSecretToken();
+  }
+  const refreshToken = await generateSecretToken();
+
+  const record: Omit<Oauth2TokensRecord, 'id'> = {
+    oauth2_client_id: options.client?.id || 0,
+    access_token: accessToken,
+    refresh_token: refreshToken,
+    user_id: options.principal.id,
+    grant_type: grantTypeId(options.grantType, options.secretUsed),
+    scope: options.scope?.join(' ') ?? null,
+    access_token_expires: accessTokenExpires,
+    refresh_token_expires: refreshTokenExpires,
+    browser_session_id: options.browserSessionId || null,
+    created_at: Math.trunc(Date.now() / 1000),
+  };
+
+  await db('oauth2_tokens').insert(record);
+
+  if (options.client && options.principal.type === 'user') {
+    await userAppPermissionsService.updateLastUse(options.principal, options.client.app);
+  }
+
+  return {
+    accessToken,
+    refreshToken,
+    grantType: options.grantType as OAuth2Token['grantType'],
+    secretUsed: false,
+    accessTokenExpires,
+    refreshTokenExpires,
+    tokenType: 'bearer',
+    principal: options.principal,
+    clientId: options.client.id,
+    scope: options.scope,
+  };
 
 }
 
@@ -316,7 +393,14 @@ export async function generateTokenFromRefreshToken(client: OAuth2Client, refres
   }
 
   await revokeToken(oldToken);
-  return generateTokenForUser(client, oldToken.user, oldToken.browserSessionId);
+
+  return generateTokenInternal({
+    grantType: oldToken.grantType,
+    principal: oldToken.principal,
+    client,
+    scope: oldToken.scope,
+    secretUsed: oldToken.secretUsed,
+  });
 
 }
 
@@ -371,30 +455,35 @@ export async function revokeToken(token: OAuth2Token): Promise<void> {
 
 }
 
+type GenerateAuthorizationCodeOptions = {
+  client: OAuth2Client;
+  principal: User;
+  scope: string[];
+  codeChallenge: string|undefined;
+  codeChallengeMethod: CodeChallengeMethod|undefined;
+  browserSessionId: string;
+  nonce: string | undefined;
+}
 /**
  * This function is used for the authorization_code grant flow.
  *
  * This function creates an code for a user. The code is later exchanged for
  * a oauth2 access token.
  */
-export async function generateCodeForUser(
-  client: OAuth2Client,
-  user: User,
-  codeChallenge: string|undefined,
-  codeChallengeMethod: CodeChallengeMethod|undefined,
-  browserSessionId: string,
-): Promise<OAuth2Code> {
+export async function generateAuthorizationCode(options: GenerateAuthorizationCodeOptions): Promise<OAuth2Code> {
 
   const code = await generateSecretToken();
   await db('oauth2_codes')
     .insert({
-      client_id: client.id,
-      user_id: user.id,
+      client_id: options.client.id,
+      principal_id: options.principal.id,
       code: code,
-      code_challenge: codeChallenge,
-      code_challenge_method: codeChallengeMethod,
-      browser_session_id: browserSessionId,
-      created: Math.floor(Date.now() / 1000),
+      code_challenge: options.codeChallenge,
+      code_challenge_method: options.codeChallengeMethod,
+      scope: options.scope?.join(' '),
+      browser_session_id: options.browserSessionId,
+      created_at: Math.floor(Date.now() / 1000),
+      nonce: options.nonce ?? null,
     });
 
   return {
@@ -402,28 +491,6 @@ export async function generateCodeForUser(
   };
 
 }
-
-type OAuth2TokenRecord = {
-  oauth2_client_id: number;
-  access_token: string;
-  refresh_token: string;
-  user_id: number;
-  access_token_expires: number;
-  refresh_token_expires: number;
-  created: number;
-  browser_session_id: string | null;
-};
-
-type OAuth2CodeRecord = {
-  id: number;
-  client_id: number;
-  code: string;
-  user_id: number;
-  code_challenge: string|undefined;
-  code_challenge_method: CodeChallengeMethod;
-  created: number;
-  browser_session_id: string | null;
-};
 
 /**
  * Returns Token information for an existing Access Token.
@@ -444,24 +511,18 @@ export async function getTokenByAccessToken(accessToken: string): Promise<OAuth2
     throw new NotFound('Access token not recognized');
   }
 
-  const row: OAuth2TokenRecord = result[0];
-  const user = await principalService.findById(row.user_id);
+  const row: Oauth2TokensRecord = result[0];
+  const principalService = new PrincipalService('insecure');
+  const principal = await principalService.findById(row.user_id);
 
-  if (!user.active) {
-    throw new Error(`Principal ${user.href} is not active`);
+  if (!principal.active) {
+    throw new Error(`Principal ${principal.href} is not active`);
   }
 
-  return {
-    accessToken: row.access_token,
-    refreshToken: row.refresh_token,
-    accessTokenExpires: row.access_token_expires,
-    refreshTokenExpires: row.refresh_token_expires,
-    tokenType: 'bearer',
-    user: user as App | User,
-    clientId: row.oauth2_client_id,
-    browserSessionId: row.browser_session_id || undefined,
-  };
-
+  return tokenRecordToModel(
+    row,
+    principal as App | User,
+  );
 }
 
 /**
@@ -480,23 +541,15 @@ export async function getTokenByRefreshToken(refreshToken: string): Promise<OAut
     throw new NotFound('Refresh token not recognized');
   }
 
-  const row: OAuth2TokenRecord = result[0];
+  const row = result[0];
 
-  const user = await principalService.findById(row.user_id);
-  if (!user.active) {
-    throw new Error(`Principal ${user.href} is not active`);
+  const principalService = new PrincipalService('insecure');
+  const principal = await principalService.findById(row.user_id);
+  if (!principal.active) {
+    throw new Error(`Principal ${principal.href} is not active`);
   }
 
-  return {
-    accessToken: row.access_token,
-    refreshToken: row.refresh_token,
-    accessTokenExpires: row.access_token_expires,
-    refreshTokenExpires: row.refresh_token_expires,
-    tokenType: 'bearer',
-    user: user as App | User,
-    clientId: row.oauth2_client_id,
-    browserSessionId: row.browser_session_id || undefined,
-  };
+  return tokenRecordToModel(row, principal as App|User);
 
 }
 
@@ -529,5 +582,80 @@ function getTokenExpiry(): TokenExpiry {
     refreshToken: getSetting('oauth2.refreshToken.expiry'),
     code: getSetting('oauth2.code.expiry'),
   };
+
+}
+
+export async function lastTokenId(): Promise<number> {
+
+  const result = await db('oauth2_tokens')
+    .first('id')
+    .orderBy('id', 'DESC');
+
+  return result?.id || 0;
+
+}
+
+function tokenRecordToModel(token: Oauth2TokensRecord, principal: User | App): OAuth2Token {
+
+  const [grantType, secretUsed] = grantTypeIdInfo(token.grant_type);
+
+  return {
+    accessToken: token.access_token,
+    refreshToken: token.refresh_token,
+
+    accessTokenExpires: token.access_token_expires,
+    refreshTokenExpires: token.refresh_token_expires,
+    tokenType: 'bearer',
+    grantType,
+    secretUsed,
+
+    scope: token.scope?.split(' ') ?? [],
+
+    principal,
+    clientId: token.oauth2_client_id,
+
+  };
+}
+
+function grantTypeIdInfo(grantType: number|null): [Exclude<GrantType, 'refresh_token'>|null, boolean] {
+
+  switch(grantType) {
+    case null: return [null, false];
+    case 1: return ['implicit', false];
+    case 2: return ['client_credentials', true];
+    case 3: return ['password', true];
+    case 4: return ['authorization_code', false];
+    case 5: return ['authorization_code', true];
+    case 6: return ['one-time-token', false];
+    case 7: return ['developer-token', false];
+    default:
+      throw new Error('Unknown grant_type in database');
+  }
+
+}
+
+function grantTypeId(grantType: 'authorization_code', secretUsed: boolean): number;
+function grantTypeId(grantType: GrantType | null, secretUsed?: boolean): null;
+function grantTypeId(grantType: GrantType | null, secretUsed?: boolean): number | null {
+
+  switch(grantType) {
+    case null:
+      return null;
+    case 'implicit':
+      return 1;
+    case 'client_credentials':
+      return 2;
+    case 'password':
+      return 3;
+    case 'authorization_code' :
+      return secretUsed ? 5 : 4;
+    case 'refresh_token' :
+      throw new Error(`Incorrect grantType for a token: ${grantType}. The token must be stored with the original grant_type`);
+    case 'one-time-token' :
+      return 6;
+    case 'developer-token' :
+      return 7;
+
+  }
 
 }

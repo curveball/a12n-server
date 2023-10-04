@@ -2,9 +2,9 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
-import * as principalService from '../../principal/service';
+import { PrincipalService } from '../../principal/service';
 import * as userService from '../../user/service';
-import { User } from '../../principal/types';
+import { User } from '../../types';
 import { InvalidGrant, InvalidRequest, UnsupportedGrantType } from '../errors';
 import * as oauth2Service from '../service';
 import { OAuth2Client } from '../../oauth2-client/types';
@@ -12,6 +12,7 @@ import {
   getOAuth2ClientFromBasicAuth,
   getOAuth2ClientFromBody,
 } from '../../oauth2-client/service';
+import * as userAppPermissions from '../../user-app-permissions/service';
 
 class TokenController extends Controller {
 
@@ -28,22 +29,16 @@ class TokenController extends Controller {
 
     let oauth2Client: OAuth2Client;
 
-    switch (grantType) {
-
-      case 'authorization_code' :
-        oauth2Client = await getOAuth2ClientFromBody(ctx);
-        break;
-      case 'refresh_token' :
-        if (ctx.request.headers.has('Authorization')) {
-          oauth2Client = await getOAuth2ClientFromBasicAuth(ctx);
-        } else {
-          oauth2Client = await getOAuth2ClientFromBody(ctx);
-        }
-        break;
-      default :
-        oauth2Client = await getOAuth2ClientFromBasicAuth(ctx);
-        break;
-
+    let secretUsed: boolean;
+    if (ctx.request.headers.has('Authorization')) {
+      oauth2Client = await getOAuth2ClientFromBasicAuth(ctx);
+      secretUsed = true;
+    } else {
+      if (!['authorization_code', 'refresh_token'].includes(grantType)) {
+        throw new InvalidRequest('A secret must be specified when using the client_credentials grant');
+      }
+      oauth2Client = await getOAuth2ClientFromBody(ctx);
+      secretUsed = false;
     }
 
     if (!oauth2Client.allowedGrantTypes.includes(grantType)) {
@@ -52,7 +47,7 @@ class TokenController extends Controller {
 
     switch (grantType) {
       case 'authorization_code' :
-        return this.authorizationCode(oauth2Client, ctx);
+        return this.authorizationCode(oauth2Client, ctx, secretUsed);
       case 'client_credentials' :
         return this.clientCredentials(oauth2Client, ctx);
       case 'password' :
@@ -65,7 +60,10 @@ class TokenController extends Controller {
 
   async clientCredentials(oauth2Client: OAuth2Client, ctx: Context) {
 
-    const token = await oauth2Service.generateTokenForClient(oauth2Client);
+    const token = await oauth2Service.generateTokenClientCredentials({
+      client: oauth2Client,
+      scope: ctx.request.body.scope?.split(' ') ?? [],
+    });
 
     ctx.response.type = 'application/json';
     ctx.response.body = {
@@ -76,7 +74,7 @@ class TokenController extends Controller {
 
   }
 
-  async authorizationCode(oauth2Client: OAuth2Client, ctx: Context<any>) {
+  async authorizationCode(oauth2Client: OAuth2Client, ctx: Context<any>, secretUsed: boolean) {
 
     if (!ctx.request.body.code) {
       throw new InvalidRequest('The "code" property is required');
@@ -88,7 +86,12 @@ class TokenController extends Controller {
       log(EventType.oauth2BadRedirect, ctx);
       throw new InvalidRequest('This value for "redirect_uri" is not recognized.');
     }
-    const token = await oauth2Service.generateTokenFromCode(oauth2Client, ctx.request.body.code, ctx.request.body.code_verifier);
+    const token = await oauth2Service.generateTokenAuthorizationCode({
+      client: oauth2Client,
+      code: ctx.request.body.code,
+      codeVerifier: ctx.request.body.code_verifier,
+      secretUsed,
+    });
 
     ctx.response.type = 'application/json';
     ctx.response.body = {
@@ -96,6 +99,7 @@ class TokenController extends Controller {
       token_type: token.tokenType,
       expires_in: token.accessTokenExpires - Math.round(Date.now() / 1000),
       refresh_token: token.refreshToken,
+      id_token: token.idToken,
     };
 
   }
@@ -103,6 +107,7 @@ class TokenController extends Controller {
   async password(oauth2Client: OAuth2Client, ctx: Context<any>) {
 
     let user: User;
+    const principalService = new PrincipalService('insecure');
     try {
       user = await principalService.findByIdentity('mailto:' + ctx.request.body.username) as User;
       if (user.type !== 'user') {
@@ -124,10 +129,19 @@ class TokenController extends Controller {
 
     log(EventType.loginSuccess, ctx);
 
-    const token = await oauth2Service.generateTokenForUser(
-      oauth2Client,
-      user
+    const scope = ctx.request.body.scope?.split(' ') ?? null;
+
+    await userAppPermissions.setPermissions(
+      oauth2Client.app,
+      user,
+      scope,
     );
+
+    const token = await oauth2Service.generateTokenPassword({
+      client: oauth2Client,
+      principal: user,
+      scope
+    });
 
     ctx.response.body = {
       access_token: token.accessToken,

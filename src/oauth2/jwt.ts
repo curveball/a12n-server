@@ -1,33 +1,73 @@
-import { User, App } from '../principal/types';
+import { User, App } from '../types';
 import { OAuth2Client } from '../oauth2-client/types';
 import { generateSecretToken } from '../crypto';
 import { getSetting } from '../server-settings';
 import { createPrivateKey, KeyObject, createPublicKey } from 'crypto';
 import { SignJWT } from 'jose';
+import { getGlobalOrigin } from '@curveball/kernel';
 
-export async function generateJWTAccessToken(user: User|App, client: OAuth2Client, expiry: number, scopes: string[]): Promise<string> {
+type AccessTokenOptions = {
+  principal: User|App;
+  client: OAuth2Client;
+  expiry: number;
+  scope: string[];
+}
 
-  const origin = process.env.PUBLIC_URI!;
+export async function generateJWTAccessToken(options: AccessTokenOptions): Promise<string> {
+
   const jti = await generateSecretToken();
 
   const privateKey = getPrivateKey();
 
-
   const jwt = await new SignJWT({
-    scope: scopes.join(' '),
+    scope: options.scope.join(' '),
+    client_id: options.client.clientId,
   })
-    .setProtectedHeader({alg: 'RS256'})
+    .setProtectedHeader({
+      alg: 'RS256',
+      typ: 'at+jwt',
+    })
     .setIssuedAt()
-    .setIssuer(origin)
-    .setAudience(client.app.href)
-    .setSubject(user.href)
-    .setExpirationTime(Math.floor(Date.now() / 1000) + expiry)
+    .setIssuer(getGlobalOrigin())
+    .setAudience(options.client.app.href)
+    .setSubject(options.principal.href)
+    .setExpirationTime(Math.floor(Date.now() / 1000) + options.expiry)
     .setJti(jti)
     .sign(privateKey);
 
   return jwt;
 
 }
+
+type IDTokenOptions = {
+  principal: User|App;
+  client: OAuth2Client;
+  nonce: null | string;
+}
+
+export async function generateJWTIDToken(options: IDTokenOptions) {
+
+  const privateKey = getPrivateKey();
+
+  const jwt = await new SignJWT({
+    nonce: options.nonce,
+
+  })
+    .setProtectedHeader({
+      alg: 'RS256',
+    })
+    .setIssuedAt()
+    .setIssuer(getGlobalOrigin())
+    .setAudience(options.client.clientId)
+    .setSubject(options.principal.href)
+    .setExpirationTime(Math.floor(Date.now() / 1000) + getSetting('oidc.idToken.expiry'))
+    .sign(privateKey);
+
+  return jwt;
+
+
+}
+
 
 let privateKey: KeyObject|null;
 

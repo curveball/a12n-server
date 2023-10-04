@@ -1,7 +1,8 @@
 import { Middleware } from '@curveball/core';
 import { NotFound, Unauthorized } from '@curveball/http-errors';
 import * as oauth2Service from './../oauth2/service';
-import { App, User, Principal } from '../principal/types';
+import { App, User, Principal } from '../types';
+import * as privilegeService from '../privilege/service';
 
 const whitelistPath = [
   '/login',
@@ -17,7 +18,7 @@ const whitelistPath = [
   '/.well-known/oauth-authorization-server',
 ];
 
-declare module '@curveball/core' {
+declare module '@curveball/kernel' {
 
   interface Context {
 
@@ -25,6 +26,8 @@ declare module '@curveball/core' {
      * Authentication info
      */
     auth: AuthHelper;
+
+    privileges: privilegeService.LazyPrivilegeBox;
 
   }
 
@@ -99,7 +102,7 @@ export default function(): Middleware {
         }
       }
       // We are logged in!
-      ctx.auth = new AuthHelper(token.user);
+      ctx.auth = new AuthHelper(token.principal);
 
       return next();
 
@@ -108,6 +111,9 @@ export default function(): Middleware {
     ctx.auth = new AuthHelper(
       ctx.session.user || null
     );
+    if (ctx.auth.principal) {
+      ctx.privileges = await privilegeService.get(ctx.auth.principal);
+    }
     if (ctx.session.user) {
       // The user was logged in via a session cookie.
       return next();
@@ -120,7 +126,7 @@ export default function(): Middleware {
 
     // Not logged in.
     ctx.status = 303;
-    ctx.response.headers.set('Location', '/login');
+    ctx.response.headers.set('Location', '/login?continue=' + encodeURIComponent(ctx.request.requestTarget));
 
   };
 

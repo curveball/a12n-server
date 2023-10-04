@@ -1,6 +1,6 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { NotFound } from '@curveball/http-errors';
+import { NotFound, NotImplemented } from '@curveball/http-errors';
 import * as querystring from 'querystring';
 import { InvalidClient, InvalidRequest, UnsupportedGrantType } from '../errors';
 import * as oauth2Service from '../service';
@@ -9,27 +9,28 @@ import { OAuth2Client } from '../../oauth2-client/types';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
 import { findByClientId } from '../../oauth2-client/service';
+import * as userAppPermissions from '../../user-app-permissions/service';
+import { generateJWTIDToken } from '../jwt';
 
+/**
+ * The Authorize controller is responsible for handing requests to the oauth2
+ * authorize endpoint.
+ *
+ * There are 2 oauth2 grant types handled here: 'implicit' and
+ * 'authorization_code'. Implicit is disabled by default and will probably
+ * be removed from a future version.
+ */
 class AuthorizeController extends Controller {
 
   async get(ctx: Context) {
 
     ctx.response.type = 'text/html';
 
+    const params = parseAuthorizationQuery(ctx.query);
     let oauth2Client;
-    let codeChallengeMethod: CodeChallengeMethod|undefined = undefined;
-
-    if (!['token', 'code'].includes(ctx.query.response_type)) {
-      throw new InvalidRequest('The "response_type" parameter must be provided, and must be "token" or "code"');
-    }
-    if (!ctx.query.client_id) {
-      throw new InvalidRequest('The "client_id" parameter must be provided');
-    }
-
-    const clientId = ctx.query.client_id;
 
     try {
-      oauth2Client = await findByClientId(clientId);
+      oauth2Client = await findByClientId(params.clientId);
     } catch (e) {
       if (e instanceof NotFound) {
         throw new InvalidClient('Client id incorrect');
@@ -39,82 +40,65 @@ class AuthorizeController extends Controller {
       }
     }
 
-    if (!ctx.query.redirect_uri) {
+    if (!params.redirectUri) {
       throw new InvalidRequest('The "redirect_uri" parameter must be provided');
     }
 
-    if (oauth2Client.requirePkce && !ctx.query.code_challenge) {
-      throw new InvalidRequest('This endpoint requires that OAuth2 client support PKCE, and your client did not pass the correct parameters. Either turn off the PKCE requirement for this OAuth2 client, or upgrade to an OAuth2 client library that supports PKCE.');
-    }
-
-    if (ctx.query.response_type === 'code') {
-      if (!ctx.query.code_challenge && ctx.query.code_challenge_method) {
-        throw new InvalidRequest('The "code_challenge" must be provided');
-      }
-      if (ctx.query.code_challenge_method) {
-        switch(ctx.query.code_challenge_method) {
-          case 'S256':
-          case 'plain':
-            codeChallengeMethod = ctx.query.code_challenge_method;
-            break;
-          default:
-            throw new InvalidRequest('The "code_challenge_method" must be "plain" or "S256"');
-        }
-      } else {
-        codeChallengeMethod = ctx.query.code_challenge ? 'plain' : undefined;
-      }
-    }
-
-    const state = ctx.query.state;
-    // const scope = ctx.query.scope;
-    const responseType = ctx.query.response_type;
-    const redirectUri = ctx.query.redirect_uri;
-    const codeChallenge = ctx.query.code_challenge;
-    const grantType = responseType === 'code' ? 'authorization_code' : 'implicit';
-
-
+    const grantType = params.responseType === 'token' ? 'implicit' :  'authorization_code';
 
     if (!oauth2Client.allowedGrantTypes.includes(grantType)) {
       throw new UnsupportedGrantType('The current client is not allowed to use the ' + grantType + ' grant_type');
     }
 
     try {
-      await oauth2Service.requireRedirectUri(oauth2Client, redirectUri);
+      await oauth2Service.requireRedirectUri(oauth2Client, params.redirectUri);
     } catch (err) {
       log(EventType.oauth2BadRedirect, ctx);
       throw err;
     }
 
-    if (ctx.session.user !== undefined) {
+    if (ctx.session.user === undefined) {
+      // Use is not logged in, we need to send them through the login process
+      // first. The user will come back here after.
+      this.redirectToLogin(ctx, {'continue': ctx.request.requestTarget});
+      return;
+    }
 
-      if (responseType === 'token') {
-        return this.tokenRedirect(ctx, oauth2Client, redirectUri, state);
-      } else {
-        return this.codeRedirect(ctx, oauth2Client, redirectUri, state, codeChallenge, codeChallengeMethod);
-      }
-
+    await userAppPermissions.setPermissions(
+      oauth2Client.app,
+      ctx.session.user,
+      params.scope,
+    );
+    if (params.responseType === 'token') {
+      return this.tokenRedirect(ctx, oauth2Client, params);
     } else {
-      return this.redirectToLogin(ctx, {'continue': ctx.request.requestTarget});
+
+      if (oauth2Client.requirePkce && !params.codeChallenge) {
+        throw new InvalidRequest('This endpoint requires that OAuth2 client support PKCE, and your client did not pass the correct parameters. Either turn off the PKCE requirement for this OAuth2 client, or upgrade to an OAuth2 client library that supports PKCE.');
+      }
+      return this.codeRedirect(ctx, oauth2Client, params);
     }
 
   }
 
-  async tokenRedirect(ctx: Context, oauth2Client: OAuth2Client, redirectUri: string, state: string|undefined) {
+  async tokenRedirect(ctx: Context, oauth2Client: OAuth2Client, params: AuthorizeParamsToken) {
 
-    const token = await oauth2Service.generateTokenForUser(
-      oauth2Client,
-      ctx.session.user
-    );
+    const token = await oauth2Service.generateTokenImplicit({
+      client: oauth2Client,
+      scope: params.scope,
+      principal: ctx.session.user,
+      browserSessionId: ctx.sessionId!,
+    });
 
     ctx.status = 302;
     ctx.response.headers.set('Cache-Control', 'no-cache');
     ctx.response.headers.set(
       'Location',
-      redirectUri + '#' + querystring.stringify({
+      params.redirectUri + '#' + querystring.stringify({
         access_token: token.accessToken,
         token_type: token.tokenType,
         expires_in: token.accessTokenExpires - Math.round(Date.now() / 1000),
-        state: state
+        state: params.state
       })
     );
 
@@ -123,28 +107,37 @@ class AuthorizeController extends Controller {
   async codeRedirect(
     ctx: Context,
     oauth2Client: OAuth2Client,
-    redirectUri: string,
-    state: string|undefined,
-    codeChallenge: string|undefined,
-    codeChallengeMethod: 'S256' | 'plain' | undefined
+    params: AuthorizeParamsCode
   ) {
 
-    const code = await oauth2Service.generateCodeForUser(
-      oauth2Client,
-      ctx.session.user,
-      codeChallenge,
-      codeChallengeMethod,
-      ctx.sessionId!,
-    );
+    const code = await oauth2Service.generateAuthorizationCode({
+      client: oauth2Client,
+      principal: ctx.session.user,
+      scope: params.scope,
+      codeChallenge: params.codeChallenge,
+      codeChallengeMethod: params.codeChallengeMethod,
+      browserSessionId: ctx.sessionId!,
+      nonce: params.nonce,
+    });
+
+    const redirectParams: Record<string, string> = {
+      code: code.code,
+    };
+    if (params.state) redirectParams.state = params.state;
+
+    if (params.responseType === 'code id_token') {
+      redirectParams.id_token = await generateJWTIDToken({
+        principal: ctx.session.user,
+        client: oauth2Client,
+        nonce: params.nonce ?? null,
+      });
+    }
 
     ctx.status = 302;
     ctx.response.headers.set('Cache-Control', 'no-cache');
     ctx.response.headers.set(
       'Location',
-      redirectUri + '?' + querystring.stringify({
-        code: code.code,
-        state: state
-      })
+      params.redirectUri + '?' + querystring.stringify(redirectParams)
     );
 
   }
@@ -162,3 +155,118 @@ class AuthorizeController extends Controller {
 }
 
 export default new AuthorizeController();
+
+type AuthorizeParamsDisplay = 'page' | 'popup' | 'touch' | 'wap';
+
+type AuthorizeParamsCode = {
+  responseType: 'code' | 'code id_token';
+  clientId: string;
+  redirectUri?: string;
+  scope: string[];
+  state?: string;
+
+  // PCKE extension
+  codeChallenge?: string;
+  codeChallengeMethod?: CodeChallengeMethod;
+
+  // OpenID Connect extension
+  nonce?: string;
+  display?: AuthorizeParamsDisplay;
+};
+
+type AuthorizeParamsToken = {
+  responseType: 'token';
+  clientId: string;
+  redirectUri?: string;
+  scope: string[];
+  state?: string;
+}
+
+type AuthorizeParams = AuthorizeParamsCode | AuthorizeParamsToken;
+
+/**
+ * The sole goal of this function parse and validate query string parameters.
+ */
+function parseAuthorizationQuery(query: Record<string, string>): AuthorizeParams {
+
+  if (!['token', 'code', 'code id_token'].includes(query.response_type)) {
+    throw new InvalidRequest('The "response_type" parameter must be provided, and must be "token" or "code"');
+  }
+  const responseType: 'code' | 'token' = query.response_type as any;
+  if (!query.client_id) {
+    throw new InvalidRequest('The "client_id" parameter must be provided');
+  }
+  const clientId = query.client_id;
+
+  /**
+   * These are all OpenID parameters that we don't support right now. We're
+   * throwing an error to make sure we're not incorrectly implementing
+   * OpenID Connect while this is still in progress.
+   */
+  const notSupportedParams = [
+    'prompt',
+    'max_age',
+    'ui_locales',
+    'id_token_hint',
+    'login_hint',
+    'acr_values',
+  ];
+
+  for(const param of notSupportedParams) {
+    if (param in query) {
+      throw new NotImplemented(`The "${param}" parameter is currently not implemented. Want support for this? Open a ticket.`);
+    }
+  }
+
+  if (responseType === 'token') {
+    return {
+      responseType,
+      clientId,
+      redirectUri: query.redirect_uri ?? undefined,
+      state: query.state ?? undefined,
+      scope: query.scope ? query.scope.split(' ') : []
+    };
+  }
+
+  const scope = query.scope ? query.scope.split(' ') : [];
+
+  if (!query.code_challenge && query.code_challenge_method) {
+    throw new InvalidRequest('The "code_challenge" must be provided');
+  }
+  let codeChallengeMethod: CodeChallengeMethod|undefined = undefined;
+  const codeChallenge: string|undefined = query.code_challenge;
+  if (query.code_challenge_method) {
+    switch(query.code_challenge_method) {
+      case 'S256':
+      case 'plain':
+        codeChallengeMethod = query.code_challenge_method;
+        break;
+      default:
+        throw new InvalidRequest('The "code_challenge_method" must be "plain" or "S256"');
+    }
+  } else {
+    codeChallengeMethod = query.code_challenge ? 'plain' : undefined;
+  }
+
+  const displayOptions = ['page', 'popup', 'touch', 'wap'] as const;
+  const display =
+    query.display && displayOptions.includes(query.display as any) ?
+    query.display as AuthorizeParamsDisplay : undefined;
+
+  if (query.responseMode && query.responseMode !== 'query') {
+    throw new NotImplemented('The only supported value for "response_mode" is currently "query"');
+  }
+
+  return {
+    responseType,
+    clientId,
+    redirectUri: query.redirect_uri ?? undefined,
+    state: query.state ?? undefined,
+    scope,
+    codeChallenge,
+    codeChallengeMethod,
+
+    display,
+    nonce: query.nonce ?? undefined,
+  };
+}

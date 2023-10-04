@@ -1,4 +1,4 @@
-import { User } from '../../principal/types';
+import { User } from '../../types';
 
 export type WebAuthnDevice = {
     id: number;

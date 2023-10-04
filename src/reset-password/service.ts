@@ -1,6 +1,6 @@
 import * as nodemailer from 'nodemailer';
 import { render } from '../templates';
-import { User } from '../principal/types';
+import { User } from '../types';
 import { createToken } from '../one-time-token/service';
 import { requireSetting } from '../server-settings';
 

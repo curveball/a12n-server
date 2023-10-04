@@ -1,5 +1,5 @@
 import { PrivilegeMap } from '../../privilege/types';
-import { Principal, Group, User } from '../../principal/types';
+import { Principal, Group, User } from '../../types';
 import { HalResource } from 'hal-types';
 
 export function collection(users: User[]): HalResource {
@@ -44,6 +44,11 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
         href: group.href,
         title: group.nickname,
       })),
+
+      'describedby': {
+        href: 'https://curveballjs.org/schemas/a12nserver/user.json',
+        type: 'application/schema+json',
+      }
     },
     nickname: user.nickname,
     active: user.active,
@@ -70,6 +75,10 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
       href: `${user.href}/sessions`,
       title: 'Active user sessions'
     };
+    hal._links['app-permission-collection'] = {
+      href: `${user.href}/app-permission`,
+      title: 'App Permissions',
+    };
   }
   if (isAdmin) {
     hal._links['password'] = {
@@ -95,7 +104,7 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
 
 }
 
-export function edit(user: Principal): HalResource {
+export function edit(user: User): HalResource {
   return {
     _links: {
       self: {
@@ -142,20 +151,21 @@ export function edit(user: Principal): HalResource {
   };
 }
 
-export function editPrivileges(user: Principal, privileges: PrivilegeMap): HalResource {
+export function editPrivileges(principal: Principal, userPrivileges: PrivilegeMap, privileges: string[]): HalResource {
   return {
     _links: {
       self: {
-        href: `${user.href}/edit/privileges`,
+        href: `${principal.href}/edit/privileges`,
+        title: `Edit privileges for ${principal.nickname}`,
       },
       up: {
-        href: user.href,
+        href: principal.href,
         title: 'Cancel',
       },
     },
     _templates: {
-      default: {
-        title: `Edit privilege policy for ${user.nickname}`,
+      edit: {
+        title: `Edit privilege policy for ${principal.nickname}`,
         method: 'POST',
         contentType: 'application/x-www-form-urlencoded',
         properties: [
@@ -165,8 +175,36 @@ export function editPrivileges(user: Principal, privileges: PrivilegeMap): HalRe
             type: 'textarea',
             cols: 100,
             rows: 20,
-            value: JSON.stringify(privileges, undefined, 2),
+            value: JSON.stringify(userPrivileges, undefined, 2),
           },
+        ],
+      },
+      add: {
+        title: 'Add a single privilege',
+        method: 'PATCH',
+        contentType: 'application/json',
+        target: `${principal.href}/edit/privileges`,
+        properties: [
+          {
+            name: 'privilege',
+            prompt: 'Privilege',
+            required: true,
+            options: {
+              inline: privileges
+            }
+          },
+          {
+            name: 'resource',
+            prompt: 'Resource (uri)',
+            required: true,
+            type: 'url',
+            placeholder: 'https://my-api/resource/foo',
+          },
+          {
+            name: 'action',
+            type: 'hidden',
+            value: 'add'
+          }
         ],
       },
     },

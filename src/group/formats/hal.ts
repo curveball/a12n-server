@@ -1,4 +1,4 @@
-import { Group, Principal } from '../../principal/types';
+import { Group, Principal } from '../../types';
 import { HalResource, HalFormsTemplate } from 'hal-types';
 import { PrivilegeMap } from '../../privilege/types';
 
@@ -47,30 +47,27 @@ export function item(group: Group, privileges: PrivilegeMap, isAdmin: boolean, g
 
   const hal: HalResource = {
     _links: {
-      'self': {href: group.href, title: group.nickname },
-      'me': { href: group.identity, title: group.nickname },
-      'up' : { href: '/group', title: 'List of groups' },
-      'group': groups.map( group => ({
+      self: {href: group.href, title: group.nickname },
+      me: { href: group.identity, title: group.nickname },
+      up : { href: '/group', title: 'List of groups' },
+      group: groups.map( group => ({
         href: group.href,
         title: group.nickname,
       })),
-      'member': members.map( member => ({
+      member: members.map( member => ({
         href: member.href,
         title: member.nickname
       })),
-      'member-collection': {
-        href: `${group.href}/member`,
-        title: 'Group member',
-        hints: {
-          status: 'deprecated'
-        },
+      describedby: {
+        href: 'https://curveballjs.org/schemas/a12nserver/group.json',
+        type: 'application/schema+json',
       }
     },
     nickname: group.nickname,
-    active: group.active,
     createdAt: group.createdAt,
     modifiedAt: group.modifiedAt,
     type: group.type,
+    system: group.system || undefined,
     privileges
   };
 
@@ -85,6 +82,43 @@ export function item(group: Group, privileges: PrivilegeMap, isAdmin: boolean, g
     if (members.length>0) {
       hal._templates['remove-member'] = removeMemberForm(group, members);
     }
+  }
+
+  return hal;
+
+}
+
+/**
+ * Generate a HAL response for the 'all users' group.
+ *
+ * This group is special as it contains a virtual representation of all users in the system.
+ * We don't want to allow modifying the members list of listing the members generally.
+ */
+export function itemAllUsers(group: Group, privileges: PrivilegeMap, isAdmin: boolean): HalResource {
+
+  const hal: HalResource = {
+    _links: {
+      'self': {href: group.href, title: group.nickname },
+      'me': { href: group.identity, title: group.nickname },
+      'up' : { href: '/group', title: 'List of groups' },
+      'describedby': {
+        href: 'https://curveballjs.org/schemas/a12nserver/group.json',
+        type: 'application/schema+json',
+      }
+    },
+    nickname: group.nickname,
+    createdAt: group.createdAt,
+    modifiedAt: group.modifiedAt,
+    type: group.type,
+    system: true,
+    privileges
+  };
+
+  if (isAdmin) {
+    hal._links['privileges'] = {
+      href: `${group.href}/edit/privileges`,
+      title: 'Change privilege policy',
+    };
   }
 
   return hal;

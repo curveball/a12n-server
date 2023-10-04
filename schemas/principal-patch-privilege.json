@@ -1,0 +1,32 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://curveballjs.org/schemas/a12nserver/principal-patch-privilege.json",
+  "type": "object",
+  "description": "This object is a request body for patching a principal's ACL.",
+
+  "required": ["action", "privilege", "resource"],
+
+  "properties": {
+    "action": {
+      "const": "add",
+      "description": "Indicates that a privilege was added"
+    },
+    "privilege": {
+      "type": "string",
+      "description": "The name of the privilege, for example 'write' or 'read'"
+    },
+    "resource": {
+      "description": "The resource on which the user is receiving the privilege for. This should be a URI or '*'",
+      "oneOf": [
+        {
+          "const": "*"
+        },
+        {
+          "type": "string",
+          "format": "uri"
+        }
+      ]
+    }
+  },
+  "additionalProperties": false
+}

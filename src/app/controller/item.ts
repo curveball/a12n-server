@@ -2,9 +2,7 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import * as privilegeService from '../../privilege/service';
 import * as hal from '../formats/hal';
-import * as principalService from '../../principal/service';
-import * as groupService from '../../group/service';
-import { Forbidden } from '@curveball/http-errors';
+import { PrincipalService } from '../../principal/service';
 
 type EditPrincipalBody = {
   nickname: string;
@@ -26,29 +24,30 @@ class AppController extends Controller {
 
   async get(ctx: Context) {
 
+    const principalService = new PrincipalService(ctx.privileges);
     const app = await principalService.findByExternalId(ctx.params.id, 'app');
 
-    const isAdmin = await privilegeService.hasPrivilege(ctx, 'admin');
+    const isAdmin = ctx.privileges.has('admin');
 
+    const principalPrivileges = await privilegeService.get(app);
     ctx.response.body = hal.item(
       app,
-      await privilegeService.getPrivilegesForPrincipal(app),
+      principalPrivileges.getAll(),
       isAdmin,
-      await groupService.findGroupsForPrincipal(app),
+      await principalService.findGroupsForPrincipal(app),
     );
 
   }
 
   async put(ctx: Context) {
 
-    if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
-      throw new Forbidden('Only users with the "admin" privilege may edit users');
-    }
+    const principalService = new PrincipalService(ctx.privileges);
+
     ctx.request.validate<EditPrincipalBody>(
       'https://curveballjs.org/schemas/a12nserver/principal-edit.json'
     );
 
-    const user = await principalService.findById(+ctx.params.id, 'app');
+    const user = await principalService.findByExternalId(ctx.params.id, 'app');
     user.active = !!ctx.request.body.active;
     user.nickname = ctx.request.body.nickname;
 
@@ -56,7 +55,6 @@ class AppController extends Controller {
     ctx.status = 204;
 
   }
-
 
 }
 

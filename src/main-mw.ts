@@ -9,6 +9,7 @@ import { RedisStore } from '@curveball/session-redis';
 import { invokeMiddlewares, Middleware } from '@curveball/core';
 
 import login from './middleware/login';
+import csrf from './middleware/csrf';
 import routes from './routes';
 import { getSetting } from './server-settings';
 import { join } from 'path';
@@ -20,7 +21,7 @@ import { join } from 'path';
  * potentially allow a12nserver to be embedded in another curveball
  * application.
  */
-export default function(): Middleware {
+export default function (): Middleware {
 
   if (process.env.PUBLIC_URI === undefined) {
     throw new Error('PUBLIC_URI environment variable must be set.');
@@ -37,6 +38,18 @@ export default function(): Middleware {
   }
 
   middlewares.push(
+    session({
+      store: process.env.REDIS_HOST ? new RedisStore({
+        prefix: 'A12N-session',
+        clientOptions: {
+          port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT, 10) : 6379,
+          host: process.env.REDIS_HOST ? process.env.REDIS_HOST : '127.0.0.1',
+          password: process.env.REDIS_PASSWORD ? process.env.REDIS_PASSWORD : undefined,
+        },
+      }) : 'memory',
+      cookieName: 'A12N',
+      expiry: 60 * 60 * 24 * 7,
+    }),
     browser({
       title: 'a12n-server',
       stylesheets: [
@@ -44,19 +57,10 @@ export default function(): Middleware {
       ],
     }),
     problem(),
-    session({
-      store: process.env.REDIS_HOST ? new RedisStore({
-        prefix: 'A12N-session',
-        clientOptions: {
-          port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT, 10) : 6379,
-          host: process.env.REDIS_HOST ? process.env.REDIS_HOST : '127.0.0.1',
-        },
-      }) : 'memory',
-      cookieName: 'A12N',
-      expiry: 60*60*24*7,
-    }),
+
     login(),
     bodyParser(),
+    csrf(),
     links(),
     validator({
       schemaPath: join(__dirname, '../schemas'),

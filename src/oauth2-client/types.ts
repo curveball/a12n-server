@@ -1,6 +1,4 @@
-import { App } from '../principal/types';
-
-export type GrantType = 'refresh_token' | 'client_credentials' | 'password' | 'implicit' | 'authorization_code';
+import { App, GrantType } from '../types';
 
 /**
  * The OAuth2 client refers to a single (programmatic) client, accessing
@@ -15,6 +13,11 @@ export type OAuth2Client = {
    * Unique, internal id.
    */
   id: number;
+
+  /**
+   * Route to this client
+   */
+  href: string;
 
   /**
    * A string that's used to configure OAuth2 clients.

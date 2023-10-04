@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://curveballjs.org/schemas/a12nserver/user.json",
+  "type": "object",
+  "description": "A user",
+
+  "required": ["nickname", "active", "createdAt", "modifiedAt", "type", "privileges", "hasPassword"],
+  "additionalProperties": false,
+
+  "properties": {
+    "_links": {
+      "description": "HAL Links"
+    },
+    "nickname": {
+      "type": "string",
+      "minLength": 3,
+      "description": "Human-readable displayname for the user."
+    },
+    "active": {
+      "type": "boolean",
+      "description": "If false, the user will not be able to log in."
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Creation date and time."
+    },
+    "modifiedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time the user was modified."
+    },
+    "type": {
+      "const": "user",
+      "description": "May be 'user', 'app' or 'group'"
+    },
+    "privileges": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "items": {
+          "type": "string"
+        }
+      }
+    },
+    "hasPassword": {
+      "type": "boolean",
+      "description": "Does the user have a password set?"
+    }
+
+  }
+}

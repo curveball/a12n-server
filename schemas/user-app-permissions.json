@@ -1,0 +1,38 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://curveballjs.org/schemas/a12nserver/user-app-permissions.json",
+  "type": "object",
+  "name": "User App Permissions",
+  "description": "This object contains the list of permissions/scopes that the user has granted to an app. The app may act on behalf of the user for these scopes.",
+
+  "required": ["scope", "createdAt", "modifiedAt", "lastUsedAt"],
+  "additionalProperties": false,
+
+  "properties": {
+    "_links": {
+      "description": "HAL Links"
+    },
+    "scope": {
+      "type": "array",
+      "description": "List of scopes that were granted to the app",
+      "items": {
+        "type": "string"
+      }
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "The date/time when the user first granted privileges to the app."
+    },
+    "modifiedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "The date/time when the list of scopes was last updated."
+    },
+    "lastUsedAt": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "The last time an access token was generated or refreshed by this app, for this user."
+    }
+  }
+}

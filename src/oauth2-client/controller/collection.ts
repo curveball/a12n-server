@@ -1,21 +1,23 @@
+import * as bcrypt from 'bcrypt';
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import * as privilegeService from '../../privilege/service';
-import * as hal from '../formats/hal';
 import { Forbidden, UnprocessableEntity } from '@curveball/http-errors';
+
+import * as hal from '../formats/hal';
+import { PrincipalService } from '../../principal/service';
+import { GrantType } from '../../types';
+import { OAuth2Client } from '../types';
 import { findByApp, create } from '../service';
-import * as principalService from '../../principal/service';
-import { GrantType, OAuth2Client } from '../types';
-import * as bcrypt from 'bcrypt';
 import { generatePublicId, generateSecretToken } from '../../crypto';
 
 class ClientCollectionController extends Controller {
 
   async get(ctx: Context) {
 
+    const principalService = new PrincipalService(ctx.privileges);
     const app = await principalService.findByExternalId(ctx.params.id, 'app');
     if (ctx.auth.equals(app)) {
-      if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
+      if (!ctx.privileges.has('admin')) {
         throw new Forbidden('Only users with the "admin" privilege can inspect OAuth2 clients that are not your own');
       }
     }
@@ -27,8 +29,9 @@ class ClientCollectionController extends Controller {
 
   async post(ctx: Context<any>) {
 
+    const principalService = new PrincipalService(ctx.privileges);
     const app = await principalService.findByExternalId(ctx.params.id, 'app');
-    if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
+    if (!ctx.privileges.has('admin')) {
       throw new Forbidden('Only users with the "admin" privilege can inspect OAuth2 clients that are not your own');
     }
 
@@ -65,7 +68,7 @@ class ClientCollectionController extends Controller {
     }
 
     const clientSecret = `secret-token:${await generateSecretToken()}`;
-    const newClient: Omit<OAuth2Client,'id'> = {
+    const newClient: Omit<OAuth2Client,'id'|'href'> = {
       clientId,
       app,
       allowedGrantTypes: allowedGrantTypes,

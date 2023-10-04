@@ -1,9 +1,8 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { BadRequest, Conflict, Forbidden, NotFound } from '@curveball/http-errors';
-import * as privilegeService from '../../privilege/service';
+import { BadRequest, Conflict, NotFound } from '@curveball/http-errors';
 import * as hal from '../formats/hal';
-import * as principalService from '../../principal/service';
+import { PrincipalService } from '../../principal/service';
 
 type NewPrincipalBody = {
   nickname: string;
@@ -15,16 +14,13 @@ class UserCollectionController extends Controller {
 
   async get(ctx: Context) {
 
+    const principalService = new PrincipalService(ctx.privileges);
     const users = await principalService.findAll('user');
     ctx.response.body = hal.collection(users);
 
   }
 
   async post(ctx: Context) {
-
-    if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
-      throw new Forbidden('Only users with the "admin" privilege may create new users');
-    }
 
     ctx.request.validate<NewPrincipalBody>(
       'https://curveballjs.org/schemas/a12nserver/principal-new.json'
@@ -34,6 +30,8 @@ class UserCollectionController extends Controller {
     if (!identity) {
       throw new BadRequest('You must specify a link with rel "me", either via a HAL link or HTTP Link header');
     }
+
+    const principalService = new PrincipalService(ctx.privileges);
 
     try {
       await principalService.findByIdentity(identity);
@@ -54,7 +52,7 @@ class UserCollectionController extends Controller {
     });
 
     ctx.response.status = 201;
-    ctx.response.headers.set('Location', `/user/${user.id}`);
+    ctx.response.headers.set('Location', user.href);
   }
 
 }

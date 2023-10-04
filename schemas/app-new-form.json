@@ -12,10 +12,31 @@
       "type": "string",
       "minLength": 3
     },
+
     "url": {
-      "type": "string",
-      "format": "url",
-      "description": "URL to the application."
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "uri",
+          "description": "URL to the application."
+        },
+        {
+          "type": "string",
+          "maxLength": 0
+        }
+      ]
+    },
+    "clientId": {
+      "type": "string"
+    },
+    "allowedGrantTypes": {
+      "type": "string"
+    },
+    "redirectUris": {
+      "type": "string"
+    },
+    "requirePkce": {
+      "type": "string"
     }
   }
 }

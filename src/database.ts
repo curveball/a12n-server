@@ -1,18 +1,17 @@
 /* eslint no-console: 0 */
 import { knex, Knex } from 'knex';
 import * as path from 'node:path';
+import * as dotenv from 'dotenv';
+import './db-types';
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-require('dotenv').config();
+dotenv.config();
 
 let settings: Knex.Config | null = null;
 const db: Knex = knex(getSettings());
 
-
 export async function init() {
 
-  // eslint-disable-next-line no-console
-  console.log('Running database migrations');
+  console.info('Running database migrations');
   await db.migrate.latest();
 
 }
@@ -75,6 +74,7 @@ export function getSettings(): Knex.Config {
   let connection: Knex.MySql2ConnectionConfig | Knex.PgConnectionConfig | Knex.Sqlite3ConnectionConfig;
   let client;
   let searchPath;
+  let useNullAsDefault: undefined|true = undefined;
 
   if (process.env.PG_DATABASE) {
 
@@ -160,8 +160,9 @@ export function getSettings(): Knex.Config {
         }
 
         connection = {
-          filename: process.env.DB_FILENAME || 'a12nserver.sqlite3'
+          filename: process.env.DB_FILENAME || 'a12nserver.sqlite3',
         };
+        useNullAsDefault = true;
         break;
 
       default:
@@ -182,6 +183,7 @@ export function getSettings(): Knex.Config {
     },
     pool: { min: 0, max: 10 },
     debug: process.env.DEBUG ? true : false,
+    useNullAsDefault: useNullAsDefault,
   };
 
   return settings;

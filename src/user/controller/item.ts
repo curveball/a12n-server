@@ -5,9 +5,7 @@ import * as userHal from '../formats/hal';
 import * as appHal from '../../app/formats/hal';
 import * as groupHal from '../../group/formats/hal';
 import * as userService from '../service';
-import * as principalService from '../../principal/service';
-import * as groupService from '../../group/service';
-import { Forbidden } from '@curveball/http-errors';
+import { PrincipalService } from '../../principal/service';
 
 type EditPrincipalBody = {
   nickname: string;
@@ -29,11 +27,12 @@ class UserController extends Controller {
 
   async get(ctx: Context) {
 
+    const principalService = new PrincipalService(ctx.privileges);
     const principal = await principalService.findByExternalId(ctx.params.id);
 
     let hasControl = false;
     let hasPassword = false;
-    const isAdmin = await privilegeService.hasPrivilege(ctx, 'admin');
+    const isAdmin = ctx.privileges.has('admin');
 
     if (ctx.auth.equals(principal)) {
       hasControl = true;
@@ -45,26 +44,27 @@ class UserController extends Controller {
       hasPassword = await userService.hasPassword(principal);
     }
 
+    const principalPrivileges = await privilegeService.get(principal);
     // This endpoint supports rendering groups and apps, for backwards
     // compatibility. This will be removed in the future
     switch(principal.type) {
       case 'user' :
         ctx.response.body = userHal.item(
           principal,
-          await privilegeService.getPrivilegesForPrincipal(principal),
+          principalPrivileges.getAll(),
           hasControl,
           hasPassword,
           isAdmin,
-          await groupService.findGroupsForPrincipal(principal),
+          await principalService.findGroupsForPrincipal(principal),
         );
         break;
       case 'group' : {
-        const members = await groupService.findMembers(principal);
+        const members = await principalService.findMembers(principal);
         ctx.response.body = groupHal.item(
           principal,
-          await privilegeService.getPrivilegesForPrincipal(principal),
+          principalPrivileges.getAll(),
           isAdmin,
-          await groupService.findGroupsForPrincipal(principal),
+          await principalService.findGroupsForPrincipal(principal),
           members,
         );
         break;
@@ -72,9 +72,9 @@ class UserController extends Controller {
       case 'app' :
         ctx.response.body = appHal.item(
           principal,
-          await privilegeService.getPrivilegesForPrincipal(principal),
+          principalPrivileges.getAll(),
           isAdmin,
-          await groupService.findGroupsForPrincipal(principal),
+          await principalService.findGroupsForPrincipal(principal),
         );
         break;
     }
@@ -83,12 +83,10 @@ class UserController extends Controller {
 
   async put(ctx: Context) {
 
-    if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
-      throw new Forbidden('Only users with the "admin" privilege may edit users');
-    }
     ctx.request.validate<EditPrincipalBody>(
       'https://curveballjs.org/schemas/a12nserver/principal-edit.json'
     );
+    const principalService = new PrincipalService(ctx.privileges);
 
     const user = await principalService.findByExternalId(ctx.params.id);
     user.active = !!ctx.request.body.active;

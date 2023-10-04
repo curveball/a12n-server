@@ -1,5 +1,5 @@
 import { PrivilegeMap } from '../../privilege/types';
-import { Group, App } from '../../principal/types';
+import { Group, App } from '../../types';
 import { HalResource } from 'hal-types';
 
 export function collection(apps: App[]): HalResource {
@@ -41,6 +41,10 @@ export function item(app: App, privileges: PrivilegeMap, isAdmin: boolean, group
       'client-collection': {
         href: `${app.href}/client`,
         title: 'List of OAuth2 client credentials'
+      },
+      'describedby': {
+        href: 'https://curveballjs.org/schemas/a12nserver/app.json',
+        type: 'application/schema+json',
       }
     },
     nickname: app.nickname,

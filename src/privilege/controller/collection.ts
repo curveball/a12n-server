@@ -6,7 +6,7 @@ import * as privilegeService from '../service';
 class PrivilegeCollectionController extends Controller {
 
   async get(ctx: Context) {
-    const privileges = await privilegeService.findPrivileges();
+    const privileges = await privilegeService.findPrivilegeTypes();
     ctx.response.body = hal.collection(privileges);
   }
 

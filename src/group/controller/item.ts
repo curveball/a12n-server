@@ -2,9 +2,8 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import * as privilegeService from '../../privilege/service';
 import * as hal from '../formats/hal';
-import * as principalService from '../../principal/service';
-import * as groupService from '../../group/service';
-import { Forbidden, NotFound, Conflict } from '@curveball/http-errors';
+import { PrincipalService } from '../../principal/service';
+import { NotFound, Conflict } from '@curveball/http-errors';
 
 type EditPrincipalBody = {
   nickname: string;
@@ -31,25 +30,34 @@ class GroupController extends Controller {
 
   async get(ctx: Context) {
 
+    const principalService = new PrincipalService(ctx.privileges);
     const group = await principalService.findByExternalId(ctx.params.id, 'group');
-    const isAdmin = await privilegeService.hasPrivilege(ctx, 'admin');
-    const members = await groupService.findMembers(group);
+    const isAdmin = ctx.privileges.has('admin');
+    const members = await principalService.findMembers(group);
 
-    ctx.response.body = hal.item(
-      group,
-      await privilegeService.getPrivilegesForPrincipal(group),
-      isAdmin,
-      await groupService.findGroupsForPrincipal(group),
-      members,
-    );
+    const principalPrivileges = await privilegeService.get(group);
+
+    if (group.system && group.externalId === '$all') {
+      ctx.response.body = hal.itemAllUsers(
+        group,
+        principalPrivileges.getAll(),
+        isAdmin,
+      );
+    } else {
+      ctx.response.body = hal.item(
+        group,
+        principalPrivileges.getAll(),
+        isAdmin,
+        await principalService.findGroupsForPrincipal(group),
+        members,
+      );
+    }
 
   }
 
   async put(ctx: Context) {
 
-    if (!await privilegeService.hasPrivilege(ctx, 'admin')) {
-      throw new Forbidden('Only users with the "admin" privilege may edit users');
-    }
+    const principalService = new PrincipalService(ctx.privileges);
     ctx.request.validate<EditPrincipalBody>(
       'https://curveballjs.org/schemas/a12nserver/principal-edit.json'
     );
@@ -69,8 +77,7 @@ class GroupController extends Controller {
    */
   async patch(ctx: Context) {
 
-    delete (ctx.request.body as any)['csrf-token'];
-
+    const principalService = new PrincipalService(ctx.privileges);
     ctx.request.validate<GroupPatch>('https://curveballjs.org/schemas/a12nserver/group-patch.json');
     const group = await principalService.findByExternalId(ctx.params.id, 'group');
 
@@ -89,15 +96,26 @@ class GroupController extends Controller {
 
     switch (ctx.request.body.operation) {
       case 'add-member':
-        await groupService.addMember(group, member);
+        await principalService.addMember(group, member);
         break;
       case 'remove-member':
-        await groupService.removeMember(group, member);
+        await principalService.removeMember(group, member);
         break;
     }
 
     if (ctx.request.accepts('text/html')) {
-      ctx.redirect(303, group.href);
+      const isAdmin = ctx.privileges.has('admin');
+      const members = await principalService.findMembers(group);
+      const principalPrivileges = await privilegeService.get(group);
+
+      ctx.response.body = hal.item(
+        group,
+        principalPrivileges.getAll(),
+        isAdmin,
+        await principalService.findGroupsForPrincipal(group),
+        members,
+      );
+      ctx.redirect(200, group.href);
     } else {
       ctx.status = 204;
     }

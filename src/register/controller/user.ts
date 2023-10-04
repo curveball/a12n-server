@@ -2,17 +2,17 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { Forbidden, NotFound } from '@curveball/http-errors';
 import { getSetting } from '../../server-settings';
-import * as principalService from '../../principal/service';
+import { PrincipalService, hasUsers } from '../../principal/service';
 import * as userService from '../../user/service';
 import { registrationForm } from '../formats/html';
 import * as privilegeService from '../../privilege/service';
-import { User } from '../../principal/types';
+import { User } from '../../types';
 
 class UserRegistrationController extends Controller {
 
   async get(ctx: Context) {
 
-    const firstRun = !(await principalService.hasPrincipals());
+    const firstRun = !(await hasUsers());
 
     ctx.response.type = 'text/html';
     ctx.response.body = registrationForm(
@@ -20,35 +20,47 @@ class UserRegistrationController extends Controller {
       ctx.query.error,
       getSetting('registration.mfa.enabled'),
       firstRun,
+      ctx.query.continue
     );
 
   }
 
   async post(ctx: Context) {
 
+    const firstRun = !(await hasUsers());
+
     const body: any = ctx.request.body;
     const userPassword = body.password;
     const confirmPassword = body.confirmPassword;
     const addMfa = 'addMfa' in body;
 
+    /**
+     * We use an 'insecure' context for registration because it's anonymous
+     */
+    const principalService = new PrincipalService('insecure');
+
     if (userPassword !== confirmPassword) {
       ctx.status = 303;
-      ctx.response.headers.set('Location', '/register?error=Password+mismatch.+Please+try+again');
+      ctx.response.headers.set('Location', '/register?' + new URLSearchParams({
+        error: 'Password mismatch. Please try again',
+        ...( body.continue ? {continue: body.continue} : {} )
+      }));
       return;
     }
 
     try {
       await principalService.findByIdentity('mailto:' + body.emailAddress);
       ctx.status = 303;
-      ctx.response.headers.set('Location', '/register?error=User+already+exists');
+      ctx.response.headers.set('Location', '/register?' + new URLSearchParams({
+        error: 'User with this email adddress already exists',
+        ...( body.continue ? {continue: body.continue} : {} )
+      }));
       return;
     } catch (err) {
       if (!(err instanceof NotFound)) {
         throw err;
       }
     }
-
-    const firstRun = !(await principalService.hasPrincipals());
 
     const user: User = await principalService.save({
       identity: 'mailto:' + body.emailAddress,
@@ -74,6 +86,7 @@ class UserRegistrationController extends Controller {
     if (addMfa && getSetting('registration.mfa.enabled')) {
       ctx.session = {
         registerUser: user,
+        registerContinueUrl: body.continue,
       };
 
       ctx.response.status = 303;
@@ -82,7 +95,12 @@ class UserRegistrationController extends Controller {
     }
 
     ctx.status = 303;
-    ctx.response.headers.set('Location', '/login?msg=Registration+successful.+Please log in');
+
+    if (body.continue) {
+      ctx.response.headers.set('Location', body.continue);
+    } else {
+      ctx.response.headers.set('Location', '/login?msg=Registration+successful.+Please log in');
+    }
 
   }
 
@@ -94,7 +112,6 @@ class UserRegistrationController extends Controller {
     return super.dispatch(ctx);
 
   }
-
 
 }
 

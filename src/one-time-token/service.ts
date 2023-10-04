@@ -1,7 +1,7 @@
 import { OneTimeToken } from './types';
-import { User } from '../principal/types';
+import { User } from '../types';
 import db from '../database';
-import * as principalService from '../principal/service';
+import { PrincipalService } from '../principal/service';
 import { BadRequest } from '@curveball/http-errors';
 import { generateSecretToken } from '../crypto';
 
@@ -15,7 +15,7 @@ const tokenTTL = 7200;
  */
 export async function createToken(user: User): Promise<OneTimeToken> {
   const token = await generateSecretToken();
-  const query = 'INSERT INTO reset_password_token SET user_id = ?, token = ?, expires_at = ?, created_at = ?';
+  const query = 'INSERT INTO reset_password_token (user_id, token, expires_at, created_at) VALUES (?, ?, ?, ?)';
 
   await db.raw(query, [
     user.id,
@@ -43,6 +43,7 @@ export async function validateToken(token: string): Promise<User> {
     throw new BadRequest ('Failed to validate token');
   } else {
     await db.raw('DELETE FROM reset_password_token WHERE token = ?', [token]);
+    const principalService = new PrincipalService('insecure');
     return principalService.findById(result[0][0].user_id) as Promise<User>;
   }
 

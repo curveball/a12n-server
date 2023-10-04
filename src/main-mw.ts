@@ -38,13 +38,6 @@ export default function (): Middleware {
   }
 
   middlewares.push(
-    browser({
-      title: 'a12n-server',
-      stylesheets: [
-        '/assets/extra.css'
-      ],
-    }),
-    problem(),
     session({
       store: process.env.REDIS_HOST ? new RedisStore({
         prefix: 'A12N-session',
@@ -57,6 +50,14 @@ export default function (): Middleware {
       cookieName: 'A12N',
       expiry: 60 * 60 * 24 * 7,
     }),
+    browser({
+      title: 'a12n-server',
+      stylesheets: [
+        '/assets/extra.css'
+      ],
+    }),
+    problem(),
+
     login(),
     bodyParser(),
     csrf(),

@@ -45,8 +45,8 @@ class WebAuthnLoginRequestController extends Controller {
       verification = verifyAuthenticationResponse({
         credential: body,
         expectedChallenge,
-        expectedOrigin: getSetting('webauthn.expectedOrigin') || new URL(process.env.PUBLIC_URI!).origin,
-        expectedRPID: getSetting('webauthn.relyingPartyId') || new URL(process.env.PUBLIC_URI!).host,
+        expectedOrigin: getSetting('webauthn.expectedOrigin') || ctx.request.origin,
+        expectedRPID: getSetting('webauthn.relyingPartyId') || ctx.request.origin,
         authenticator: {
           credentialID: authenticatorDevice.credentialID,
           counter: authenticatorDevice.counter,

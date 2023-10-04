@@ -129,7 +129,7 @@ class TokenController extends Controller {
 
     log(EventType.loginSuccess, ctx);
 
-    const scope = ctx.request.body.scope?.split(' ') ?? null;
+    const scope: string[] = ctx.request.body.scope?.split(' ') ?? [];
 
     await userAppPermissions.setPermissions(
       oauth2Client.app,

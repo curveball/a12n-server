@@ -20,6 +20,8 @@ Changelog
   behavior need to give the relevant users the `a12n:principals:list`
   privilege. To get the old behavior, simply add this privilege to the new
   `$all` group.
+* When a user goes from login to registration, the "continue" link will be
+  remembered.
 * The 'password' flow now also tracks apps that are granted access to user
   accounts
 

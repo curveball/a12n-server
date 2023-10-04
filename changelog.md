@@ -24,6 +24,8 @@ Changelog
   remembered.
 * The 'password' flow now also tracks apps that are granted access to user
   accounts
+* When using the Redis session backend, CSRF tokens would not get stored
+  correctly, causing some browser operations to fail.
 
 
 0.23.1 (2023-03-29)

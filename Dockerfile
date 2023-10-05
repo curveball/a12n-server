@@ -1,5 +1,5 @@
 # Stage 1: build
-FROM node:16-alpine as build-stage
+FROM node:20-alpine as build-stage
 WORKDIR /opt/app
 
 # Needed for building @vscode/sqlite3 package
@@ -15,7 +15,7 @@ COPY src src
 RUN npm i --legacy-peer-deps --environment=dev && npx tsc && npm prune --production && rm -r src/
 
 # Stage 2: run!
-FROM node:16-alpine
+FROM node:20-alpine
 LABEL org.opencontainers.image.source https://github.com/curveball/a12n-server
 
 

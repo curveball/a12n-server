@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.24.0-alpha.1 (????-??-??)
+---------------------------
+
+* The Docker distribution now runs on Node 20 (upgraded from 16).
+
+
 0.24.0-alpha.0 (2023-10-04)
 ---------------------------
 

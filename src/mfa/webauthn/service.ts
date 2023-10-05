@@ -10,8 +10,8 @@ export async function save(webAuthNDevice: NewWebAuthnDevice): Promise<WebAuthnD
   if (!isExistingDevice(webAuthNDevice)) {
     const newWebAuthnRecord: Partial<UserWebauthnRecord> = {
       user_id: webAuthNDevice.user.id,
-      credential_id: webAuthNDevice.credentialID.toString('base64'),
-      public_key: webAuthNDevice.publicKey.toString('base64'),
+      credential_id: Buffer.from(webAuthNDevice.credentialID).toString('base64'),
+      public_key: Buffer.from(webAuthNDevice.publicKey).toString('base64'),
       counter: webAuthNDevice.counter,
       created: Math.floor(Date.now() / 1000),
     };
@@ -24,8 +24,8 @@ export async function save(webAuthNDevice: NewWebAuthnDevice): Promise<WebAuthnD
     };
   } else {
     const updateWebAuthnRecord: Partial<UserWebauthnRecord> = {
-      credential_id: webAuthNDevice.credentialID.toString('base64'),
-      public_key: webAuthNDevice.publicKey.toString('base64'),
+      credential_id: Buffer.from(webAuthNDevice.credentialID).toString('base64'),
+      public_key: Buffer.from(webAuthNDevice.publicKey).toString('base64'),
       counter: webAuthNDevice.counter
     };
 

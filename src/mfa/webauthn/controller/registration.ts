@@ -12,7 +12,7 @@ class WebAuthnAttestationController extends Controller {
   async get(ctx: Context) {
     const user: User = ctx.session.registerUser;
 
-    const registrationOptions = generateRegistrationOptions({
+    const registrationOptions = await generateRegistrationOptions({
       rpName: getSetting('webauthn.serviceName'),
       rpID: getSetting('webauthn.relyingPartyId') || new URL(ctx.request.origin).host,
       userID: user.id.toString(),
@@ -20,7 +20,7 @@ class WebAuthnAttestationController extends Controller {
       timeout: 60000,
       attestationType: 'indirect',
       excludeCredentials: (await webAuthnService.findDevicesByUser(user)).map(device => ({
-        id: Buffer.from(device.credentialID),
+        id: device.credentialID,
         type: 'public-key',
       })),
       /**
@@ -48,7 +48,7 @@ class WebAuthnAttestationController extends Controller {
     let verification;
     try {
       verification = await verifyRegistrationResponse({
-        credential: body,
+        response: body,
         expectedChallenge,
         expectedOrigin: getSetting('webauthn.expectedOrigin') || ctx.request.origin,
         expectedRPID: getSetting('webauthn.relyingPartyId') || new URL(ctx.request.origin).host,

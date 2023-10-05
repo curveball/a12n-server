@@ -5,6 +5,7 @@ Changelog
 ---------------------------
 
 * The Docker distribution now runs on Node 20 (upgraded from 16).
+* Fixed a 500 error in the OAuth2 password flow.
 
 
 0.24.0-alpha.0 (2023-10-04)

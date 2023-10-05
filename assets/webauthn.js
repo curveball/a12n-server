@@ -1,3 +1,4 @@
+// @ts-check
 document.addEventListener('DOMContentLoaded', function(){
   const elemBeginRegister = document.getElementById('btnBeginRegister');
   const elemBeginLogin = document.getElementById('btnBeginLogin');
@@ -75,6 +76,7 @@ document.addEventListener('DOMContentLoaded', function(){
     } catch (error) {
       console.error(error, url);
       handleError('There was an error making the request.', button);
+      return;
     }
 
     if (!resp.ok) {

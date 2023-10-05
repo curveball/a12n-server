@@ -14,7 +14,7 @@ class WebAuthnLoginRequestController extends Controller {
   async get(ctx: Context) {
     const { user }: MFALoginSession = ctx.session.mfa || {};
 
-    const authenticationOptions = generateAuthenticationOptions({
+    const authenticationOptions = await generateAuthenticationOptions({
       timeout: 60000,
       allowCredentials: (await webauthnService.findDevicesByUser(user)).map(device => ({
         id: device.credentialID,
@@ -42,8 +42,8 @@ class WebAuthnLoginRequestController extends Controller {
 
     let verification;
     try {
-      verification = verifyAuthenticationResponse({
-        credential: body,
+      verification = await verifyAuthenticationResponse({
+        response: body,
         expectedChallenge,
         expectedOrigin: getSetting('webauthn.expectedOrigin') || ctx.request.origin,
         expectedRPID: getSetting('webauthn.relyingPartyId') || ctx.request.origin,

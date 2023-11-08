@@ -82,16 +82,21 @@ class TokenController extends Controller {
     if (!ctx.request.body.redirect_uri) {
       throw new InvalidRequest('The "redirect_uri" property is required');
     }
-    if (!await oauth2Service.validateRedirectUri(oauth2Client, ctx.request.body.redirect_uri)) {
-      log(EventType.oauth2BadRedirect, ctx);
-      throw new InvalidRequest('This value for "redirect_uri" is not recognized.');
-    }
     const token = await oauth2Service.generateTokenAuthorizationCode({
       client: oauth2Client,
       code: ctx.request.body.code,
       codeVerifier: ctx.request.body.code_verifier,
       secretUsed,
     });
+    if (!await oauth2Service.validateRedirectUri(oauth2Client, ctx.request.body.redirect_uri)) {
+      await log(
+        EventType.oauth2BadRedirect,
+        ctx.ip(),
+        token.principal.id
+      );
+      throw new InvalidRequest('This value for "redirect_uri" is not recognized.');
+    }
+
 
     ctx.response.type = 'application/json';
     ctx.response.body = {
@@ -118,16 +123,30 @@ class TokenController extends Controller {
     }
 
     if (!await userService.validatePassword(user, ctx.request.body.password)) {
-      log(EventType.loginFailed, ctx.ip(), user.id);
+      await log(
+        EventType.loginFailed,
+        ctx.ip(),
+        user.id
+      );
       throw new InvalidGrant('Unknown username or password');
     }
 
     if (!user.active) {
-      log(EventType.loginFailedInactive, ctx.ip(), user.id, ctx.request.headers.get('User-Agent')!);
+      await log(
+        EventType.loginFailedInactive,
+        ctx.ip(),
+        user.id,
+        ctx.request.headers.get('User-Agent')!
+      );
       throw new InvalidGrant('User Inactive');
     }
 
-    log(EventType.loginSuccess, ctx);
+    await log(
+      EventType.loginSuccess,
+      ctx.ip(),
+      user.id,
+      ctx.request.headers.get('User-Agent')!
+    );
 
     const scope: string[] = ctx.request.body.scope?.split(' ') ?? [];
 

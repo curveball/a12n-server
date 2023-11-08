@@ -1,15 +1,16 @@
 export enum EventType {
   loginSuccess = 1,
-  loginFailed,
-  totpFailed,
-  changePasswordSuccess,
-  resetPasswordRequest,
-  resetPasswordSuccess,
-  loginFailedInactive,
-  webAuthnFailed,
-  tokenRevoked,
+  loginFailed = 2,
+  totpFailed = 3,
+  changePasswordSuccess = 3,
+  resetPasswordRequest = 4,
+  resetPasswordSuccess = 5,
+  loginFailedInactive = 6,
+  webAuthnFailed = 7,
+  tokenRevoked = 7,
+
   oauth2BadRedirect = 11,
-  generateAccessToken,
+  generateAccessToken = 12,
 }
 
 export type LogEntry = {

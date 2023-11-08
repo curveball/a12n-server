@@ -53,7 +53,7 @@ class AuthorizeController extends Controller {
     try {
       await oauth2Service.requireRedirectUri(oauth2Client, params.redirectUri);
     } catch (err) {
-      log(EventType.oauth2BadRedirect, ctx);
+      await log(EventType.oauth2BadRedirect, ctx);
       throw err;
     }
 

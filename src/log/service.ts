@@ -15,6 +15,13 @@ export default async function log(
 ) {
 
   if (isContext(arg1)) {
+
+    if (process.env.NODE_ENV === 'dev') {
+      if (!arg1.session.user?.id) {
+        throw new Error('[DEBUG] user_log is invoked with a context that didn\'t have a user. This log entry will be ignored');
+      }
+    }
+
     await addLogEntry(
       eventType,
       arg1.ip() ?? '',

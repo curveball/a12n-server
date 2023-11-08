@@ -75,6 +75,10 @@ export function getSettings(): Knex.Config {
   let client;
   let searchPath;
   let useNullAsDefault: undefined|true = undefined;
+  let pool: Knex.PoolConfig = {
+    min: 0,
+    max: 10
+  };
 
   if (process.env.PG_DATABASE) {
 
@@ -181,7 +185,7 @@ export function getSettings(): Knex.Config {
       directory: path.join(__dirname, 'migrations'),
       loadExtensions: ['.js'],
     },
-    pool: { min: 0, max: 10 },
+    pool,
     debug: process.env.DEBUG ? true : false,
     useNullAsDefault: useNullAsDefault,
   };

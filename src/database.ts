@@ -75,7 +75,7 @@ export function getSettings(): Knex.Config {
   let client;
   let searchPath;
   let useNullAsDefault: undefined|true = undefined;
-  let pool: Knex.PoolConfig = {
+  const pool: Knex.PoolConfig = {
     min: 0,
     max: 10
   };

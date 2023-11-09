@@ -42,9 +42,7 @@ export default function (): Middleware {
       store: process.env.REDIS_HOST ? new RedisStore({
         prefix: 'A12N-session',
         clientOptions: {
-          port: process.env.REDIS_PORT ? parseInt(process.env.REDIS_PORT, 10) : 6379,
-          host: process.env.REDIS_HOST ? process.env.REDIS_HOST : '127.0.0.1',
-          password: process.env.REDIS_PASSWORD ? process.env.REDIS_PASSWORD : undefined,
+          url: process.env.REDIS_URI!,
         },
       }) : 'memory',
       cookieName: 'A12N',

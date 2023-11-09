@@ -7,6 +7,9 @@ Changelog
 * The Docker distribution now runs on Node 20 (upgraded from 16).
 * Fixed a 500 error in the OAuth2 password flow.
 * Updated to simplewebauthn 8.
+* Upgrade to Redis 4.
+* Improve user audit logging for various OAuth2 flows.
+* Use SQLite3 WAL mode for better concurrency.
 
 
 0.24.0-alpha.0 (2023-10-04)

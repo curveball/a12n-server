@@ -16,7 +16,10 @@ export type PrivilegeEntry = {
 }
 
 export type InternalPrivilege =
-  'admin' |
-  'a12n:principals:list' |
-  'a12n:principals:create' |
-  'a12n:principals:update';
+  | 'admin'
+  | 'a12n:principals:list'
+  | 'a12n:principals:create'
+  | 'a12n:principals:update'
+  | 'a12n:one-time-token:generate'
+  | 'a12n:one-time-token:exchange'
+

@@ -103,6 +103,7 @@ export default function(): Middleware {
       }
       // We are logged in!
       ctx.auth = new AuthHelper(token.principal);
+      ctx.privileges = await privilegeService.get(ctx.auth.principal!);
 
       return next();
 

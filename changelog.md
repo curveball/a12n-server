@@ -1,6 +1,17 @@
 Changelog
 =========
 
+0.24.1 (????-??-??)
+-------------------
+
+* Added two privileges for one-time-token use: `a12n:one-time-token:generate`
+  and `a12n-one-time-token:exchange`, these both required the `admin`
+  privilege. Theres no bc break here as the original `admin` privilege still
+  covers these new ones.
+* It wasn't possible to see a full principal even if a user had
+  `a12n:principal:list` privilege.
+
+
 0.24.0 (2023-11-09)
 -------------------
 

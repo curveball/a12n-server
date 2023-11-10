@@ -20,7 +20,7 @@ class OneTimeTokenExchangeController extends Controller {
 
   async post(ctx: Context<OtteRequest>) {
 
-    ctx.privileges.require('admin');
+    ctx.privileges.require('a12n:one-time-token:exchange');
     const principalService = new PrincipalService(ctx.privileges);
 
     if (!ctx.request.body.token) {

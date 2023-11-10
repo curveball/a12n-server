@@ -345,7 +345,7 @@ export class PrincipalService {
    */
   async findGroupsForPrincipal(principal: Principal): Promise<Group[]> {
 
-    this.privileges.require('admin');
+    this.privileges.require('a12n:principals:list');
     const result = await db('principals')
       .select('principals.*')
       .innerJoin('group_members', { 'principals.id': 'group_members.group_id'})

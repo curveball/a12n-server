@@ -2,8 +2,6 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import * as privilegeService from '../../privilege/service';
 import * as userHal from '../formats/hal';
-import * as appHal from '../../app/formats/hal';
-import * as groupHal from '../../group/formats/hal';
 import * as userService from '../service';
 import { PrincipalService } from '../../principal/service';
 
@@ -28,7 +26,7 @@ class UserController extends Controller {
   async get(ctx: Context) {
 
     const principalService = new PrincipalService(ctx.privileges);
-    const principal = await principalService.findByExternalId(ctx.params.id);
+    const principal = await principalService.findByExternalId(ctx.params.id, 'user');
 
     let hasControl = false;
     let hasPassword = false;
@@ -45,39 +43,17 @@ class UserController extends Controller {
     }
 
     const principalPrivileges = await privilegeService.get(principal);
-    // This endpoint supports rendering groups and apps, for backwards
-    // compatibility. This will be removed in the future
-    switch(principal.type) {
-      case 'user' :
-        ctx.response.body = userHal.item(
-          principal,
-          principalPrivileges.getAll(),
-          hasControl,
-          hasPassword,
-          isAdmin,
-          await principalService.findGroupsForPrincipal(principal),
-        );
-        break;
-      case 'group' : {
-        const members = await principalService.findMembers(principal);
-        ctx.response.body = groupHal.item(
-          principal,
-          principalPrivileges.getAll(),
-          isAdmin,
-          await principalService.findGroupsForPrincipal(principal),
-          members,
-        );
-        break;
-      }
-      case 'app' :
-        ctx.response.body = appHal.item(
-          principal,
-          principalPrivileges.getAll(),
-          isAdmin,
-          await principalService.findGroupsForPrincipal(principal),
-        );
-        break;
-    }
+
+    const currentUserPrivileges = ctx.privileges;
+
+    ctx.response.body = userHal.item(
+      principal,
+      principalPrivileges.getAll(),
+      hasControl,
+      hasPassword,
+      currentUserPrivileges,
+      await principalService.findGroupsForPrincipal(principal),
+    );
 
   }
 

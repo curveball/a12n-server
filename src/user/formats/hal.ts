@@ -1,6 +1,7 @@
 import { PrivilegeMap } from '../../privilege/types';
 import { Principal, Group, User } from '../../types';
 import { HalResource } from 'hal-types';
+import { LazyPrivilegeBox } from '../../privilege/service';
 
 export function collection(users: User[]): HalResource {
 
@@ -32,7 +33,7 @@ export function collection(users: User[]): HalResource {
  * we're generating the repsonse for, or if the current authenticated user
  * has full admin privileges
  */
-export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, hasPassword: boolean, isAdmin: boolean, groups: Group[]): HalResource {
+export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, hasPassword: boolean, currentUserPrivileges: LazyPrivilegeBox, groups: Group[]): HalResource {
 
   const hal: HalResource = {
     _links: {
@@ -58,8 +59,7 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
     privileges
   };
 
-  if (hasControl) {
-    hal.hasPassword = hasPassword;
+  if (hasControl || currentUserPrivileges.has('a12n:one-time-token:generate')) {
     hal._links['one-time-token'] = {
       href: `${user.href}/one-time-token`,
       title: 'Generate a one-time login token.',
@@ -67,6 +67,11 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
         allow: ['POST'],
       }
     };
+  }
+
+  if (hasControl) {
+    hal.hasPassword = hasPassword;
+
     hal._links['access-token'] = {
       href: `${user.href}/access-token`,
       title: 'Generate an access token for this user.',
@@ -80,7 +85,7 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
       title: 'App Permissions',
     };
   }
-  if (isAdmin) {
+  if (currentUserPrivileges.has('admin')) {
     hal._links['password'] = {
       href: `${user.href}/password`,
       title: 'Change user\'s password',

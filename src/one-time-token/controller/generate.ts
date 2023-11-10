@@ -9,7 +9,7 @@ class OneTimeTokenController extends Controller {
 
   async post(ctx: Context<any>) {
 
-    ctx.privileges.require('admin');
+    ctx.privileges.require('a12n:one-time-token:generate');
 
     const principalService = new PrincipalService(ctx.privileges);
     const user = await principalService.findByExternalId(ctx.params.id, 'user');

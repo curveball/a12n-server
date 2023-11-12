@@ -15,7 +15,7 @@ class UserPasswordController extends Controller {
 
     const password = userBody.newPassword;
 
-    await userService.updatePassword(user, password);
+    await userService.updatePassword(user, password, false);
 
     ctx.response.status = 204;
 

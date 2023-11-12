@@ -43,7 +43,7 @@ class ResetPasswordController extends Controller {
       return;
     }
 
-    await UserService.updatePassword(user, resetNewPassword);
+    await UserService.updatePassword(user, resetNewPassword, false);
 
     delete ctx.session.resetPasswordUser;
     log(EventType.resetPasswordSuccess, ctx.ip()!, user.id);

@@ -4,12 +4,11 @@ import { NotFound, Unauthorized, Conflict } from '@curveball/http-errors';
 import { Oauth2ClientsRecord } from 'knex/types/tables';
 import { wrapError, UniqueViolationError } from 'db-errors';
 
-import { OAuth2Client } from './types';
 import { PrincipalService } from '../principal/service';
 import db, { insertAndGetId } from '../database';
 import { InvalidRequest } from '../oauth2/errors';
 import parseBasicAuth from './parse-basic-auth';
-import { App, GrantType } from '../types';
+import { App, GrantType, OAuth2Client } from '../types';
 
 export async function findByClientId(clientId: string): Promise<OAuth2Client> {
 

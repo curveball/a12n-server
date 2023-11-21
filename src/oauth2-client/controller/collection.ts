@@ -5,8 +5,7 @@ import { Forbidden, UnprocessableEntity } from '@curveball/http-errors';
 
 import * as hal from '../formats/hal';
 import { PrincipalService } from '../../principal/service';
-import { GrantType } from '../../types';
-import { OAuth2Client } from '../types';
+import { GrantType, OAuth2Client } from '../../types';
 import { findByApp, create } from '../service';
 import { generatePublicId, generateSecretToken } from '../../crypto';
 

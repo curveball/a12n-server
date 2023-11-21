@@ -1,11 +1,12 @@
+import * as querystring from 'querystring';
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { NotFound, NotImplemented } from '@curveball/http-errors';
-import * as querystring from 'querystring';
+
 import { InvalidClient, InvalidRequest, UnsupportedGrantType } from '../errors';
 import * as oauth2Service from '../service';
 import { CodeChallengeMethod } from '../types';
-import { OAuth2Client } from '../../oauth2-client/types';
+import { OAuth2Client } from '../../types';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
 import { findByClientId } from '../../oauth2-client/service';

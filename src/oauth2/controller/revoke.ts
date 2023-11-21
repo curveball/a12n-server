@@ -3,7 +3,7 @@ import { Context } from '@curveball/core';
 import log from '../../log/service';
 import { EventType } from '../../log/types';
 import { revokeByAccessRefreshToken } from '../service';
-import { OAuth2Client } from '../../oauth2-client/types';
+import { OAuth2Client } from '../../types';
 import {
   getOAuth2ClientFromBasicAuth,
   getOAuth2ClientFromBody,

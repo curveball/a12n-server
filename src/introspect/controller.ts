@@ -73,10 +73,10 @@ class IntrospectionController extends Controller {
       switch (foundTokenType!) {
 
         case 'accessToken' :
-          ctx.response.body = accessToken(foundToken, privileges);
+          ctx.response.body = accessToken(ctx.request.origin, foundToken, privileges);
           break;
         case 'refreshToken' :
-          ctx.response.body = refreshToken(foundToken, privileges);
+          ctx.response.body = refreshToken(ctx.request.origin, foundToken, privileges);
           break;
       }
       return;

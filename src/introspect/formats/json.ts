@@ -2,7 +2,7 @@ import { OAuth2Token } from '../../oauth2/types';
 import { PrivilegeMap } from '../../privilege/types';
 import * as url from 'url';
 
-export function accessToken(token: OAuth2Token, privileges: PrivilegeMap) {
+export function accessToken(origin: string, token: OAuth2Token, privileges: PrivilegeMap) {
 
   return {
     active: true,
@@ -12,16 +12,17 @@ export function accessToken(token: OAuth2Token, privileges: PrivilegeMap) {
     username: token.principal.nickname,
     token_type: 'bearer',
     exp: token.accessTokenExpires,
+    sub: url.resolve(origin, token.principal.href),
     _links: {
       'authenticated-as': {
-        href: url.resolve(process.env.PUBLIC_URI!, token.principal.href),
+        href: url.resolve(origin, token.principal.href),
       }
     }
   };
 
 }
 
-export function refreshToken(token: OAuth2Token, privileges: PrivilegeMap) {
+export function refreshToken(origin: string, token: OAuth2Token, privileges: PrivilegeMap) {
 
   return {
     active: true,
@@ -30,9 +31,10 @@ export function refreshToken(token: OAuth2Token, privileges: PrivilegeMap) {
     client_id: token.clientId,
     username: token.principal.nickname,
     token_type: 'refresh_token',
+    sub: url.resolve(origin, token.principal.href),
     _links: {
       'authenticated-as': {
-        href: url.resolve(process.env.PUBLIC_URI!, token.principal.href),
+        href: url.resolve(origin, token.principal.href),
       }
     }
   };

@@ -11,6 +11,7 @@ Changelog
 * It wasn't possible to see a full principal even if a user had
   `a12n:principal:list` privilege.
 * Added new privilege for changing passwords: `a12n:user:change-password`.
+* Introspection endpoint now returns the 'sub' property.
 
 
 0.24.0 (2023-11-09)

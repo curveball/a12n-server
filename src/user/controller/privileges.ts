@@ -5,7 +5,6 @@ import * as privilegeService from '../../privilege/service';
 import { PrivilegeMap } from '../../privilege/types';
 import * as hal from '../formats/hal';
 import { PrincipalService } from '../../principal/service';
-// import * as groupService from '../../group/service';
 
 type PolicyForm = {
   policyBody: string;

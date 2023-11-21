@@ -17,9 +17,6 @@ class UserPasswordController extends Controller {
     if (!userBody.newPassword || typeof userBody.newPassword !== 'string') {
       throw new UnprocessableEntity('The "newPassword" property is required.');
     }
-    if (userBody.newPassword.length < 8) {
-      throw new UnprocessableEntity('Passwords must be at least 8 characters.');
-    }
 
     const password = userBody.newPassword;
 

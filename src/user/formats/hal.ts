@@ -85,7 +85,7 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
       title: 'App Permissions',
     };
   }
-  if (currentUserPrivileges.has('admin')) {
+  if (currentUserPrivileges.has('a12n:user:change-password', user.href)) {
     hal._links['password'] = {
       href: `${user.href}/password`,
       title: 'Change user\'s password',

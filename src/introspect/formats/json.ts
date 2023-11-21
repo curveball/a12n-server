@@ -4,11 +4,11 @@ import * as url from 'url';
 import { OAuth2Client } from '../../types';
 
 type IntrospectInfo = {
-  privileges: PrivilegeMap,
-  client: OAuth2Client,
-  token: OAuth2Token,
-  tokenType: 'bearer' | 'refresh_token',
-  origin: string,
+  privileges: PrivilegeMap;
+  client: OAuth2Client;
+  token: OAuth2Token;
+  tokenType: 'bearer' | 'refresh_token';
+  origin: string;
 }
 
 
@@ -22,7 +22,7 @@ type IntrospectResponse = {
   scope?: string;
   client_id?: string;
   username?: string;
-  token_type?: 'bearer' | 'refresh_token',
+  token_type?: 'bearer' | 'refresh_token';
   exp?: number;
   iat?: number;
   nbf?: number;
@@ -34,12 +34,12 @@ type IntrospectResponse = {
   /**
    * A12n additions.
    */
-  privileges: PrivilegeMap,
+  privileges: PrivilegeMap;
   _links: {
     'authenticated-as': {
-      href: string,
-    }
-  }
+      href: string;
+    };
+  };
 
 }
 

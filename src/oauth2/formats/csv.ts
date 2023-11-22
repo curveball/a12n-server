@@ -1,5 +1,5 @@
 import { OAuth2Token } from '../types';
-import { OAuth2Client } from '../../oauth2-client/types';
+import { OAuth2Client } from '../../types';
 
 import { stringify } from 'csv-stringify/sync';
 

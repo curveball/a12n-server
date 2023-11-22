@@ -8,8 +8,12 @@ import { PrincipalService } from '../../principal/service';
 import * as oauth2Service from '../service';
 import * as oauth2ClientService from '../../oauth2-client/service';
 
-import { Principal, User, App } from '../../types';
-import { OAuth2Client } from '../../oauth2-client/types';
+import {
+  App,
+  OAuth2Client,
+  Principal,
+  User,
+} from '../../types';
 
 import { OAuth2Token } from '../types';
 

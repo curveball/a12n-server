@@ -1,5 +1,4 @@
-import { App } from '../../types';
-import { OAuth2Client } from '../types';
+import { App, OAuth2Client } from '../../types';
 import { HalResource } from 'hal-types';
 
 export function collection(app: App, clients: OAuth2Client[]): HalResource {

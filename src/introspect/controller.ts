@@ -5,7 +5,8 @@ import { NotFound } from '@curveball/http-errors';
 import * as oauth2Service from '../oauth2/service';
 import { OAuth2Token } from '../oauth2/types';
 import * as privilegeService from '../privilege/service';
-import { accessToken, inactive, refreshToken } from './formats/json';
+import * as oauth2ClientService from '../oauth2-client/service';
+import { introspectResponse, inactive } from './formats/json';
 
 /**
  * The /introspect endpoint allows a client to get more information
@@ -69,14 +70,27 @@ class IntrospectionController extends Controller {
     }
     if (foundToken) {
       const privileges = (await privilegeService.get(foundToken.principal)).getAll();
+      const client = await oauth2ClientService.findById(foundToken.clientId);
 
       switch (foundTokenType!) {
 
         case 'accessToken' :
-          ctx.response.body = accessToken(foundToken, privileges);
+          ctx.response.body = introspectResponse({
+            tokenType: 'bearer',
+            origin: ctx.request.origin,
+            token: foundToken,
+            client,
+            privileges,
+          });
           break;
         case 'refreshToken' :
-          ctx.response.body = refreshToken(foundToken, privileges);
+          ctx.response.body = introspectResponse({
+            tokenType: 'refresh_token',
+            origin: ctx.request.origin,
+            token: foundToken,
+            client,
+            privileges,
+          });
           break;
       }
       return;

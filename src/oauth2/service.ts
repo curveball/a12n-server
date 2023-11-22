@@ -6,11 +6,10 @@ import { getSetting } from '../server-settings';
 import { PrincipalService } from '../principal/service';
 import { InvalidGrant, InvalidRequest, UnauthorizedClient } from './errors';
 import { CodeChallengeMethod, OAuth2Code, OAuth2Token } from './types';
-import { OAuth2Client } from '../oauth2-client/types';
 import { generateSecretToken } from '../crypto';
 import { generateJWTAccessToken, generateJWTIDToken } from './jwt';
 import { Oauth2TokensRecord, Oauth2CodesRecord } from 'knex/types/tables';
-import { App, User, GrantType } from '../types';
+import { App, User, GrantType, OAuth2Client } from '../types';
 import * as userAppPermissionsService from '../user-app-permissions/service';
 
 const oauth2TokenFields: (keyof Oauth2TokensRecord)[] = [

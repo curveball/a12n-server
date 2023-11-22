@@ -1,38 +1,64 @@
 import { OAuth2Token } from '../../oauth2/types';
 import { PrivilegeMap } from '../../privilege/types';
 import * as url from 'url';
+import { OAuth2Client } from '../../types';
 
-export function accessToken(token: OAuth2Token, privileges: PrivilegeMap) {
+type IntrospectInfo = {
+  privileges: PrivilegeMap;
+  client: OAuth2Client;
+  token: OAuth2Token;
+  tokenType: 'bearer' | 'refresh_token';
+  origin: string;
+}
 
-  return {
-    active: true,
-    scope: Object.values(privileges).join(' '),
-    privileges: privileges,
-    client_id: token.clientId,
-    username: token.principal.nickname,
-    token_type: 'bearer',
-    exp: token.accessTokenExpires,
-    _links: {
-      'authenticated-as': {
-        href: url.resolve(process.env.PUBLIC_URI!, token.principal.href),
-      }
-    }
+
+/**
+ * Defined in:
+ *
+ * https://www.rfc-editor.org/rfc/rfc7662#section-2.2
+ */
+type IntrospectResponse = {
+  active: boolean;
+  scope?: string;
+  client_id?: string;
+  username?: string;
+  token_type?: 'bearer' | 'refresh_token';
+  exp?: number;
+  iat?: number;
+  nbf?: number;
+  sub?: string;
+  aud?: string;
+  iss?: string;
+  jti?: string;
+
+  /**
+   * A12n additions.
+   */
+  privileges: PrivilegeMap;
+  _links: {
+    'authenticated-as': {
+      href: string;
+    };
   };
 
 }
 
-export function refreshToken(token: OAuth2Token, privileges: PrivilegeMap) {
 
+export function introspectResponse(info: IntrospectInfo): IntrospectResponse {
   return {
     active: true,
-    scope: Object.values(privileges).join(' '),
-    privileges: privileges,
-    client_id: token.clientId,
-    username: token.principal.nickname,
-    token_type: 'refresh_token',
+    scope: Object.values(info.privileges).join(' '),
+    privileges: info.privileges,
+    client_id: info.client.clientId,
+    username: info.token.principal.nickname,
+    token_type: info.tokenType,
+    exp: info.tokenType === 'refresh_token' ? info.token.refreshTokenExpires : info.token.accessTokenExpires,
+    sub: url.resolve(info.origin, info.token.principal.href),
+    aud: url.resolve(info.origin, info.client.app.href),
+    iss: info.origin,
     _links: {
       'authenticated-as': {
-        href: url.resolve(process.env.PUBLIC_URI!, token.principal.href),
+        href: url.resolve(info.origin, info.token.principal.href),
       }
     }
   };

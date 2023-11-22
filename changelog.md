@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.25.0 (????-??-??)
+0.25.0 (2023-11-22)
 -------------------
 
 * Added two privileges for one-time-token use: `a12n:one-time-token:generate`

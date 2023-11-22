@@ -2,9 +2,11 @@ import * as bcrypt from 'bcrypt';
 import * as otplib from 'otplib';
 import db from '../database';
 import { User } from '../types';
+import { UnprocessableEntity } from '@curveball/http-errors';
 
 export async function createPassword(user: User, password: string): Promise<void> {
 
+  assertValidPassword(password);
   await db('user_passwords').insert({
     user_id: user.id,
     password: await bcrypt.hash(password, 12)
@@ -14,10 +16,13 @@ export async function createPassword(user: User, password: string): Promise<void
 
 export async function updatePassword(user: User, password: string): Promise<void> {
 
-  const query = 'INSERT INTO user_passwords (password, user_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE password = ?';
-  const hashedPw = await bcrypt.hash(password, 12);
-
-  await db.raw(query, [hashedPw, user.id, hashedPw]);
+  assertValidPassword(password);
+  await db('user_passwords').insert({
+    user_id: user.id,
+    password: await bcrypt.hash(password, 12)
+  })
+    .onConflict('user_id')
+    .merge();
 
 }
 
@@ -90,5 +95,13 @@ export async function hasTotp(user: User): Promise<boolean> {
     .where('user_id', user.id);
 
   return result.length !== 0;
+
+}
+
+function assertValidPassword(password: string) {
+
+  if (password.length < 8) {
+    throw new UnprocessableEntity('Passwords must be at least 8 characters');
+  }
 
 }

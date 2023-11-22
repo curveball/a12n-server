@@ -21,8 +21,8 @@ export async function updatePassword(user: User, password: string): Promise<void
     user_id: user.id,
     password: await bcrypt.hash(password, 12)
   })
-  .onConflict('user_id')
-  .merge();
+    .onConflict('user_id')
+    .merge();
 
 }
 

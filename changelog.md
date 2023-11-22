@@ -13,6 +13,7 @@ Changelog
 * Added new privilege for changing passwords: `a12n:user:change-password`.
 * Introspection endpoint now returns the `exp`, `sub`, `aud` and `iss`
   properties.
+* Now returning a 422 for invalid passwords instead of 500.
 
 
 0.24.0 (2023-11-09)

@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.25.2 (????-??-??)
+0.25.2 (2023-12-01)
 -------------------
 
 * Fixed result of one-time-token if a custom expiry was used.

@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.25.1 (????-??-??)
+0.25.1 (2023-12-01)
 -------------------
 
 * Clients can now specify how long a one-time-token should be valid for.

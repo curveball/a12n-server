@@ -21,7 +21,7 @@
     },
     "dontExpire": {
       "type": "boolean",
-      "description": "Don\'t expire the one-time-token even if it was correct."
+      "description": "Don't expire the one-time-token even if it was correct."
     }
   }
 }

@@ -1,7 +1,7 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 
-import { Forbidden, UnprocessableEntity } from '@curveball/http-errors';
+import { Forbidden } from '@curveball/http-errors';
 
 import { tokenResponse } from '../../oauth2/formats/json';
 

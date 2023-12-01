@@ -14,24 +14,26 @@ type OtteRequest = {
   activateUser?: boolean;
   token: string;
   client_id: string;
+  dontExpire?: boolean;
 }
 
 class OneTimeTokenExchangeController extends Controller {
 
-  async post(ctx: Context<OtteRequest>) {
+  async post(ctx: Context) {
 
     ctx.privileges.require('a12n:one-time-token:exchange');
+    ctx.request.validate<OtteRequest>('https://curveballjs.org/schemas/a12nserver/one-time-token-exchange.json');
+
     const principalService = new PrincipalService(ctx.privileges);
 
-    if (!ctx.request.body.token) {
-      throw new UnprocessableEntity('A token must be provided for the exchange');
+    const client = await oauth2ClientService.findByClientId(ctx.request.body.client_id);
+    if (!ctx.privileges.isPrincipal(client.app)) {
+      throw new Forbidden(`The client_id ${ctx.request.body.client_id} is not associated with the currently authenticated app`);
     }
-    if (!ctx.request.body.client_id) {
-      throw new UnprocessableEntity('A client_id must be provided for the exchange');
-    }
-
-    const user = await tokenService.validateToken(ctx.request.body.token);
-
+    const user = await tokenService.validateToken(
+      ctx.request.body.token,
+      ctx.request.body.dontExpire ?? false,
+    );
     if (!user.active) {
       if (ctx.request.body.activateUser) {
         user.active = true;
@@ -41,7 +43,6 @@ class OneTimeTokenExchangeController extends Controller {
       }
     }
 
-    const client = await oauth2ClientService.findByClientId(ctx.request.body.client_id);
     const oauth2Token = await oauth2Service.generateTokenOneTimeToken({
       client,
       principal: user,

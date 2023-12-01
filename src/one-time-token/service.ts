@@ -13,16 +13,16 @@ const tokenTTL = 7200;
 /**
  * This function will create a unique token then store it in the database
  */
-export async function createToken(user: User): Promise<OneTimeToken> {
+export async function createToken(user: User, expiresIn: number | null): Promise<OneTimeToken> {
   const token = await generateSecretToken();
-  const query = 'INSERT INTO reset_password_token (user_id, token, expires_at, created_at) VALUES (?, ?, ?, ?)';
+  const expiresAt = Math.floor(Date.now() / 1000) + (expiresIn ?? tokenTTL);
 
-  await db.raw(query, [
-    user.id,
+  await db('reset_password_token').insert({
+    user_id: user.id,
     token,
-    Math.floor(Date.now() / 1000) + tokenTTL,
-    Math.floor(Date.now() / 1000),
-  ]);
+    expires_at: expiresAt,
+    created_at: Math.floor(Date.now() / 1000)
+  });
   return {
     token,
     expires: new Date(Date.now() + tokenTTL*1000),

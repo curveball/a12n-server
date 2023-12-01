@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://curveballjs.org/schemas/a12nserver/one-time-token-generate.json",
+  "type": "object",
+  "description": "The request made to the one-time-token generate endpoint.",
+  "required": [],
+  "additionalProperties": false,
+
+  "properties": {
+    "expiresIn": {
+      "description": "Specify how long the token is valid for, in seconds.",
+      "type": "number"
+    }
+  }
+}

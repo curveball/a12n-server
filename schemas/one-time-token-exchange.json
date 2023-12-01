@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://curveballjs.org/schemas/a12nserver/one-time-token-exchange.json",
+  "type": "object",
+  "description": "Request body of the exchange one-time-token endpoint.",
+  "required": ["token","client_id"],
+  "additionalProperties": false,
+
+  "properties": {
+    "token": {
+      "type": "string",
+      "description": "The token previously obtained with the 'generate one-time-token' endpoint."
+    },
+    "client_id": {
+      "type": "string",
+      "description": "The OAuth2 client_id. This client will be associated with the generated token."
+    },
+    "activateUser": {
+      "type": "boolean",
+      "description": "Activate the user if the token was valid."
+    },
+    "dontExpire": {
+      "type": "boolean",
+      "description": "Don't expire the one-time-token even if it was correct."
+    }
+  }
+}

@@ -34,17 +34,22 @@ export async function createToken(user: User, expiresIn: number | null): Promise
  * This function only works once for every token.
  * After calling this function, the token automatically gets deleted.
  */
-export async function validateToken(token: string): Promise<User> {
+export async function validateToken(token: string, dontExpire: boolean = false): Promise<User> {
 
-  const query = 'SELECT token, user_id FROM reset_password_token WHERE token = ? AND expires_at > ?';
-  const result = await db.raw(query, [token, Math.floor(Date.now() / 1000)]);
+  const result = await db('reset_password_token')
+    .select()
+    .where({token})
+    .andWhere('expires_at', '>', Math.floor(Date.now() / 1000))
+    .first();
 
-  if (result[0].length !== 1) {
-    throw new BadRequest ('Failed to validate token');
+  if (!result) {
+    throw new BadRequest('Failed to validate token');
   } else {
-    await db.raw('DELETE FROM reset_password_token WHERE token = ?', [token]);
+    if (!dontExpire) {
+      await db('reset_password_token').delete().where({token});
+    }
     const principalService = new PrincipalService('insecure');
-    return principalService.findById(result[0][0].user_id) as Promise<User>;
+    return principalService.findById(result.user_id, 'user');
   }
 
 }

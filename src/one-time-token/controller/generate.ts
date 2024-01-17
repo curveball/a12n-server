@@ -11,7 +11,7 @@ type GenerateRequest = {
 
 class OneTimeTokenController extends Controller {
 
-  async post(ctx: Context<any>) {
+  async post(ctx: Context) {
 
     ctx.request.validate<GenerateRequest>('https://curveballjs.org/schemas/a12nserver/one-time-token-generate.json');
     ctx.privileges.require('a12n:one-time-token:generate');

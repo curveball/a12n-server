@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.25.3 (????-??-??)
+0.25.3 (2024-02-08)
 -------------------
 
 * Set Content-Type to application/json for `password` and `refresh_token`

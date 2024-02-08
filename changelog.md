@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.25.3 (????-??-??)
+-------------------
+
+* Set Content-Type to application/json for `password` and `refresh_token`
+  operations on the token endpoint.
+
+
 0.25.2 (2023-12-01)
 -------------------
 

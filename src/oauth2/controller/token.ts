@@ -161,6 +161,7 @@ class TokenController extends Controller {
       scope
     });
 
+    ctx.response.type = 'application/json';
     ctx.response.body = {
       access_token: token.accessToken,
       token_type: token.tokenType,
@@ -181,6 +182,7 @@ class TokenController extends Controller {
       ctx.request.body.refresh_token
     );
 
+    ctx.response.type = 'application/json';
     ctx.response.body = {
       access_token: token.accessToken,
       token_type: token.tokenType,

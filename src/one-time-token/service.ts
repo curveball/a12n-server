@@ -24,7 +24,6 @@ export async function createToken(user: User, expiresIn: number | null): Promise
     created_at: Math.floor(Date.now() / 1000)
   });
 
-  console.log(new Date(expiresAt*1000));
   return {
     token,
     expires: new Date(expiresAt*1000),

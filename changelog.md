@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.25.4 (????-??-??)
+0.25.4 (2024-02-26)
 -------------------
 
 * The 'scope' property on the OAuth2 introspection response was comma-separated

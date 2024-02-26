@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.25.4 (????-??-??)
+-------------------
+
+* The 'scope' property on the OAuth2 introspection response was comma-separated
+  when it should have been space-separated.
+
+
 0.25.3 (2024-02-08)
 -------------------
 

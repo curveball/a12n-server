@@ -45,9 +45,18 @@ type IntrospectResponse = {
 
 
 export function introspectResponse(info: IntrospectInfo): IntrospectResponse {
+
+  // Currently we determine the 'scope' by taking all privileges for each
+  // resource. In the future this will be refined.
+  const scope = new Set<string>();
+
+  for(const privilegeSet of Object.values(info.privileges)) {
+    for(const privilege of privilegeSet) scope.add(privilege);
+  }
+
   return {
     active: true,
-    scope: Object.values(info.privileges).join(' '),
+    scope: (Array.from(scope.values())).join(' '),
     privileges: info.privileges,
     client_id: info.client.clientId,
     username: info.token.principal.nickname,

@@ -95,6 +95,7 @@ export function getSettings(): Knex.Config {
     searchPath = [
       connection.user as string,
       connection.database as string,
+      'public',
     ];
 
 

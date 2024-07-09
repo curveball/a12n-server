@@ -76,20 +76,20 @@
     ]
   },
   "dependencies": {
-    "@curveball/accesslog": "^0.4.0",
-    "@curveball/bodyparser": "^0.6.1",
-    "@curveball/browser": "^0.20.3",
-    "@curveball/controller": "^0.5.0",
-    "@curveball/core": "^0.21.1",
-    "@curveball/cors": "^0.3.0",
-    "@curveball/http-errors": "^0.5.0",
-    "@curveball/kernel": "^0.21.2",
-    "@curveball/links": "^0.3.0",
-    "@curveball/problem": "^0.5.0",
-    "@curveball/router": "^0.6.0",
-    "@curveball/session": "^0.10.0",
-    "@curveball/session-redis": "^0.6.0",
-    "@curveball/validator": "^0.10.0",
+    "@curveball/accesslog": "^1.0.0",
+    "@curveball/bodyparser": "^1.0.0",
+    "@curveball/browser": "^1.1.1",
+    "@curveball/controller": "^1.0.0",
+    "@curveball/core": "^1.0.0",
+    "@curveball/cors": "^1.0.0",
+    "@curveball/http-errors": "^1.0.1",
+    "@curveball/kernel": "^1.0.0",
+    "@curveball/links": "^1.0.1",
+    "@curveball/problem": "^1.0.0",
+    "@curveball/router": "^1.0.0",
+    "@curveball/session": "^1.0.0",
+    "@curveball/session-redis": "^1.0.0",
+    "@curveball/validator": "^1.0.0",
     "@simplewebauthn/browser": "^8.3.1",
     "@simplewebauthn/server": "^8.2.0",
     "bcrypt": "^5.0.1",
@@ -100,7 +100,7 @@
     "handlebars": "^4.7.7",
     "jose": "^5.1.0",
     "knex": "^3.0.1",
-    "mysql2": "^3.6.3",
+    "mysql2": "^3.10.2",
     "nodemailer": "^6.5.0",
     "otplib": "^12.0.1",
     "pg": "^8.7.1",
@@ -117,5 +117,8 @@
       "js",
       "tsx"
     ]
+  },
+  "overrides": {
+    "mysql2": "^3.10.2"
   }
 }

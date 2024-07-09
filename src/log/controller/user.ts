@@ -1,9 +1,9 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { Forbidden } from '@curveball/http-errors';
-import { PrincipalService } from '../../principal/service';
-import csv from '../formats/csv';
-import * as logService from '../service';
+import { PrincipalService } from '../../principal/service.js';
+import csv from '../formats/csv.js';
+import * as logService from '../service.js';
 
 class UserLogController extends Controller {
 

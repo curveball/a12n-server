@@ -1,11 +1,11 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { NotFound, BadRequest } from '@curveball/http-errors';
-import log from '../../log/service';
-import { EventType } from '../../log/types';
-import { PrincipalService } from '../../principal/service';
-import { resetPasswordRequestForm } from '../formats/html';
-import { sendResetPasswordEmail } from '../service';
+import log from '../../log/service.js';
+import { EventType } from '../../log/types.js';
+import { PrincipalService } from '../../principal/service.js';
+import { resetPasswordRequestForm } from '../formats/html.js';
+import { sendResetPasswordEmail } from '../service.js';
 
 
 /**

@@ -1,6 +1,6 @@
-import { User, App, OAuth2Client } from '../types';
-import { generateSecretToken } from '../crypto';
-import { getSetting } from '../server-settings';
+import { User, App, OAuth2Client } from '../types.js';
+import { generateSecretToken } from '../crypto.js';
+import { getSetting } from '../server-settings.js';
 import { createPrivateKey, KeyObject, createPublicKey } from 'crypto';
 import { SignJWT } from 'jose';
 import { getGlobalOrigin } from '@curveball/kernel';

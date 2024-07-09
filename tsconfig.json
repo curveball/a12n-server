@@ -1,14 +1,12 @@
 {
     "compilerOptions": {
-        "module": "commonjs",
-        "target": "es2021",
+        "module": "node16",
+        "target": "es2022",
 
         "strict": true,
         "noFallthroughCasesInSwitch": true,
-        "experimentalDecorators": true,
         "noUnusedLocals": true,
 
-        "moduleResolution": "node",
         "sourceMap": true,
         "outDir": "dist",
         "baseUrl": ".",
@@ -19,12 +17,9 @@
         },
         "lib": [
           "DOM",
-          "ES2021"
+          "ES2022"
         ],
         "declaration": true
-    },
-    "ts-node": {
-      "files": true
     },
     "include": [
         "src/**/*"

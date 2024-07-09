@@ -1,4 +1,4 @@
-import { User, App } from '../types';
+import { User, App } from '../types.js';
 
 /**
  * This type represents the set of permissions that an app is allowed to use

@@ -1,4 +1,4 @@
-import { LazyPrivilegeBox } from '../privilege/service';
+import { LazyPrivilegeBox } from '../privilege/service.js';
 import {
   App,
   BasePrincipal,
@@ -8,14 +8,14 @@ import {
   PrincipalStats,
   PrincipalType,
   User,
-} from '../types';
-import db, {insertAndGetId} from '../database';
-import { PrincipalsRecord } from 'knex/types/tables';
+} from '../types.js';
+import db, {insertAndGetId} from '../database.js';
+import { PrincipalsRecord } from 'knex/types/tables.js';
 import {
   NotFound,
-  UnprocessableEntity,
+  UnprocessableContent,
 } from '@curveball/http-errors';
-import { generatePublicId } from '../crypto';
+import { generatePublicId } from '../crypto.js';
 
 /**
  * This class provides a wrapper around the principal service APIs.
@@ -116,7 +116,7 @@ export class PrincipalService {
       // Update user
       this.privileges.require('a12n:principals:update', principal.href);
       if (!isIdentityValid(principal.identity)) {
-        throw new UnprocessableEntity('Identity must be a valid URI');
+        throw new UnprocessableContent('Identity must be a valid URI');
       }
 
       principal.modifiedAt = new Date();

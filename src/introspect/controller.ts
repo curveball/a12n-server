@@ -1,12 +1,12 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { UnprocessableEntity, UnsupportedMediaType } from '@curveball/http-errors';
+import { UnprocessableContent, UnsupportedMediaType } from '@curveball/http-errors';
 import { NotFound } from '@curveball/http-errors';
-import * as oauth2Service from '../oauth2/service';
-import { OAuth2Token } from '../oauth2/types';
-import * as privilegeService from '../privilege/service';
-import * as oauth2ClientService from '../oauth2-client/service';
-import { introspectResponse, inactive } from './formats/json';
+import * as oauth2Service from '../oauth2/service.js';
+import { OAuth2Token } from '../oauth2/types.js';
+import * as privilegeService from '../privilege/service.js';
+import * as oauth2ClientService from '../oauth2-client/service.js';
+import { introspectResponse, inactive } from './formats/json.js';
 
 /**
  * The /introspect endpoint allows a client to get more information
@@ -23,7 +23,7 @@ class IntrospectionController extends Controller {
     }
 
     if (!('token' in ctx.request.body)) {
-      throw new UnprocessableEntity('The "token" parameter must be set');
+      throw new UnprocessableContent('The "token" parameter must be set');
     }
 
     const token = ctx.request.body.token;

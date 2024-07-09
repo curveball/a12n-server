@@ -3,12 +3,12 @@ import { Context } from '@curveball/core';
 
 import { Forbidden } from '@curveball/http-errors';
 
-import { tokenResponse } from '../../oauth2/formats/json';
+import { tokenResponse } from '../../oauth2/formats/json.js';
 
-import * as tokenService from '../service';
-import * as oauth2Service from '../../oauth2/service';
-import * as oauth2ClientService from '../../oauth2-client/service';
-import { PrincipalService } from '../../principal/service';
+import * as tokenService from '../service.js';
+import * as oauth2Service from '../../oauth2/service.js';
+import * as oauth2ClientService from '../../oauth2-client/service.js';
+import { PrincipalService } from '../../principal/service.js';
 
 type OtteRequest = {
   activateUser?: boolean;

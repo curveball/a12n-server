@@ -1,12 +1,12 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { Forbidden, NotFound } from '@curveball/http-errors';
-import { getSetting } from '../../server-settings';
-import { PrincipalService, hasUsers } from '../../principal/service';
-import * as userService from '../../user/service';
-import { registrationForm } from '../formats/html';
-import * as privilegeService from '../../privilege/service';
-import { User } from '../../types';
+import { getSetting } from '../../server-settings.js';
+import { PrincipalService, hasUsers } from '../../principal/service.js';
+import * as userService from '../../user/service.js';
+import { registrationForm } from '../formats/html.js';
+import * as privilegeService from '../../privilege/service.js';
+import { User } from '../../types.js';
 
 class UserRegistrationController extends Controller {
 

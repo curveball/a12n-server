@@ -3,15 +3,15 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { NotFound, NotImplemented } from '@curveball/http-errors';
 
-import { InvalidClient, InvalidRequest, UnsupportedGrantType } from '../errors';
-import * as oauth2Service from '../service';
-import { CodeChallengeMethod } from '../types';
-import { OAuth2Client } from '../../types';
-import log from '../../log/service';
-import { EventType } from '../../log/types';
-import { findByClientId } from '../../oauth2-client/service';
-import * as userAppPermissions from '../../user-app-permissions/service';
-import { generateJWTIDToken } from '../jwt';
+import { InvalidClient, InvalidRequest, UnsupportedGrantType } from '../errors.js';
+import * as oauth2Service from '../service.js';
+import { CodeChallengeMethod } from '../types.js';
+import { OAuth2Client } from '../../types.js';
+import log from '../../log/service.js';
+import { EventType } from '../../log/types.js';
+import { findByClientId } from '../../oauth2-client/service.js';
+import * as userAppPermissions from '../../user-app-permissions/service.js';
+import { generateJWTIDToken } from '../jwt.js';
 
 /**
  * The Authorize controller is responsible for handing requests to the oauth2

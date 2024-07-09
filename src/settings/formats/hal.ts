@@ -1,4 +1,4 @@
-import { SettingsRules, Settings } from '../../server-settings';
+import { SettingsRules, Settings } from '../../server-settings.js';
 import { HalResource } from 'hal-types';
 
 export function settings(settingsRules: SettingsRules, settings: Settings): HalResource {

@@ -1,7 +1,7 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { logoutForm } from './formats/html';
-import * as oauth2Service from '../oauth2/service';
+import { logoutForm } from './formats/html.js';
+import * as oauth2Service from '../oauth2/service.js';
 
 class LogoutController extends Controller {
 

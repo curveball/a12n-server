@@ -1,8 +1,8 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { BadRequest, Conflict, NotFound } from '@curveball/http-errors';
-import * as hal from '../formats/hal';
-import { PrincipalService } from '../../principal/service';
+import * as hal from '../formats/hal.js';
+import { PrincipalService } from '../../principal/service.js';
 
 type NewPrincipalBody = {
   nickname: string;

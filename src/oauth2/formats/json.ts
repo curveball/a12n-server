@@ -1,4 +1,4 @@
-import { OAuth2Token } from '../types';
+import { OAuth2Token } from '../types.js';
 import { resolve } from 'url';
 import { getGlobalOrigin } from '@curveball/kernel';
 

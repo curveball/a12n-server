@@ -1,13 +1,13 @@
 import * as bcrypt from 'bcrypt';
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { Forbidden, UnprocessableEntity } from '@curveball/http-errors';
+import { Forbidden, UnprocessableContent } from '@curveball/http-errors';
 
-import * as hal from '../formats/hal';
-import { PrincipalService } from '../../principal/service';
-import { GrantType, OAuth2Client } from '../../types';
-import { findByApp, create } from '../service';
-import { generatePublicId, generateSecretToken } from '../../crypto';
+import * as hal from '../formats/hal.js';
+import { PrincipalService } from '../../principal/service.js';
+import { GrantType, OAuth2Client } from '../../types.js';
+import { findByApp, create } from '../service.js';
+import { generatePublicId, generateSecretToken } from '../../crypto.js';
 
 class ClientCollectionController extends Controller {
 
@@ -59,11 +59,11 @@ class ClientCollectionController extends Controller {
     if (!clientId) {
       clientId = await generatePublicId();
     } else if (clientId.length < 6) {
-      throw new UnprocessableEntity('clientId must be at least 6 characters or left empty');
+      throw new UnprocessableContent('clientId must be at least 6 characters or left empty');
     }
 
     if (!allowedGrantTypes) {
-      throw new UnprocessableEntity('You must specify the allowedGrantTypes property');
+      throw new UnprocessableContent('You must specify the allowedGrantTypes property');
     }
 
     const clientSecret = `secret-token:${await generateSecretToken()}`;

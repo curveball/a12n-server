@@ -1,16 +1,22 @@
 {
   "name": "@curveball/a12n-server",
   "version": "0.25.4",
-  "main": "dist/index.js",
   "description": "A ready-to-launch User and Authentication system for those that don't want to build it",
+  "type": "module",
+  "exports": "./dist/index.js",
+  "homepage": "https://github.com/curveball/a12n-server#readme",
+  "author": "Evert Pot (https://evertpot.com/)",
+  "license": "MIT",
   "scripts": {
     "prepublishOnly": "make build",
-    "test": "make lint test",
+    "test": "make test",
+    "lint": "make lint",
+    "fix": "make fix",
     "tsc": "tsc",
-    "start": "node ./dist/app.js",
-    "start:watch": "tsc-watch --onSuccess 'node dist/app.js'"
+    "start": "make start",
+    "start:watch": "tsc-watch --onSuccess 'node dist/app.js'",
+    "build": "make build"
   },
-  "bin": "./bin/a12n-server",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/curveball/a12n-server.git"
@@ -20,10 +26,7 @@
     "README.md",
     "dist",
     "LICENSE",
-    "assets",
-    "templates",
-    ".env.defaults",
-    "schemas"
+    "src"
   ],
   "contributors": [
     {
@@ -42,39 +45,6 @@
       "url": "https://mihok.systems"
     }
   ],
-  "homepage": "https://github.com/curveball/a12n-server#readme",
-  "devDependencies": {
-    "@types/bcrypt": "^5.0.0",
-    "@types/chai": "^4.2.15",
-    "@types/chai-as-promised": "^7.1.3",
-    "@types/geoip-lite": "^1.4.1",
-    "@types/mocha": "^10.0.2",
-    "@types/node": "^16.11.26",
-    "@types/nodemailer": "^6.4.1",
-    "@types/qrcode": "^1.4.0",
-    "@types/sinon": "^17.0.1",
-    "@types/sinon-chai": "^3.2.8",
-    "@typescript-eslint/eslint-plugin": "^7.16.0",
-    "@typescript-eslint/parser": "^7.16.0",
-    "chai": "^4.4.1",
-    "chai-as-promised": "^8.0.0",
-    "eslint": "^8.0.1",
-    "hal-types": "^1.7.6",
-    "mocha": "^10.0.0",
-    "mysql-types-generator": "^1.0.3",
-    "nyc": "^17.0.0",
-    "sinon": "^18.0.0",
-    "sinon-chai": "^3.7.0",
-    "ts-node": "^10.0.0",
-    "tsc-watch": "^6.0.4",
-    "typescript": "^5.2.2"
-  },
-  "types": "dist/",
-  "nyc": {
-    "extension": [
-      ".ts"
-    ]
-  },
   "dependencies": {
     "@curveball/accesslog": "^1.0.0",
     "@curveball/bodyparser": "^1.0.0",
@@ -107,9 +77,42 @@
     "qrcode": "^1.3.2",
     "sqlite3": "^5.0.6"
   },
+  "peerDependencies": {
+    "@curveball/kernel": "^1"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/chai": "^4.2.15",
+    "@types/chai-as-promised": "^7.1.3",
+    "@types/geoip-lite": "^1.4.1",
+    "@types/mocha": "^10.0.2",
+    "@types/node": "^16.11.26",
+    "@types/nodemailer": "^6.4.1",
+    "@types/qrcode": "^1.4.0",
+    "@types/sinon": "^17.0.1",
+    "@types/sinon-chai": "^3.2.8",
+    "@typescript-eslint/eslint-plugin": "^7.16.0",
+    "@typescript-eslint/parser": "^7.16.0",
+    "chai": "^4.4.1",
+    "chai-as-promised": "^8.0.0",
+    "eslint": "^8.0.1",
+    "hal-types": "^1.7.6",
+    "mocha": "^10.0.0",
+    "mysql-types-generator": "^1.0.3",
+    "nyc": "^17.0.0",
+    "sinon": "^18.0.0",
+    "sinon-chai": "^3.7.0",
+    "ts-node": "^10.0.0",
+    "tsc-watch": "^6.0.4",
+    "typescript": "^5.2.2"
+  },
+  "engines": {
+    "node": ">= 18"
+  },
+
   "mocha": {
-    "require": [
-      "ts-node/register"
+    "loader": [
+      "ts-node/esm"
     ],
     "recursive": true,
     "extension": [
@@ -118,6 +121,13 @@
       "tsx"
     ]
   },
+  "nyc": {
+    "extension": [
+      ".ts"
+    ]
+  },
+  "bin": "./bin/a12n-server",
+  "types": "dist/",
   "overrides": {
     "mysql2": "^3.10.2"
   }

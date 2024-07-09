@@ -2,9 +2,9 @@
 import { Application } from '@curveball/core';
 import accessLog from '@curveball/accesslog';
 
-import mainMw from './main-mw';
-import { init as initDb } from './database';
-import { load } from './server-settings';
+import mainMw from './main-mw.js';
+import { init as initDb } from './database.js';
+import { load } from './server-settings.js';
 
 import * as dotenv from 'dotenv';
 

@@ -1,4 +1,4 @@
-import { App } from '../../types';
+import { App } from '../../types.js';
 
 type NewClientQuery = {
  clientId?: string;

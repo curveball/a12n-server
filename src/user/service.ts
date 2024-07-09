@@ -1,8 +1,8 @@
 import * as bcrypt from 'bcrypt';
 import * as otplib from 'otplib';
-import db from '../database';
-import { User } from '../types';
-import { UnprocessableEntity } from '@curveball/http-errors';
+import db from '../database.js';
+import { User } from '../types.js';
+import { UnprocessableContent } from '@curveball/http-errors';
 
 export async function createPassword(user: User, password: string): Promise<void> {
 
@@ -101,7 +101,7 @@ export async function hasTotp(user: User): Promise<boolean> {
 function assertValidPassword(password: string) {
 
   if (password.length < 8) {
-    throw new UnprocessableEntity('Passwords must be at least 8 characters');
+    throw new UnprocessableContent('Passwords must be at least 8 characters');
   }
 
 }

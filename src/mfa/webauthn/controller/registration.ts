@@ -2,9 +2,9 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { generateRegistrationOptions, verifyRegistrationResponse } from '@simplewebauthn/server';
 
-import * as webAuthnService from '../service';
-import { getSetting } from '../../../server-settings';
-import { User } from '../../../types';
+import * as webAuthnService from '../service.js';
+import { getSetting } from '../../../server-settings.js';
+import { User } from '../../../types.js';
 
 
 class WebAuthnAttestationController extends Controller {

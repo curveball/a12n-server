@@ -1,7 +1,7 @@
-import { OAuth2Token } from '../../oauth2/types';
-import { PrivilegeMap } from '../../privilege/types';
+import { OAuth2Token } from '../../oauth2/types.js';
+import { PrivilegeMap } from '../../privilege/types.js';
 import * as url from 'url';
-import { OAuth2Client } from '../../types';
+import { OAuth2Client } from '../../types.js';
 
 type IntrospectInfo = {
   privileges: PrivilegeMap;

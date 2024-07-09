@@ -2,16 +2,16 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { NotFound } from '@curveball/http-errors';
 import * as querystring from 'querystring';
-import log from '../../log/service';
-import { EventType } from '../../log/types';
-import { MFALoginSession } from '../../mfa/types';
-import * as webAuthnService from '../../mfa/webauthn/service';
-import { getSetting } from '../../server-settings';
-import { hasUsers, PrincipalService } from '../../principal/service';
-import * as userService from '../../user/service';
-import { User } from '../../types';
-import { isValidRedirect } from '../utilities';
-import { loginForm } from '../formats/html';
+import log from '../../log/service.js';
+import { EventType } from '../../log/types.js';
+import { MFALoginSession } from '../../mfa/types.js';
+import * as webAuthnService from '../../mfa/webauthn/service.js';
+import { getSetting } from '../../server-settings.js';
+import { hasUsers, PrincipalService } from '../../principal/service.js';
+import * as userService from '../../user/service.js';
+import { User } from '../../types.js';
+import { isValidRedirect } from '../utilities.js';
+import { loginForm } from '../formats/html.js';
 
 class LoginController extends Controller {
 

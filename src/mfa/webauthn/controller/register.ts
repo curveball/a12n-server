@@ -1,8 +1,8 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 
-import { registrationForm } from '../formats/html';
-import { User } from '../../../types';
+import { registrationForm } from '../formats/html.js';
+import { User } from '../../../types.js';
 
 
 class WebAuthnRegisterController extends Controller {

@@ -1,4 +1,4 @@
-import { User } from '../../types';
+import { User } from '../../types.js';
 
 export type WebAuthnDevice = {
     id: number;

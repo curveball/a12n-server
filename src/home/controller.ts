@@ -1,8 +1,8 @@
 import Controller, { accept, method } from '@curveball/controller';
 import { Context } from '@curveball/core';
-import hal from './formats/hal';
-import markdown from './formats/markdown';
-import { getServerStats } from './service';
+import hal from './formats/hal.js';
+import markdown from './formats/markdown.js';
+import { getServerStats } from './service.js';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const version = require('../../package.json').version;

@@ -1,8 +1,8 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import * as hal from '../formats/hal';
-import * as userAppPermissionService from '../service';
-import { PrincipalService } from '../../principal/service';
+import * as hal from '../formats/hal.js';
+import * as userAppPermissionService from '../service.js';
+import { PrincipalService } from '../../principal/service.js';
 
 class UserAppPermissionsCollection extends Controller {
 

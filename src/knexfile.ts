@@ -1,4 +1,4 @@
-import { getSettings } from './database';
+import { getSettings } from './database.js';
 import * as dotenv from 'dotenv';
 
 if (process.env.PUBLIC_URI === undefined) {

@@ -3,10 +3,10 @@ import { Context } from '@curveball/core';
 import { authenticator } from 'otplib';
 import * as QRCode from 'qrcode';
 
-import { generateSecret, save } from '../service';
-import { registrationForm } from '../formats/html';
-import { User } from '../../../types';
-import { getSetting } from '../../../server-settings';
+import { generateSecret, save } from '../service.js';
+import { registrationForm } from '../formats/html.js';
+import { User } from '../../../types.js';
+import { getSetting } from '../../../server-settings.js';
 
 
 class TOTPRegisterController extends Controller {

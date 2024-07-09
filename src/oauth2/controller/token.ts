@@ -1,17 +1,17 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import log from '../../log/service';
-import { EventType } from '../../log/types';
-import { PrincipalService } from '../../principal/service';
-import * as userService from '../../user/service';
-import { User, OAuth2Client } from '../../types';
-import { InvalidGrant, InvalidRequest, UnsupportedGrantType } from '../errors';
-import * as oauth2Service from '../service';
+import log from '../../log/service.js';
+import { EventType } from '../../log/types.js';
+import { PrincipalService } from '../../principal/service.js';
+import * as userService from '../../user/service.js';
+import { User, OAuth2Client } from '../../types.js';
+import { InvalidGrant, InvalidRequest, UnsupportedGrantType } from '../errors.js';
+import * as oauth2Service from '../service.js';
 import {
   getOAuth2ClientFromBasicAuth,
   getOAuth2ClientFromBody,
-} from '../../oauth2-client/service';
-import * as userAppPermissions from '../../user-app-permissions/service';
+} from '../../oauth2-client/service.js';
+import * as userAppPermissions from '../../user-app-permissions/service.js';
 
 class TokenController extends Controller {
 

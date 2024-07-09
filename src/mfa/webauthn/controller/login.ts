@@ -2,12 +2,12 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { generateAuthenticationOptions, verifyAuthenticationResponse } from '@simplewebauthn/server';
 
-import log from '../../../log/service';
-import { EventType } from '../../../log/types';
-import { getSetting } from '../../../server-settings';
+import log from '../../../log/service.js';
+import { EventType } from '../../../log/types.js';
+import { getSetting } from '../../../server-settings.js';
 
-import * as webauthnService from '../service';
-import { MFALoginSession } from '../../types';
+import * as webauthnService from '../service.js';
+import { MFALoginSession } from '../../types.js';
 
 class WebAuthnLoginRequestController extends Controller {
 

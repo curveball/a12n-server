@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import * as handlebars from 'handlebars';
-import { getSetting } from './server-settings';
+import { getSetting } from './server-settings.js';
 
 type Params = {
   [key: string]: any;

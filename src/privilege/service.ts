@@ -1,9 +1,9 @@
 import { Context } from '@curveball/core';
-import db, { query } from '../database';
-import { Principal } from '../types';
-import { Privilege, PrivilegeMap, PrivilegeEntry, InternalPrivilege } from './types';
-import { UserPrivilegesRecord } from 'knex/types/tables';
-import { PrincipalService } from '../principal/service';
+import db, { query } from '../database.js';
+import { Principal } from '../types.js';
+import { Privilege, PrivilegeMap, PrivilegeEntry, InternalPrivilege } from './types.js';
+import { UserPrivilegesRecord } from 'knex/types/tables.js';
+import { PrincipalService } from '../principal/service.js';
 import { Forbidden } from '@curveball/http-errors';
 
 

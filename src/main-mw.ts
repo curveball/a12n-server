@@ -8,10 +8,10 @@ import validator from '@curveball/validator';
 import { RedisStore } from '@curveball/session-redis';
 import { invokeMiddlewares, Middleware } from '@curveball/core';
 
-import login from './middleware/login';
-import csrf from './middleware/csrf';
-import routes from './routes';
-import { getSetting } from './server-settings';
+import login from './middleware/login.js';
+import csrf from './middleware/csrf.js';
+import routes from './routes.js';
+import { getSetting } from './server-settings.js';
 import { join } from 'path';
 
 /**

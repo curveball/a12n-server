@@ -1,4 +1,4 @@
-import { render } from '../../templates';
+import { render } from '../../templates.js';
 
 export function logoutForm(msg: string, error: string, continueUri?: string) {
 

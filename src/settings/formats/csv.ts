@@ -1,4 +1,4 @@
-import { SettingsRules, Settings } from '../../server-settings';
+import { SettingsRules, Settings } from '../../server-settings.js';
 import { stringify } from 'csv-stringify/sync';
 
 export function settings(settingsRules: SettingsRules, settings: Settings): string {

@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.25.5 (????-??-??)
+-------------------
+
+* Upgraded to Curveball 1
+* Moved from CommonJS to ESM.
+* Upgraded to Typescript 5.5.
+
+
 0.25.4 (2024-02-26)
 -------------------
 

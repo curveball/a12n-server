@@ -5,6 +5,7 @@ import { generateRegistrationOptions, verifyRegistrationResponse } from '@simple
 import * as webAuthnService from '../service.js';
 import { getSetting } from '../../../server-settings.js';
 import { User } from '../../../types.js';
+import { isoBase64URL, isoUint8Array } from '@simplewebauthn/server/helpers';
 
 
 class WebAuthnAttestationController extends Controller {
@@ -15,12 +16,13 @@ class WebAuthnAttestationController extends Controller {
     const registrationOptions = await generateRegistrationOptions({
       rpName: getSetting('webauthn.serviceName'),
       rpID: getSetting('webauthn.relyingPartyId') || new URL(ctx.request.origin).host,
-      userID: user.id.toString(),
-      userName: user.nickname,
+      userID: isoUint8Array.fromUTF8String(user.id.toString()),
+      userName: user.href,
+      userDisplayName: user.nickname,
       timeout: 60000,
       attestationType: 'indirect',
       excludeCredentials: (await webAuthnService.findDevicesByUser(user)).map(device => ({
-        id: device.credentialID,
+        id: isoBase64URL.fromBuffer(device.credentialID),
         type: 'public-key',
       })),
       /**
@@ -66,13 +68,13 @@ class WebAuthnAttestationController extends Controller {
     if (verified) {
       const { credentialPublicKey, credentialID, counter } = registrationInfo!;
 
-      const existingDevice = (await webAuthnService.findDevicesByUser(user)).find(device => device.credentialID === credentialID);
+      const existingDevice = (await webAuthnService.findDevicesByUser(user)).find(device => device.credentialID.toString() === credentialID);
 
       if (!existingDevice) {
         await webAuthnService.save({
           user,
           credentialID: credentialPublicKey,
-          publicKey: credentialID,
+          publicKey: isoUint8Array.fromUTF8String(credentialID),
           counter,
         });
 

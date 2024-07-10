@@ -13,7 +13,7 @@ function readSync(basePath: string, filename: string) {
   return readFileSync(join(basePath, filename));
 }
 
-const files: Record<string, {data: Buffer, type: string}> = {
+const files: Record<string, {data: Buffer; type: string}> = {
   'extra.css': {
     data: readSync(assetPath, 'extra.css'),
     type: 'text/css',

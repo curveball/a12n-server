@@ -6,7 +6,7 @@
  * https://github.com/Hexagon/base64/issues/184
  */
 
-declare module "@hexagon/base64" {
+declare module '@hexagon/base64' {
 
 export default base64;
 export namespace base64 {

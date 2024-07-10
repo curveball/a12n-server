@@ -23,7 +23,7 @@ if (!process.env.PUBLIC_URI) {
 
 (async () => {
 
-  process.title = 'a12n-server/' + VERSION
+  process.title = 'a12n-server/' + VERSION;
 
   await initDb();
   await load();

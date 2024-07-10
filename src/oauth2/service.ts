@@ -1,16 +1,16 @@
 import { NotFound } from '@curveball/http-errors';
 import * as crypto from 'crypto';
 
-import db, { query } from '../database';
-import { getSetting } from '../server-settings';
-import { PrincipalService } from '../principal/service';
-import { InvalidGrant, InvalidRequest, UnauthorizedClient } from './errors';
-import { CodeChallengeMethod, OAuth2Code, OAuth2Token } from './types';
-import { generateSecretToken } from '../crypto';
-import { generateJWTAccessToken, generateJWTIDToken } from './jwt';
-import { Oauth2TokensRecord, Oauth2CodesRecord } from 'knex/types/tables';
-import { App, User, GrantType, OAuth2Client } from '../types';
-import * as userAppPermissionsService from '../user-app-permissions/service';
+import db, { query } from '../database.js';
+import { getSetting } from '../server-settings.js';
+import { PrincipalService } from '../principal/service.js';
+import { InvalidGrant, InvalidRequest, UnauthorizedClient } from './errors.js';
+import { CodeChallengeMethod, OAuth2Code, OAuth2Token } from './types.js';
+import { generateSecretToken } from '../crypto.js';
+import { generateJWTAccessToken, generateJWTIDToken } from './jwt.js';
+import { Oauth2TokensRecord, Oauth2CodesRecord } from 'knex/types/tables.js';
+import { App, User, GrantType, OAuth2Client } from '../types.js';
+import * as userAppPermissionsService from '../user-app-permissions/service.js';
 
 const oauth2TokenFields: (keyof Oauth2TokensRecord)[] = [
   'id',

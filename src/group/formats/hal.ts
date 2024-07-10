@@ -1,6 +1,6 @@
-import { Group, Principal } from '../../types';
+import { Group, Principal } from '../../types.js';
 import { HalResource, HalFormsTemplate } from 'hal-types';
-import { PrivilegeMap } from '../../privilege/types';
+import { PrivilegeMap } from '../../privilege/types.js';
 
 export function memberCollection(group: Group, members: Principal[]): HalResource {
 

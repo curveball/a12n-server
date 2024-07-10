@@ -1,10 +1,10 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { BadRequest } from '@curveball/http-errors';
-import * as privilegeService from '../../privilege/service';
-import { PrivilegeMap } from '../../privilege/types';
-import * as hal from '../formats/hal';
-import { PrincipalService } from '../../principal/service';
+import * as privilegeService from '../../privilege/service.js';
+import { PrivilegeMap } from '../../privilege/types.js';
+import * as hal from '../formats/hal.js';
+import { PrincipalService } from '../../principal/service.js';
 
 type PolicyForm = {
   policyBody: string;

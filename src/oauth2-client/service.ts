@@ -1,14 +1,14 @@
 import * as bcrypt from 'bcrypt';
 import { Context } from '@curveball/core';
 import { NotFound, Unauthorized, Conflict } from '@curveball/http-errors';
-import { Oauth2ClientsRecord } from 'knex/types/tables';
+import { Oauth2ClientsRecord } from 'knex/types/tables.js';
 import { wrapError, UniqueViolationError } from 'db-errors';
 
-import { PrincipalService } from '../principal/service';
-import db, { insertAndGetId } from '../database';
-import { InvalidRequest } from '../oauth2/errors';
-import parseBasicAuth from './parse-basic-auth';
-import { App, GrantType, OAuth2Client } from '../types';
+import { PrincipalService } from '../principal/service.js';
+import db, { insertAndGetId } from '../database.js';
+import { InvalidRequest } from '../oauth2/errors.js';
+import parseBasicAuth from './parse-basic-auth.js';
+import { App, GrantType, OAuth2Client } from '../types.js';
 
 export async function findByClientId(clientId: string): Promise<OAuth2Client> {
 

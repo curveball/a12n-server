@@ -1,8 +1,8 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { PrincipalService } from '../../principal/service';
-import { createToken } from '../service';
-import * as hal from '../formats/hal';
+import { PrincipalService } from '../../principal/service.js';
+import { createToken } from '../service.js';
+import * as hal from '../formats/hal.js';
 import { resolve } from 'url';
 
 type GenerateRequest = {

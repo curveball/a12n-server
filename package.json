@@ -1,16 +1,22 @@
 {
   "name": "@curveball/a12n-server",
   "version": "0.25.4",
-  "main": "dist/index.js",
   "description": "A ready-to-launch User and Authentication system for those that don't want to build it",
+  "type": "module",
+  "exports": "./dist/index.js",
+  "homepage": "https://github.com/curveball/a12n-server#readme",
+  "author": "Evert Pot (https://evertpot.com/)",
+  "license": "MIT",
   "scripts": {
     "prepublishOnly": "make build",
-    "test": "make lint test",
+    "test": "make test",
+    "lint": "make lint",
+    "fix": "make fix",
     "tsc": "tsc",
-    "start": "node ./dist/app.js",
-    "start:watch": "tsc-watch --onSuccess 'node dist/app.js'"
+    "start": "make start",
+    "start:watch": "tsc-watch --onSuccess 'node dist/app.js'",
+    "build": "make build"
   },
-  "bin": "./bin/a12n-server",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/curveball/a12n-server.git"
@@ -20,10 +26,7 @@
     "README.md",
     "dist",
     "LICENSE",
-    "assets",
-    "templates",
-    ".env.defaults",
-    "schemas"
+    "src"
   ],
   "contributors": [
     {
@@ -42,56 +45,23 @@
       "url": "https://mihok.systems"
     }
   ],
-  "homepage": "https://github.com/curveball/a12n-server#readme",
-  "devDependencies": {
-    "@types/bcrypt": "^5.0.0",
-    "@types/chai": "^4.2.15",
-    "@types/chai-as-promised": "^7.1.3",
-    "@types/geoip-lite": "^1.4.1",
-    "@types/mocha": "^10.0.2",
-    "@types/node": "^16.11.26",
-    "@types/nodemailer": "^6.4.1",
-    "@types/qrcode": "^1.4.0",
-    "@types/sinon": "^17.0.1",
-    "@types/sinon-chai": "^3.2.8",
-    "@typescript-eslint/eslint-plugin": "^6.7.4",
-    "@typescript-eslint/parser": "^6.7.4",
-    "chai": "^4.3.4",
-    "chai-as-promised": "^7.1.1",
-    "eslint": "^8.0.1",
-    "hal-types": "^1.7.6",
-    "mocha": "^10.0.0",
-    "mysql-types-generator": "^1.0.3",
-    "nyc": "^15.1.0",
-    "sinon": "^17.0.1",
-    "sinon-chai": "^3.7.0",
-    "ts-node": "^10.0.0",
-    "tsc-watch": "^6.0.4",
-    "typescript": "^5.2.2"
-  },
-  "types": "dist/",
-  "nyc": {
-    "extension": [
-      ".ts"
-    ]
-  },
   "dependencies": {
-    "@curveball/accesslog": "^0.4.0",
-    "@curveball/bodyparser": "^0.6.1",
-    "@curveball/browser": "^0.20.3",
-    "@curveball/controller": "^0.5.0",
-    "@curveball/core": "^0.21.1",
-    "@curveball/cors": "^0.3.0",
-    "@curveball/http-errors": "^0.5.0",
-    "@curveball/kernel": "^0.21.2",
-    "@curveball/links": "^0.3.0",
-    "@curveball/problem": "^0.5.0",
-    "@curveball/router": "^0.6.0",
-    "@curveball/session": "^0.10.0",
-    "@curveball/session-redis": "^0.6.0",
-    "@curveball/validator": "^0.10.0",
-    "@simplewebauthn/browser": "^8.3.1",
-    "@simplewebauthn/server": "^8.2.0",
+    "@curveball/accesslog": "^1.0.0",
+    "@curveball/bodyparser": "^1.0.0",
+    "@curveball/browser": "^1.1.1",
+    "@curveball/controller": "^1.0.0",
+    "@curveball/core": "^1.0.0",
+    "@curveball/cors": "^1.0.0",
+    "@curveball/http-errors": "^1.0.1",
+    "@curveball/kernel": "^1",
+    "@curveball/links": "^1.0.1",
+    "@curveball/problem": "^1.0.0",
+    "@curveball/router": "^1.0.0",
+    "@curveball/session": "^1.0.0",
+    "@curveball/session-redis": "^1.0.0",
+    "@curveball/validator": "^1.0.0",
+    "@simplewebauthn/browser": "^10.0.0",
+    "@simplewebauthn/server": "^10.0.0",
     "bcrypt": "^5.0.1",
     "csv-stringify": "^6.0.5",
     "db-errors": "^0.2.3",
@@ -100,22 +70,42 @@
     "handlebars": "^4.7.7",
     "jose": "^5.1.0",
     "knex": "^3.0.1",
-    "mysql2": "^3.6.3",
+    "mysql2": "^3.10.2",
     "nodemailer": "^6.5.0",
     "otplib": "^12.0.1",
     "pg": "^8.7.1",
     "qrcode": "^1.3.2",
     "sqlite3": "^5.0.6"
   },
-  "mocha": {
-    "require": [
-      "ts-node/register"
-    ],
-    "recursive": true,
-    "extension": [
-      "ts",
-      "js",
-      "tsx"
-    ]
-  }
+  "peerDependencies": {
+    "@curveball/kernel": "^1"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/chai": "^4.2.15",
+    "@types/chai-as-promised": "^7.1.3",
+    "@types/geoip-lite": "^1.4.1",
+    "@types/node": "^18.19.39",
+    "@types/nodemailer": "^6.4.1",
+    "@types/qrcode": "^1.4.0",
+    "@types/sinon": "^17.0.1",
+    "@types/sinon-chai": "^3.2.8",
+    "@typescript-eslint/eslint-plugin": "^7.16.0",
+    "@typescript-eslint/parser": "^7.16.0",
+    "chai": "^4.4.1",
+    "chai-as-promised": "^8.0.0",
+    "eslint": "^8.0.1",
+    "hal-types": "^1.7.6",
+    "mysql-types-generator": "^2.0.0",
+    "sinon": "^18.0.0",
+    "sinon-chai": "^3.7.0",
+    "tsc-watch": "^6.0.4",
+    "tsx": "^4.16.2",
+    "typescript": "^5.2.2"
+  },
+  "engines": {
+    "node": ">= 18"
+  },
+  "bin": "./bin/a12n-server",
+  "types": "dist/"
 }

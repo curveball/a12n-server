@@ -1,12 +1,12 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import * as querystring from 'querystring';
-import { isValidRedirect } from '../utilities';
-import { MFALoginSession } from '../../mfa/types';
-import { mfaForm } from '../formats/html';
-import log from '../../log/service';
-import { EventType } from '../../log/types';
-import * as userService from '../../user/service';
+import { isValidRedirect } from '../utilities.js';
+import { MFALoginSession } from '../../mfa/types.js';
+import { mfaForm } from '../formats/html.js';
+import log from '../../log/service.js';
+import { EventType } from '../../log/types.js';
+import * as userService from '../../user/service.js';
 
 class MFAController extends Controller {
 

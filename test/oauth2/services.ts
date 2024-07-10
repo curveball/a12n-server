@@ -1,7 +1,8 @@
 import { expect } from 'chai';
+import { describe, it } from 'node:test';
 
-import { InvalidGrant, InvalidRequest } from '../../src/oauth2/errors';
-import { validatePKCE } from '../../src/oauth2/service';
+import { InvalidGrant, InvalidRequest } from '../../src/oauth2/errors.js';
+import { validatePKCE } from '../../src/oauth2/service.js';
 
 describe('oauth2 services', () => {
   describe('oauth2 validatePKCE', () => {

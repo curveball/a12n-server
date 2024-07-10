@@ -1,8 +1,8 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { NotFound, UnprocessableEntity } from '@curveball/http-errors';
-import { PrincipalService, isIdentityValid } from '../../principal/service';
-import { createUserForm } from '../formats/html';
+import { NotFound, UnprocessableContent } from '@curveball/http-errors';
+import { PrincipalService, isIdentityValid } from '../../principal/service.js';
+import { createUserForm } from '../formats/html.js';
 
 type UserNewForm = {
   identity: string;
@@ -33,7 +33,7 @@ class CreateUserController extends Controller {
     const nickname = ctx.request.body.nickname;
 
     if (!isIdentityValid(identity)) {
-      throw new UnprocessableEntity('Identity must be a valid URI');
+      throw new UnprocessableContent('Identity must be a valid URI');
     }
 
     try {

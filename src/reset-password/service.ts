@@ -1,8 +1,8 @@
 import * as nodemailer from 'nodemailer';
-import { render } from '../templates';
-import { User } from '../types';
-import { createToken } from '../one-time-token/service';
-import { requireSetting } from '../server-settings';
+import { render } from '../templates.js';
+import { User } from '../types.js';
+import { createToken } from '../one-time-token/service.js';
+import { requireSetting } from '../server-settings.js';
 
 /**
  * This function is for sending reset password email with validated token

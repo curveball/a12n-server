@@ -1,5 +1,5 @@
 import { Middleware } from '@curveball/core';
-import { isOAuth2Error } from './errors';
+import { isOAuth2Error } from './errors.js';
 
 const oauth2ErrorHandler: Middleware = async (ctx, next) => {
 

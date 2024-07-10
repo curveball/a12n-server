@@ -1,11 +1,9 @@
 import Controller, { accept, method } from '@curveball/controller';
 import { Context } from '@curveball/core';
-import hal from './formats/hal';
-import markdown from './formats/markdown';
-import { getServerStats } from './service';
-
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const version = require('../../package.json').version;
+import hal from './formats/hal.js';
+import markdown from './formats/markdown.js';
+import { getServerStats } from './service.js';
+import { VERSION } from '../version.js';
 
 class HomeController extends Controller {
 
@@ -25,7 +23,7 @@ class HomeController extends Controller {
       '</logout>; rel="logout"',
       `<${user.href}>; rel="authenticated-as" title="${user.nickname.replace('"','')}"`,
     ]);
-    ctx.response.body = markdown(version, user, isAdmin, stats);
+    ctx.response.body = markdown(VERSION, user, isAdmin, stats);
 
   }
 
@@ -38,7 +36,7 @@ class HomeController extends Controller {
     ctx.response.headers.append('Link', [
       '</>; rel="alternate"; type="text/markdown"',
     ]);
-    ctx.response.body = hal(version, ctx.auth.principal!, isAdmin, stats);
+    ctx.response.body = hal(VERSION, ctx.auth.principal!, isAdmin, stats);
 
   }
 

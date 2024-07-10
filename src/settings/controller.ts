@@ -1,9 +1,9 @@
 import { Controller, method, accept } from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { Forbidden } from '@curveball/http-errors';
-import { getSettings, settingsRules } from '../server-settings';
-import * as hal from './formats/hal';
-import * as csv from './formats/csv';
+import { getSettings, settingsRules } from '../server-settings.js';
+import * as hal from './formats/hal.js';
+import * as csv from './formats/csv.js';
 
 class SettingsController extends Controller {
 

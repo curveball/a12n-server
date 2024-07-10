@@ -1,9 +1,9 @@
 import { NotFound } from '@curveball/http-errors';
 
-import db, { query, insertAndGetId } from '../../database';
-import { User } from '../../types';
-import { NewWebAuthnDevice, WebAuthnDevice } from './types';
-import { UserWebauthnRecord } from 'knex/types/tables';
+import db, { query, insertAndGetId } from '../../database.js';
+import { User } from '../../types.js';
+import { NewWebAuthnDevice, WebAuthnDevice } from './types.js';
+import { UserWebauthnRecord } from 'knex/types/tables.js';
 
 
 export async function save(webAuthNDevice: NewWebAuthnDevice): Promise<WebAuthnDevice> {

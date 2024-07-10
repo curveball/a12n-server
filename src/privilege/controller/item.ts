@@ -1,7 +1,7 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import * as hal from '../formats/hal';
-import * as privilegeService from '../service';
+import * as hal from '../formats/hal.js';
+import * as privilegeService from '../service.js';
 
 class PrivilegeController extends Controller {
 

@@ -1,7 +1,7 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { Jwks } from './types';
-import { getPublicKey } from '../oauth2/jwt';
+import { Jwks } from './types.js';
+import { getPublicKey } from '../oauth2/jwt.js';
 
 class JwksController extends Controller {
 

@@ -1,9 +1,9 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import * as privilegeService from '../../privilege/service';
-import * as userHal from '../formats/hal';
-import * as userService from '../service';
-import { PrincipalService } from '../../principal/service';
+import * as privilegeService from '../../privilege/service.js';
+import * as userHal from '../formats/hal.js';
+import * as userService from '../service.js';
+import { PrincipalService } from '../../principal/service.js';
 
 type EditPrincipalBody = {
   nickname: string;

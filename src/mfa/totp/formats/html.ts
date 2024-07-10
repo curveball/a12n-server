@@ -1,4 +1,4 @@
-import { render } from '../../../templates';
+import { render } from '../../../templates.js';
 
 export function registrationForm(msg: string, error: string, secret: string, qrCode: string): string {
 

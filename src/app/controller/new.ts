@@ -1,8 +1,8 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { PrincipalService } from '../../principal/service';
-import { createAppForm } from '../formats/html';
-import { uuidUrn } from '../../crypto';
+import { PrincipalService } from '../../principal/service.js';
+import { createAppForm } from '../formats/html.js';
+import { uuidUrn } from '../../crypto.js';
 
 type AppNewForm = {
   nickname: string;

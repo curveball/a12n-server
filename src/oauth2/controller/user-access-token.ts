@@ -2,10 +2,10 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { Forbidden } from '@curveball/http-errors';
 
-import log from '../../log/service';
-import { EventType } from '../../log/types';
-import { PrincipalService } from '../../principal/service';
-import * as oauth2Service from '../service';
+import log from '../../log/service.js';
+import { EventType } from '../../log/types.js';
+import { PrincipalService } from '../../principal/service.js';
+import * as oauth2Service from '../service.js';
 
 class UserAccessTokenController extends Controller {
 

@@ -1,4 +1,4 @@
-import db from './database';
+import db from './database.js';
 
 export type Settings = {
   'login.defaultRedirect': string;

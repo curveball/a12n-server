@@ -1,4 +1,4 @@
-import { render } from '../../templates';
+import { render } from '../../templates.js';
 
 export function changePasswordForm(msg: string, error: string) {
 

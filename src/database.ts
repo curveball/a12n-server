@@ -1,8 +1,8 @@
 /* eslint no-console: 0 */
-import { knex, Knex } from 'knex';
+import { Knex, default as knex } from 'knex';
 import * as path from 'node:path';
 import * as dotenv from 'dotenv';
-import './db-types';
+import { fileURLToPath } from 'node:url';
 
 dotenv.config();
 
@@ -182,7 +182,7 @@ export function getSettings(): Knex.Config {
     connection,
     searchPath,
     migrations: {
-      directory: path.join(__dirname, 'migrations'),
+      directory: path.dirname(fileURLToPath(import.meta.url)) + '/migrations',
       loadExtensions: ['.js'],
     },
     pool,

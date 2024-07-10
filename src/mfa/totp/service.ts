@@ -1,7 +1,7 @@
 import { authenticator } from 'otplib';
-import db from '../../database';
-import { NewTotpDevice, TotpDevice } from './types';
-import { UserTotpRecord } from 'knex/types/tables';
+import db from '../../database.js';
+import { NewTotpDevice, TotpDevice } from './types.js';
+import { UserTotpRecord } from 'knex/types/tables.js';
 
 export function generateSecret(): string {
   const secret = authenticator.generateSecret();

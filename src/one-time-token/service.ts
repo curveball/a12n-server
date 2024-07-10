@@ -1,9 +1,9 @@
-import { OneTimeToken } from './types';
-import { User } from '../types';
-import db from '../database';
-import { PrincipalService } from '../principal/service';
+import { OneTimeToken } from './types.js';
+import { User } from '../types.js';
+import db from '../database.js';
+import { PrincipalService } from '../principal/service.js';
 import { BadRequest } from '@curveball/http-errors';
-import { generateSecretToken } from '../crypto';
+import { generateSecretToken } from '../crypto.js';
 
 /**
  * 2 hour token timeout

@@ -1,7 +1,7 @@
-import { PrivilegeMap } from '../../privilege/types';
-import { Principal, Group, User } from '../../types';
+import { PrivilegeMap } from '../../privilege/types.js';
+import { Principal, Group, User } from '../../types.js';
 import { HalResource } from 'hal-types';
-import { LazyPrivilegeBox } from '../../privilege/service';
+import { LazyPrivilegeBox } from '../../privilege/service.js';
 
 export function collection(users: User[]): HalResource {
 

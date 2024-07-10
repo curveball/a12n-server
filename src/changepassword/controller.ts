@@ -1,10 +1,10 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import log from '../log/service';
-import { EventType } from '../log/types';
-import * as UserService from '../user/service';
-import { User } from '../types';
-import { changePasswordForm } from './formats/html';
+import log from '../log/service.js';
+import { EventType } from '../log/types.js';
+import * as UserService from '../user/service.js';
+import { User } from '../types.js';
+import { changePasswordForm } from './formats/html.js';
 
 class ChangePasswordController extends Controller {
 

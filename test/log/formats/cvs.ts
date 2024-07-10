@@ -1,7 +1,8 @@
 import { expect } from 'chai';
+import { describe, it } from 'node:test';
 
-import { EventType } from '../../../src/log/types';
-import csv from '../../../src/log/formats/csv';
+import { EventType } from '../../../src/log/types.js';
+import csv from '../../../src/log/formats/csv.js';
 
 describe('csv', () => {
   it('should return formatted log string', () => {

@@ -1,11 +1,11 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import * as hal from '../formats/hal';
-import { Forbidden, NotFound, UnprocessableEntity } from '@curveball/http-errors';
-import { PrincipalService } from '../../principal/service';
-import { findByClientId, edit } from '../service';
-import * as oauth2Service from '../../oauth2/service';
-import { GrantType } from '../../types';
+import * as hal from '../formats/hal.js';
+import { Forbidden, NotFound, UnprocessableContent } from '@curveball/http-errors';
+import { PrincipalService } from '../../principal/service.js';
+import { findByClientId, edit } from '../service.js';
+import * as oauth2Service from '../../oauth2/service.js';
+import { GrantType } from '../../types.js';
 
 class EditClientController extends Controller {
 
@@ -59,7 +59,7 @@ class EditClientController extends Controller {
     const redirectUris = ctx.request.body.redirectUris.trim().split(/\r\n|\n/).filter((line:string) => !!line);
 
     if (!allowedGrantTypes) {
-      throw new UnprocessableEntity('You must specify the allowedGrantTypes property');
+      throw new UnprocessableContent('You must specify the allowedGrantTypes property');
     }
 
     client.allowedGrantTypes = allowedGrantTypes;

@@ -1,8 +1,8 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { BadRequest, Conflict, NotFound, UnprocessableEntity } from '@curveball/http-errors';
-import * as hal from '../formats/hal';
-import { PrincipalService } from '../../principal/service';
+import { BadRequest, Conflict, NotFound, UnprocessableContent } from '@curveball/http-errors';
+import * as hal from '../formats/hal.js';
+import { PrincipalService } from '../../principal/service.js';
 
 type NewPrincipalBody = {
   nickname: string;
@@ -34,7 +34,7 @@ class UserCollectionController extends Controller {
 
     const identity = ctx.request.links.get('me')?.href;
     if (!identity) {
-      throw new UnprocessableEntity('You must specify a link with rel "me", either via a HAL link or HTTP Link header');
+      throw new UnprocessableContent('You must specify a link with rel "me", either via a HAL link or HTTP Link header');
     }
 
     try {

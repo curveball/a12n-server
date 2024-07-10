@@ -1,10 +1,18 @@
 // @ts-check
-document.addEventListener('DOMContentLoaded', function(){
-  const elemBeginRegister = document.getElementById('btnBeginRegister');
-  const elemBeginLogin = document.getElementById('btnBeginLogin');
-  const elemError = document.getElementById('error');
 
-  const { startAttestation, startAssertion } = SimpleWebAuthnBrowser;
+/** @import * as SimpleWebAuthn from '@simplewebauthn/browser' */
+
+/**
+ * @type {SimpleWebAuthn}
+ */
+var SimpleWebAuthnBrowser;
+
+document.addEventListener('DOMContentLoaded', function(){
+  const elemBeginRegister = /** @type {HTMLButtonElement} */ (document.getElementById('btnBeginRegister'));
+  const elemBeginLogin = /** @type {HTMLButtonElement} */(document.getElementById('btnBeginLogin'));
+  const elemError = /** @type {HTMLDivElement} */(document.getElementById('error'));
+
+  const { startRegistration, startAuthentication } = SimpleWebAuthnBrowser;
 
   elemBeginRegister?.addEventListener('click', async (ev) => {
 
@@ -13,11 +21,13 @@ document.addEventListener('DOMContentLoaded', function(){
     elemError.classList.add('hidden');
     elemBeginRegister.disabled = true;
 
+
+
     const jsonResponse = await makeRequest('/register/mfa/webauthn/registration', {}, elemBeginRegister);
 
     let attResp;
     try {
-      attResp = await startAttestation(jsonResponse);
+      attResp = await startRegistration(jsonResponse);
     } catch (error) {
       let errorText;
       if (error.name === 'InvalidStateError') {
@@ -48,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
     let asseResp;
     try {
-      asseResp = await startAssertion(jsonResponse);
+      asseResp = await startAuthentication(jsonResponse);
     } catch (error) {
       handleError(error, elemBeginLogin);
     }
@@ -62,13 +72,14 @@ document.addEventListener('DOMContentLoaded', function(){
     }, elemBeginLogin);
 
     const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('continue')) {
-      window.location.href = urlParams.get('continue');
-    } else {
-      window.location.href = '/';
-    }
+    window.location.href = urlParams.get('continue') ?? '/';
   });
 
+  /**
+   * @param {string} url
+   * @param {RequestInit} options
+   * @param {HTMLButtonElement} button
+   */
   async function makeRequest(url, options, button) {
     let resp;
     try {
@@ -102,6 +113,10 @@ document.addEventListener('DOMContentLoaded', function(){
     return jsonResponse;
   }
 
+  /**
+   * @param {string} error
+   * @param {HTMLButtonElement} btn
+   */
   function handleError(error, btn) {
     elemError.innerText = error;
     elemError.classList.remove('hidden');

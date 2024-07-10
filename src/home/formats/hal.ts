@@ -1,6 +1,6 @@
 import { HalResource } from 'hal-types';
-import { getSetting } from '../../server-settings';
-import { Principal, ServerStats } from '../../types';
+import { getSetting } from '../../server-settings.js';
+import { Principal, ServerStats } from '../../types.js';
 
 export default (version: string, authenticatedUser: Principal, isAdmin: boolean, stats: ServerStats) => {
 

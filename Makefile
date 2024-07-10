@@ -1,4 +1,5 @@
 SOURCE_FILES:=$(shell find src/ -type f -name '*.ts')
+TEST_FILES:=$(shell find test/ -type f -name '*.ts')
 DOCKER_IMAGE_NAME:=a12n-server
 
 .PHONY:start run build test lint fix lint-fix start-dev watch inspect deploy
@@ -16,7 +17,7 @@ docker-run:
 	docker run -it --rm --name $(DOCKER_IMAGE_NAME)-01 $(DOCKER_IMAGE_NAME)
 
 test:
-	npx tsx --test test/**/*.ts
+	npx tsx --test ${TEST_FILES}
 
 lint:
 	npx tsc --noemit

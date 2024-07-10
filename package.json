@@ -106,22 +106,6 @@
   "engines": {
     "node": ">= 18"
   },
-  "mocha": {
-    "loader": [
-      "ts-node/esm"
-    ],
-    "recursive": true,
-    "extension": [
-      "ts",
-      "js",
-      "tsx"
-    ]
-  },
-  "nyc": {
-    "extension": [
-      ".ts"
-    ]
-  },
   "bin": "./bin/a12n-server",
   "types": "dist/"
 }

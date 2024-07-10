@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import { describe, it } from 'node:test';
 
 import { InvalidGrant, InvalidRequest } from '../../src/oauth2/errors.js';
 import { validatePKCE } from '../../src/oauth2/service.js';

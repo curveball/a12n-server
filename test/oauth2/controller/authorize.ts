@@ -1,5 +1,6 @@
 // Bring in more definitions
 import '@curveball/session';
+import { describe, it } from 'node:test';
 
 import { URLSearchParams } from 'url';
 

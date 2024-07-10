@@ -1,5 +1,6 @@
 import { generateSecretToken, uuidUrn } from '../src/crypto.js';
 import { expect } from 'chai';
+import { describe, it } from 'node:test';
 
 describe('Crypto utilities', () => {
 

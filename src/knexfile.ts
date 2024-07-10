@@ -13,7 +13,7 @@ if (process.env.PUBLIC_URI === undefined) {
 
 const settings = getSettings();
 
-module.exports = {
+export default {
 
   development: settings,
 

@@ -16,7 +16,7 @@ docker-run:
 	docker run -it --rm --name $(DOCKER_IMAGE_NAME)-01 $(DOCKER_IMAGE_NAME)
 
 test:
-	npx nyc mocha
+	npx tsx --test test/**/*.ts
 
 lint:
 	npx tsc --noemit

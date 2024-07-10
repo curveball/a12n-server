@@ -12,7 +12,8 @@ import login from './middleware/login.js';
 import csrf from './middleware/csrf.js';
 import routes from './routes.js';
 import { getSetting } from './server-settings.js';
-import { join } from 'path';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 /**
  * The 'main middleware'.
@@ -61,7 +62,7 @@ export default function (): Middleware {
     csrf(),
     links(),
     validator({
-      schemaPath: join(__dirname, '../schemas'),
+      schemaPath: dirname(fileURLToPath(import.meta.url)) + '/../schemas',
       noLink: true,
     }),
     ...routes,

@@ -85,7 +85,6 @@
     "@types/chai": "^4.2.15",
     "@types/chai-as-promised": "^7.1.3",
     "@types/geoip-lite": "^1.4.1",
-    "@types/mocha": "^10.0.2",
     "@types/node": "^16.11.26",
     "@types/nodemailer": "^6.4.1",
     "@types/qrcode": "^1.4.0",
@@ -97,13 +96,11 @@
     "chai-as-promised": "^8.0.0",
     "eslint": "^8.0.1",
     "hal-types": "^1.7.6",
-    "mocha": "^10.0.0",
     "mysql-types-generator": "^2.0.0",
-    "nyc": "^17.0.0",
     "sinon": "^18.0.0",
     "sinon-chai": "^3.7.0",
-    "ts-node": "^10.0.0",
     "tsc-watch": "^6.0.4",
+    "tsx": "^4.16.2",
     "typescript": "^5.2.2"
   },
   "engines": {
@@ -126,8 +123,5 @@
     ]
   },
   "bin": "./bin/a12n-server",
-  "types": "dist/",
-  "overrides": {
-    "mysql2": "^3.10.2"
-  }
+  "types": "dist/"
 }

@@ -2,7 +2,7 @@ import { Context } from '@curveball/core';
 import db from '../database.js';
 import { Principal } from '../types.js';
 import { EventType, LogEntry } from './types.js';
-import * as geoip from 'geoip-lite';
+import geoip from 'geoip-lite';
 import { UserLogRecord } from 'knex/types/tables.js';
 
 export function log(eventType: EventType, ctx: Context): Promise<void>;

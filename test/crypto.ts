@@ -1,4 +1,4 @@
-import { generateSecretToken, uuidUrn } from '../src/crypto';
+import { generateSecretToken, uuidUrn } from '../src/crypto.js';
 import { expect } from 'chai';
 
 describe('Crypto utilities', () => {

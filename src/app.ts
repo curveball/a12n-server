@@ -6,13 +6,13 @@ import mainMw from './main-mw.js';
 import { init as initDb } from './database.js';
 import { load } from './server-settings.js';
 
+import { NAME, VERSION } from './version.js';
+
 import * as dotenv from 'dotenv';
 
 dotenv.config();
 
-// eslint-disable-next-line @typescript-eslint/no-var-requires
-const pkgInfo = require('../package.json');
-console.info('⚾ %s %s', pkgInfo.name, pkgInfo.version);
+console.info('⚾ %s %s', NAME, VERSION);
 
 const port = process.env.PORT ? parseInt(process.env.PORT, 10) :  8531;
 
@@ -23,7 +23,7 @@ if (!process.env.PUBLIC_URI) {
 
 (async () => {
 
-  process.title = 'a12n-server/' + pkgInfo.version;
+  process.title = 'a12n-server/' + VERSION
 
   await initDb();
   await load();

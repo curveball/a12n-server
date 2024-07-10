@@ -1,6 +1,8 @@
-import * as fs from 'fs';
-import * as handlebars from 'handlebars';
+import hb from 'handlebars';
 import { getSetting } from './server-settings.js';
+import { dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import { readFileSync } from 'node:fs';
 
 type Params = {
   [key: string]: any;
@@ -49,8 +51,10 @@ export function getTemplate(name: string): Template {
 
 export function loadTemplate(name: string): Template {
 
-  const template = handlebars.compile(
-    fs.readFileSync(__dirname + '/../templates/' + name + '.hbs', 'utf-8')
+  const template = hb.compile(
+    readFileSync(
+      dirname(fileURLToPath(import.meta.url)) +
+      '/../templates/' + name + '.hbs', 'utf-8')
   );
 
   return template;

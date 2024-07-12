@@ -8,6 +8,7 @@ Changelog
 * Moved from CommonJS to ESM.
 * Upgraded to Typescript 5.5.
 * Dropped mocha for the built-in Node tester.
+* #494: Add 'public' to Postgres schema search path. (@elaugier)
 
 
 0.25.4 (2024-02-26)

@@ -17,8 +17,8 @@ export async function createToken(user: User, expiresIn: number | null): Promise
   const token = await generateSecretToken();
   const expiresAt = Math.floor(Date.now() / 1000) + (expiresIn ?? tokenTTL);
 
-  await db('reset_password_token').insert({
-    user_id: user.id,
+  await db('verification_token').insert({
+    principal_id: user.id,
     token,
     expires_at: expiresAt,
     created_at: Math.floor(Date.now() / 1000)
@@ -37,7 +37,7 @@ export async function createToken(user: User, expiresIn: number | null): Promise
  */
 export async function validateToken(token: string, dontExpire: boolean = false): Promise<User> {
 
-  const result = await db('reset_password_token')
+  const result = await db('verification_token')
     .select()
     .where({token})
     .andWhere('expires_at', '>', Math.floor(Date.now() / 1000))
@@ -47,10 +47,10 @@ export async function validateToken(token: string, dontExpire: boolean = false):
     throw new BadRequest('Failed to validate token');
   } else {
     if (!dontExpire) {
-      await db('reset_password_token').delete().where({token});
+      await db('verification_token').delete().where({token});
     }
     const principalService = new PrincipalService('insecure');
-    return principalService.findById(result.user_id, 'user');
+    return principalService.findById(result.principal_id, 'user');
   }
 
 }

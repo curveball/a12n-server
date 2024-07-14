@@ -26,8 +26,8 @@ import oauth2ErrorHandler from './oauth2/oauth2-error-handler.js';
 import oauth2Metadata from './well-known/controller/oauth2-metadata.js';
 import oauth2Revoke from './oauth2/controller/revoke.js';
 import oauth2Token from './oauth2/controller/token.js';
-import oneTimeToken from './one-time-token/controller/generate.js';
-import oneTimeTokenExchange from './one-time-token/controller/exchange.js';
+import verificationToken from './verification-token/controller/generate.js';
+import verificationTokenExchange from './verification-token/controller/exchange.js';
 import passwordToken from './reset-password/controller/token.js';
 import privilegeCollection from './privilege/controller/collection.js';
 import privilegeItem from './privilege/controller/item.js';
@@ -68,7 +68,7 @@ const routes = [
   router('/app/:id/client/:clientId/edit', clientEdit),
 
   router('/authorize', oauth2ErrorHandler, oauth2Authorize),
-  router('/exchange-one-time-token', oneTimeTokenExchange),
+  router('/exchange-one-time-token', verificationTokenExchange),
   router('/token', oauth2ErrorHandler, oauth2Token),
   router('/revoke', oauth2Revoke),
 
@@ -106,7 +106,7 @@ const routes = [
   router('/user/:id/edit/privileges', userEditPrivileges),
   router('/user/:id/log', userLog),
   router('/user/:id/password', userPassword),
-  router('/user/:id/one-time-token', oneTimeToken),
+  router('/user/:id/one-time-token', verificationToken),
   router('/user/:id/access-token', userAccessToken),
   router('/user/:id/sessions', userActiveSessions),
   router('/user/:id/app-permission', userAppPermissionCollection),

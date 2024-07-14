@@ -44,7 +44,7 @@ const tableMap = await generateTableMap();
 const newOutput =
 `import 'knex';
 
-declare module 'knex/types/tables' {
+declare module 'knex/types/tables.js' {
 
 ${tableMap}
 

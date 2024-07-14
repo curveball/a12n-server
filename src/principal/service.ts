@@ -412,7 +412,7 @@ function recordToModel(user: PrincipalsRecord): Principal {
   return {
     id: user.id,
     href: `/${userTypeIntToUserType(user.type)}/${user.external_id}`,
-    identity: user.identity,
+    identity: user.identity ?? 'about:blank',
     externalId: user.external_id,
     nickname: user.nickname!,
     createdAt: new Date(user.created_at),

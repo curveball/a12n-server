@@ -53,6 +53,8 @@ export async function up(knex: Knex): Promise<void> {
 
   for(const principal of principals) {
 
+    if (principal.identity === null) continue;
+
     await knex('principal_identity').insert({
       principal_id: principal.id,
       href: principal.identity,

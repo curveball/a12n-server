@@ -1,7 +1,7 @@
 import * as nodemailer from 'nodemailer';
 import { render } from '../templates.js';
 import { User } from '../types.js';
-import { createToken } from '../one-time-token/service.js';
+import { createToken } from '../verification-token/service.js';
 import { requireSetting } from '../server-settings.js';
 
 /**

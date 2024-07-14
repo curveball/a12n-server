@@ -9,9 +9,9 @@ interface Tables {
   oauth2_codes: Oauth2CodesRecord;
   oauth2_redirect_uris: Oauth2RedirectUrisRecord;
   oauth2_tokens: Oauth2TokensRecord;
+  principal_identity: PrincipalIdentityRecord;
   principals: PrincipalsRecord;
   privileges: PrivilegesRecord;
-  reset_password_token: ResetPasswordTokenRecord;
   server_settings: ServerSettingsRecord;
   user_app_permissions: UserAppPermissionsRecord;
   user_log: UserLogRecord;
@@ -19,6 +19,7 @@ interface Tables {
   user_privileges: UserPrivilegesRecord;
   user_totp: UserTotpRecord;
   user_webauthn: UserWebauthnRecord;
+  verification_token: VerificationTokenRecord;
 }
 
 
@@ -89,9 +90,51 @@ export type Oauth2TokensRecord = {
    */
   scope: string | null;
 };
+export type PrincipalIdentityRecord = {
+  id: number;
+
+  /**
+   * The email address or phone number, specified as a URI
+   */
+  href: string;
+
+  /**
+   * Which principal this identity belongs to
+   */
+  principal_id: number;
+
+  /**
+   * Is this the primary user id
+   */
+  is_primary: number;
+
+  /**
+   * Optional, user supplied label for this id. For example, "work" or "home", or "mobile"
+   */
+  label: string | null;
+
+  /**
+   * When the identity was verified, for example through an email verification link. If set to null the identity has not been verified.
+   */
+  verified_at: number | null;
+
+  /**
+   * When the record was added
+   */
+  created_at: number;
+
+  /**
+   * When the record was last changed
+   */
+  modified_at: number;
+};
 export type PrincipalsRecord = {
   id: number;
-  identity: string;
+
+  /**
+   * Deprecated. Do not use. Will be deleted in a future version
+   */
+  identity: string | null;
   external_id: string;
   nickname: string | null;
   created_at: number;
@@ -111,13 +154,6 @@ export type PrincipalsRecord = {
 export type PrivilegesRecord = {
   privilege: string;
   description: string;
-};
-export type ResetPasswordTokenRecord = {
-  id: number;
-  user_id: number;
-  token: string;
-  expires_at: number;
-  created_at: number;
 };
 export type ServerSettingsRecord = {
   setting: string;
@@ -188,6 +224,23 @@ export type UserWebauthnRecord = {
   public_key: string;
   counter: number;
   created: number;
+};
+export type VerificationTokenRecord = {
+  id: number;
+  principal_id: number;
+
+  /**
+   * If set, this verification token is created to verify a principals identity (for example email or phone number
+   */
+  principal_identity_id: number | null;
+  token: string;
+
+  /**
+   * If set to true, the token will become invalidated upon use
+   */
+  single_use: number;
+  expires_at: number;
+  created_at: number;
 };
 
 

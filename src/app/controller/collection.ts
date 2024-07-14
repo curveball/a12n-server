@@ -1,8 +1,8 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { BadRequest } from '@curveball/http-errors';
+import { BadRequest, UnprocessableContent } from '@curveball/http-errors';
 import * as hal from '../formats/hal.js';
-import { PrincipalService } from '../../principal/service.js';
+import * as services from '../../services.js';
 
 type NewPrincipalBody = {
   nickname: string;
@@ -10,11 +10,11 @@ type NewPrincipalBody = {
   type: 'user' | 'app' | 'group';
 }
 
-class UserCollectionController extends Controller {
+class AppCollectionController extends Controller {
 
   async get(ctx: Context) {
 
-    const principalService = new PrincipalService(ctx.privileges);
+    const principalService = new services.principal.PrincipalService(ctx.privileges);
     const apps = await principalService.findAll('app');
     ctx.response.body = hal.collection(apps);
 
@@ -22,10 +22,10 @@ class UserCollectionController extends Controller {
 
   async post(ctx: Context) {
 
-    const principalService = new PrincipalService(ctx.privileges);
+    const principalService = new services.principal.PrincipalService(ctx.privileges);
 
     ctx.request.validate<NewPrincipalBody>(
-      'https://curveballjs.org/schemas/a12nserver/new-principal.json'
+      'https://curveballjs.org/schemas/a12nserver/principal-new.json'
     );
 
     if (ctx.request.body.type !== 'app') {
@@ -40,10 +40,25 @@ class UserCollectionController extends Controller {
       modifiedAt: new Date(),
     });
 
+    if (ctx.request.links.has('me')) {
+      const identity = ctx.request.links.get('me')!;
+      if (!identity.href.match(/^https?:(.*)$/)) {
+        throw new UnprocessableContent('App "me" URI must be a http or https URI');
+      }
+      await services.principalIdentity.create({
+        href: identity.href,
+        principalId: app.id,
+        isPrimary: true,
+        label: identity.title ?? null,
+        markVerified: false,
+      });
+
+    }
+
     ctx.response.status = 201;
     ctx.response.headers.set('Location', app.href);
   }
 
 }
 
-export default new UserCollectionController();
+export default new AppCollectionController();

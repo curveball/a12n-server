@@ -4,6 +4,7 @@ import * as privilegeService from '../../privilege/service.js';
 import * as userHal from '../formats/hal.js';
 import * as userService from '../service.js';
 import { PrincipalService } from '../../principal/service.js';
+import * as principalIdentityService from '../../principal-identity/service.js';
 
 type EditPrincipalBody = {
   nickname: string;
@@ -53,6 +54,7 @@ class UserController extends Controller {
       hasPassword,
       currentUserPrivileges,
       await principalService.findGroupsForPrincipal(principal),
+      await principalIdentityService.findByPrincipal(principal),
     );
 
   }

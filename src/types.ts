@@ -78,6 +78,46 @@ export type NewPrincipal<TType extends PrincipalType> = {
   active: boolean;
 }
 
+export type PrincipalIdentity = {
+  id: number;
+  /**
+   * External URI for the principal. Usually a mailto: for an associated email
+   * address, or a tel: for a phone number.
+   */
+  href: string;
+
+  /**
+   * If this is the 'main' ID for a user, this is set to true.
+   * There should usually only be one identity that has this flag.
+   */
+  isPrimary: boolean;
+
+  /**
+   * Optional, user supplied label for the identity. For example 'Home', 'Work' or 'Mobile'.
+   */
+  label: string | null;
+
+  /**
+   * If set, when the user verified ownership of the id.
+   *
+   * For uuid IDs this will automatically be set to true, but email and tel ids may need
+   * to be sent a verification code which the user needs to enter back into the system.
+   *
+   * Trusted clients of the API may also set this.
+   */
+  verifiedAt: Date | null;
+
+  /**
+   * When the identity was first created.
+   */
+  createdAt: Date;
+
+  /**
+   * Last time the identity was updated.
+   */
+  modifiedAt: Date;
+}
+
 /**
  * Principal statistics
  */

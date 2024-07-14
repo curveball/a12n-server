@@ -2,17 +2,15 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { Forbidden, NotFound } from '@curveball/http-errors';
 import { getSetting } from '../../server-settings.js';
-import { PrincipalService, hasUsers } from '../../principal/service.js';
-import * as userService from '../../user/service.js';
 import { registrationForm } from '../formats/html.js';
-import * as privilegeService from '../../privilege/service.js';
 import { User } from '../../types.js';
+import * as services from '../../services.js';
 
 class UserRegistrationController extends Controller {
 
   async get(ctx: Context) {
 
-    const firstRun = !(await hasUsers());
+    const firstRun = !(await services.principal.hasUsers());
 
     ctx.response.type = 'text/html';
     ctx.response.body = registrationForm(
@@ -27,7 +25,7 @@ class UserRegistrationController extends Controller {
 
   async post(ctx: Context) {
 
-    const firstRun = !(await hasUsers());
+    const firstRun = !(await services.principal.hasUsers());
 
     const body: any = ctx.request.body;
     const userPassword = body.password;
@@ -37,7 +35,7 @@ class UserRegistrationController extends Controller {
     /**
      * We use an 'insecure' context for registration because it's anonymous
      */
-    const principalService = new PrincipalService('insecure');
+    const principalService = new services.principal.PrincipalService('insecure');
 
     if (userPassword !== confirmPassword) {
       ctx.status = 303;
@@ -63,7 +61,6 @@ class UserRegistrationController extends Controller {
     }
 
     const user: User = await principalService.save({
-      identity: 'mailto:' + body.emailAddress,
       nickname: body.nickname,
       createdAt: new Date(),
       modifiedAt: new Date(),
@@ -74,14 +71,24 @@ class UserRegistrationController extends Controller {
 
     if (firstRun) {
       // The first user will be an admin
-      await privilegeService.addPrivilegeForUser(
+      await services.privilege.addPrivilegeForUser(
         user,
         'admin',
         '*'
       );
     }
 
-    await userService.createPassword(user, userPassword);
+    await services.user.createPassword(user, userPassword);
+
+    await services.principalIdentity.create(
+      {
+        href: 'mailto:' + body.emailAddress,
+        principalId: user.id,
+        label: null,
+        isPrimary: true,
+        markVerified: false,
+      }
+    );
 
     if (addMfa && getSetting('registration.mfa.enabled')) {
       ctx.session = {

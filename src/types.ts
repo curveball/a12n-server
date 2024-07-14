@@ -35,7 +35,7 @@ export type BasePrincipal<TType extends PrincipalType> = {
    *
    * @deprecated You should use the 'principal-identity' service to get a list of identities.
    */
-  identity: string;
+  // identity: string;
   externalId: string;
   type: TType;
   nickname: string;
@@ -71,7 +71,6 @@ export type Principal = User | Group | App;
  */
 export type NewPrincipal<TType extends PrincipalType> = {
   type: TType;
-  identity: string;
   nickname: string;
   createdAt: Date;
   modifiedAt: Date;
@@ -85,6 +84,11 @@ export type PrincipalIdentity = {
    * address, or a tel: for a phone number.
    */
   href: string;
+
+  /**
+   * Associated principal
+   */
+  principalId: number;
 
   /**
    * If this is the 'main' ID for a user, this is set to true.
@@ -116,6 +120,13 @@ export type PrincipalIdentity = {
    * Last time the identity was updated.
    */
   modifiedAt: Date;
+}
+
+export type NewPrincipalIdentity = Omit<PrincipalIdentity, 'id' | 'createdAt' | 'modifiedAt' | 'verifiedAt'> & {
+  /**
+   * Immediately mark the identity as verified.
+   */
+  markVerified: boolean;
 }
 
 /**

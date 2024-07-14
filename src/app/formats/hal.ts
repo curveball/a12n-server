@@ -32,7 +32,6 @@ export function item(app: App, privileges: PrivilegeMap, isAdmin: boolean, group
   const hal: HalResource = {
     _links: {
       'self': {href: app.href, title: app.nickname },
-      'me': { href: app.identity, title: app.nickname },
       'up' : { href: '/app', title: 'List of apps' },
       'group': groups.map( group => ({
         href: group.href,

@@ -2,7 +2,6 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { PrincipalService } from '../../principal/service.js';
 import { createGroupForm } from '../formats/html.js';
-import { uuidUrn } from '../../crypto.js';
 
 type GroupNewForm = {
   nickname: string;
@@ -34,7 +33,6 @@ class CreateGroupController extends Controller {
       type: 'group',
       nickname,
       active: true,
-      identity: uuidUrn(),
       createdAt: new Date(),
       modifiedAt: new Date(),
     });

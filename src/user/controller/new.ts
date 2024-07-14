@@ -1,8 +1,8 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { NotFound, UnprocessableContent } from '@curveball/http-errors';
-import { PrincipalService, isIdentityValid } from '../../principal/service.js';
 import { createUserForm } from '../formats/html.js';
+import * as services from '../../services.js';
 
 type UserNewForm = {
   identity: string;
@@ -27,12 +27,12 @@ class CreateUserController extends Controller {
   async post(ctx: Context) {
 
     ctx.request.validate<UserNewForm>('https://curveballjs.org/schemas/a12nserver/user-new-form.json');
-    const principalService = new PrincipalService(ctx.privileges);
+    const principalService = new services.principal.PrincipalService(ctx.privileges);
 
     const identity = ctx.request.body.identity;
     const nickname = ctx.request.body.nickname;
 
-    if (!isIdentityValid(identity)) {
+    if (!services.principal.isIdentityValid(identity)) {
       throw new UnprocessableContent('Identity must be a valid URI');
     }
 
@@ -48,13 +48,22 @@ class CreateUserController extends Controller {
     }
 
     const newUser = await principalService.save({
-      identity: identity,
       nickname: nickname,
       createdAt: new Date(),
       modifiedAt: new Date(),
       type: 'user',
       active: 'active' in ctx.request.body
     });
+
+    await services.principalIdentity.create(
+      {
+        href: identity,
+        principalId: newUser.id,
+        isPrimary: true,
+        label: null,
+        markVerified: newUser.active,
+      }
+    );
 
     ctx.response.status = 303;
     ctx.response.headers.set('Location', '/user/' + newUser.id);

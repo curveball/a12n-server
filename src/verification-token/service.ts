@@ -1,5 +1,5 @@
 import { OneTimeToken } from './types.js';
-import { User } from '../types.js';
+import { PrincipalIdentity, User } from '../types.js';
 import db from '../database.js';
 import { PrincipalService } from '../principal/service.js';
 import { BadRequest } from '@curveball/http-errors';
@@ -13,7 +13,7 @@ const tokenTTL = 7200;
 /**
  * This function will create a unique token then store it in the database
  */
-export async function createToken(user: User, expiresIn: number | null): Promise<OneTimeToken> {
+export async function createToken(user: User, expiresIn: number | null, identity: PrincipalIdentity|null): Promise<OneTimeToken> {
   const token = await generateSecretToken();
   const expiresAt = Math.floor(Date.now() / 1000) + (expiresIn ?? tokenTTL);
 
@@ -21,7 +21,8 @@ export async function createToken(user: User, expiresIn: number | null): Promise
     principal_id: user.id,
     token,
     expires_at: expiresAt,
-    created_at: Math.floor(Date.now() / 1000)
+    created_at: Math.floor(Date.now() / 1000),
+    principal_identity_id: identity?.id,
   });
 
   return {

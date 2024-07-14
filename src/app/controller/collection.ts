@@ -1,6 +1,6 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { BadRequest, Conflict, NotFound, UnprocessableContent } from '@curveball/http-errors';
+import { BadRequest } from '@curveball/http-errors';
 import * as hal from '../formats/hal.js';
 import { PrincipalService } from '../../principal/service.js';
 
@@ -32,22 +32,7 @@ class UserCollectionController extends Controller {
       throw new BadRequest('You may only create principals with type "app" at this endpoint');
     }
 
-    const identity = ctx.request.links.get('me')?.href;
-    if (!identity) {
-      throw new UnprocessableContent('You must specify a link with rel "me", either via a HAL link or HTTP Link header');
-    }
-
-    try {
-      await principalService.findByIdentity(identity);
-      throw new Conflict('Principal already exists');
-    } catch (err) {
-      if (!(err instanceof NotFound)) {
-        throw err;
-      }
-    }
-
     const app = await principalService.save({
-      identity,
       nickname: ctx.request.body.nickname,
       type: 'app',
       active: ctx.request.body.active,

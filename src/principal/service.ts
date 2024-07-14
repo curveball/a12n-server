@@ -5,6 +5,7 @@ import {
   Group,
   NewPrincipal,
   Principal,
+  PrincipalIdentity,
   PrincipalStats,
   PrincipalType,
   User,
@@ -13,9 +14,9 @@ import db, {insertAndGetId} from '../database.js';
 import { PrincipalsRecord } from 'knex/types/tables.js';
 import {
   NotFound,
-  UnprocessableContent,
 } from '@curveball/http-errors';
 import { generatePublicId } from '../crypto.js';
+import * as PrincipalIdentityService from '../principal-identity/service.js';
 
 /**
  * This class provides a wrapper around the principal service APIs.
@@ -68,6 +69,7 @@ export class PrincipalService {
 
   }
 
+  /*
   async findByIdentity(identity: string): Promise<Principal> {
 
     this.privileges.require('a12n:principals:list');
@@ -81,6 +83,20 @@ export class PrincipalService {
 
     return recordToModel(result);
 
+  }*/
+  async findByIdentity(identity: PrincipalIdentity|string): Promise<Principal> {
+
+    this.privileges.require('a12n:principals:list');
+
+    let pi;
+    if (typeof identity === 'string') {
+      pi = await PrincipalIdentityService.findByHref(identity);
+    } else {
+      pi = identity;
+    }
+
+    return this.findById(pi.principalId);
+
   }
 
   async save<T extends PrincipalType>(principal: BasePrincipal<T>|NewPrincipal<T> ): Promise<BasePrincipal<T>> {
@@ -91,7 +107,7 @@ export class PrincipalService {
       const externalId = await generatePublicId();
 
       const newPrincipalsRecord: Omit<PrincipalsRecord, 'id'> = {
-        identity: principal.identity,
+        identity: null,
         external_id: externalId,
         nickname: principal.nickname,
         type: userTypeToInt(principal.type),
@@ -115,14 +131,10 @@ export class PrincipalService {
 
       // Update user
       this.privileges.require('a12n:principals:update', principal.href);
-      if (!isIdentityValid(principal.identity)) {
-        throw new UnprocessableContent('Identity must be a valid URI');
-      }
 
       principal.modifiedAt = new Date();
 
-      const updatePrincipalsRecord: Omit<PrincipalsRecord, 'id' | 'created_at' | 'type' | 'external_id' | 'system'> = {
-        identity: principal.identity,
+      const updatePrincipalsRecord: Omit<PrincipalsRecord, 'id' | 'created_at' | 'type' | 'external_id' | 'system' | 'identity'> = {
         nickname: principal.nickname,
         active: principal.active ? 1 : 0,
         modified_at: principal.modifiedAt.getTime(),
@@ -412,7 +424,6 @@ function recordToModel(user: PrincipalsRecord): Principal {
   return {
     id: user.id,
     href: `/${userTypeIntToUserType(user.type)}/${user.external_id}`,
-    identity: user.identity ?? 'about:blank',
     externalId: user.external_id,
     nickname: user.nickname!,
     createdAt: new Date(user.created_at),
@@ -424,7 +435,7 @@ function recordToModel(user: PrincipalsRecord): Principal {
 
 }
 
-function isExistingPrincipal(user: Principal | NewPrincipal<any>): user is Principal {
+function isExistingPrincipal(user: BasePrincipal<any> | NewPrincipal<any>): user is Principal {
 
   return (user as Principal).id !== undefined;
 

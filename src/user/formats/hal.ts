@@ -39,7 +39,7 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
     _links: {
       'self': {href: user.href, title: user.nickname },
       'me': identities.map( identity => (
-         { href: identity.href, title: user.nickname ?? undefined }
+        { href: identity.href, title: user.nickname ?? undefined }
       )),
       'auth-log': { href: `${user.href}/log`, title: 'Authentication log', type: 'text/csv' },
       'up' : { href: '/user', title: 'List of users' },
@@ -131,12 +131,6 @@ export function edit(user: User): HalResource {
         method: 'POST',
         contentType: 'application/x-www-form-urlencoded',
         properties: [
-          {
-            name: 'identity',
-            prompt: 'Identity',
-            type: 'text',
-            value: user.identity,
-          },
           {
             name: 'nickname',
             prompt: 'Nickname',

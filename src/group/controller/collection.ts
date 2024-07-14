@@ -1,6 +1,5 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { BadRequest, Conflict, NotFound } from '@curveball/http-errors';
 import * as hal from '../formats/hal.js';
 import { PrincipalService } from '../../principal/service.js';
 
@@ -28,22 +27,7 @@ class GroupCollectionController extends Controller {
       'https://curveballjs.org/schemas/a12nserver/principal-new.json'
     );
 
-    const identity = ctx.request.links.get('me')?.href;
-    if (!identity) {
-      throw new BadRequest('You must specify a link with rel "me", either via a HAL link or HTTP Link header');
-    }
-
-    try {
-      await principalService.findByIdentity(identity);
-      throw new Conflict(`Principal with the identity ${identity} already exists`);
-    } catch (err) {
-      if (!(err instanceof NotFound)) {
-        throw err;
-      }
-    }
-
     const group = await principalService.save({
-      identity,
       nickname: ctx.request.body.nickname,
       type: ctx.request.body.type,
       active: ctx.request.body.active,

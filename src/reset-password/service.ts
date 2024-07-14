@@ -18,7 +18,7 @@ export async function sendResetPasswordEmail(user: User, identity: PrincipalIden
   const smtpUrl = requireSetting('smtp.url')!;
 
   const transporter = nodemailer.createTransport(smtpUrl);
-  const token = await createToken(user, null);
+  const token = await createToken(user, null, identity);
   const emailTemplate = render('emails/reset-password-email', {
     name: user.nickname,
     url: process.env.PUBLIC_URI + 'reset-password/token/' + token.token,

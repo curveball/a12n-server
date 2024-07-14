@@ -22,6 +22,7 @@ class OneTimeTokenController extends Controller {
     const token = await createToken(
       user,
       ctx.request.body.expiresIn ?? null,
+      null,
     );
     const url = resolve(ctx.request.origin, 'reset-password/token/' + token.token);
 

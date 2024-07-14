@@ -68,7 +68,7 @@ export async function up(knex: Knex): Promise<void> {
   // for safety reasons. We are however making it nullable and remove the
   // unique constraint.
   await knex.schema.alterTable('principals', table => {
-    
+
     table.dropUnique(['identity'], 'users_identity_unique');
     table
       .string('identity')
@@ -111,7 +111,7 @@ export async function down(knex: Knex): Promise<void> {
   // for safety reasons. We are however making it nullable and remove the
   // unique constraint.
   await knex.schema.alterTable('principals', table => {
-    
+
     table.unique(['identity'], {indexName: 'users_identity_unique'});
     table
       .string('identity')
@@ -119,7 +119,7 @@ export async function down(knex: Knex): Promise<void> {
       .alter();
 
   });
-  
+
   await knex.schema.alterTable('verification_token', table => {
 
     table.renameColumn('principal_id', 'user_id');

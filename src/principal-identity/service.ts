@@ -17,6 +17,19 @@ export async function findByPrincipal(principal: Principal): Promise<PrincipalId
 
 }
 
+export async function findById(principal: Principal, id:number): Promise<PrincipalIdentity> {
+
+  const result = await knex('principal_identity')
+    .select()
+    .where('principal_id', principal.id)
+    .first();
+
+  if (!result) throw new NotFound(`Identity with id "${id}" not found on this principal.`);
+
+  return recordToModel(principal, result);
+
+}
+
 export async function findByExternalId(principal: Principal, externalId: string): Promise<PrincipalIdentity> {
 
   const result = await knex('principal_identity')
@@ -77,6 +90,18 @@ export async function create(identity: NewPrincipalIdentity): Promise<void> {
     });
 
 }
+export async function markVerified(identity: PrincipalIdentity): Promise<void> {
+
+  await knex('principal_identity')
+    .update({
+      verified_at: Date.now(),
+    })
+    .where({
+      id: identity.id,
+    });
+
+}
+
 
 function recordToModel(principal: Principal, record: PrincipalIdentityRecord): PrincipalIdentity {
 

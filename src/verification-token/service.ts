@@ -4,6 +4,7 @@ import db from '../database.js';
 import { PrincipalService } from '../principal/service.js';
 import { BadRequest } from '@curveball/http-errors';
 import { generateSecretToken } from '../crypto.js';
+import * as principalIdentityService from '../principal-identity/service.js';
 
 /**
  * 2 hour token timeout
@@ -31,12 +32,13 @@ export async function createToken(user: User, expiresIn: number | null, identity
     ttl: tokenTTL,
   };
 }
+
 /**
  * Checks if a 'password reset token' is valid, and returns the associated user.
  * This function only works once for every token.
  * After calling this function, the token automatically gets deleted.
  */
-export async function validateToken(token: string, dontExpire: boolean = false): Promise<User> {
+export async function validateToken(token: string, dontExpire: boolean = false): Promise<[User, PrincipalIdentity|null]> {
 
   const result = await db('verification_token')
     .select()
@@ -51,7 +53,18 @@ export async function validateToken(token: string, dontExpire: boolean = false):
       await db('verification_token').delete().where({token});
     }
     const principalService = new PrincipalService('insecure');
-    return principalService.findById(result.principal_id, 'user');
+    const principal = await principalService.findById(result.principal_id, 'user');
+    if (result.principal_identity_id) {
+      return [
+        principal,
+        await principalIdentityService.findById(principal, result.principal_identity_id)
+      ];
+    } else {
+      return [
+        principal,
+        null
+      ];
+    }
   }
 
 }

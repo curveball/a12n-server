@@ -39,7 +39,6 @@ class ResetPasswordRequestController extends Controller {
       }
     }
 
-
     if (!user.active) {
       ctx.redirect(303, '/reset-password?error=User+account+is+inactive,+please+contact+administrator.');
       return;

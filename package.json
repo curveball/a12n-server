@@ -96,6 +96,7 @@
     "chai-as-promised": "^8.0.0",
     "eslint": "^8.0.1",
     "hal-types": "^1.7.6",
+    "json-schema-to-typescript": "^14.1.0",
     "mysql-types-generator": "^2.0.0",
     "sinon": "^18.0.0",
     "sinon-chai": "^3.7.0",

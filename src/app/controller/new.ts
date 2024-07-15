@@ -2,7 +2,7 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { createAppForm } from '../formats/html.js';
 import * as services from '../../services.js';
-import { UnprocessableContent } from '@curveball/http-errors';
+import { Conflict, UnprocessableContent } from '@curveball/http-errors';
 
 type AppNewForm = {
   nickname: string;
@@ -40,6 +40,16 @@ class CreateAppController extends Controller {
     const principalService = new services.principal.PrincipalService(ctx.privileges);
 
     const nickname = ctx.request.body.nickname;
+    const identity = ctx.request.body.url ?? null;
+
+    if (identity) {
+      if (!identity.match(/^https?:(.*)$/)) {
+        throw new UnprocessableContent('App url must be a http or https URI');
+      }
+      if (await services.principalIdentity.findByUri(identity)) {
+        throw new Conflict('A principal with this URI already exists');
+      }
+    }
 
     const newApp = await principalService.save({
       type: 'app',
@@ -49,11 +59,7 @@ class CreateAppController extends Controller {
       modifiedAt: new Date(),
     });
 
-    if (ctx.request.body.url) {
-      const identity = ctx.request.body.url;
-      if (!identity.match(/^https?:(.*)$/)) {
-        throw new UnprocessableContent('App url must be a http or https URI');
-      }
+    if (identity) {
       await services.principalIdentity.create({
         uri: identity,
         principalId: newApp.id,

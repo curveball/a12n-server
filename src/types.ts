@@ -30,12 +30,6 @@ export const PrincipalTypeList: PrincipalType[] = ['user', 'app', 'group'];
 export type BasePrincipal<TType extends PrincipalType> = {
   id: number;
   href: string;
-  /**
-   * A secondary URI associated with the user, like a mailto: or tel: URI.
-   *
-   * @deprecated You should use the 'principal-identity' service to get a list of identities.
-   */
-  // identity: string;
   externalId: string;
   type: TType;
   nickname: string;

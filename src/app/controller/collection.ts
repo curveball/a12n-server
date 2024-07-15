@@ -1,6 +1,6 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { BadRequest, UnprocessableContent } from '@curveball/http-errors';
+import { BadRequest, Conflict, UnprocessableContent } from '@curveball/http-errors';
 import * as hal from '../formats/hal.js';
 import * as services from '../../services.js';
 
@@ -32,6 +32,17 @@ class AppCollectionController extends Controller {
       throw new BadRequest('You may only create principals with type "app" at this endpoint');
     }
 
+    let identity = null;
+    if (ctx.request.links.has('me')) {
+      identity = ctx.request.links.get('me')!;
+      if (!identity.href.match(/^https?:(.*)$/)) {
+        throw new UnprocessableContent('App "me" URI must be a http or https URI');
+      }
+      if (await services.principalIdentity.findByUri(identity.href)) {
+        throw new Conflict(`The uri "${identity.href}" already exists`);
+      }
+    }
+
     const app = await principalService.save({
       nickname: ctx.request.body.nickname,
       type: 'app',
@@ -40,11 +51,7 @@ class AppCollectionController extends Controller {
       modifiedAt: new Date(),
     });
 
-    if (ctx.request.links.has('me')) {
-      const identity = ctx.request.links.get('me')!;
-      if (!identity.href.match(/^https?:(.*)$/)) {
-        throw new UnprocessableContent('App "me" URI must be a http or https URI');
-      }
+    if (identity) {
       await services.principalIdentity.create({
         uri: identity.href,
         principalId: app.id,

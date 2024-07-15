@@ -65,8 +65,7 @@ class UserRegistrationController extends Controller {
       createdAt: new Date(),
       modifiedAt: new Date(),
       type: 'user',
-      // Auto-activating if it's the first user.
-      active: firstRun,
+      active: true,
     }) as User;
 
     if (firstRun) {
@@ -86,7 +85,9 @@ class UserRegistrationController extends Controller {
         principalId: user.id,
         label: null,
         isPrimary: true,
-        markVerified: false,
+        // If this was the first run, we assume the email is verified
+        // to make it quicker to log in.
+        markVerified: firstRun
       }
     );
 

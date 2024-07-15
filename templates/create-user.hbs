@@ -13,14 +13,14 @@
       <input type="text" name="nickname" id="nickname" required="required" autocomplete="nickname" autofocus />
     </label>
 
-    <label for="identity">
-      <span>Identity (unique URL identifying this user)</span>
-      <input type="url" name="identity" id="identity" required="required" autocomplete="url" />
+    <label>
+      <span>Email address for this user. This is not required for creating the user, but may be needed to allow the user to be logged in.</span>
+      <input type="email" name="email" required="required" autocomplete="email" />
     </label>
 
-    <label for="active" class="checkbox">
-      <span>Activate user account immediately</span>
-      <input type="checkbox" name="active" id="active" value="1">
+    <label class="checkbox">
+      <span>Mark email as valididated. If not set it means the user will need to pass a validation challenge before logging in.</span>
+      <input type="checkbox" name="markEmailValid" />
     </label>
   </fieldset>
 

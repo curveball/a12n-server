@@ -81,7 +81,7 @@ class UserRegistrationController extends Controller {
 
     await services.principalIdentity.create(
       {
-        href: 'mailto:' + body.emailAddress,
+        uri: 'mailto:' + body.emailAddress,
         principalId: user.id,
         label: null,
         isPrimary: true,

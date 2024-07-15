@@ -57,7 +57,7 @@ class UserCollectionController extends Controller {
     await services.principalIdentity.create({
       principalId: user.id,
       isPrimary: true,
-      href: identity,
+      uri: identity,
       label: null,
       markVerified: ctx.request.body.active,
     });

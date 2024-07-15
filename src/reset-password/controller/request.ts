@@ -25,10 +25,11 @@ class ResetPasswordRequestController extends Controller {
     // Insecure means there are no privilege restrictions in doing this.
     // Normally findByIdentity is protected but for this specific case it's public.
     const principalService = new services.principal.PrincipalService('insecure');
-    let identity;
+    const identityUri = 'mailto:' + ctx.request.body.emailAddress;
+    let user, identity;
     try {
-      identity = await services.principalIdentity.findByHref('mailto:' + ctx.request.body.emailAddress);
-
+      identity = await services.principalIdentity.findByUri(identityUri);
+      user = await principalService.findByIdentity(identity);
     } catch (err) {
       if (err instanceof NotFound) {
         ctx.redirect(303, '/reset-password?error=Account+not+found.+Please+try+again');
@@ -37,7 +38,7 @@ class ResetPasswordRequestController extends Controller {
         throw err;
       }
     }
-    const user = await principalService.findByIdentity(identity);
+
 
     if (!user.active) {
       ctx.redirect(303, '/reset-password?error=User+account+is+inactive,+please+contact+administrator.');

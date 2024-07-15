@@ -77,11 +77,26 @@ export type NewPrincipal<TType extends PrincipalType> = {
   active: boolean;
 }
 
+/**
+ * The PrincipalIdentity is some associated id with a principal, such
+ * as a email address for a user or a https:// uri for an app.
+ */
 export type PrincipalIdentity = {
   id: number;
+
+  /**
+   * Public-facing unique id, used in URL and such.
+   */
+  externalId: string;
+
   /**
    * External URI for the principal. Usually a mailto: for an associated email
    * address, or a tel: for a phone number.
+   */
+  uri: string;
+
+  /**
+   * API uri to find the resource.
    */
   href: string;
 
@@ -122,7 +137,7 @@ export type PrincipalIdentity = {
   modifiedAt: Date;
 }
 
-export type NewPrincipalIdentity = Omit<PrincipalIdentity, 'id' | 'createdAt' | 'modifiedAt' | 'verifiedAt'> & {
+export type NewPrincipalIdentity = Omit<PrincipalIdentity, 'id' | 'href' | 'externalId' | 'createdAt' | 'modifiedAt' | 'verifiedAt'> & {
   /**
    * Immediately mark the identity as verified.
    */

@@ -1,8 +1,11 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
+import { Forbidden } from '@curveball/http-errors';
+
 import * as hal from '../formats/hal.js';
 import * as userAppPermissionService from '../service.js';
 import { PrincipalService } from '../../principal/service.js';
+
 
 class UserAppPermissionsCollection extends Controller {
 
@@ -10,6 +13,10 @@ class UserAppPermissionsCollection extends Controller {
 
     const principalService = new PrincipalService(ctx.privileges);
     const principal = await principalService.findByExternalId(ctx.params.id, 'user');
+
+    if (ctx.auth.equals(principal) && !ctx.privileges.has('admin')) {
+      throw new Forbidden('You can only use this API for yourself, or if you have \'admin\' privileges');
+    }
 
     const appPermissions = await userAppPermissionService.findByUser(principal);
     ctx.response.body = hal.collection(

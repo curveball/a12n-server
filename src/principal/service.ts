@@ -69,28 +69,13 @@ export class PrincipalService {
 
   }
 
-  /*
-  async findByIdentity(identity: string): Promise<Principal> {
-
-    this.privileges.require('a12n:principals:list');
-    const result = await db('principals')
-      .where({identity})
-      .first();
-
-    if (!result) {
-      throw new NotFound(`Principal with identity: ${identity} not found`);
-    }
-
-    return recordToModel(result);
-
-  }*/
   async findByIdentity(identity: PrincipalIdentity|string): Promise<Principal> {
 
     this.privileges.require('a12n:principals:list');
 
     let pi;
     if (typeof identity === 'string') {
-      pi = await PrincipalIdentityService.findByHref(identity);
+      pi = await PrincipalIdentityService.findByUri(identity);
     } else {
       pi = identity;
     }

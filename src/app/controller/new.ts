@@ -55,7 +55,7 @@ class CreateAppController extends Controller {
         throw new UnprocessableContent('App url must be a http or https URI');
       }
       await services.principalIdentity.create({
-        href: identity,
+        uri: identity,
         principalId: newApp.id,
         isPrimary: true,
         label: null,

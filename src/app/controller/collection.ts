@@ -46,7 +46,7 @@ class AppCollectionController extends Controller {
         throw new UnprocessableContent('App "me" URI must be a http or https URI');
       }
       await services.principalIdentity.create({
-        href: identity.href,
+        uri: identity.href,
         principalId: app.id,
         isPrimary: true,
         label: identity.title ?? null,

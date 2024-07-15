@@ -57,7 +57,7 @@ class CreateUserController extends Controller {
     if (identity) {
       await services.principalIdentity.create(
         {
-          href: 'mailto:' + ctx.request.body.email,
+          uri: 'mailto:' + ctx.request.body.email,
           principalId: newUser.id,
           isPrimary: true,
           label: null,

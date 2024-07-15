@@ -39,7 +39,7 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
     _links: {
       'self': {href: user.href, title: user.nickname },
       'me': identities.map( identity => (
-        { href: identity.href, title: user.nickname ?? undefined }
+        { href: identity.uri, title: user.nickname ?? undefined }
       )),
       'auth-log': { href: `${user.href}/log`, title: 'Authentication log', type: 'text/csv' },
       'up' : { href: '/user', title: 'List of users' },
@@ -47,10 +47,7 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
         href: group.href,
         title: group.nickname,
       })),
-      'identity-collection' : {
-        href: `${user.href}/identity`,
-        title: 'List of identities the user is associated with'
-      },
+
       'describedby': {
         href: 'https://curveballjs.org/schemas/a12nserver/user.json',
         type: 'application/schema+json',
@@ -88,6 +85,10 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
     hal._links['app-permission-collection'] = {
       href: `${user.href}/app-permission`,
       title: 'App Permissions',
+    };
+    hal._links['identity-collection'] = {
+      href: `${user.href}/identity`,
+      title: 'List of identities the user is associated with'
     };
   }
   if (currentUserPrivileges.has('a12n:user:change-password', user.href)) {

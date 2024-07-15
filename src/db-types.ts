@@ -92,11 +92,8 @@ export type Oauth2TokensRecord = {
 };
 export type PrincipalIdentityRecord = {
   id: number;
-
-  /**
-   * The email address or phone number, specified as a URI
-   */
-  href: string;
+  external_id: string;
+  uri: string;
 
   /**
    * Which principal this identity belongs to

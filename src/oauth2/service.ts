@@ -229,7 +229,6 @@ export function generateTokenDeveloperToken(options: GenerateTokenDeveloperToken
       id: 0,
       href:'/system',
       externalId: 'system',
-      identity: 'https://curveballjs.org/a12nserver',
       createdAt: new Date('2018-11-01T140000Z'),
       modifiedAt: new Date('2022-09-11T020000Z'),
       type: 'app',

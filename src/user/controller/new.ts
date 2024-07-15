@@ -1,13 +1,13 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { NotFound, UnprocessableContent } from '@curveball/http-errors';
-import { PrincipalService, isIdentityValid } from '../../principal/service.js';
+import { NotFound } from '@curveball/http-errors';
 import { createUserForm } from '../formats/html.js';
+import * as services from '../../services.js';
 
 type UserNewForm = {
-  identity: string;
   nickname: string;
-  active: string;
+  email: string;
+  markEmailValid: string;
 }
 
 class CreateUserController extends Controller {
@@ -27,37 +27,47 @@ class CreateUserController extends Controller {
   async post(ctx: Context) {
 
     ctx.request.validate<UserNewForm>('https://curveballjs.org/schemas/a12nserver/user-new-form.json');
-    const principalService = new PrincipalService(ctx.privileges);
+    const principalService = new services.principal.PrincipalService(ctx.privileges);
 
-    const identity = ctx.request.body.identity;
     const nickname = ctx.request.body.nickname;
 
-    if (!isIdentityValid(identity)) {
-      throw new UnprocessableContent('Identity must be a valid URI');
-    }
+    const identity = ctx.request.body.email ? 'mailto:' + ctx.request.body.email : null;
 
-    try {
-      await principalService.findByIdentity(ctx.request.body.identity);
-      ctx.status = 303;
-      ctx.response.headers.set('Location', '/user/new?error=User+already+exists');
-      return;
-    } catch (err) {
-      if (!(err instanceof NotFound)) {
-        throw err;
+    if (identity) {
+      try {
+        await principalService.findByIdentity(identity);
+        ctx.status = 303;
+        ctx.response.headers.set('Location', '/user/new?error=User+already+exists');
+        return;
+      } catch (err) {
+        if (!(err instanceof NotFound)) {
+          throw err;
+        }
       }
     }
 
     const newUser = await principalService.save({
-      identity: identity,
       nickname: nickname,
       createdAt: new Date(),
       modifiedAt: new Date(),
       type: 'user',
-      active: 'active' in ctx.request.body
+      active: true,
     });
 
+    if (identity) {
+      await services.principalIdentity.create(
+        {
+          uri: 'mailto:' + ctx.request.body.email,
+          principalId: newUser.id,
+          isPrimary: true,
+          label: null,
+          markVerified: !!ctx.request.body.markEmailValid,
+        }
+      );
+    }
+
     ctx.response.status = 303;
-    ctx.response.headers.set('Location', '/user/' + newUser.id);
+    ctx.response.headers.set('Location', newUser.href);
 
   }
 

@@ -1,8 +1,8 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { PrincipalService } from '../../principal/service.js';
 import { createAppForm } from '../formats/html.js';
-import { uuidUrn } from '../../crypto.js';
+import * as services from '../../services.js';
+import { Conflict, UnprocessableContent } from '@curveball/http-errors';
 
 type AppNewForm = {
   nickname: string;
@@ -37,20 +37,38 @@ class CreateAppController extends Controller {
 
     ctx.request.validate<AppNewForm>('https://curveballjs.org/schemas/a12nserver/app-new-form.json');
 
-    const principalService = new PrincipalService(ctx.privileges);
+    const principalService = new services.principal.PrincipalService(ctx.privileges);
 
     const nickname = ctx.request.body.nickname;
-    const identity = ctx.request.body.url || uuidUrn();
+    const identity = ctx.request.body.url ?? null;
+
+    if (identity) {
+      if (!identity.match(/^https?:(.*)$/)) {
+        throw new UnprocessableContent('App url must be a http or https URI');
+      }
+      if (await services.principalIdentity.findByUri(identity)) {
+        throw new Conflict('A principal with this URI already exists');
+      }
+    }
 
     const newApp = await principalService.save({
       type: 'app',
       nickname,
       active: true,
-      identity,
       createdAt: new Date(),
       modifiedAt: new Date(),
     });
 
+    if (identity) {
+      await services.principalIdentity.create({
+        uri: identity,
+        principalId: newApp.id,
+        isPrimary: true,
+        label: null,
+        markVerified: false,
+      });
+
+    }
     ctx.response.status = 303;
 
     let newLocation = newApp.href;

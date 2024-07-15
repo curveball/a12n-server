@@ -1,5 +1,5 @@
 import { PrivilegeMap } from '../../privilege/types.js';
-import { Principal, Group, User } from '../../types.js';
+import { Principal, Group, User, PrincipalIdentity } from '../../types.js';
 import { HalResource } from 'hal-types';
 import { LazyPrivilegeBox } from '../../privilege/service.js';
 
@@ -33,12 +33,14 @@ export function collection(users: User[]): HalResource {
  * we're generating the repsonse for, or if the current authenticated user
  * has full admin privileges
  */
-export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, hasPassword: boolean, currentUserPrivileges: LazyPrivilegeBox, groups: Group[]): HalResource {
+export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, hasPassword: boolean, currentUserPrivileges: LazyPrivilegeBox, groups: Group[], identities: PrincipalIdentity[]): HalResource {
 
   const hal: HalResource = {
     _links: {
       'self': {href: user.href, title: user.nickname },
-      'me': { href: user.identity, title: user.nickname },
+      'me': identities.map( identity => (
+        { href: identity.uri, title: user.nickname ?? undefined }
+      )),
       'auth-log': { href: `${user.href}/log`, title: 'Authentication log', type: 'text/csv' },
       'up' : { href: '/user', title: 'List of users' },
       'group': groups.map( group => ({
@@ -84,6 +86,10 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
       href: `${user.href}/app-permission`,
       title: 'App Permissions',
     };
+    hal._links['identity-collection'] = {
+      href: `${user.href}/identity`,
+      title: 'List of identities the user is associated with'
+    };
   }
   if (currentUserPrivileges.has('a12n:user:change-password', user.href)) {
     hal._links['password'] = {
@@ -126,12 +132,6 @@ export function edit(user: User): HalResource {
         method: 'POST',
         contentType: 'application/x-www-form-urlencoded',
         properties: [
-          {
-            name: 'identity',
-            prompt: 'Identity',
-            type: 'text',
-            value: user.identity,
-          },
           {
             name: 'nickname',
             prompt: 'Nickname',

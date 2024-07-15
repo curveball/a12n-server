@@ -4,6 +4,16 @@ Changelog
 0.26.0 (????-??-??)
 -------------------
 
+* BC Break: Previous versions of a12nserver collated the 'active' status of
+  users and whether or not their used email addresses were verified. These two
+  flags are now separate. For a user to log in with their username and password
+  their account must be active (now on by default) and email must be verified.
+  When upgrading to 0.26 all active users will have their email automatically
+  verified.
+* BC Break: When creating users via the API, we no longer accept the 'active'
+  flag. (is now on by default).
+* New! Users can now be associated with multiple email addresses and/or phone
+  numbers.
 * Upgraded to Curveball 1.
 * Moved from CommonJS to ESM.
 * Upgraded to Typescript 5.5.

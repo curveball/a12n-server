@@ -8,6 +8,7 @@ export enum EventType {
   loginFailedInactive = 7,
   webAuthnFailed = 8,
   tokenRevoked = 9,
+  loginFailedNotVerified = 10,
 
   oauth2BadRedirect = 11,
   generateAccessToken = 12,
@@ -30,6 +31,7 @@ export const eventTypeString = new Map<EventType, string>([
   [EventType.resetPasswordRequest,  'reset-password-request'],
   [EventType.resetPasswordSuccess,  'reset-password-success'],
   [EventType.loginFailedInactive,   'login-failed-inactive'],
+  [EventType.loginFailedNotVerified,'login-failed-notverified'],
   [EventType.tokenRevoked,          'token-revoked'],
   [EventType.oauth2BadRedirect,     'oauth2-badredirect'],
 ]);

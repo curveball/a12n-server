@@ -32,7 +32,6 @@ export type BasePrincipal<TType extends PrincipalType> = {
   href: string;
   externalId: string;
   type: TType;
-  identity: string;
   nickname: string;
   createdAt: Date;
   modifiedAt: Date;
@@ -66,11 +65,77 @@ export type Principal = User | Group | App;
  */
 export type NewPrincipal<TType extends PrincipalType> = {
   type: TType;
-  identity: string;
   nickname: string;
   createdAt: Date;
   modifiedAt: Date;
   active: boolean;
+}
+
+/**
+ * The PrincipalIdentity is some associated id with a principal, such
+ * as a email address for a user or a https:// uri for an app.
+ */
+export type PrincipalIdentity = {
+  id: number;
+
+  /**
+   * Public-facing unique id, used in URL and such.
+   */
+  externalId: string;
+
+  /**
+   * External URI for the principal. Usually a mailto: for an associated email
+   * address, or a tel: for a phone number.
+   */
+  uri: string;
+
+  /**
+   * API uri to find the resource.
+   */
+  href: string;
+
+  /**
+   * Associated principal
+   */
+  principalId: number;
+
+  /**
+   * If this is the 'main' ID for a user, this is set to true.
+   * There should usually only be one identity that has this flag.
+   */
+  isPrimary: boolean;
+
+  /**
+   * Optional, user supplied label for the identity. For example 'Home', 'Work' or 'Mobile'.
+   */
+  label: string | null;
+
+  /**
+   * If set, when the user verified ownership of the id.
+   *
+   * For uuid IDs this will automatically be set to true, but email and tel ids may need
+   * to be sent a verification code which the user needs to enter back into the system.
+   *
+   * Trusted clients of the API may also set this.
+   */
+  verifiedAt: Date | null;
+
+  /**
+   * When the identity was first created.
+   */
+  createdAt: Date;
+
+  /**
+   * Last time the identity was updated.
+   */
+  modifiedAt: Date;
+}
+
+export type NewPrincipalIdentity = Omit<PrincipalIdentity, 'id' | 'href' | 'externalId' | 'createdAt' | 'modifiedAt' | 'verifiedAt'> & {
+  /**
+   * Immediately mark the identity as verified.
+   */
+  markVerified: boolean;
 }
 
 /**

@@ -1,12 +1,9 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { NotFound, BadRequest } from '@curveball/http-errors';
-import log from '../../log/service.js';
 import { EventType } from '../../log/types.js';
-import { PrincipalService } from '../../principal/service.js';
 import { resetPasswordRequestForm } from '../formats/html.js';
-import { sendResetPasswordEmail } from '../service.js';
-
+import * as services from '../../services.js';
 
 /**
  * This controller is used for requesting change password when the user forgot the password.
@@ -27,10 +24,12 @@ class ResetPasswordRequestController extends Controller {
 
     // Insecure means there are no privilege restrictions in doing this.
     // Normally findByIdentity is protected but for this specific case it's public.
-    const principalService = new PrincipalService('insecure');
-    let user;
+    const principalService = new services.principal.PrincipalService('insecure');
+    const identityUri = 'mailto:' + ctx.request.body.emailAddress;
+    let user, identity;
     try {
-      user = await principalService.findByIdentity('mailto:' + ctx.request.body.emailAddress);
+      identity = await services.principalIdentity.findByUri(identityUri);
+      user = await principalService.findByIdentity(identity);
     } catch (err) {
       if (err instanceof NotFound) {
         ctx.redirect(303, '/reset-password?error=Account+not+found.+Please+try+again');
@@ -47,8 +46,8 @@ class ResetPasswordRequestController extends Controller {
     if (user.type !== 'user') {
       throw new BadRequest('This endpoint can only be called for principals of type \'user\'.');
     }
-    await sendResetPasswordEmail(user);
-    await log(EventType.resetPasswordRequest, ctx.ip()!, user.id);
+    await services.resetPassword.sendResetPasswordEmail(user, identity);
+    await services.log.log(EventType.resetPasswordRequest, ctx.ip()!, user.id);
 
     ctx.redirect(303, '/reset-password?msg=Password+reset+request+submitted.+Please+check+your+email+for+further+instructions.');
   }

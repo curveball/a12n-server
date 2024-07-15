@@ -7,8 +7,8 @@ import blob from './blob/controller.js';
 import changePassword from './changepassword/controller.js';
 import changePasswordRedirect from './well-known/controller/change-password.js';
 import client from './oauth2-client/controller/item.js';
-import clientNew from './oauth2-client/controller/new.js';
 import clientEdit from './oauth2-client/controller/edit.js';
+import clientNew from './oauth2-client/controller/new.js';
 import clients from './oauth2-client/controller/collection.js';
 import group from './group/controller/item.js';
 import groupNew from './group/controller/new.js';
@@ -26,9 +26,9 @@ import oauth2ErrorHandler from './oauth2/oauth2-error-handler.js';
 import oauth2Metadata from './well-known/controller/oauth2-metadata.js';
 import oauth2Revoke from './oauth2/controller/revoke.js';
 import oauth2Token from './oauth2/controller/token.js';
-import oneTimeToken from './one-time-token/controller/generate.js';
-import oneTimeTokenExchange from './one-time-token/controller/exchange.js';
 import passwordToken from './reset-password/controller/token.js';
+import principalIdentityCollection from './principal-identity/controller/collection.js';
+import principalIdentityItem from './principal-identity/controller/item.js';
 import privilegeCollection from './privilege/controller/collection.js';
 import privilegeItem from './privilege/controller/item.js';
 import privilegeSearch from './privilege/controller/search.js';
@@ -42,15 +42,17 @@ import settings from './settings/controller.js';
 import user from './user/controller/item.js';
 import userAccessToken from './oauth2/controller/user-access-token.js';
 import userActiveSessions from './oauth2/controller/active-sessions.js';
-import userAppPermissionItem from './user-app-permissions/controller/user-item.js';
 import userAppPermissionCollection from './user-app-permissions/controller/user-collection.js';
+import userAppPermissionItem from './user-app-permissions/controller/user-item.js';
 import userByHref from './user/controller/by-href.js';
 import userEdit from './user/controller/edit.js';
 import userEditPrivileges from './user/controller/privileges.js';
 import userLog from './log/controller/user.js';
-import userPassword from './user/controller/password.js';
 import userNew from './user/controller/new.js';
+import userPassword from './user/controller/password.js';
 import users from './user/controller/collection.js';
+import verificationToken from './verification-token/controller/generate.js';
+import verificationTokenExchange from './verification-token/controller/exchange.js';
 import webAuthnRegistration from './mfa/webauthn/controller/registration.js';
 
 const routes = [
@@ -66,9 +68,11 @@ const routes = [
   router('/app/:id/client/new', clientNew),
   router('/app/:id/client/:clientId', client),
   router('/app/:id/client/:clientId/edit', clientEdit),
+  router('/app/:id/identity', principalIdentityCollection),
+  router('/app/:id/identity/:identityId', principalIdentityItem),
 
   router('/authorize', oauth2ErrorHandler, oauth2Authorize),
-  router('/exchange-one-time-token', oneTimeTokenExchange),
+  router('/exchange-one-time-token', verificationTokenExchange),
   router('/token', oauth2ErrorHandler, oauth2Token),
   router('/revoke', oauth2Revoke),
 
@@ -106,11 +110,13 @@ const routes = [
   router('/user/:id/edit/privileges', userEditPrivileges),
   router('/user/:id/log', userLog),
   router('/user/:id/password', userPassword),
-  router('/user/:id/one-time-token', oneTimeToken),
+  router('/user/:id/one-time-token', verificationToken),
   router('/user/:id/access-token', userAccessToken),
   router('/user/:id/sessions', userActiveSessions),
   router('/user/:id/app-permission', userAppPermissionCollection),
   router('/user/:id/app-permission/:appId', userAppPermissionItem),
+  router('/user/:id/identity', principalIdentityCollection),
+  router('/user/:id/identity/:identityId', principalIdentityItem),
 
   router('/change-password', changePassword),
   router('/reset-password', resetPassword),

@@ -7,7 +7,8 @@ import { UserLogRecord } from 'knex/types/tables.js';
 
 export function log(eventType: EventType, ctx: Context): Promise<void>;
 export function log(eventType: EventType, ip: string|null, userId: number, userAgent: string|null): Promise<void>;
-export default async function log(
+export function log(eventType: EventType, ip: string|null, userId: number): Promise<void>;
+export async function log(
   eventType: EventType,
   arg1: string | Context | null,
   arg2?: number,
@@ -33,6 +34,8 @@ export default async function log(
   }
 
 }
+
+export default log;
 
 export async function addLogEntry(eventType: EventType, ip: string, userId: number, userAgent: string|null): Promise<void> {
 

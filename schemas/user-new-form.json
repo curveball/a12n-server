@@ -4,7 +4,7 @@
   "type": "object",
   "description": "This is the request body used by the HTML form submission for creating new users",
 
-  "required": ["nickname", "identity"],
+  "required": ["nickname", "email", "markEmailValid"],
   "additionalProperties": false,
 
   "properties": {
@@ -12,14 +12,22 @@
       "type": "string",
       "minLength": 3
     },
-    "identity": {
-      "type": "string",
-      "format": "uri",
-      "description": "Unique identity of the user. Usually a mailto: address"
+    "email": {
+      "oneOf": [
+        {
+          "type": "string",
+          "format": "email",
+          "description": "Users' email address."
+        },
+        {
+          "type": "string",
+          "const": ""
+        }
+      ]
     },
-    "active": {
+    "markEmailValid": {
       "type": "string",
-      "description": "Immediately activate the user. Should be a javascript truthy string for true."
+      "description": "Automatically mark email address as validated. Shoudl be Javacript thruthy string."
     }
   }
 }

@@ -1,8 +1,8 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { BadRequest, Conflict, NotFound } from '@curveball/http-errors';
+import { BadRequest, Conflict, NotFound, UnprocessableContent } from '@curveball/http-errors';
 import * as hal from '../formats/hal.js';
-import { PrincipalService } from '../../principal/service.js';
+import * as services from '../../services.js';
 
 type NewPrincipalBody = {
   nickname: string;
@@ -14,7 +14,7 @@ class UserCollectionController extends Controller {
 
   async get(ctx: Context) {
 
-    const principalService = new PrincipalService(ctx.privileges);
+    const principalService = new services.principal.PrincipalService(ctx.privileges);
     const users = await principalService.findAll('user');
     ctx.response.body = hal.collection(users);
 
@@ -31,7 +31,11 @@ class UserCollectionController extends Controller {
       throw new BadRequest('You must specify a link with rel "me", either via a HAL link or HTTP Link header');
     }
 
-    const principalService = new PrincipalService(ctx.privileges);
+    const principalService = new services.principal.PrincipalService(ctx.privileges);
+
+    if (!services.principal.isIdentityValid(identity)) {
+      throw new UnprocessableContent('Invalid value for identity field. Must be a URI');
+    }
 
     try {
       await principalService.findByIdentity(identity);
@@ -43,12 +47,19 @@ class UserCollectionController extends Controller {
     }
 
     const user = await principalService.save({
-      identity,
       nickname: ctx.request.body.nickname,
       type: ctx.request.body.type,
       active: ctx.request.body.active,
       createdAt: new Date(),
       modifiedAt: new Date(),
+    });
+
+    await services.principalIdentity.create({
+      principalId: user.id,
+      isPrimary: true,
+      uri: identity,
+      label: null,
+      markVerified: ctx.request.body.active,
     });
 
     ctx.response.status = 201;

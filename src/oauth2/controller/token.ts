@@ -1,5 +1,6 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
+import { NotFound } from '@curveball/http-errors';
 import log from '../../log/service.js';
 import { EventType } from '../../log/types.js';
 import { PrincipalService } from '../../principal/service.js';
@@ -12,6 +13,7 @@ import {
   getOAuth2ClientFromBody,
 } from '../../oauth2-client/service.js';
 import * as userAppPermissions from '../../user-app-permissions/service.js';
+import * as principalIdentityService from '../../principal-identity/service.js';
 
 class TokenController extends Controller {
 
@@ -110,10 +112,23 @@ class TokenController extends Controller {
 
   async password(oauth2Client: OAuth2Client, ctx: Context<any>) {
 
+    let identity;
     let user: User;
     const principalService = new PrincipalService('insecure');
     try {
-      user = await principalService.findByIdentity('mailto:' + ctx.request.body.username) as User;
+      identity = await principalIdentityService.findByUri('mailto:' + ctx.request.body.username);
+    } catch (err) {
+      if (err instanceof NotFound) {
+        throw new InvalidGrant('Unknown username or password');
+      } else {
+        throw err;
+      }
+    }
+    if (!identity.verifiedAt) {
+      throw new InvalidGrant(`${ctx.request.body.username} has not been verified`);
+    }
+    try {
+      user = await principalService.findByIdentity(identity) as User;
       if (user.type !== 'user') {
         throw new InvalidRequest('The "password" grant type is only valid for users');
       }

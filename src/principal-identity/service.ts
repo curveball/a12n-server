@@ -71,7 +71,7 @@ export async function create(identity: NewPrincipalIdentity): Promise<void> {
       principal_id: identity.principalId,
       label: identity.label ?? null,
       is_primary: identity.isPrimary ? 1 : 0,
-      verified_at: null,
+      verified_at: identity.markVerified ? Date.now() : null,
       created_at: Date.now(),
       modified_at: Date.now(),
     });

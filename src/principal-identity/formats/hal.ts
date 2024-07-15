@@ -7,7 +7,7 @@ export function collection(principal: Principal, identities: PrincipalIdentity[]
     _links: {
       self: {
         href: `${principal.href}/identity`,
-        title: 'Colletion of identities associated with a principal',
+        title: 'Identities associated with a principal',
       },
       up: {
         href: principal.href,

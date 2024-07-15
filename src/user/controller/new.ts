@@ -51,7 +51,7 @@ class CreateUserController extends Controller {
       createdAt: new Date(),
       modifiedAt: new Date(),
       type: 'user',
-      active: 'active' in ctx.request.body
+      active: true,
     });
 
     if (identity) {

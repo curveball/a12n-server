@@ -4,7 +4,7 @@
   "type": "object",
   "description": "This is the request body used to create new principals",
 
-  "required": ["nickname", "active", "type"],
+  "required": ["nickname","type"],
   "additionalProperties": false,
 
   "properties": {
@@ -12,9 +12,6 @@
     "nickname": {
       "type": "string",
       "minLength": 3
-    },
-    "active": {
-      "type": "boolean"
     },
     "type": {
       "enum": ["user", "app", "group"]

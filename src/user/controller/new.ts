@@ -3,12 +3,7 @@ import { Context } from '@curveball/core';
 import { NotFound } from '@curveball/http-errors';
 import { createUserForm } from '../formats/html.js';
 import * as services from '../../services.js';
-
-type UserNewForm = {
-  nickname: string;
-  email: string;
-  markEmailValid: string;
-}
+import { UserNewFormBody } from '../../api-types.js';
 
 class CreateUserController extends Controller {
 
@@ -26,7 +21,7 @@ class CreateUserController extends Controller {
 
   async post(ctx: Context) {
 
-    ctx.request.validate<UserNewForm>('https://curveballjs.org/schemas/a12nserver/user-new-form.json');
+    ctx.request.validate<UserNewFormBody>('https://curveballjs.org/schemas/a12nserver/user-new-form.json');
     const principalService = new services.principal.PrincipalService(ctx.privileges);
 
     const nickname = ctx.request.body.nickname;

@@ -2,12 +2,7 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import * as hal from '../formats/hal.js';
 import { PrincipalService } from '../../principal/service.js';
-
-type NewPrincipalBody = {
-  nickname: string;
-  active: boolean;
-  type: 'user' | 'app' | 'group';
-}
+import { PrincipalNew } from '../../api-types.js';
 
 class GroupCollectionController extends Controller {
 
@@ -23,14 +18,14 @@ class GroupCollectionController extends Controller {
 
     const principalService = new PrincipalService(ctx.privileges);
 
-    ctx.request.validate<NewPrincipalBody>(
+    ctx.request.validate<PrincipalNew>(
       'https://curveballjs.org/schemas/a12nserver/principal-new.json'
     );
 
     const group = await principalService.save({
       nickname: ctx.request.body.nickname,
       type: ctx.request.body.type,
-      active: ctx.request.body.active,
+      active: true,
       createdAt: new Date(),
       modifiedAt: new Date(),
     });

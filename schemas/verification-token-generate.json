@@ -1,7 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2019-09/schema",
-  "$id": "https://curveballjs.org/schemas/a12nserver/one-time-token-generate.json",
+  "$id": "https://curveballjs.org/schemas/a12nserver/verification-token-generate.json",
   "type": "object",
+  "title": "VerificationTokenGenerateRequest",
   "description": "The request made to the one-time-token generate endpoint.",
   "required": [],
   "additionalProperties": false,

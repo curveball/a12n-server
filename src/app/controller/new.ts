@@ -3,15 +3,7 @@ import { Context } from '@curveball/core';
 import { createAppForm } from '../formats/html.js';
 import * as services from '../../services.js';
 import { Conflict, UnprocessableContent } from '@curveball/http-errors';
-
-type AppNewForm = {
-  nickname: string;
-  url: string;
-  clientId?: string;
-  allowedGrantTypes?: string;
-  redirectUris?: string;
-  requirePkce?: string;
-}
+import { AppNewFormBody } from '../../api-types.js';
 
 class CreateAppController extends Controller {
 
@@ -35,7 +27,7 @@ class CreateAppController extends Controller {
 
   async post(ctx: Context) {
 
-    ctx.request.validate<AppNewForm>('https://curveballjs.org/schemas/a12nserver/app-new-form.json');
+    ctx.request.validate<AppNewFormBody>('https://curveballjs.org/schemas/a12nserver/app-new-form.json');
 
     const principalService = new services.principal.PrincipalService(ctx.privileges);
 

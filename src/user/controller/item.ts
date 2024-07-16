@@ -5,22 +5,7 @@ import * as userHal from '../formats/hal.js';
 import * as userService from '../service.js';
 import { PrincipalService } from '../../principal/service.js';
 import * as principalIdentityService from '../../principal-identity/service.js';
-
-type EditPrincipalBody = {
-  nickname: string;
-  active: boolean;
-  type: 'user' | 'app' | 'group';
-
-  /**
-   * We don't care about the below types yet.
-   *
-   * In the future we will auto-generate _good_ types from the schemas
-   * and then all of this will be cleaned up
-   */
-  createdAt?: unknown;
-  modifiedAt?: unknown;
-  privileges?: unknown;
-}
+import { PrincipalEdit } from '../../api-types.js';
 
 class UserController extends Controller {
 
@@ -61,7 +46,7 @@ class UserController extends Controller {
 
   async put(ctx: Context) {
 
-    ctx.request.validate<EditPrincipalBody>(
+    ctx.request.validate<PrincipalEdit>(
       'https://curveballjs.org/schemas/a12nserver/principal-edit.json'
     );
     const principalService = new PrincipalService(ctx.privileges);

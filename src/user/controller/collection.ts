@@ -3,12 +3,7 @@ import { Context } from '@curveball/core';
 import { BadRequest, Conflict, NotFound, UnprocessableContent } from '@curveball/http-errors';
 import * as hal from '../formats/hal.js';
 import * as services from '../../services.js';
-
-type NewPrincipalBody = {
-  nickname: string;
-  active: boolean;
-  type: 'user' | 'app' | 'group';
-}
+import { PrincipalNew } from '../../api-types.js';
 
 class UserCollectionController extends Controller {
 
@@ -22,7 +17,7 @@ class UserCollectionController extends Controller {
 
   async post(ctx: Context) {
 
-    ctx.request.validate<NewPrincipalBody>(
+    ctx.request.validate<PrincipalNew>(
       'https://curveballjs.org/schemas/a12nserver/principal-new.json'
     );
 
@@ -49,7 +44,7 @@ class UserCollectionController extends Controller {
     const user = await principalService.save({
       nickname: ctx.request.body.nickname,
       type: ctx.request.body.type,
-      active: ctx.request.body.active,
+      active: true,
       createdAt: new Date(),
       modifiedAt: new Date(),
     });
@@ -59,7 +54,7 @@ class UserCollectionController extends Controller {
       isPrimary: true,
       uri: identity,
       label: null,
-      markVerified: ctx.request.body.active,
+      markVerified: false,
     });
 
     ctx.response.status = 201;

@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2019-09/schema",
   "$id": "https://curveballjs.org/schemas/a12nserver/user-app-permissions.json",
   "type": "object",
-  "name": "User App Permissions",
+  "title": "UserAppPermissions",
   "description": "This object contains the list of permissions/scopes that the user has granted to an app. The app may act on behalf of the user for these scopes.",
 
   "required": ["scope", "createdAt", "modifiedAt", "lastUsedAt"],

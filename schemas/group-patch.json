@@ -3,7 +3,7 @@
   "$id": "https://curveballjs.org/schemas/a12nserver/group-patch.json",
   "type": "object",
   "description": "The body of a PATCH call on a group. This PATCH request lets you add or remove members from a group",
-
+  "title": "GroupPatch",
   "required": ["operation", "memberHref"],
   "additionalProperties": false,
 

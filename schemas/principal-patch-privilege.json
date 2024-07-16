@@ -2,6 +2,7 @@
   "$schema": "https://json-schema.org/draft/2019-09/schema",
   "$id": "https://curveballjs.org/schemas/a12nserver/principal-patch-privilege.json",
   "type": "object",
+  "title": "PrincipalPatchPrivilege",
   "description": "This object is a request body for patching a principal's ACL.",
 
   "required": ["action", "privilege", "resource"],

@@ -1,7 +1,8 @@
 {
   "$schema": "https://json-schema.org/draft/2019-09/schema",
-  "$id": "https://curveballjs.org/schemas/a12nserver/one-time-token-exchange.json",
+  "$id": "https://curveballjs.org/schemas/a12nserver/verification-token-exchange.json",
   "type": "object",
+  "title": "VerificationTokenExchangeRequest",
   "description": "Request body of the exchange one-time-token endpoint.",
   "required": ["token","client_id"],
   "additionalProperties": false,

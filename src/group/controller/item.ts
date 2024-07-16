@@ -4,27 +4,7 @@ import * as privilegeService from '../../privilege/service.js';
 import * as hal from '../formats/hal.js';
 import { PrincipalService } from '../../principal/service.js';
 import { NotFound, Conflict } from '@curveball/http-errors';
-
-type EditPrincipalBody = {
-  nickname: string;
-  active: boolean;
-  type: 'user' | 'app' | 'group';
-
-  /**
-   * We don't care about the below types yet.
-   *
-   * In the future we will auto-generate _good_ types from the schemas
-   * and then all of this will be cleaned up
-   */
-  createdAt?: unknown;
-  modifiedAt?: unknown;
-  privileges?: unknown;
-}
-
-type GroupPatch = {
-  operation: 'add-member' | 'remove-member';
-  memberHref: string;
-};
+import { GroupPatch, PrincipalEdit } from '../../api-types.js';
 
 class GroupController extends Controller {
 
@@ -58,7 +38,7 @@ class GroupController extends Controller {
   async put(ctx: Context) {
 
     const principalService = new PrincipalService(ctx.privileges);
-    ctx.request.validate<EditPrincipalBody>(
+    ctx.request.validate<PrincipalEdit>(
       'https://curveballjs.org/schemas/a12nserver/principal-edit.json'
     );
 

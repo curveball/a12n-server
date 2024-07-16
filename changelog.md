@@ -19,6 +19,7 @@ Changelog
 * Upgraded to Typescript 5.5.
 * Dropped mocha for the built-in Node tester.
 * #494: Add 'public' to Postgres schema search path. (@elaugier)
+* Auto-generate API types from JSON schema.
 
 
 0.25.4 (2024-02-26)

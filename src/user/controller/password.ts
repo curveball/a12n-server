@@ -2,7 +2,7 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { PrincipalService } from '../../principal/service.js';
 import * as userService from '../service.js';
-import { UnprocessableEntity } from '@curveball/http-errors';
+import { UnprocessableContent } from '@curveball/http-errors';
 
 class UserPasswordController extends Controller {
 
@@ -15,7 +15,7 @@ class UserPasswordController extends Controller {
     ctx.privileges.require('a12n:user:change-password', user.href);
 
     if (!userBody.newPassword || typeof userBody.newPassword !== 'string') {
-      throw new UnprocessableEntity('The "newPassword" property is required.');
+      throw new UnprocessableContent('The "newPassword" property is required.');
     }
 
     const password = userBody.newPassword;

@@ -5,14 +5,10 @@ import * as privilegeService from '../../privilege/service.js';
 import { PrivilegeMap } from '../../privilege/types.js';
 import * as hal from '../formats/hal.js';
 import { PrincipalService } from '../../principal/service.js';
+import { PrincipalPatchPrivilege } from '../../api-types.js';
 
 type PolicyForm = {
   policyBody: string;
-}
-type PrincipalPatchPrivilege = {
-  action: 'add';
-  resource: '*' | string;
-  privilege: string;
 }
 
 class UserEditPrivilegesController extends Controller {

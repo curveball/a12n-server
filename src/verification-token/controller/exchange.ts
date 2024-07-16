@@ -10,20 +10,14 @@ import * as oauth2Service from '../../oauth2/service.js';
 import * as oauth2ClientService from '../../oauth2-client/service.js';
 import { PrincipalService } from '../../principal/service.js';
 import * as principalIdentityService from '../../principal-identity/service.js';
-
-type OtteRequest = {
-  activateUser?: boolean;
-  token: string;
-  client_id: string;
-  dontExpire?: boolean;
-}
+import { VerificationTokenExchangeRequest } from '../../api-types.js';
 
 class OneTimeTokenExchangeController extends Controller {
 
   async post(ctx: Context) {
 
     ctx.privileges.require('a12n:one-time-token:exchange');
-    ctx.request.validate<OtteRequest>('https://curveballjs.org/schemas/a12nserver/one-time-token-exchange.json');
+    ctx.request.validate<VerificationTokenExchangeRequest>('https://curveballjs.org/schemas/a12nserver/verification-token-exchange.json');
 
     const principalService = new PrincipalService(ctx.privileges);
 

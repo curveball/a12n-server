@@ -4,16 +4,13 @@ import { PrincipalService } from '../../principal/service.js';
 import { createToken } from '../service.js';
 import * as hal from '../formats/hal.js';
 import { resolve } from 'url';
-
-type GenerateRequest = {
-  expiresIn?: number;
-}
+import { VerificationTokenGenerateRequest } from '../../api-types.js';
 
 class OneTimeTokenController extends Controller {
 
   async post(ctx: Context) {
 
-    ctx.request.validate<GenerateRequest>('https://curveballjs.org/schemas/a12nserver/one-time-token-generate.json');
+    ctx.request.validate<VerificationTokenGenerateRequest>('https://curveballjs.org/schemas/a12nserver/verification-token-generate.json');
     ctx.privileges.require('a12n:one-time-token:generate');
 
     const principalService = new PrincipalService(ctx.privileges);

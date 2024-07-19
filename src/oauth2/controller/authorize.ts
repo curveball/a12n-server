@@ -9,7 +9,7 @@ import { CodeChallengeMethod } from '../types.js';
 import { OAuth2Client } from '../../types.js';
 import log from '../../log/service.js';
 import { EventType } from '../../log/types.js';
-import { findByClientId } from '../../oauth2-client/service.js';
+import { findByClientId } from '../../app-client/service.js';
 import * as userAppPermissions from '../../user-app-permissions/service.js';
 import { generateJWTIDToken } from '../jwt.js';
 

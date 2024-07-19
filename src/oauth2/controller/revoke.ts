@@ -7,7 +7,7 @@ import { OAuth2Client } from '../../types.js';
 import {
   getOAuth2ClientFromBasicAuth,
   getOAuth2ClientFromBody,
-} from '../../oauth2-client/service.js';
+} from '../../app-client/service.js';
 
 
 class RevokeController extends Controller {

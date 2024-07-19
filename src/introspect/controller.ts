@@ -5,7 +5,7 @@ import { NotFound } from '@curveball/http-errors';
 import * as oauth2Service from '../oauth2/service.js';
 import { OAuth2Token } from '../oauth2/types.js';
 import * as privilegeService from '../privilege/service.js';
-import * as oauth2ClientService from '../oauth2-client/service.js';
+import * as oauth2ClientService from '../app-client/service.js';
 import { introspectResponse, inactive } from './formats/json.js';
 
 /**

@@ -115,10 +115,10 @@ class AuthorizeController extends Controller {
       client: oauth2Client,
       principal: ctx.session.user,
       scope: params.scope,
-      codeChallenge: params.codeChallenge,
-      codeChallengeMethod: params.codeChallengeMethod,
+      codeChallenge: params.codeChallenge ?? null,
+      codeChallengeMethod: params.codeChallengeMethod ?? null,
       browserSessionId: ctx.sessionId!,
-      nonce: params.nonce,
+      nonce: params.nonce ?? null,
     });
 
     const redirectParams: Record<string, string> = {

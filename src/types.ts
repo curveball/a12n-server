@@ -8,7 +8,8 @@ export type GrantType =
   | 'implicit'
   | 'authorization_code'
   | 'one-time-token' // a12n-server tokens for things like password reset
-  | 'developer-token'; // User-generated developer token
+  | 'developer-token' // User-generated developer token
+  | 'authorization_challenge'; // https://www.ietf.org/archive/id/draft-parecki-oauth-first-party-apps-00.html
 
 export type ServerStats = {
   user: number;

@@ -50,6 +50,7 @@ Changelog
 * API clients can now request that one-time-tokens don't expire after use.
 * The client_id is now validated to belong to the curent user when validating
   one-time-tokens.
+* Fixed result of one-time-token if a custom expiry was used.
 
 
 0.25.0 (2023-11-22)

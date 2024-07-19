@@ -5,12 +5,9 @@ import accessLog from '@curveball/accesslog';
 import mainMw from './main-mw.js';
 import { init as initDb } from './database.js';
 import { load } from './server-settings.js';
+import './env.js';
 
 import { NAME, VERSION } from './version.js';
-
-import * as dotenv from 'dotenv';
-
-dotenv.config();
 
 console.info('⚾ %s %s', NAME, VERSION);
 

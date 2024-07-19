@@ -457,10 +457,10 @@ type GenerateAuthorizationCodeOptions = {
   client: OAuth2Client;
   principal: User;
   scope: string[];
-  codeChallenge: string|undefined;
-  codeChallengeMethod: CodeChallengeMethod|undefined;
+  codeChallenge: string|null;
+  codeChallengeMethod: CodeChallengeMethod|null;
+  nonce: string | null;
   browserSessionId: string;
-  nonce: string | undefined;
 }
 /**
  * This function is used for the authorization_code grant flow.
@@ -626,6 +626,7 @@ function grantTypeIdInfo(grantType: number|null): [Exclude<GrantType, 'refresh_t
     case 5: return ['authorization_code', true];
     case 6: return ['one-time-token', false];
     case 7: return ['developer-token', false];
+    case 8: return ['authorization_challenge', false];
     default:
       throw new Error('Unknown grant_type in database');
   }
@@ -653,6 +654,8 @@ function grantTypeId(grantType: GrantType | null, secretUsed?: boolean): number 
       return 6;
     case 'developer-token' :
       return 7;
+    case 'authorization_challenge' :
+      return 8;
 
   }
 

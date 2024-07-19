@@ -1,10 +1,8 @@
 /* eslint no-console: 0 */
 import { Knex, default as knex } from 'knex';
 import * as path from 'node:path';
-import * as dotenv from 'dotenv';
 import { fileURLToPath } from 'node:url';
-
-dotenv.config();
+import './env.js';
 
 let settings: Knex.Config | null = null;
 const db: Knex = knex(getSettings());

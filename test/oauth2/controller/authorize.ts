@@ -12,7 +12,7 @@ import * as sinon from 'sinon';
 
 import { InvalidRequest } from '../../../src/oauth2/errors.js';
 import * as oauth2Service from '../../../src/oauth2/service.js';
-import * as oauth2ClientService from '../../../src/oauth2-client/service.js';
+import * as oauth2ClientService from '../../../src/app-client/service.js';
 import * as principalService from '../../../src/principal/service.js';
 import * as userService from '../../../src/user/service.js';
 import * as userAppPermissionService from '../../../src/user-app-permissions/service.js';

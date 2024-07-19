@@ -26,7 +26,7 @@ class ClientCollectionController extends Controller {
 
   }
 
-  async post(ctx: Context<any>) {
+  async post(ctx: Context) {
 
     const principalService = new PrincipalService(ctx.privileges);
     const app = await principalService.findByExternalId(ctx.params.id, 'app');

@@ -7,7 +7,7 @@ import { tokenResponse } from '../../oauth2/formats/json.js';
 
 import * as tokenService from '../service.js';
 import * as oauth2Service from '../../oauth2/service.js';
-import * as oauth2ClientService from '../../oauth2-client/service.js';
+import * as oauth2ClientService from '../../app-client/service.js';
 import { PrincipalService } from '../../principal/service.js';
 import * as principalIdentityService from '../../principal-identity/service.js';
 import { VerificationTokenExchangeRequest } from '../../api-types.js';

@@ -6,7 +6,7 @@ import * as csv from '../formats/csv.js';
 
 import { PrincipalService } from '../../principal/service.js';
 import * as oauth2Service from '../service.js';
-import * as oauth2ClientService from '../../oauth2-client/service.js';
+import * as oauth2ClientService from '../../app-client/service.js';
 
 import {
   App,

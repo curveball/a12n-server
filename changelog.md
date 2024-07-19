@@ -20,6 +20,7 @@ Changelog
 * Dropped mocha for the built-in Node tester.
 * #494: Add 'public' to Postgres schema search path. (@elaugier)
 * Auto-generate API types from JSON schema.
+* Internal: oauth2-client is renamed to app-client to reduce confusion a bit.
 
 
 0.25.4 (2024-02-26)

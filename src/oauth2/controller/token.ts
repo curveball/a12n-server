@@ -11,7 +11,7 @@ import * as oauth2Service from '../service.js';
 import {
   getOAuth2ClientFromBasicAuth,
   getOAuth2ClientFromBody,
-} from '../../oauth2-client/service.js';
+} from '../../app-client/service.js';
 import * as userAppPermissions from '../../user-app-permissions/service.js';
 import * as principalIdentityService from '../../principal-identity/service.js';
 

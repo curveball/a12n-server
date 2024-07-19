@@ -1,6 +1,6 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { metadata } from '../../oauth2/formats/json.js';
+import { metadata } from '../formats/json.js';
 
 class MetadataController extends Controller {
 

@@ -9,9 +9,10 @@ import * as webAuthnService from '../../mfa/webauthn/service.js';
 import { getSetting } from '../../server-settings.js';
 import { hasUsers, PrincipalService } from '../../principal/service.js';
 import * as userService from '../../user/service.js';
-import { User } from '../../types.js';
+import { PrincipalIdentity, User } from '../../types.js';
 import { isValidRedirect } from '../utilities.js';
 import { loginForm } from '../formats/html.js';
+import * as services from '../../services.js';
 
 class LoginController extends Controller {
 
@@ -47,8 +48,10 @@ class LoginController extends Controller {
 
     const principalService = new PrincipalService('insecure');
     let user: User;
+    let identity: PrincipalIdentity;
     try {
-      user = await principalService.findByIdentity('mailto:' + ctx.request.body.userName) as User;
+      identity = await services.principalIdentity.findByUri('mailto:' + ctx.request.body.username);
+      user = await principalService.findByIdentity(identity) as User;
     } catch (err) {
       if (err instanceof NotFound) {
         log(EventType.loginFailed, ctx);
@@ -66,6 +69,10 @@ class LoginController extends Controller {
     if (!user.active) {
       log(EventType.loginFailedInactive, ctx.ip(), user.id, ctx.request.headers.get('User-Agent'));
       return this.redirectToLogin(ctx, '', 'This account is inactive. Please contact Admin');
+    }
+    if (!identity.verifiedAt) {
+      log(EventType.loginFailedNotVerified, ctx.ip(), user.id, ctx.request.headers.get('User-Agent'));
+      return this.redirectToLogin(ctx, '', 'This identity has not been verified');
     }
 
     if (await this.shouldMfaRedirect(ctx, user)) {

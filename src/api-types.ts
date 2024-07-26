@@ -162,6 +162,10 @@ export interface PrincipalEdit {
 export interface PrincipalNew {
   _links?: unknown;
   nickname: string;
+  /**
+   * Deprecated: If set, and when an identity href is passed when creating a user, this automatically sets that identity as 'verified'. This flag exists to replicate the behavior of older a12n-server versions when email verification was handled through the 'active' flag. This will be fully ignored in a future version and eventually removed.
+   */
+  active?: boolean;
   type: "user" | "app" | "group";
 }
 /* eslint-disable */

@@ -49,12 +49,18 @@ class UserCollectionController extends Controller {
       modifiedAt: new Date(),
     });
 
+    if (ctx.request.body.active !== undefined) {
+      console.error('[ERROR] A API client used the "active" flag when creating a new user. This is deprecated behavior!');
+    }
+
     await services.principalIdentity.create({
       principalId: user.id,
       isPrimary: true,
       uri: identity,
       label: null,
-      markVerified: false,
+
+      // Deprecated feature.
+      markVerified: ctx.request.body.active ?? false,
     });
 
     ctx.response.status = 201;

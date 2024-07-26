@@ -12,7 +12,7 @@ import { App, GrantType, AppClient } from '../types.js';
 
 export async function findByClientId(clientId: string): Promise<AppClient> {
 
-  const result = await db('app_client')
+  const result = await db('app_clients')
     .select('*')
     .where('client_id', clientId);
 
@@ -33,7 +33,7 @@ export async function findByClientId(clientId: string): Promise<AppClient> {
 
 export async function findById(id: number): Promise<AppClient> {
 
-  const result = await db('app_client')
+  const result = await db('app_clients')
     .select('*')
     .where('id', id);
 
@@ -54,7 +54,7 @@ export async function findById(id: number): Promise<AppClient> {
 
 export async function findByApp(app: App): Promise<AppClient[]> {
 
-  const result = await db('app_client')
+  const result = await db('app_clients')
     .select('*')
     .where('user_id', app.id);
 
@@ -135,7 +135,7 @@ export async function create(client: Omit<AppClient, 'id'|'href'>, redirectUris:
   let result;
 
   try {
-    result = await insertAndGetId('app_client', params);
+    result = await insertAndGetId('app_clients', params);
     for(const uri of redirectUris) {
 
       await db('oauth2_redirect_uris').insert({app_client_id: result, uri});
@@ -170,7 +170,7 @@ export async function edit(client: AppClient, redirectUris: string[]): Promise<v
 
   await db.transaction(async trx => {
 
-    await trx('app_client').update(params).where({id: client.id});
+    await trx('app_clients').update(params).where({id: client.id});
     await trx('oauth2_redirect_uris').delete().where({app_client_id: client.id});
 
     for(const uri of redirectUris) {

@@ -2,7 +2,7 @@ import { Knex } from 'knex';
 
 export async function up(knex: Knex): Promise<void> {
 
-  await knex.schema.renameTable('oauth2_clients', 'app_client');
+  await knex.schema.renameTable('oauth2_clients', 'app_clients');
 
   await knex.schema.alterTable('app_clients', table => {
 

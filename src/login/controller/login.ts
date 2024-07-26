@@ -47,19 +47,17 @@ class LoginController extends Controller {
   async post(ctx: Context<any>) {
 
     const principalService = new PrincipalService('insecure');
-    let user: User;
     let identity: PrincipalIdentity;
     try {
-      identity = await services.principalIdentity.findByUri('mailto:' + ctx.request.body.username);
-      user = await principalService.findByIdentity(identity) as User;
+      identity = await services.principalIdentity.findByUri('mailto:' + ctx.request.body.userName);
     } catch (err) {
       if (err instanceof NotFound) {
-        log(EventType.loginFailed, ctx);
         return this.redirectToLogin(ctx, '', 'Incorrect username or password');
       } else {
         throw err;
       }
     }
+    const user = await principalService.findByIdentity(identity) as User;
 
     if (!await userService.validatePassword(user, ctx.request.body.password)) {
       log(EventType.loginFailed, ctx.ip(), user.id);

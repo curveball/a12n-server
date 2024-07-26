@@ -328,4 +328,8 @@ export interface VerificationTokenGenerateRequest {
    * Specify how long the token is valid for, in seconds.
    */
   expiresIn?: number;
+  /**
+   * If set, the token will be associated with a specific email address or phone number. When this token is validated later, the email address or phone number will be marked as 'verified' for the user.
+   */
+  identity?: string;
 }

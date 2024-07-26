@@ -1,4 +1,4 @@
-import { User, App, OAuth2Client } from '../types.js';
+import { User, App, AppClient } from '../types.js';
 import { generateSecretToken } from '../crypto.js';
 import { getSetting } from '../server-settings.js';
 import { createPrivateKey, KeyObject, createPublicKey } from 'crypto';
@@ -7,7 +7,7 @@ import { getGlobalOrigin } from '@curveball/kernel';
 
 type AccessTokenOptions = {
   principal: User|App;
-  client: OAuth2Client;
+  client: AppClient;
   expiry: number;
   scope: string[];
 }
@@ -40,7 +40,7 @@ export async function generateJWTAccessToken(options: AccessTokenOptions): Promi
 
 type IDTokenOptions = {
   principal: User|App;
-  client: OAuth2Client;
+  client: AppClient;
   nonce: null | string;
 }
 

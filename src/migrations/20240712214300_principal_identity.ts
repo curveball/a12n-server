@@ -3,7 +3,7 @@ import { Knex } from 'knex';
 
 export async function up(knex: Knex): Promise<void> {
 
-  await knex.schema.createTable('principal_identity', table => {
+  await knex.schema.createTable('principal_identities', table => {
 
     table.increments('id');
     table
@@ -56,7 +56,7 @@ export async function up(knex: Knex): Promise<void> {
 
     if (principal.identity === null) continue;
 
-    await knex('principal_identity').insert({
+    await knex('principal_identities').insert({
       principal_id: principal.id,
       href: principal.identity,
       is_primary: 1,
@@ -108,7 +108,7 @@ export async function up(knex: Knex): Promise<void> {
 
 export async function down(knex: Knex): Promise<void> {
 
-  await knex.schema.dropTable('principal_identity');
+  await knex.schema.dropTable('principal_identities');
 
   // The 'identity' field is no longer used, but we are not deleting it yet
   // for safety reasons. We are however making it nullable and remove the

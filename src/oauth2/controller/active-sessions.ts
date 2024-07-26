@@ -10,7 +10,7 @@ import * as oauth2ClientService from '../../app-client/service.js';
 
 import {
   App,
-  OAuth2Client,
+  AppClient,
   Principal,
   User,
 } from '../../types.js';
@@ -44,7 +44,7 @@ class ActiveSessions extends Controller {
 
   }
 
-  private async getData(ctx: Context): Promise<[Principal, OAuth2Token[], Map<number, OAuth2Client|null>]> {
+  private async getData(ctx: Context): Promise<[Principal, OAuth2Token[], Map<number, AppClient|null>]> {
 
     const principalService = new PrincipalService(ctx.privileges);
     const principal = await principalService.findByExternalId(ctx.params.id);
@@ -58,7 +58,7 @@ class ActiveSessions extends Controller {
 
     const tokens = await oauth2Service.getActiveTokens(principal);
 
-    const clients = new Map<number, OAuth2Client|null>();
+    const clients = new Map<number, AppClient|null>();
     for(const token of tokens) {
 
       if (token.clientId !== 0 && !clients.has(token.clientId)) {

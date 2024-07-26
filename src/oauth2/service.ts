@@ -9,12 +9,12 @@ import { CodeChallengeMethod, OAuth2Code, OAuth2Token } from './types.js';
 import { generateSecretToken } from '../crypto.js';
 import { generateJWTAccessToken, generateJWTIDToken } from './jwt.js';
 import { Oauth2TokensRecord, Oauth2CodesRecord } from 'knex/types/tables.js';
-import { App, User, GrantType, OAuth2Client } from '../types.js';
+import { App, User, GrantType, AppClient } from '../types.js';
 import * as userAppPermissionsService from '../user-app-permissions/service.js';
 
 const oauth2TokenFields: (keyof Oauth2TokensRecord)[] = [
   'id',
-  'oauth2_client_id',
+  'app_client_id',
   'access_token',
   'refresh_token',
   'user_id',
@@ -26,10 +26,10 @@ const oauth2TokenFields: (keyof Oauth2TokensRecord)[] = [
   'grant_type',
 ];
 
-export async function getRedirectUris(client: OAuth2Client): Promise<string[]> {
+export async function getRedirectUris(client: AppClient): Promise<string[]> {
 
   const result = await query(
-    'SELECT uri FROM oauth2_redirect_uris WHERE oauth2_client_id = ?',
+    'SELECT uri FROM oauth2_redirect_uris WHERE app_client_id = ?',
     [client.id]
   );
 
@@ -37,7 +37,7 @@ export async function getRedirectUris(client: OAuth2Client): Promise<string[]> {
 
 }
 
-export async function validateRedirectUri(client: OAuth2Client, redirectUri: string): Promise<boolean> {
+export async function validateRedirectUri(client: AppClient, redirectUri: string): Promise<boolean> {
 
   const uris = await getRedirectUris(client);
   return uris.includes(redirectUri);
@@ -49,7 +49,7 @@ export async function validateRedirectUri(client: OAuth2Client, redirectUri: str
  *
  * If not, it will emit an InvalidGrant error
  */
-export async function requireRedirectUri(client: OAuth2Client, redirectUrl: string): Promise<void> {
+export async function requireRedirectUri(client: AppClient, redirectUrl: string): Promise<void> {
 
   const uris = await getRedirectUris(client);
   if (uris.length===0) {
@@ -61,9 +61,9 @@ export async function requireRedirectUri(client: OAuth2Client, redirectUrl: stri
 
 }
 
-export async function addRedirectUris(client: OAuth2Client, redirectUris: string[]): Promise<void> {
+export async function addRedirectUris(client: AppClient, redirectUris: string[]): Promise<void> {
 
-  const query = 'INSERT INTO oauth2_redirect_uris (oauth2_client_id, uri) VALUES (?, ?)';
+  const query = 'INSERT INTO oauth2_redirect_uris (app_client_id, uri) VALUES (?, ?)';
   for(const uri of redirectUris) {
     await db.raw(query, [client.id, uri]);
   }
@@ -82,7 +82,7 @@ export async function getActiveTokens(user: App | User): Promise<OAuth2Token[]> 
 }
 
 type GenerateTokenImplicitOptions = {
-  client: OAuth2Client;
+  client: AppClient;
   principal: User;
   scope: string[];
   browserSessionId: string;
@@ -100,7 +100,7 @@ export function generateTokenImplicit(options: GenerateTokenImplicitOptions): Pr
 }
 
 type GenerateTokenClientCredentialsOptions = {
-  client: OAuth2Client;
+  client: AppClient;
   scope: string[];
 }
 
@@ -117,7 +117,7 @@ export function generateTokenClientCredentials(options: GenerateTokenClientCrede
 }
 
 type GenerateTokenPasswordOptions = {
-  client: OAuth2Client;
+  client: AppClient;
   principal: User;
   scope: string[];
 }
@@ -133,7 +133,7 @@ export function generateTokenPassword(options: GenerateTokenPasswordOptions): Pr
 }
 
 type GenerateTokenAuthorizationCodeOptions = {
-  client: OAuth2Client;
+  client: AppClient;
   code: string;
   codeVerifier?: string;
   secretUsed: boolean;
@@ -218,7 +218,7 @@ type GenerateTokenDeveloperTokenOptions = {
  * Generates a token for the 'implicit' GrantType
  */
 export function generateTokenDeveloperToken(options: GenerateTokenDeveloperTokenOptions): Promise<OAuth2Token> {
-  const client: OAuth2Client = {
+  const client: AppClient = {
     id: 0,
     clientId: 'system',
     clientSecret: '',
@@ -247,7 +247,7 @@ export function generateTokenDeveloperToken(options: GenerateTokenDeveloperToken
 }
 
 type GenerateTokenOneTimeTokenOptions = {
-  client: OAuth2Client;
+  client: AppClient;
   principal: User;
 }
 /**
@@ -272,7 +272,7 @@ type GenerateTokenOptions = {
    * Goal is to remove this Summer 2023
    */
   grantType: GrantType | null;
-  client: OAuth2Client;
+  client: AppClient;
   principal: App |User;
   scope: string[];
   browserSessionId?: string;
@@ -307,7 +307,7 @@ async function generateTokenInternal(options: GenerateTokenOptions): Promise<OAu
   const refreshToken = await generateSecretToken();
 
   const record: Omit<Oauth2TokensRecord, 'id'> = {
-    oauth2_client_id: options.client?.id || 0,
+    app_client_id: options.client?.id || 0,
     access_token: accessToken,
     refresh_token: refreshToken,
     user_id: options.principal.id,
@@ -373,7 +373,7 @@ export function validatePKCE(codeVerifier: string|undefined, codeChallenge: stri
  * By specifying a refresh token, a new access/refresh token pair gets
  * returned. This also expires the old token.
  */
-export async function generateTokenFromRefreshToken(client: OAuth2Client, refreshToken: string): Promise<OAuth2Token> {
+export async function generateTokenFromRefreshToken(client: AppClient, refreshToken: string): Promise<OAuth2Token> {
 
   let oldToken: OAuth2Token;
   try {
@@ -402,7 +402,7 @@ export async function generateTokenFromRefreshToken(client: OAuth2Client, refres
 
 }
 
-export async function revokeByAccessRefreshToken(client: OAuth2Client, token: string): Promise<void> {
+export async function revokeByAccessRefreshToken(client: AppClient, token: string): Promise<void> {
 
   let oauth2Token: OAuth2Token|null = null;
 
@@ -454,7 +454,7 @@ export async function revokeToken(token: OAuth2Token): Promise<void> {
 }
 
 type GenerateAuthorizationCodeOptions = {
-  client: OAuth2Client;
+  client: AppClient;
   principal: User;
   scope: string[];
   codeChallenge: string|null;
@@ -610,7 +610,7 @@ function tokenRecordToModel(token: Oauth2TokensRecord, principal: User | App): O
     scope: token.scope?.split(' ') ?? [],
 
     principal,
-    clientId: token.oauth2_client_id,
+    clientId: token.app_client_id,
 
   };
 }

@@ -1,6 +1,6 @@
 import { Controller } from '@curveball/controller';
 import { Context } from '@curveball/kernel';
-import { getOAuth2ClientFromBasicAuth } from '../../app-client/service.js';
+import { getAppClientFromBasicAuth } from '../../app-client/service.js';
 import { UnauthorizedClient } from '../../oauth2/errors.js';
 import { UnsupportedMediaType } from '@curveball/http-errors';
 import { AuthorizationChallengeRequest } from '../../api-types.js';
@@ -29,7 +29,7 @@ class AuthorizationChallengeController extends Controller {
   async post(ctx: Context) {
 
     // We will only support Basic auth for now.
-    const client = await getOAuth2ClientFromBasicAuth(ctx);
+    const client = await getAppClientFromBasicAuth(ctx);
 
     if (!client.allowedGrantTypes.includes('authorization_challenge')) {
       throw new UnauthorizedClient('This client is not allowed to use the "authorization_challenge" oauth2 flow');

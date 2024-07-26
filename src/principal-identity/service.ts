@@ -1,13 +1,13 @@
 import { Principal, PrincipalIdentity, NewPrincipalIdentity } from '../types.js';
 import knex from '../database.js';
-import { PrincipalIdentityRecord } from 'knex/types/tables.js';
+import { PrincipalIdentitiesRecord } from 'knex/types/tables.js';
 import { NotFound } from '@curveball/http-errors';
 import { generatePublicId } from '../crypto.js';
 import { PrincipalService } from '../principal/service.js';
 
 export async function findByPrincipal(principal: Principal): Promise<PrincipalIdentity[]> {
 
-  const result = await knex('principal_identity')
+  const result = await knex('principal_identities')
     .select()
     .where('principal_id', principal.id);
 
@@ -19,7 +19,7 @@ export async function findByPrincipal(principal: Principal): Promise<PrincipalId
 
 export async function findById(principal: Principal, id:number): Promise<PrincipalIdentity> {
 
-  const result = await knex('principal_identity')
+  const result = await knex('principal_identities')
     .select()
     .where('principal_id', principal.id)
     .first();
@@ -32,7 +32,7 @@ export async function findById(principal: Principal, id:number): Promise<Princip
 
 export async function findByExternalId(principal: Principal, externalId: string): Promise<PrincipalIdentity> {
 
-  const result = await knex('principal_identity')
+  const result = await knex('principal_identities')
     .select()
     .where({external_id: externalId, principal_id: principal.id})
     .first();
@@ -50,7 +50,7 @@ export async function findByUri(arg1: Principal|string, arg2?:string): Promise<P
 
   if (typeof arg1 === 'string') {
 
-    const result = await knex('principal_identity')
+    const result = await knex('principal_identities')
       .select()
       .where('uri', arg1)
       .first();
@@ -62,7 +62,7 @@ export async function findByUri(arg1: Principal|string, arg2?:string): Promise<P
     return recordToModel(principalObj, result);
 
   } else {
-    const result = await knex('principal_identity')
+    const result = await knex('principal_identities')
       .select()
       .where({principal_id: arg1.id, uri: arg2})
       .first();
@@ -77,7 +77,7 @@ export async function findByUri(arg1: Principal|string, arg2?:string): Promise<P
 
 export async function create(identity: NewPrincipalIdentity): Promise<void> {
 
-  await knex('principal_identity')
+  await knex('principal_identities')
     .insert({
       uri: identity.uri,
       external_id: await generatePublicId(),
@@ -92,7 +92,7 @@ export async function create(identity: NewPrincipalIdentity): Promise<void> {
 }
 export async function markVerified(identity: PrincipalIdentity): Promise<void> {
 
-  await knex('principal_identity')
+  await knex('principal_identities')
     .update({
       verified_at: Date.now(),
     })
@@ -103,7 +103,7 @@ export async function markVerified(identity: PrincipalIdentity): Promise<void> {
 }
 
 
-function recordToModel(principal: Principal, record: PrincipalIdentityRecord): PrincipalIdentity {
+function recordToModel(principal: Principal, record: PrincipalIdentitiesRecord): PrincipalIdentity {
 
   return {
     id: record.id,

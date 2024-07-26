@@ -5,7 +5,7 @@ import { Forbidden, UnprocessableContent } from '@curveball/http-errors';
 
 import * as hal from '../formats/hal.js';
 import { PrincipalService } from '../../principal/service.js';
-import { GrantType, OAuth2Client } from '../../types.js';
+import { GrantType, AppClient } from '../../types.js';
 import { findByApp, create } from '../service.js';
 import { generatePublicId, generateSecretToken } from '../../crypto.js';
 
@@ -51,6 +51,9 @@ class ClientCollectionController extends Controller {
     if (ctx.request.body.allowPassword) {
       allowedGrantTypes.push('password');
     }
+    if (ctx.request.body.allowAuthorizationChallenge) {
+      allowedGrantTypes.push('authorization_challenge');
+    }
 
     let clientId = ctx.request.body.clientId;
 
@@ -67,7 +70,7 @@ class ClientCollectionController extends Controller {
     }
 
     const clientSecret = `secret-token:${await generateSecretToken()}`;
-    const newClient: Omit<OAuth2Client,'id'|'href'> = {
+    const newClient: Omit<AppClient,'id'|'href'> = {
       clientId,
       app,
       allowedGrantTypes: allowedGrantTypes,

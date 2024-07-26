@@ -3,13 +3,13 @@ import 'knex';
 declare module 'knex/types/tables.js' {
 
 interface Tables {
+  app_clients: AppClientsRecord;
   changelog: ChangelogRecord;
   group_members: GroupMembersRecord;
-  oauth2_clients: Oauth2ClientsRecord;
   oauth2_codes: Oauth2CodesRecord;
   oauth2_redirect_uris: Oauth2RedirectUrisRecord;
   oauth2_tokens: Oauth2TokensRecord;
-  principal_identity: PrincipalIdentityRecord;
+  principal_identities: PrincipalIdentitiesRecord;
   principals: PrincipalsRecord;
   privileges: PrivilegesRecord;
   server_settings: ServerSettingsRecord;
@@ -28,6 +28,18 @@ interface Tables {
  * It will be overwritten the next time types are generated.
  */
 
+export type AppClientsRecord = {
+  id: number;
+  client_id: string;
+  client_secret: string;
+
+  /**
+   * List of OAuth2 grant_types / flows this client is allowed to use
+   */
+  allowed_grant_types: string;
+  user_id: number;
+  require_pkce: number;
+};
 export type ChangelogRecord = {
   id: number;
   timestamp: number | null;
@@ -35,14 +47,6 @@ export type ChangelogRecord = {
 export type GroupMembersRecord = {
   user_id: number;
   group_id: number;
-};
-export type Oauth2ClientsRecord = {
-  id: number;
-  client_id: string;
-  client_secret: string;
-  allowed_grant_types: string;
-  user_id: number;
-  require_pkce: number;
 };
 export type Oauth2CodesRecord = {
   id: number;
@@ -66,12 +70,12 @@ export type Oauth2CodesRecord = {
 };
 export type Oauth2RedirectUrisRecord = {
   id: number;
-  oauth2_client_id: number;
+  app_client_id: number;
   uri: string;
 };
 export type Oauth2TokensRecord = {
   id: number;
-  oauth2_client_id: number;
+  app_client_id: number;
   access_token: string;
   refresh_token: string;
   user_id: number;
@@ -90,7 +94,7 @@ export type Oauth2TokensRecord = {
    */
   scope: string | null;
 };
-export type PrincipalIdentityRecord = {
+export type PrincipalIdentitiesRecord = {
   id: number;
   external_id: string;
   uri: string;

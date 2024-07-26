@@ -149,13 +149,16 @@ export type PrincipalStats = {
 };
 
 /**
- * The OAuth2 client refers to a single (programmatic) client, accessing
- * an API.
+ * The App Client refers to a single set of credentials for an app.
  *
- * OAuth2 clients are associated to 'Apps'. Each 'app' may have multiple
- * OAuth2 clients.
+ * The app client usually refers to an oauth2_client, and defines its
+ * client_id, client_secret and which OAuth2 flows its allowed to use.
+ *
+ * Apps can have multiple 'clients' because this allows apps to create
+ * new credentials while not immediately disabling old ones, or to
+ * create different credential sets with diffent grant types.
  */
-export type OAuth2Client = {
+export type AppClient = {
 
   /**
    * Unique, internal id.

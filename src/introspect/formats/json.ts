@@ -1,11 +1,11 @@
 import { OAuth2Token } from '../../oauth2/types.js';
 import { PrivilegeMap } from '../../privilege/types.js';
 import * as url from 'url';
-import { OAuth2Client } from '../../types.js';
+import { AppClient } from '../../types.js';
 
 type IntrospectInfo = {
   privileges: PrivilegeMap;
-  client: OAuth2Client;
+  client: AppClient;
   token: OAuth2Token;
   tokenType: 'bearer' | 'refresh_token';
   origin: string;

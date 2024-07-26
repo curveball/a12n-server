@@ -1,7 +1,7 @@
-import { App, OAuth2Client } from '../../types.js';
+import { App, AppClient } from '../../types.js';
 import { HalResource } from 'hal-types';
 
-export function collection(app: App, clients: OAuth2Client[]): HalResource {
+export function collection(app: App, clients: AppClient[]): HalResource {
 
   return {
     _links: {
@@ -44,7 +44,7 @@ export function collection(app: App, clients: OAuth2Client[]): HalResource {
   };
 
 }
-export function item(client: OAuth2Client, redirectUris: string[]): HalResource {
+export function item(client: AppClient, redirectUris: string[]): HalResource {
 
   return {
     _links: {
@@ -62,7 +62,7 @@ export function item(client: OAuth2Client, redirectUris: string[]): HalResource 
   };
 
 }
-export function editForm(client: OAuth2Client, redirectUris: string[]): HalResource {
+export function editForm(client: AppClient, redirectUris: string[]): HalResource {
 
   return {
     _links: {
@@ -134,7 +134,7 @@ export function editForm(client: OAuth2Client, redirectUris: string[]): HalResou
 
 }
 
-export function newClientSuccess(client: OAuth2Client, redirectUris: string[] ,secret: string): HalResource {
+export function newClientSuccess(client: AppClient, redirectUris: string[] ,secret: string): HalResource {
 
   return {
     _links: {

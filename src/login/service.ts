@@ -1,4 +1,4 @@
-import { OAuth2Client, Principal, PrincipalIdentity, User } from '../types.js';
+import { AppClient, Principal, PrincipalIdentity, User } from '../types.js';
 import { getSessionStore } from '../session-store.js';
 import { InvalidGrant, OAuth2Error } from '../oauth2/errors.js';
 import * as services from '../services.js';
@@ -59,7 +59,7 @@ type LoginSessionStage2 = LoginSession & {
  */
 const LOGIN_SESSION_EXPIRY = 60*20;
 
-export async function getSession(client: OAuth2Client, parameters: ChallengeRequest): Promise<LoginSession> {
+export async function getSession(client: AppClient, parameters: ChallengeRequest): Promise<LoginSession> {
 
   if (parameters.auth_session) {
     if (parameters.scope) {
@@ -73,7 +73,7 @@ export async function getSession(client: OAuth2Client, parameters: ChallengeRequ
 }
 
 
-export async function startLoginSession(client: OAuth2Client, scope?: string[]): Promise<LoginSession> {
+export async function startLoginSession(client: AppClient, scope?: string[]): Promise<LoginSession> {
 
   const store = getSessionStore();
   const id: string = await store.newSessionId();
@@ -90,7 +90,7 @@ export async function startLoginSession(client: OAuth2Client, scope?: string[]):
 
 }
 
-export async function continueLoginSession(client: OAuth2Client, authSession: string): Promise<LoginSession> {
+export async function continueLoginSession(client: AppClient, authSession: string): Promise<LoginSession> {
 
   const store = getSessionStore();
   const session: LoginSession|null = await store.get(authSession) as LoginSession|null;
@@ -131,7 +131,7 @@ async function deleteSession(session: LoginSession) {
  * If more credentials are needed or if any information is incorrect, an error
  * will be thrown.
  */
-export async function challenge(client: OAuth2Client, session: LoginSession, parameters: ChallengeRequest): Promise<OAuth2Code> {
+export async function challenge(client: AppClient, session: LoginSession, parameters: ChallengeRequest): Promise<OAuth2Code> {
 
   try {
     if (!session.principalId) {

@@ -283,6 +283,21 @@ class A12nLoginChallengeError extends OAuth2Error {
 
   }
 
+  serializeErrorBody() {
+
+    return {
+      error: this.errorCode,
+      error_description: this.message,
+      challenge: this.userChallenge,
+      was_fail: this.wasFail,
+      auth_session: this.session.authSession,
+      expires_at: this.session.expiresAt,
+    };
+
+  }
+
+
+
 }
 
 function assertSessionStage2(session: LoginSession): asserts session is LoginSessionStage2 {

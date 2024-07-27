@@ -45,7 +45,8 @@ Features
   * [OAuth 2 Token Introspection][2].
   * [JSON Web Key Sets][4].
   * [OAuth2 Token Revocation][5]
-  * [RFC 9068][7] - JSON Web Token (JWT) Profile for OAuth 2.0 Access Tokens
+  * [RFC 9068][7] - JSON Web Token (JWT) Profile for OAuth 2.0 Access Tokens.
+  * [OAuth 2.0 Multiple Response Type Encoding Practices](https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html)
 * MFA
   * Google Authenticator (TOTP).
   * WebauthN / Yubikeys

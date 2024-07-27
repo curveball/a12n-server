@@ -7,6 +7,7 @@ type SigningAlgs = 'RS256';
 type GrantType = 'client_credentials' | 'implicit' | 'authorization_code' | 'refresh_token';
 
 type ResponseType = 'token' | 'code' | 'code id_token';
+type ResponseMode = 'query' | 'fragment';
 
 type MetaData = {
   issuer: string;
@@ -20,6 +21,7 @@ type MetaData = {
   scopes_supported: string[];
 
   response_types_supported: ResponseType[];
+  response_modes_supported: ResponseMode[];
   grant_types_supported: GrantType[];
 
   id_token_signing_alg_values_supported: SigningAlgs[];
@@ -51,6 +53,7 @@ export function metadata(): MetaData {
     scopes_supported: ['openid'],
 
     response_types_supported: ['token', 'code', 'code id_token'],
+    response_modes_supported: ['fragment', 'query'],
     grant_types_supported: ['client_credentials', 'implicit', 'authorization_code', 'refresh_token'],
     id_token_signing_alg_values_supported: ['RS256'],
 

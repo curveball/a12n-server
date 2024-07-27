@@ -21,6 +21,8 @@ Changelog
 * #494: Add 'public' to Postgres schema search path. (@elaugier)
 * Auto-generate API types from JSON schema.
 * Internal: oauth2-client is renamed to app-client to reduce confusion a bit.
+* Added support for [OAuth 2.0 Multiple Response Type Encoding
+  Practices](https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html).
 
 
 0.25.4 (2024-02-26)

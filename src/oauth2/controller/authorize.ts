@@ -95,7 +95,7 @@ class AuthorizeController extends Controller {
     ctx.response.headers.set('Cache-Control', 'no-cache');
     ctx.response.headers.set(
       'Location',
-      params.redirectUri + '#' + querystring.stringify({
+      params.redirectUri + (params.responseMode === 'query' ? '?' : '#') + querystring.stringify({
         access_token: token.accessToken,
         token_type: token.tokenType,
         expires_in: token.accessTokenExpires - Math.round(Date.now() / 1000),
@@ -138,7 +138,7 @@ class AuthorizeController extends Controller {
     ctx.response.headers.set('Cache-Control', 'no-cache');
     ctx.response.headers.set(
       'Location',
-      params.redirectUri + '?' + querystring.stringify(redirectParams)
+      params.redirectUri + (params.responseMode === 'query' ? '?' : '#') + querystring.stringify(redirectParams)
     );
 
   }
@@ -166,6 +166,11 @@ type AuthorizeParamsCode = {
   scope: string[];
   state?: string;
 
+  /**
+   * See https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html
+   */
+  responseMode: OAuth2ResponseMode;
+
   // PCKE extension
   codeChallenge?: string;
   codeChallengeMethod?: CodeChallengeMethod;
@@ -181,6 +186,11 @@ type AuthorizeParamsToken = {
   redirectUri?: string;
   scope: string[];
   state?: string;
+
+  /**
+   * See https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html
+   */
+  responseMode: OAuth2ResponseMode;
 }
 
 type AuthorizeParams = AuthorizeParamsCode | AuthorizeParamsToken;
@@ -219,13 +229,24 @@ function parseAuthorizationQuery(query: Record<string, string>): AuthorizeParams
     }
   }
 
+  let responseMode: OAuth2ResponseMode;
+  if (query.response_mode) {
+    if (!isResponseMode(query.response_mode)) {
+      throw new InvalidRequest('Only "query" and "fragment" are currently supported by this server for the "response_mode" parameter');
+    }
+    responseMode = query.response_mode;
+  } else {
+    responseMode = responseType === 'token' ? 'fragment' : 'query';
+  }
+
   if (responseType === 'token') {
     return {
       responseType,
       clientId,
       redirectUri: query.redirect_uri ?? undefined,
       state: query.state ?? undefined,
-      scope: query.scope ? query.scope.split(' ') : []
+      scope: query.scope ? query.scope.split(' ') : [],
+      responseMode,
     };
   }
 
@@ -264,10 +285,19 @@ function parseAuthorizationQuery(query: Record<string, string>): AuthorizeParams
     redirectUri: query.redirect_uri ?? undefined,
     state: query.state ?? undefined,
     scope,
+    responseMode,
     codeChallenge,
     codeChallengeMethod,
 
     display,
     nonce: query.nonce ?? undefined,
   };
+}
+
+type OAuth2ResponseMode = 'query' | 'fragment';
+
+function isResponseMode(input: string): input is OAuth2ResponseMode {
+
+  return (input === 'query' || input === 'fragment');
+
 }

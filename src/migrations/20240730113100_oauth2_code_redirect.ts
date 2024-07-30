@@ -16,7 +16,7 @@ export async function up(knex: Knex): Promise<void> {
 
   });
 
-  await knex('oauth2_codes').update({grant_type: 4}); 
+  await knex('oauth2_codes').update({grant_type: 4});
 
   await knex.schema.alterTable('oauth2_codes', table => {
 

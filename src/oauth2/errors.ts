@@ -1,7 +1,21 @@
 import { HttpError } from '@curveball/http-errors';
 
-interface OAuth2Error extends HttpError {
-  errorCode: string;
+export abstract class OAuth2Error extends Error implements HttpError {
+  abstract errorCode: string;
+  abstract httpStatus: number;
+
+  /**
+   * Returns the JSON response body for the OAuth2 error.
+   */
+  serializeErrorBody() {
+
+    return {
+      error: this.errorCode,
+      error_description: this.message,
+    };
+
+  }
+
 }
 
 export function isOAuth2Error(err: any): err is OAuth2Error {
@@ -14,7 +28,7 @@ export function isOAuth2Error(err: any): err is OAuth2Error {
  * The request is missing a required parameter, includes an invalid parameter
  * value, includes a parameter more than once or is otherwise malformed.
  */
-export class InvalidRequest extends Error implements OAuth2Error {
+export class InvalidRequest extends OAuth2Error {
 
   httpStatus = 400;
   errorCode = 'invalid_request';
@@ -25,7 +39,7 @@ export class InvalidRequest extends Error implements OAuth2Error {
  * The client is not authorized to request an authorization code using this
  * method
  */
-export class UnauthorizedClient extends Error implements OAuth2Error {
+export class UnauthorizedClient extends OAuth2Error {
 
   httpStatus = 403;
   errorCode = 'unauthorized_client';
@@ -35,7 +49,7 @@ export class UnauthorizedClient extends Error implements OAuth2Error {
 /**
  * The resource owner or authorization server denied the request
  */
-export class AccessDenied extends Error implements OAuth2Error {
+export class AccessDenied extends OAuth2Error {
 
   httpStatus = 403;
   errorCode = 'access_denied';
@@ -46,7 +60,7 @@ export class AccessDenied extends Error implements OAuth2Error {
  * The authorization server does not support obtaining an authorization code
  * using this method
  */
-export class UnsupportedResponseType extends Error implements OAuth2Error {
+export class UnsupportedResponseType extends OAuth2Error {
 
   httpStatus = 400;
   errorCode = 'unsupported_response_type';
@@ -56,7 +70,7 @@ export class UnsupportedResponseType extends Error implements OAuth2Error {
 /**
  * The requested scope is invalid, unknown or malformed
  */
-export class InvalidScope extends Error implements OAuth2Error {
+export class InvalidScope extends OAuth2Error {
 
   httpStatus = 400;
   errorCode = 'invalid_scope';
@@ -73,7 +87,7 @@ export class InvalidScope extends Error implements OAuth2Error {
  * the "WWW-Authenticate" response header field matching the authentication
  * scheme used by the client.
  */
-export class InvalidClient extends Error implements OAuth2Error {
+export class InvalidClient extends OAuth2Error {
 
   httpStatus = 401;
   errorCode = 'invalid_client';
@@ -86,7 +100,7 @@ export class InvalidClient extends Error implements OAuth2Error {
  * the redirection URI used in the authorization request, or was issued to
  * another client.
  */
-export class InvalidGrant extends Error implements OAuth2Error {
+export class InvalidGrant extends OAuth2Error {
 
   httpStatus = 400;
   errorCode = 'invalid_grant';
@@ -96,7 +110,7 @@ export class InvalidGrant extends Error implements OAuth2Error {
 /**
  * The authorization grant type is not supported by the authorization server.
  */
-export class UnsupportedGrantType extends Error implements OAuth2Error {
+export class UnsupportedGrantType extends OAuth2Error {
 
   httpStatus = 400;
   errorCode = 'unsupported_grant_type';
@@ -109,7 +123,7 @@ export class UnsupportedGrantType extends Error implements OAuth2Error {
  * Internal Server Error HTTP status code cannot be returned to the client via
  * an HTTP redirect.)
  */
-export class ServerError extends Error implements OAuth2Error {
+export class ServerError extends OAuth2Error {
 
   httpStatus = 500;
   errorCode = 'server_error';
@@ -122,7 +136,7 @@ export class ServerError extends Error implements OAuth2Error {
  * needed because a 503 Service Unavailable HTTP status code cannot be returned
  * to the client via an HTTP redirect.)
  */
-export class TemporarilyUnavailable extends Error implements OAuth2Error {
+export class TemporarilyUnavailable extends OAuth2Error {
 
   httpStatus = 503;
   errorCode = 'temporarily_unavailable';

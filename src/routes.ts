@@ -22,6 +22,7 @@ import loginMfa from './login/controller/mfa.js';
 import loginWebAuthn from './mfa/webauthn/controller/login.js';
 import logout from './logout/controller.js';
 import oauth2Authorize from './oauth2/controller/authorize.js';
+import oauth2AuthorizationChallenge from './login/controller/authorization-challenge.js';
 import oauth2ErrorHandler from './oauth2/oauth2-error-handler.js';
 import oauth2Metadata from './well-known/controller/oauth2-metadata.js';
 import oauth2Revoke from './oauth2/controller/revoke.js';
@@ -75,6 +76,7 @@ const routes = [
   router('/exchange-one-time-token', verificationTokenExchange),
   router('/token', oauth2ErrorHandler, oauth2Token),
   router('/revoke', oauth2Revoke),
+  router('/authorization-challenge', oauth2ErrorHandler, oauth2AuthorizationChallenge),
 
   router('/login', login),
   router('/login/mfa', loginMfa),

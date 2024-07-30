@@ -1,9 +1,9 @@
 import { OAuth2Token } from '../types.js';
-import { OAuth2Client } from '../../types.js';
+import { AppClient } from '../../types.js';
 
 import { stringify } from 'csv-stringify/sync';
 
-export function activeSessions(tokens: OAuth2Token[], clients: Map<number, OAuth2Client|null>): string {
+export function activeSessions(tokens: OAuth2Token[], clients: Map<number, AppClient|null>): string {
 
   return stringify(
     tokens.map( token => {

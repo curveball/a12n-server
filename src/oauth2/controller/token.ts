@@ -5,12 +5,12 @@ import log from '../../log/service.js';
 import { EventType } from '../../log/types.js';
 import { PrincipalService } from '../../principal/service.js';
 import * as userService from '../../user/service.js';
-import { User, OAuth2Client } from '../../types.js';
+import { User, AppClient } from '../../types.js';
 import { InvalidGrant, InvalidRequest, UnsupportedGrantType } from '../errors.js';
 import * as oauth2Service from '../service.js';
 import {
-  getOAuth2ClientFromBasicAuth,
-  getOAuth2ClientFromBody,
+  getAppClientFromBasicAuth,
+  getAppClientFromBody,
 } from '../../app-client/service.js';
 import * as userAppPermissions from '../../user-app-permissions/service.js';
 import * as principalIdentityService from '../../principal-identity/service.js';
@@ -28,17 +28,17 @@ class TokenController extends Controller {
       throw new UnsupportedGrantType('The "grant_type" must be one of ' + supportedGrantTypes.join(', '));
     }
 
-    let oauth2Client: OAuth2Client;
+    let oauth2Client: AppClient;
 
     let secretUsed: boolean;
     if (ctx.request.headers.has('Authorization')) {
-      oauth2Client = await getOAuth2ClientFromBasicAuth(ctx);
+      oauth2Client = await getAppClientFromBasicAuth(ctx);
       secretUsed = true;
     } else {
       if (!['authorization_code', 'refresh_token'].includes(grantType)) {
         throw new InvalidRequest('A secret must be specified when using the client_credentials grant');
       }
-      oauth2Client = await getOAuth2ClientFromBody(ctx);
+      oauth2Client = await getAppClientFromBody(ctx);
       secretUsed = false;
     }
 
@@ -59,7 +59,7 @@ class TokenController extends Controller {
 
   }
 
-  async clientCredentials(oauth2Client: OAuth2Client, ctx: Context) {
+  async clientCredentials(oauth2Client: AppClient, ctx: Context) {
 
     const token = await oauth2Service.generateTokenClientCredentials({
       client: oauth2Client,
@@ -75,29 +75,19 @@ class TokenController extends Controller {
 
   }
 
-  async authorizationCode(oauth2Client: OAuth2Client, ctx: Context<any>, secretUsed: boolean) {
+  async authorizationCode(oauth2Client: AppClient, ctx: Context<any>, secretUsed: boolean) {
 
     if (!ctx.request.body.code) {
       throw new InvalidRequest('The "code" property is required');
     }
-    if (!ctx.request.body.redirect_uri) {
-      throw new InvalidRequest('The "redirect_uri" property is required');
-    }
+
     const token = await oauth2Service.generateTokenAuthorizationCode({
       client: oauth2Client,
       code: ctx.request.body.code,
       codeVerifier: ctx.request.body.code_verifier,
       secretUsed,
+      redirectUri: ctx.request.body.redirect_uri ?? null,
     });
-    if (!await oauth2Service.validateRedirectUri(oauth2Client, ctx.request.body.redirect_uri)) {
-      await log(
-        EventType.oauth2BadRedirect,
-        ctx.ip(),
-        token.principal.id
-      );
-      throw new InvalidRequest('This value for "redirect_uri" is not recognized.');
-    }
-
 
     ctx.response.type = 'application/json';
     ctx.response.body = {
@@ -110,7 +100,7 @@ class TokenController extends Controller {
 
   }
 
-  async password(oauth2Client: OAuth2Client, ctx: Context<any>) {
+  async password(oauth2Client: AppClient, ctx: Context<any>) {
 
     let identity;
     let user: User;
@@ -186,7 +176,7 @@ class TokenController extends Controller {
 
   }
 
-  async refreshToken(oauth2Client: OAuth2Client, ctx: Context<any>) {
+  async refreshToken(oauth2Client: AppClient, ctx: Context<any>) {
 
     if (!ctx.request.body.refresh_token) {
       throw new InvalidRequest('The "refresh_token" property is required');

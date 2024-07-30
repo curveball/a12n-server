@@ -13,10 +13,7 @@ const oauth2ErrorHandler: Middleware = async (ctx, next) => {
 
       ctx.status = err.httpStatus;
       ctx.response.type = 'application/json';
-      ctx.response.body = {
-        error: err.errorCode,
-        error_description: err.message,
-      };
+      ctx.response.body = err.serializeErrorBody();
 
     } else {
       // Let someone else deal with it

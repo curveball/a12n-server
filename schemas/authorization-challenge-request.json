@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://curveballjs.org/schemas/a12nserver/authorization-challenge-request.json",
+  "type": "object",
+  "title": "AuthorizationChallengeRequest",
+  "description": "Request body for the Authorization Challenge Request endpoint for first-party applications.",
+  "required": [],
+  "additionalProperties": false,
+
+  "properties": {
+    "scope": {
+      "type": "string",
+      "description": "OAuth2 scope"
+    },
+    "auth_session": {
+      "description": "If the client has started a login session, specify auth_session to continue the login process",
+      "type": "string"
+    },
+    "username": {
+      "type": "string"
+    },
+    "password": {
+      "type": "string"
+    }
+  }
+
+}

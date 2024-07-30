@@ -48,13 +48,19 @@ export function newClient(user: App, query: NewClientQuery ) {
           },
           {
             name: 'allowPassword',
-            title: 'Allow "password" grant_type (trusted applications only)',
+            title: 'Allow "password" grant_type (trusted applications only!)',
             type: 'checkbox',
             value: allowedGrantTypes.includes('password')
           },
           {
+            name: 'allowAuthorizationChallenge',
+            title: 'Allow "OAuth 2.0 Authorization Challenge for First-Party applications" flow (experimental and only for trusted applications!)',
+            type: 'checkbox',
+            value: allowedGrantTypes.includes('allowAuthorizationChallenge')
+          },
+          {
             name: 'allowImplicit',
-            title: 'Allow "implicit" grant_type (deprecated) ',
+            title: 'Allow "implicit" grant_type (deprecated! insecure!) ',
             type: 'checkbox',
             value: allowedGrantTypes.includes('implicit')
           },

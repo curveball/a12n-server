@@ -1,18 +1,18 @@
 import * as bcrypt from 'bcrypt';
 import { Context } from '@curveball/core';
 import { NotFound, Unauthorized, Conflict } from '@curveball/http-errors';
-import { Oauth2ClientsRecord } from 'knex/types/tables.js';
+import { AppClientsRecord } from 'knex/types/tables.js';
 import { wrapError, UniqueViolationError } from 'db-errors';
 
 import { PrincipalService } from '../principal/service.js';
 import db, { insertAndGetId } from '../database.js';
 import { InvalidRequest } from '../oauth2/errors.js';
 import parseBasicAuth from './parse-basic-auth.js';
-import { App, GrantType, OAuth2Client } from '../types.js';
+import { App, GrantType, AppClient } from '../types.js';
 
-export async function findByClientId(clientId: string): Promise<OAuth2Client> {
+export async function findByClientId(clientId: string): Promise<AppClient> {
 
-  const result = await db('oauth2_clients')
+  const result = await db('app_clients')
     .select('*')
     .where('client_id', clientId);
 
@@ -20,7 +20,7 @@ export async function findByClientId(clientId: string): Promise<OAuth2Client> {
     throw new NotFound('OAuth2 client_id not recognized');
   }
 
-  const record: Oauth2ClientsRecord = result[0];
+  const record: AppClientsRecord = result[0];
 
   const principalService = new PrincipalService('insecure');
   const app = await principalService.findById(record.user_id, 'app');
@@ -31,9 +31,9 @@ export async function findByClientId(clientId: string): Promise<OAuth2Client> {
 
 }
 
-export async function findById(id: number): Promise<OAuth2Client> {
+export async function findById(id: number): Promise<AppClient> {
 
-  const result = await db('oauth2_clients')
+  const result = await db('app_clients')
     .select('*')
     .where('id', id);
 
@@ -41,7 +41,7 @@ export async function findById(id: number): Promise<OAuth2Client> {
     throw new NotFound('OAuth2 id not recognized');
   }
 
-  const record: Oauth2ClientsRecord = result[0];
+  const record: AppClientsRecord = result[0];
 
   const principalService = new PrincipalService('insecure');
   const app = await principalService.findById(record.user_id, 'app');
@@ -52,17 +52,17 @@ export async function findById(id: number): Promise<OAuth2Client> {
 
 }
 
-export async function findByApp(app: App): Promise<OAuth2Client[]> {
+export async function findByApp(app: App): Promise<AppClient[]> {
 
-  const result = await db('oauth2_clients')
+  const result = await db('app_clients')
     .select('*')
     .where('user_id', app.id);
 
-  return result.map( (record: Oauth2ClientsRecord) => mapRecordToModel(record, app));
+  return result.map( (record: AppClientsRecord) => mapRecordToModel(record, app));
 
 }
 
-function mapRecordToModel(record: Oauth2ClientsRecord, app: App): OAuth2Client {
+function mapRecordToModel(record: AppClientsRecord, app: App): AppClient {
 
   return {
     id: record.id,
@@ -76,9 +76,9 @@ function mapRecordToModel(record: Oauth2ClientsRecord, app: App): OAuth2Client {
 
 }
 
-export async function getOAuth2ClientFromBasicAuth(ctx: Context): Promise<OAuth2Client> {
+export async function getAppClientFromBasicAuth(ctx: Context): Promise<AppClient> {
 
-  let oauth2Client: OAuth2Client;
+  let oauth2Client: AppClient;
 
   const basicAuth = parseBasicAuth(ctx);
   if (!basicAuth) {
@@ -103,7 +103,7 @@ export async function getOAuth2ClientFromBasicAuth(ctx: Context): Promise<OAuth2
 
 }
 
-export async function getOAuth2ClientFromBody(ctx: Context<any>): Promise<OAuth2Client> {
+export async function getAppClientFromBody(ctx: Context<any>): Promise<AppClient> {
 
   if (!ctx.request.body.client_id) {
     throw new InvalidRequest('The "client_id" property is required');
@@ -122,9 +122,9 @@ export async function getOAuth2ClientFromBody(ctx: Context<any>): Promise<OAuth2
 
 }
 
-export async function create(client: Omit<OAuth2Client, 'id'|'href'>, redirectUris: string[]): Promise<OAuth2Client> {
+export async function create(client: Omit<AppClient, 'id'|'href'>, redirectUris: string[]): Promise<AppClient> {
 
-  const params: Partial<Oauth2ClientsRecord> = {
+  const params: Partial<AppClientsRecord> = {
     client_id: client.clientId,
     client_secret: client.clientSecret,
     user_id: client.app.id,
@@ -135,10 +135,10 @@ export async function create(client: Omit<OAuth2Client, 'id'|'href'>, redirectUr
   let result;
 
   try {
-    result = await insertAndGetId('oauth2_clients', params);
+    result = await insertAndGetId('app_clients', params);
     for(const uri of redirectUris) {
 
-      await db('oauth2_redirect_uris').insert({oauth2_client_id: result, uri});
+      await db('oauth2_redirect_uris').insert({app_client_id: result, uri});
 
     }
 
@@ -161,28 +161,28 @@ export async function create(client: Omit<OAuth2Client, 'id'|'href'>, redirectUr
 
 }
 
-export async function edit(client: OAuth2Client, redirectUris: string[]): Promise<void> {
+export async function edit(client: AppClient, redirectUris: string[]): Promise<void> {
 
-  const params: Partial<Oauth2ClientsRecord> = {
+  const params: Partial<AppClientsRecord> = {
     allowed_grant_types: client.allowedGrantTypes.join(' '),
     require_pkce: client.requirePkce?1:0,
   };
 
   await db.transaction(async trx => {
 
-    await trx('oauth2_clients').update(params).where({id: client.id});
-    await trx('oauth2_redirect_uris').delete().where({oauth2_client_id: client.id});
+    await trx('app_clients').update(params).where({id: client.id});
+    await trx('oauth2_redirect_uris').delete().where({app_client_id: client.id});
 
     for(const uri of redirectUris) {
 
-      await trx('oauth2_redirect_uris').insert({oauth2_client_id: client.id, uri});
+      await trx('oauth2_redirect_uris').insert({app_client_id: client.id, uri});
 
     }
   });
 
 }
 
-export async function validateSecret(oauth2Client: OAuth2Client, secret: string): Promise<boolean> {
+export async function validateSecret(oauth2Client: AppClient, secret: string): Promise<boolean> {
 
   return await bcrypt.compare(secret, oauth2Client.clientSecret);
 

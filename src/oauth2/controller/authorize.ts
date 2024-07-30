@@ -6,7 +6,7 @@ import { NotFound, NotImplemented } from '@curveball/http-errors';
 import { InvalidClient, InvalidRequest, UnsupportedGrantType } from '../errors.js';
 import * as oauth2Service from '../service.js';
 import { CodeChallengeMethod } from '../types.js';
-import { OAuth2Client } from '../../types.js';
+import { AppClient } from '../../types.js';
 import log from '../../log/service.js';
 import { EventType } from '../../log/types.js';
 import { findByClientId } from '../../app-client/service.js';
@@ -82,7 +82,7 @@ class AuthorizeController extends Controller {
 
   }
 
-  async tokenRedirect(ctx: Context, oauth2Client: OAuth2Client, params: AuthorizeParamsToken) {
+  async tokenRedirect(ctx: Context, oauth2Client: AppClient, params: AuthorizeParamsToken) {
 
     const token = await oauth2Service.generateTokenImplicit({
       client: oauth2Client,
@@ -107,7 +107,7 @@ class AuthorizeController extends Controller {
 
   async codeRedirect(
     ctx: Context,
-    oauth2Client: OAuth2Client,
+    oauth2Client: AppClient,
     params: AuthorizeParamsCode
   ) {
 
@@ -115,10 +115,12 @@ class AuthorizeController extends Controller {
       client: oauth2Client,
       principal: ctx.session.user,
       scope: params.scope,
-      codeChallenge: params.codeChallenge,
-      codeChallengeMethod: params.codeChallengeMethod,
+      redirectUri: params.redirectUri ?? null,
+      grantType: params.grantType,
+      codeChallenge: params.codeChallenge ?? null,
+      codeChallengeMethod: params.codeChallengeMethod ?? null,
       browserSessionId: ctx.sessionId!,
-      nonce: params.nonce,
+      nonce: params.nonce ?? null,
     });
 
     const redirectParams: Record<string, string> = {
@@ -164,6 +166,7 @@ type AuthorizeParamsCode = {
   clientId: string;
   redirectUri?: string;
   scope: string[];
+  grantType: 'authorization_code' | 'authorization_challenge';
   state?: string;
 
   /**
@@ -282,7 +285,8 @@ function parseAuthorizationQuery(query: Record<string, string>): AuthorizeParams
   return {
     responseType,
     clientId,
-    redirectUri: query.redirect_uri ?? undefined,
+    redirectUri: query.redirect_uri ?? null,
+    grantType: 'authorization_code',
     state: query.state ?? undefined,
     scope,
     responseMode,

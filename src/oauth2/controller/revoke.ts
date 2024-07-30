@@ -3,10 +3,10 @@ import { Context } from '@curveball/core';
 import log from '../../log/service.js';
 import { EventType } from '../../log/types.js';
 import { revokeByAccessRefreshToken } from '../service.js';
-import { OAuth2Client } from '../../types.js';
+import { AppClient } from '../../types.js';
 import {
-  getOAuth2ClientFromBasicAuth,
-  getOAuth2ClientFromBody,
+  getAppClientFromBasicAuth,
+  getAppClientFromBody,
 } from '../../app-client/service.js';
 
 
@@ -14,12 +14,12 @@ class RevokeController extends Controller {
 
   async post(ctx: Context<any>) {
 
-    let oauth2Client: OAuth2Client;
+    let oauth2Client: AppClient;
 
     if (ctx.request.headers.has('Authorization')) {
-      oauth2Client = await getOAuth2ClientFromBasicAuth(ctx);
+      oauth2Client = await getAppClientFromBasicAuth(ctx);
     } else {
-      oauth2Client = await getOAuth2ClientFromBody(ctx);
+      oauth2Client = await getAppClientFromBody(ctx);
     }
 
     const token = ctx.request.body.token;

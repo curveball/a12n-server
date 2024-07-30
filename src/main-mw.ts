@@ -5,7 +5,6 @@ import links from '@curveball/links';
 import problem from '@curveball/problem';
 import session from '@curveball/session';
 import validator from '@curveball/validator';
-import { RedisStore } from '@curveball/session-redis';
 import { invokeMiddlewares, Middleware } from '@curveball/core';
 
 import login from './middleware/login.js';
@@ -14,6 +13,7 @@ import routes from './routes.js';
 import { getSetting } from './server-settings.js';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { getSessionStore } from './session-store.js';
 
 /**
  * The 'main middleware'.
@@ -40,12 +40,7 @@ export default function (): Middleware {
 
   middlewares.push(
     session({
-      store: process.env.REDIS_HOST ? new RedisStore({
-        prefix: 'A12N-session',
-        clientOptions: {
-          url: process.env.REDIS_URI!,
-        },
-      }) : 'memory',
+      store: getSessionStore(),
       cookieName: 'A12N',
       expiry: 60 * 60 * 24 * 7,
     }),

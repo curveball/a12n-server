@@ -43,7 +43,7 @@ class EditClientController extends Controller {
     if (ctx.request.body.allowClientCredentials) {
       allowedGrantTypes.push('client_credentials');
     }
-    if (ctx.request.body.allowAuthorizationCode) {
+    if (ctx.request.body.allowAuthorizationCode || ctx.request.body.allowAuthorizationChallenge) {
       allowedGrantTypes.push('authorization_code');
     }
     if (ctx.request.body.allowImplicit) {
@@ -54,6 +54,9 @@ class EditClientController extends Controller {
     }
     if (ctx.request.body.allowPassword) {
       allowedGrantTypes.push('password');
+    }
+    if (ctx.request.body.allowAuthorizationChallenge) {
+      allowedGrantTypes.push('authorization_challenge');
     }
 
     const redirectUris = ctx.request.body.redirectUris.trim().split(/\r\n|\n/).filter((line:string) => !!line);

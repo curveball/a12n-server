@@ -110,6 +110,12 @@ export function editForm(client: AppClient, redirectUris: string[]): HalResource
             value: client.allowedGrantTypes.includes('implicit') ? 'true' : '',
           },
           {
+            name: 'allowAuthorizationChallenge',
+            prompt: 'Allow "OAuth 2.0 Authorization Challenge for First-Party applications" flow (experimental and only for trusted applications!) (implies authorization_code)',
+            type: 'checkbox',
+            value: client.allowedGrantTypes.includes('authorization_challenge') ? 'true' :'',
+          },
+          {
             name: 'allowRefreshToken',
             prompt: 'Allow "refresh_token" grant_type',
             type: 'checkbox',

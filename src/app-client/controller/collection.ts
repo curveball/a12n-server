@@ -39,7 +39,7 @@ class ClientCollectionController extends Controller {
     if (ctx.request.body.allowClientCredentials) {
       allowedGrantTypes.push('client_credentials');
     }
-    if (ctx.request.body.allowAuthorizationCode) {
+    if (ctx.request.body.allowAuthorizationCode || ctx.request.body.allowAuthorizationChallenge) {
       allowedGrantTypes.push('authorization_code');
     }
     if (ctx.request.body.allowImplicit) {

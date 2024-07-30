@@ -285,7 +285,7 @@ type GenerateTokenOptions = {
 async function generateTokenInternal(options: GenerateTokenOptions): Promise<OAuth2Token> {
 
   if (!options.principal.active) {
-    throw new Error ('Cannot generate token for inactive user');
+    throw new Error('Cannot generate token for inactive user');
   }
 
   const expirySettings = getTokenExpiry();

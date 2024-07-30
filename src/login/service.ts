@@ -146,8 +146,8 @@ export async function challenge(client: AppClient, session: LoginSession, parame
       }
       await challengeUsernamePassword(
         session,
-        parameters.password!,
         parameters.username!,
+        parameters.password!,
       );
 
     }

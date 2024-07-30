@@ -136,6 +136,7 @@ type GenerateTokenAuthorizationCodeOptions = {
   client: AppClient;
   code: string;
   codeVerifier?: string;
+  redirectUri: string|null;
   secretUsed: boolean;
 }
 
@@ -179,6 +180,10 @@ export async function generateTokenAuthorizationCode(options: GenerateTokenAutho
   }
   if (codeRecord.client_id !== options.client.id) {
     throw new UnauthorizedClient('The client_id associated with the token did not match with the authenticated client credentials');
+  }
+
+  if (codeRecord.redirect_uri !== null && options.redirectUri !== codeRecord.redirect_uri) {
+    throw new InvalidRequest('The "redirect_uri" parameter must match the redirect_uri that was originally specified when initiating the flow');
   }
 
   const principalService = new PrincipalService('insecure');
@@ -457,6 +462,8 @@ type GenerateAuthorizationCodeOptions = {
   client: AppClient;
   principal: User;
   scope: string[];
+  redirectUri: string|null;
+  grantType: GrantType;
   codeChallenge: string|null;
   codeChallengeMethod: CodeChallengeMethod|null;
   nonce: string | null;
@@ -479,6 +486,8 @@ export async function generateAuthorizationCode(options: GenerateAuthorizationCo
       code_challenge: options.codeChallenge,
       code_challenge_method: options.codeChallengeMethod,
       scope: options.scope?.join(' '),
+      redirect_uri: options.redirectUri,
+      grant_type: grantTypeId(options.grantType),
       browser_session_id: options.browserSessionId,
       created_at: Math.floor(Date.now() / 1000),
       nonce: options.nonce ?? null,
@@ -634,7 +643,9 @@ function grantTypeIdInfo(grantType: number|null): [Exclude<GrantType, 'refresh_t
 }
 
 function grantTypeId(grantType: 'authorization_code', secretUsed: boolean): number;
-function grantTypeId(grantType: GrantType | null, secretUsed?: boolean): null;
+function grantTypeId(grantType: GrantType, secretUsed?: boolean): number;
+function grantTypeId(grantType: null, secretUsed?: boolean): null;
+function grantTypeId(grantType: GrantType|null, secretUsed?: boolean): number|null;
 function grantTypeId(grantType: GrantType | null, secretUsed?: boolean): number | null {
 
   switch(grantType) {

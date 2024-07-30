@@ -115,6 +115,8 @@ class AuthorizeController extends Controller {
       client: oauth2Client,
       principal: ctx.session.user,
       scope: params.scope,
+      redirectUri: params.redirectUri ?? null,
+      grantType: params.grantType,
       codeChallenge: params.codeChallenge ?? null,
       codeChallengeMethod: params.codeChallengeMethod ?? null,
       browserSessionId: ctx.sessionId!,
@@ -164,6 +166,7 @@ type AuthorizeParamsCode = {
   clientId: string;
   redirectUri?: string;
   scope: string[];
+  grantType: 'authorization_code' | 'authorization_challenge';
   state?: string;
 
   /**
@@ -282,7 +285,8 @@ function parseAuthorizationQuery(query: Record<string, string>): AuthorizeParams
   return {
     responseType,
     clientId,
-    redirectUri: query.redirect_uri ?? undefined,
+    redirectUri: query.redirect_uri ?? null,
+    grantType: 'authorization_code',
     state: query.state ?? undefined,
     scope,
     responseMode,

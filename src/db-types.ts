@@ -64,6 +64,16 @@ export type Oauth2CodesRecord = {
   scope: string | null;
 
   /**
+   * The grant_type that was used to generate the code
+   */
+  grant_type: number;
+
+  /**
+   * The redirect_uri that was used when generating this code
+   */
+  redirect_uri: string | null;
+
+  /**
    * OpenID Connect Nonce
    */
   nonce: string | null;

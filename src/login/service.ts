@@ -173,6 +173,8 @@ export async function challenge(client: AppClient, session: LoginSession, parame
     client,
     principal: user,
     scope: session.scope ?? [],
+    redirectUri: null,
+    grantType: 'authorization_challenge',
     browserSessionId: session.authSession,
     codeChallenge: null,
     codeChallengeMethod: null,

@@ -32,7 +32,6 @@ for(const file of files) {
               return fs.readFileSync(`schemas/${baseNameMatch[1]}`);
             }
          },
-          
         }
       },
     }

@@ -4,6 +4,13 @@ Changelog
 0.26.0 (????-??-??)
 -------------------
 
+New big release in a while! This release primarily adds support for multiple
+email/addresses per user and separates the 'active' flag from 'having validated
+your email address'. It also introduces experimental support for a draft OAuth2
+flow for first-party apps. Please note that this release has a few database
+changes that (depending on your database size) may take a bit to complete. MAKE
+A BACKUP! I can't stress this enough!
+
 * BC Break: Previous versions of a12nserver collated the 'active' status of
   users and whether or not their used email addresses were verified. These two
   flags are now separate. For a user to log in with their username and password
@@ -14,6 +21,9 @@ Changelog
   flag. (is now on by default).
 * New! Users can now be associated with multiple email addresses and/or phone
   numbers.
+* Added support for [OAuth 2.0 Multiple Response Type Encoding
+  Practices](https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html)
+  aka "authorization_challenge".
 * Upgraded to Curveball 1.
 * Moved from CommonJS to ESM.
 * Upgraded to Typescript 5.5.
@@ -21,8 +31,8 @@ Changelog
 * #494: Add 'public' to Postgres schema search path. (@elaugier)
 * Auto-generate API types from JSON schema.
 * Internal: oauth2-client is renamed to app-client to reduce confusion a bit.
-* Added support for [OAuth 2.0 Multiple Response Type Encoding
-  Practices](https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html).
+* Internal: oauth2_codes now remember what grant_type was used to generate the
+  code, plus the redirect_uri.
 
 
 0.25.4 (2024-02-26)

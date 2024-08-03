@@ -1,12 +1,9 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { authenticator } from 'otplib';
-import * as QRCode from 'qrcode';
-
-import { generateSecret, save } from '../service.js';
+import { generateSecret, generateTotpQrcode, save } from '../service.js';
 import { registrationForm } from '../formats/html.js';
 import { User } from '../../../types.js';
-import { getSetting } from '../../../server-settings.js';
 
 
 class TOTPRegisterController extends Controller {
@@ -20,17 +17,17 @@ class TOTPRegisterController extends Controller {
     const secret = ctx.session.totpSecret ? ctx.session.totpSecret : generateSecret();
     ctx.session.totpSecret = secret;
 
-    const otpauth = authenticator.keyuri(user.nickname, getSetting('totp.serviceName'), secret);
-
-    const qrCode = await QRCode.toDataURL(otpauth);
+    const qrCode = await generateTotpQrcode(user, secret);
 
     ctx.response.type = 'text/html';
-    ctx.response.body = registrationForm(
-      ctx.query.msg,
-      ctx.query.error,
+    ctx.response.body = registrationForm({
+      action: ctx.path,
+      message: ctx.query.msg,
+      error: ctx.query.error,
       secret,
       qrCode,
-    );
+      csrfToken: await ctx.getCsrf(),
+    });
   }
 
   async post(ctx: Context<any>) {

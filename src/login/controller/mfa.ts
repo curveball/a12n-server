@@ -1,12 +1,12 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
+import * as services from '../../services.js';
+
 import * as querystring from 'querystring';
 import { isValidRedirect } from '../utilities.js';
 import { MFALoginSession } from '../../mfa/types.js';
 import { mfaForm } from '../formats/html.js';
-import log from '../../log/service.js';
 import { EventType } from '../../log/types.js';
-import * as userService from '../../user/service.js';
 
 class MFAController extends Controller {
 
@@ -43,8 +43,8 @@ class MFAController extends Controller {
     }
 
     if (ctx.request.body.totp) {
-      if (!await userService.validateTotp(user, ctx.request.body.totp)) {
-        log(EventType.totpFailed, ctx.ip(), user.id);
+      if (!await services.mfaTotp.validateTotp(user, ctx.request.body.totp)) {
+        services.log.log(EventType.totpFailed, ctx.ip(), user.id);
         return this.redirectToMfa(ctx, 'Incorrect TOTP code');
       }
     } else {
@@ -58,7 +58,7 @@ class MFAController extends Controller {
     ctx.session = {
       user: user,
     };
-    log(EventType.loginSuccess, ctx);
+    services.log.log(EventType.loginSuccess, ctx);
 
     ctx.status = 303;
     if (ctx.request.body.continue) {

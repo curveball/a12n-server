@@ -74,6 +74,10 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
   if (hasControl) {
     hal.hasPassword = hasPassword;
 
+    hal._links['auth-factor-collection'] = {
+      href: `${user.href}/auth-factor`,
+      title: 'List of authentication methods / authentication factors for a user',
+    };
     hal._links['access-token'] = {
       href: `${user.href}/access-token`,
       title: 'Generate an access token for this user.',

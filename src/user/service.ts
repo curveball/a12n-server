@@ -1,5 +1,4 @@
 import * as bcrypt from 'bcrypt';
-import * as otplib from 'otplib';
 import db from '../database.js';
 import { User } from '../types.js';
 import { UnprocessableContent } from '@curveball/http-errors';
@@ -58,43 +57,6 @@ export async function hasPassword(user: User): Promise<boolean> {
     .where('user_id', user.id);
 
   return result.length > 0;
-
-}
-
-
-/**
- * Returns true or false if the totp token was correct.
- *
- * Calling this method multiple times might result in a block.
- */
-export async function validateTotp(user: User, token: string): Promise<boolean> {
-
-  const result = await db('user_totp')
-    .select('secret')
-    .where('user_id', user.id);
-
-  if (!result.length) {
-    // Not set up
-    return false;
-  }
-  const secret = result[0].secret;
-
-  return otplib.authenticator.check(token, secret);
-
-}
-
-/**
- * Returns true or false if the totp was provided or not.
- *
- *
- */
-export async function hasTotp(user: User): Promise<boolean> {
-
-  const result = await db('user_totp')
-    .select('secret')
-    .where('user_id', user.id);
-
-  return result.length !== 0;
 
 }
 

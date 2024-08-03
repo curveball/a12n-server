@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.26.0 (????-??-??)
+0.26.0 (2024-07-31)
 -------------------
 
 New big release in a while! This release primarily adds support for multiple

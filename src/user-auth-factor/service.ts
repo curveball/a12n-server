@@ -1,5 +1,5 @@
-import { User } from "../types.js";
-import { UserAuthFactor } from "./types.js";
+import { User } from '../types.js';
+import { UserAuthFactor } from './types.js';
 
 import * as services from '../services.js';
 

@@ -1,5 +1,5 @@
-import { HalFormsTemplate, HalResource } from "hal-types";
-import { User } from "../../types.js";
+import { HalFormsTemplate, HalResource } from 'hal-types';
+import { User } from '../../types.js';
 import { UserAuthFactor } from '../types.js';
 
 export function collection(principal: User, authFactors: UserAuthFactor[]): HalResource  {
@@ -38,6 +38,6 @@ function addTotpAction(principal: User): HalFormsTemplate {
     method: 'GET',
     target: `${principal.href}/auth-factor/new/totp`,
     title: 'Set up TOTP',
-  }
+  };
 
 }

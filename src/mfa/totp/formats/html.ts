@@ -2,12 +2,12 @@ import { render } from '../../../templates.js';
 
 
 type RegisterFormParams = {
-  message: string,
-  error: string,
-  secret: string,
-  qrCode: string,
-  title?: string,
-  action: string,
+  message: string;
+  error: string;
+  secret: string;
+  qrCode: string;
+  title?: string;
+  action: string;
   csrfToken: string;
 };
 

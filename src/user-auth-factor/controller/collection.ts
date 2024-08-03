@@ -1,4 +1,4 @@
-import { Controller } from "@curveball/controller";
+import { Controller } from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { Forbidden } from '@curveball/http-errors';
 

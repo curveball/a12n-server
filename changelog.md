@@ -1,6 +1,15 @@
 Changelog
 =========
 
+0.26.1 (????-??-??)
+-------------------
+
+* Allow users to set up TOTP after registration.
+* Add a new 'auth-factor' API endpoint, which lists all the authentication
+  factors the user has setup. Currently it only supports 'password' and 'totp',
+  but more will be added in the future.
+
+
 0.26.0 (2024-07-31)
 -------------------
 
@@ -865,4 +874,6 @@ may be expected while the server runs its migrations.
 * First public version
 
 [oauth2-jwt]: https://tools.ietf.org/html/draft-ietf-oauth-access-token-jwt-12
-[firstparty]: https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html
+
+[firstparty]:
+              https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html

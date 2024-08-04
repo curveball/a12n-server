@@ -55,6 +55,8 @@ import users from './user/controller/collection.js';
 import verificationToken from './verification-token/controller/generate.js';
 import verificationTokenExchange from './verification-token/controller/exchange.js';
 import webAuthnRegistration from './mfa/webauthn/controller/registration.js';
+import userAuthFactorCollection from './user-auth-factor/controller/collection.js';
+import totpAddToUserController from './mfa/totp/controller/add-to-user.js';
 
 const routes = [
   router('/', home),
@@ -119,6 +121,8 @@ const routes = [
   router('/user/:id/app-permission/:appId', userAppPermissionItem),
   router('/user/:id/identity', principalIdentityCollection),
   router('/user/:id/identity/:identityId', principalIdentityItem),
+  router('/user/:id/auth-factor', userAuthFactorCollection),
+  router('/user/:id/auth-factor/new/totp', totpAddToUserController),
 
   router('/change-password', changePassword),
   router('/reset-password', resetPassword),

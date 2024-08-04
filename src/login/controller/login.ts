@@ -8,7 +8,6 @@ import { MFALoginSession } from '../../mfa/types.js';
 import * as webAuthnService from '../../mfa/webauthn/service.js';
 import { getSetting } from '../../server-settings.js';
 import { hasUsers, PrincipalService } from '../../principal/service.js';
-import * as userService from '../../user/service.js';
 import { PrincipalIdentity, User } from '../../types.js';
 import { isValidRedirect } from '../utilities.js';
 import { loginForm } from '../formats/html.js';
@@ -59,7 +58,7 @@ class LoginController extends Controller {
     }
     const user = await principalService.findByIdentity(identity) as User;
 
-    if (!await userService.validatePassword(user, ctx.request.body.password)) {
+    if (!await services.user.validatePassword(user, ctx.request.body.password)) {
       log(EventType.loginFailed, ctx.ip(), user.id);
       return this.redirectToLogin(ctx, '', 'Incorrect username or password');
     }
@@ -121,7 +120,7 @@ class LoginController extends Controller {
 
   async shouldUseTotp(ctx: Context<any>, user: User): Promise<boolean> {
     if (getSetting('totp') !== 'disabled') {
-      if (await userService.hasTotp(user)) {
+      if (await services.mfaTotp.hasTotp(user)) {
 
         if (ctx.request.body.continue && !isValidRedirect(ctx.request.body.continue)) {
           this.redirectToLogin(ctx, '', 'Invalid continue URL provided');

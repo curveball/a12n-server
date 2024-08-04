@@ -6,6 +6,8 @@
   <div class="msg error">{{ error }}</div>
   {{/if}}
 
+  <input type="hidden" name="secret" value="{{secret}}" />
+  <input type="hidden" name="csrf-token" value="{{csrf-token}}" />
   <fieldset>
     <div class="qrcode">
       <div>
@@ -20,7 +22,7 @@
   <fieldset>
     <label for="code">
       <span>Enter generated code</span>
-      <input name="code" id="code" required="required" minlength="6" maxlength="6" size="6" autofocus />
+      <input name="code" id="code" required="required" minlength="6" maxlength="6" size="6" autofocus type="text" inputmode="numeric" pattern="[0-9]{6}" autocomplete="one-time-code"/>
     </label>
 
     <label>

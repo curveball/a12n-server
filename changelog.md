@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.26.1 (????-??-??)
+0.26.1 (2024-08-12)
 -------------------
 
 * Allow users to set up TOTP after registration.

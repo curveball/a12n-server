@@ -1,12 +1,9 @@
 #!/usr/bin/env node
 
-/* Some eslint overrides since we're in Javascript land here */
-
 /* eslint "@typescript-eslint/no-var-requires": 0 */
-
-const fs = require('node:fs');
-const path = require('node:path');
-const dotenv = require('dotenv');
+import fs from 'node:fs';
+import path from 'node:path';
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -19,7 +16,7 @@ if (!isConfigured()) {
 
 }
 
-require('../dist/app.js');
+await import('../dist/app.js');
 
 function isConfigured() {
 

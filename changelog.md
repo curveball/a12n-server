@@ -8,6 +8,7 @@ Changelog
 * Add a new 'auth-factor' API endpoint, which lists all the authentication
   factors the user has setup. Currently it only supports 'password' and 'totp',
   but more will be added in the future.
+* Fix test server.
 
 
 0.26.0 (2024-07-31)

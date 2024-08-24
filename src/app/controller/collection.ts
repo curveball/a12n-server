@@ -49,7 +49,7 @@ class AppCollectionController extends Controller {
     if (identity) {
       await services.principalIdentity.create({
         uri: identity.href,
-        principalId: app.id,
+        principal: app,
         isPrimary: true,
         label: identity.title ?? null,
         markVerified: false,

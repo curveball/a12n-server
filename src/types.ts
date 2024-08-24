@@ -98,7 +98,7 @@ export type PrincipalIdentity = {
   /**
    * Associated principal
    */
-  principalId: number;
+  principal: Principal;
 
   /**
    * If this is the 'main' ID for a user, this is set to true.

@@ -98,7 +98,7 @@ export async function create(identity: NewPrincipalIdentity): Promise<PrincipalI
     verifiedAt: new Date(),
     createdAt: new Date(),
     modifiedAt: new Date(),
-  }
+  };
 
 }
 export async function markVerified(identity: PrincipalIdentity): Promise<void> {

@@ -82,6 +82,9 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
     hal._links['access-token'] = {
       href: `${user.href}/access-token`,
       title: 'Generate an access token for this user.',
+      hints: {
+        allow: ['POST']
+      }
     };
     hal._links['active-sessions'] = {
       href: `${user.href}/sessions`,

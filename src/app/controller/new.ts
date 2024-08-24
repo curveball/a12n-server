@@ -54,7 +54,7 @@ class CreateAppController extends Controller {
     if (identity) {
       await services.principalIdentity.create({
         uri: identity,
-        principalId: newApp.id,
+        principal: newApp,
         isPrimary: true,
         label: null,
         markVerified: false,

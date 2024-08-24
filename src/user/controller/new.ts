@@ -4,6 +4,8 @@ import { NotFound } from '@curveball/http-errors';
 import { createUserForm } from '../formats/html.js';
 import * as services from '../../services.js';
 import { UserNewFormBody } from '../../api-types.js';
+import { generatePassword } from '../../crypto.js';
+import { newUserResult } from '../formats/hal.js';
 
 class CreateUserController extends Controller {
 
@@ -49,11 +51,12 @@ class CreateUserController extends Controller {
       active: true,
     });
 
+    let identityModel = null;
     if (identity) {
-      await services.principalIdentity.create(
+      identityModel = await services.principalIdentity.create(
         {
           uri: 'mailto:' + ctx.request.body.email,
-          principalId: newUser.id,
+          principal: newUser,
           isPrimary: true,
           label: null,
           markVerified: !!ctx.request.body.markEmailValid,
@@ -61,8 +64,17 @@ class CreateUserController extends Controller {
       );
     }
 
-    ctx.response.status = 303;
-    ctx.response.headers.set('Location', newUser.href);
+    let password = null;
+    if (ctx.request.body.autoGeneratePassword) {
+      password = generatePassword();
+      await services.user.createPassword(
+        newUser,
+        password,
+      );
+    }
+
+    ctx.response.status = 201;
+    ctx.response.body = newUserResult(newUser, password, identityModel ? [identityModel] : []);
 
   }
 

@@ -82,7 +82,7 @@ class UserRegistrationController extends Controller {
     await services.principalIdentity.create(
       {
         uri: 'mailto:' + body.emailAddress,
-        principalId: user.id,
+        principal: user,
         label: null,
         isPrimary: true,
         // If this was the first run, we assume the email is verified

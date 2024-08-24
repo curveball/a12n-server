@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.26.2 (????-??-??)
+-------------------
+
+* Allow admins to auto-generate an intitial 'diceware' password when creating
+  new users, which should make onboaring new users and testing easier.
+
+
 0.26.1 (2024-08-12)
 -------------------
 

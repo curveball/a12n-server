@@ -80,7 +80,7 @@ export class PrincipalService {
       pi = identity;
     }
 
-    return this.findById(pi.principalId);
+    return this.findById(pi.principal.id);
 
   }
 

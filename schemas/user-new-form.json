@@ -28,7 +28,11 @@
     },
     "markEmailValid": {
       "type": "string",
-      "description": "Automatically mark email address as validated. Shoudl be Javacript thruthy string."
+      "description": "Automatically mark email address as validated. Should be Javacript thruthy string."
+    },
+    "autoGeneratePassword": {
+      "type": "string",
+      "description": "Request a password to be generated. Should be a Javascript thruthy string."
     }
   }
 }

@@ -1,0 +1,44 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://curveballjs.org/schemas/a12nserver/user-new-result.json",
+  "type": "object",
+  "title": "UserNewResult",
+  "description": "After a user is created, this object will be returned to the client. It's mostly similar to the regular \"user\" object, with some modifications.",
+
+  "required": ["nickname", "active", "createdAt", "modifiedAt", "type"],
+  "additionalProperties": false,
+
+  "properties": {
+    "_links": {
+      "description": "HAL Links"
+    },
+    "nickname": {
+      "type": "string",
+      "minLength": 3,
+      "description": "Human-readable displayname for the user."
+    },
+    "active": {
+      "type": "boolean",
+      "description": "If false, the user will not be able to log in."
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Creation date and time."
+    },
+    "modifiedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Last time the user was modified."
+    },
+    "type": {
+      "const": "user",
+      "description": "May be 'user', 'app' or 'group'"
+    },
+    "password": {
+      "type": "string",
+      "description": "Password for the newly created user. This password will only be displayed this one time. You are recommended to change the password immediately after."
+    }
+
+  }
+}

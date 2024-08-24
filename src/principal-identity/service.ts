@@ -1,5 +1,5 @@
 import { Principal, PrincipalIdentity, NewPrincipalIdentity } from '../types.js';
-import knex from '../database.js';
+import knex, { insertAndGetId } from '../database.js';
 import { PrincipalIdentitiesRecord } from 'knex/types/tables.js';
 import { NotFound } from '@curveball/http-errors';
 import { generatePublicId } from '../crypto.js';
@@ -75,19 +75,30 @@ export async function findByUri(arg1: Principal|string, arg2?:string): Promise<P
 
 }
 
-export async function create(identity: NewPrincipalIdentity): Promise<void> {
+export async function create(identity: NewPrincipalIdentity): Promise<PrincipalIdentity> {
 
-  await knex('principal_identities')
-    .insert({
-      uri: identity.uri,
-      external_id: await generatePublicId(),
-      principal_id: identity.principalId,
-      label: identity.label ?? null,
-      is_primary: identity.isPrimary ? 1 : 0,
-      verified_at: identity.markVerified ? Date.now() : null,
-      created_at: Date.now(),
-      modified_at: Date.now(),
-    });
+  const externalId = await generatePublicId();
+
+  const id = await insertAndGetId('principal_identities', {
+    uri: identity.uri,
+    external_id: externalId,
+    principal_id: identity.principal.id,
+    label: identity.label ?? null,
+    is_primary: identity.isPrimary ? 1 : 0,
+    verified_at: identity.markVerified ? Date.now() : null,
+    created_at: Date.now(),
+    modified_at: Date.now(),
+  });
+
+  return {
+    id,
+    href: `${identity.principal.href}/identity/${externalId}`,
+    externalId,
+    ...identity,
+    verifiedAt: new Date(),
+    createdAt: new Date(),
+    modifiedAt: new Date(),
+  };
 
 }
 export async function markVerified(identity: PrincipalIdentity): Promise<void> {
@@ -108,7 +119,7 @@ function recordToModel(principal: Principal, record: PrincipalIdentitiesRecord):
   return {
     id: record.id,
     uri: record.uri,
-    principalId: record.principal_id,
+    principal,
     href: `${principal.href}/identity/${record.external_id}`,
     externalId: record.external_id,
     label: record.label,

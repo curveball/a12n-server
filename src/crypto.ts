@@ -1,4 +1,5 @@
 import * as crypto from 'node:crypto';
+import generatePassphrase from 'eff-diceware-passphrase';
 
 /**
  * Centralized place for all crypto-related functions
@@ -37,6 +38,17 @@ export function uuidUrn() {
   return `urn:uuid:${crypto.randomUUID()}`;
 
 }
+
+/**
+ * Generates a random 'diceware' password, which is a memorable password
+ * consisting of several words.
+ */
+export function generatePassword(): string {
+
+  return generatePassphrase.entropy(45).join('-');
+
+}
+
 
 function generateUrlSafeString(bytes: number): Promise<string> {
 

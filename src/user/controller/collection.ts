@@ -54,7 +54,7 @@ class UserCollectionController extends Controller {
     }
 
     await services.principalIdentity.create({
-      principalId: user.id,
+      principal: user,
       isPrimary: true,
       uri: identity,
       label: null,

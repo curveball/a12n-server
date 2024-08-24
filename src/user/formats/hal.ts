@@ -2,6 +2,7 @@ import { PrivilegeMap } from '../../privilege/types.js';
 import { Principal, Group, User, PrincipalIdentity } from '../../types.js';
 import { HalResource } from 'hal-types';
 import { LazyPrivilegeBox } from '../../privilege/service.js';
+import { UserNewResult } from '../../api-types.js';
 
 export function collection(users: User[]): HalResource {
 
@@ -55,8 +56,8 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
     },
     nickname: user.nickname,
     active: user.active,
-    createdAt: user.createdAt,
-    modifiedAt: user.modifiedAt,
+    createdAt: user.createdAt.toISOString(),
+    modifiedAt: user.modifiedAt.toISOString(),
     type: user.type,
     privileges
   };
@@ -218,4 +219,37 @@ export function editPrivileges(principal: Principal, userPrivileges: PrivilegeMa
       },
     },
   };
+}
+
+
+/**
+ * Generate a HAL response after new user creation.
+ *
+ * hasControl should only be true if the *current* user is same as the user
+ * we're generating the repsonse for, or if the current authenticated user
+ * has full admin privileges
+ */
+export function newUserResult(user: User, password: string|null, identities: PrincipalIdentity[]): HalResource<UserNewResult> {
+
+  const hal: HalResource<UserNewResult> = {
+    _links: {
+      'self': {href: user.href, title: user.nickname },
+      'me': identities.map( identity => (
+        { href: identity.uri, title: user.nickname ?? undefined }
+      )),
+      'describedby': {
+        href: 'https://curveballjs.org/schemas/a12nserver/user-new-result.json',
+        type: 'application/schema+json',
+      }
+    },
+    nickname: user.nickname,
+    active: user.active,
+    password: password ?? undefined,
+    createdAt: user.createdAt.toISOString(),
+    modifiedAt: user.modifiedAt.toISOString(),
+    type: user.type
+  };
+
+  return hal;
+
 }

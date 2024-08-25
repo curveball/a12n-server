@@ -1,7 +1,12 @@
 import { Middleware } from '@curveball/kernel';
 
 const safeMethods = ['GET', 'OPTIONS', 'REPORT', 'HEAD', 'SEARCH', 'QUERY'];
-const safePaths = ['/login', '/logout', '/authorize'];
+const safePaths = [
+  '/authorize',
+  '/login',
+  '/logout',
+  '/register',
+];
 
 export default function(): Middleware {
 

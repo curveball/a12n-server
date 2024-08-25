@@ -6,6 +6,7 @@ Changelog
 
 * Allow admins to auto-generate an intitial 'diceware' password when creating
   new users, which should make onboaring new users and testing easier.
+* Fix CSRF error on register form
 
 
 0.26.1 (2024-08-12)

@@ -80,7 +80,7 @@ export function newClient(user: App, query: NewClientQuery ) {
             name: 'requirePkce',
             title: 'Require PKCE support (modern clients support this, but not everyone does)',
             type: 'checkbox',
-            value: query.requirePkce === 'true'
+            value: !!query.requirePkce
           },
         ],
       }

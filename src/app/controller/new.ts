@@ -2,7 +2,7 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { createAppForm } from '../formats/html.js';
 import * as services from '../../services.js';
-import { Conflict, UnprocessableContent } from '@curveball/http-errors';
+import { Conflict, NotFound, UnprocessableContent } from '@curveball/http-errors';
 import { AppNewFormBody } from '../../api-types.js';
 
 class CreateAppController extends Controller {
@@ -38,9 +38,15 @@ class CreateAppController extends Controller {
       if (!identity.match(/^https?:(.*)$/)) {
         throw new UnprocessableContent('App url must be a http or https URI');
       }
-      if (await services.principalIdentity.findByUri(identity)) {
-        throw new Conflict('A principal with this URI already exists');
+
+      try {
+        if (await services.principalIdentity.findByUri(identity)) {
+          throw new Conflict('A principal with this URI already exists');
+        }
+      } catch (err) {
+        if (!(err instanceof NotFound)) throw err;
       }
+
     }
 
     const newApp = await principalService.save({

@@ -7,6 +7,7 @@ Changelog
 * Allow admins to auto-generate an intitial 'diceware' password when creating
   new users, which should make onboaring new users and testing easier.
 * Fix CSRF error on register form
+* Fix a bug in the automatic App creation flow
 
 
 0.26.1 (2024-08-12)

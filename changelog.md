@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.26.2 (????-??-??)
+0.26.2 (2024-08-30)
 -------------------
 
 * Allow admins to auto-generate an intitial 'diceware' password when creating

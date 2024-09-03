@@ -8,6 +8,7 @@ import { PrincipalService } from '../../principal/service.js';
 import { GrantType, AppClient } from '../../types.js';
 import { findByApp, create } from '../service.js';
 import { generatePublicId, generateSecretToken } from '../../crypto.js';
+import { AppClientNewFormBody } from '../../api-types.js';
 
 class ClientCollectionController extends Controller {
 
@@ -28,6 +29,7 @@ class ClientCollectionController extends Controller {
 
   async post(ctx: Context) {
 
+    ctx.request.validate<AppClientNewFormBody>('https://curveballjs.org/schemas/a12nserver/app-client-new-form.json');
     const principalService = new PrincipalService(ctx.privileges);
     const app = await principalService.findByExternalId(ctx.params.id, 'app');
     if (!ctx.privileges.has('admin')) {
@@ -57,7 +59,10 @@ class ClientCollectionController extends Controller {
 
     let clientId = ctx.request.body.clientId;
 
-    const redirectUris = ctx.request.body.redirectUris.trim().split(/\r\n|\n/).filter((line:string) => !!line);
+    let redirectUris:string[] = [];
+    if (ctx.request.body.redirectUris) {
+      redirectUris = ctx.request.body.redirectUris.trim().split(/\r\n|\n/).filter((line:string) => !!line);
+    }
 
     if (!clientId) {
       clientId = await generatePublicId();
@@ -75,7 +80,7 @@ class ClientCollectionController extends Controller {
       app,
       allowedGrantTypes: allowedGrantTypes,
       clientSecret: await bcrypt.hash(clientSecret, 12),
-      requirePkce: ctx.request.body.requirePkce ?? false,
+      requirePkce: !!ctx.request.body.requirePkce,
     };
 
     const client = await create(newClient, redirectUris);

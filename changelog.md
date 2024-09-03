@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.26.3 (????-??-??)
+-------------------
+
+* Stricter validation on the 'Create App Client Form.'
+
+
 0.26.2 (2024-08-30)
 -------------------
 

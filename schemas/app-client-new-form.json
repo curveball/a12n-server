@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://curveballjs.org/schemas/a12nserver/app-client-new-form.json",
+  "type": "object",
+  "title": "AppClientNewFormBody",
+  "description": "This is the request body used by the HTML form submission for creating new OAuth2 Clients (credentials)",
+
+  "required": [],
+  "additionalProperties": false,
+
+  "properties": {
+    "allowClientCredentials": {
+      "type": "string",
+      "const": "on",
+      "description": "Can the client can use the 'client_credentials' flow" 
+    },
+    "allowAuthorizationCode": {
+      "type": "string",
+      "const": "on",
+      "description": "Can the client can use the 'authorization_code' flow" 
+    },
+    "allowAuthorizationChallenge": {
+      "type": "string",
+      "const": "on",
+      "description": "Can the client can use the OAuth 2.0 for First Party Applications flow" 
+    },
+    "allowImplicit": {
+      "type": "string",
+      "const": "on",
+      "description": "Can the client can use the deprecated 'implicit' flow" 
+    },
+    "allowRefreshToken": {
+      "type": "string",
+      "const": "on",
+      "description": "Is the client allowed to refresh tokens" 
+    },
+    "allowPassword": {
+      "type": "string",
+      "const": "on",
+      "description": "Can the client can use the 'password' flow flow" 
+    },
+    "redirectUris": {
+      "type": "string",
+      "description": "List of redirect uris for the authorization_code and implicit flows." 
+    },
+    "clientId": {
+      "type": "string",
+      "description": "Preferred OAuth2 client_id. If empty we'll generate one for you"
+    },
+    "requirePkce": {
+      "type": "string",
+      "const": "on",
+      "description": "Require 'Proof of Key Code Exchange' for authorization_code flow. If not set, PKCE is supported but not enforced."
+    }
+  }
+}

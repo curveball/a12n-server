@@ -6,6 +6,7 @@ import { PrincipalService } from '../../principal/service.js';
 import { findByClientId, edit } from '../service.js';
 import * as oauth2Service from '../../oauth2/service.js';
 import { GrantType } from '../../types.js';
+import { AppClientEditFormBody } from '../../api-types.js';
 
 class EditClientController extends Controller {
 
@@ -28,6 +29,7 @@ class EditClientController extends Controller {
 
   async post(ctx: Context<any>) {
 
+    ctx.request.validate<AppClientEditFormBody>('https://curveballjs.org/schemas/a12nserver/app-client-edit-form.json');
     const principalService = new PrincipalService(ctx.privileges);
     const app = await principalService.findByExternalId(ctx.params.id, 'app');
     if (!ctx.privileges.has('admin')) {
@@ -59,14 +61,17 @@ class EditClientController extends Controller {
       allowedGrantTypes.push('authorization_challenge');
     }
 
-    const redirectUris = ctx.request.body.redirectUris.trim().split(/\r\n|\n/).filter((line:string) => !!line);
+    let redirectUris: string[] = [];
+    if (ctx.request.body.redirectUris && typeof ctx.request.body.redirectUris === 'string') {
+      redirectUris = ctx.request.body.redirectUris.trim().split(/\r\n|\n/).filter((line:string) => !!line);
+    }
 
     if (!allowedGrantTypes) {
       throw new UnprocessableContent('You must specify the allowedGrantTypes property');
     }
 
     client.allowedGrantTypes = allowedGrantTypes;
-    client.requirePkce = ctx.request.body.requirePkce ?? false,
+    client.requirePkce = !!ctx.request.body.requirePkce;
 
     await edit(client, redirectUris);
     ctx.redirect(303, client.href);

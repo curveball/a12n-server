@@ -6,12 +6,12 @@ import log from '../../log/service.js';
 import { EventType } from '../../log/types.js';
 import { MFALoginSession } from '../../mfa/types.js';
 import * as webAuthnService from '../../mfa/webauthn/service.js';
-import { getSetting } from '../../server-settings.js';
 import { hasUsers, PrincipalService } from '../../principal/service.js';
-import { PrincipalIdentity, User } from '../../types.js';
-import { isValidRedirect } from '../utilities.js';
-import { loginForm } from '../formats/html.js';
+import { getSetting, requireSetting } from '../../server-settings.js';
 import * as services from '../../services.js';
+import { PrincipalIdentity, User } from '../../types.js';
+import { loginForm } from '../formats/html.js';
+import { isValidRedirect } from '../utilities.js';
 
 class LoginController extends Controller {
 
@@ -56,9 +56,23 @@ class LoginController extends Controller {
         throw err;
       }
     }
-    const user = await principalService.findByIdentity(identity) as User;
+
+    const user = (await principalService.findByIdentity(identity)) as User;
+
+    if (await services.loginActivity.isAccountLocked(user)) {
+      await services.loginActivity.incrementFailedLoginAttempts(user);
+      log(EventType.loginFailedAccountLocked, ctx.ip(), user.id, ctx.request.headers.get('User-Agent'));
+      return this.redirectToLogin(ctx, '', `Too many failed login attempts, please contact ${requireSetting('smtp.emailFrom')} to unlock your account.`);
+    }
 
     if (!await services.user.validatePassword(user, ctx.request.body.password)) {
+      const incrementedAttempts = await services.loginActivity.incrementFailedLoginAttempts(user);
+
+      if (services.loginActivity.reachedMaxAttempts(incrementedAttempts)) {
+        log(EventType.accountLocked, ctx.ip(), user.id, ctx.request.headers.get('User-Agent'));
+        return this.redirectToLogin(ctx, '', `Too many failed login attempts, please contact ${requireSetting('smtp.emailFrom')} to unlock your account.`);
+      }
+
       log(EventType.loginFailed, ctx.ip(), user.id);
       return this.redirectToLogin(ctx, '', 'Incorrect username or password');
     }
@@ -76,6 +90,8 @@ class LoginController extends Controller {
       return;
     }
 
+    await services.loginActivity.resetFailedLoginAttempts(user);
+
     ctx.session = {
       user: user,
     };
@@ -88,7 +104,6 @@ class LoginController extends Controller {
     }
 
     ctx.response.redirect(303, getSetting('login.defaultRedirect'));
-
   }
 
   redirectToLogin(ctx: Context<any>, msg: string, error: string) {

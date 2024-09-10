@@ -38,37 +38,37 @@ export function newClient(user: App, query: NewClientQuery ) {
             name: 'allowAuthorizationCode',
             title: 'Allow "authorization_code" grant_type (for browser apps) ',
             type: 'checkbox',
-            value: allowedGrantTypes.includes('authorization_code')
+            value: allowedGrantTypes.includes('authorization_code') ? 'on' : '',
           },
           {
             name: 'allowClientCredentials',
             title: 'Allow "client_credentials" grant_type (for server to server apps) ',
             type: 'checkbox',
-            value: allowedGrantTypes.includes('client_credentials')
+            value: allowedGrantTypes.includes('client_credentials') ? 'on' : '',
           },
           {
             name: 'allowPassword',
             title: 'Allow "password" grant_type (trusted applications only!)',
             type: 'checkbox',
-            value: allowedGrantTypes.includes('password')
+            value: allowedGrantTypes.includes('password') ? 'on' : '',
           },
           {
             name: 'allowAuthorizationChallenge',
             title: 'Allow "OAuth 2.0 Authorization Challenge for First-Party applications" flow (experimental and only for trusted applications!)',
             type: 'checkbox',
-            value: allowedGrantTypes.includes('allowAuthorizationChallenge')
+            value: allowedGrantTypes.includes('allowAuthorizationChallenge') ? 'on' : '',
           },
           {
             name: 'allowImplicit',
             title: 'Allow "implicit" grant_type (deprecated! insecure!) ',
             type: 'checkbox',
-            value: allowedGrantTypes.includes('implicit')
+            value: allowedGrantTypes.includes('implicit') ? 'on' : '',
           },
           {
             name: 'allowRefreshToken',
             title: 'Allow "refresh_token" grant_type',
             type: 'checkbox',
-            value: allowedGrantTypes.includes('refresh_token')
+            value: allowedGrantTypes.includes('refresh_token') ? 'on' : '',
           },
           {
             name: 'redirectUris',
@@ -80,7 +80,7 @@ export function newClient(user: App, query: NewClientQuery ) {
             name: 'requirePkce',
             title: 'Require PKCE support (modern clients support this, but not everyone does)',
             type: 'checkbox',
-            value: !!query.requirePkce
+            value: query.requirePkce ? 'on' : '',
           },
         ],
       }

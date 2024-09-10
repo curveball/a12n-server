@@ -31,7 +31,7 @@ export function collection(app: App, clients: AppClient[]): HalResource {
           {
             name: 'allowedGrantTypes',
             prompt: 'Allowed grant types (space separated)',
-            required: true,
+            required: on,
           },
           {
             name: 'redirectUris',
@@ -89,37 +89,37 @@ export function editForm(client: AppClient, redirectUris: string[]): HalResource
             name: 'allowAuthorizationCode',
             prompt: 'Allow "authorization_code" grant_type (for browser apps) ',
             type: 'checkbox',
-            value: client.allowedGrantTypes.includes('authorization_code') ? 'true' : '',
+            value: client.allowedGrantTypes.includes('authorization_code') ? 'on' : '',
           },
           {
             name: 'allowClientCredentials',
             prompt: 'Allow "client_credentials" grant_type (for server to server apps) ',
             type: 'checkbox',
-            value: client.allowedGrantTypes.includes('client_credentials') ? 'true' : '',
+            value: client.allowedGrantTypes.includes('client_credentials') ? 'on' : '',
           },
           {
             name: 'allowPassword',
             prompt: 'Allow "password" grant_type (trusted applications only)',
             type: 'checkbox',
-            value: client.allowedGrantTypes.includes('password') ? 'true' : '',
+            value: client.allowedGrantTypes.includes('password') ? 'on' : '',
           },
           {
             name: 'allowImplicit',
             prompt: 'Allow "implicit" grant_type (deprecated) ',
             type: 'checkbox',
-            value: client.allowedGrantTypes.includes('implicit') ? 'true' : '',
+            value: client.allowedGrantTypes.includes('implicit') ? 'on' : '',
           },
           {
             name: 'allowAuthorizationChallenge',
             prompt: 'Allow "OAuth 2.0 Authorization Challenge for First-Party applications" flow (experimental and only for trusted applications!) (implies authorization_code)',
             type: 'checkbox',
-            value: client.allowedGrantTypes.includes('authorization_challenge') ? 'true' :'',
+            value: client.allowedGrantTypes.includes('authorization_challenge') ? 'on' :'',
           },
           {
             name: 'allowRefreshToken',
             prompt: 'Allow "refresh_token" grant_type',
             type: 'checkbox',
-            value: client.allowedGrantTypes.includes('refresh_token') ? 'true' : '',
+            value: client.allowedGrantTypes.includes('refresh_token') ? 'on' : '',
           },
           {
             name: 'redirectUris',
@@ -131,7 +131,7 @@ export function editForm(client: AppClient, redirectUris: string[]): HalResource
             name: 'requirePkce',
             prompt: 'Require PKCE support (modern clients support this, but not everyone does)',
             type: 'checkbox',
-            value: client.requirePkce ? 'true' : '',
+            value: client.requirePkce ? 'on' : '',
           },
         ],
       }

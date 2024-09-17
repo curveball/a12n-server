@@ -20,8 +20,17 @@
       "type": "string"
     },
     "password": {
-      "type": "string"
+      "type": "string",
+      "description": "User-supplied password"
+    },
+    "totp_code": {
+      "type": "string",
+      "description": "A 6 digit TOTP code / authenticator app code",
+      "minLength": 6,
+      "maxLength": 6,
+      "pattern": "/^[0-9]{6}$/"
     }
+
   }
 
 }

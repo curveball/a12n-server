@@ -170,6 +170,10 @@ export interface AuthorizationChallengeRequest {
   auth_session?: string;
   username?: string;
   password?: string;
+  /**
+   * A 6 digit TOTP code / authenticator app code
+   */
+  totp_code?: string;
 }
 /* eslint-disable */
 /**

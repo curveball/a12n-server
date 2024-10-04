@@ -10,7 +10,7 @@ const safePaths = [
 
 export default function(): Middleware {
 
-  return async (ctx, next) => {
+  return (ctx, next) => {
 
     /**
      * There's 2 ways a user might be authenticated, via a session cookie or
@@ -21,12 +21,7 @@ export default function(): Middleware {
     if (!ctx.session.user) return next();
 
     if (!safeMethods.includes(ctx.method) && !safePaths.includes(ctx.path)) {
-      if(ctx.path === '/change-password'){
-        ctx.validateCsrf(await ctx.getCsrf());
-      }
-      else{
-        ctx.validateCsrf();
-      }
+      ctx.validateCsrf();
     }
 
     delete ctx.request.body?.['csrf-token'];

@@ -5,6 +5,8 @@ Changelog
 -------------------
 
 * Stricter validation on the 'Create App Client Form.'
+* Looks for database in 'public' searchPath in Postgres. (@Zen-cronic)
+* Fix internal error on user/id route in Postgres. (@Zen-cronic)
 
 
 0.26.2 (2024-08-30)

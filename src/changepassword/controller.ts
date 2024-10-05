@@ -10,9 +10,9 @@ class ChangePasswordController extends Controller {
 
   async get(ctx: Context) {
 
+    const csrfToken = await ctx.getCsrf();
     ctx.response.type = 'text/html';
-    ctx.response.body = changePasswordForm(ctx.query.msg, ctx.query.error);
-
+    ctx.response.body = changePasswordForm(ctx.query.msg, ctx.query.error, csrfToken);
   }
 
   async post(ctx: Context<any>) {

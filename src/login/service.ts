@@ -1,10 +1,11 @@
-import { AppClient, Principal, PrincipalIdentity, User } from '../types.js';
-import { getSessionStore } from '../session-store.js';
-import { InvalidGrant, OAuth2Error } from '../oauth2/errors.js';
-import * as services from '../services.js';
 import { BadRequest, NotFound } from '@curveball/http-errors';
+import { Context } from '@curveball/kernel';
 import { AuthorizationChallengeRequest } from '../api-types.js';
+import { InvalidGrant, OAuth2Error } from '../oauth2/errors.js';
 import { OAuth2Code } from '../oauth2/types.js';
+import * as services from '../services.js';
+import { getSessionStore } from '../session-store.js';
+import { AppClient, Principal, PrincipalIdentity, User } from '../types.js';
 
 type ChallengeRequest = AuthorizationChallengeRequest;
 
@@ -131,7 +132,7 @@ async function deleteSession(session: LoginSession) {
  * If more credentials are needed or if any information is incorrect, an error
  * will be thrown.
  */
-export async function challenge(client: AppClient, session: LoginSession, parameters: ChallengeRequest): Promise<OAuth2Code> {
+export async function challenge(client: AppClient, session: LoginSession, parameters: ChallengeRequest, ctx: Context): Promise<OAuth2Code> {
 
   try {
     if (!session.principalId) {
@@ -148,6 +149,7 @@ export async function challenge(client: AppClient, session: LoginSession, parame
         session,
         parameters.username!,
         parameters.password!,
+        ctx,
       );
 
     }
@@ -183,7 +185,7 @@ export async function challenge(client: AppClient, session: LoginSession, parame
 
 }
 
-async function challengeUsernamePassword(session: LoginSession, username: string, password: string): Promise<User> {
+async function challengeUsernamePassword(session: LoginSession, username: string, password: string, ctx: Context): Promise<User> {
 
   const principalService = new services.principal.PrincipalService('insecure');
   let user: Principal;
@@ -228,21 +230,11 @@ async function challengeUsernamePassword(session: LoginSession, username: string
     );
   }
 
-  if (!await services.user.validatePassword(user, password)) {
-    throw new A12nLoginChallengeError(
-      session,
-      'Incorrect username or password',
-      'username-password',
-      true,
-    );
-  }
-
   session.principalId = user.id;
   session.passwordValid = true;
   session.dirty = true;
 
   if (!user.active) {
-
     throw new A12nLoginChallengeError(
       session,
       'This account is not active. Please contact support',
@@ -258,6 +250,17 @@ async function challengeUsernamePassword(session: LoginSession, username: string
       true
     );
   }
+
+  const { success, errorMessage } = await services.user.validateUserCredentials(user, password, ctx);
+  if (!success && errorMessage) {
+    throw new A12nLoginChallengeError(
+      session,
+      errorMessage,
+      'username-password',
+      true,
+    );
+  }
+
   return user;
 }
 

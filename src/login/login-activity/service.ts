@@ -5,7 +5,7 @@ import { User } from '../../types.js';
 const MAX_FAILED_ATTEMPTS = 5;
 
 export function reachedMaxAttempts(attempts: number) {
-  return attempts === MAX_FAILED_ATTEMPTS;
+  return attempts >= MAX_FAILED_ATTEMPTS;
 }
 
 async function getLoginActivity(user: User): Promise<UserLoginActivityRecord | undefined> {

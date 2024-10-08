@@ -13,8 +13,8 @@ export enum EventType {
   oauth2BadRedirect = 11,
   generateAccessToken = 12,
 
-  accountLocked = 13,
-  loginFailedAccountLocked = 14,
+  accountLocked = 13, // Logged at the time the account is locked
+  loginFailedAccountLocked = 14, // Logged when a login attempt is made on a locked account
 }
 
 export type LogEntry = {

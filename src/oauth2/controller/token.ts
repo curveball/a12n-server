@@ -1,19 +1,19 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { NotFound } from '@curveball/http-errors';
-import log from '../../log/service.js';
-import { EventType } from '../../log/types.js';
-import { PrincipalService } from '../../principal/service.js';
-import * as userService from '../../user/service.js';
-import { User, AppClient } from '../../types.js';
-import { InvalidGrant, InvalidRequest, UnsupportedGrantType } from '../errors.js';
-import * as oauth2Service from '../service.js';
 import {
   getAppClientFromBasicAuth,
   getAppClientFromBody,
 } from '../../app-client/service.js';
-import * as userAppPermissions from '../../user-app-permissions/service.js';
+import log from '../../log/service.js';
+import { EventType } from '../../log/types.js';
 import * as principalIdentityService from '../../principal-identity/service.js';
+import { PrincipalService } from '../../principal/service.js';
+import { AppClient, User } from '../../types.js';
+import * as userAppPermissions from '../../user-app-permissions/service.js';
+import * as userService from '../../user/service.js';
+import { InvalidGrant, InvalidRequest, UnsupportedGrantType } from '../errors.js';
+import * as oauth2Service from '../service.js';
 
 class TokenController extends Controller {
 
@@ -126,15 +126,6 @@ class TokenController extends Controller {
       throw new InvalidGrant('Unknown username or password');
     }
 
-    if (!await userService.validatePassword(user, ctx.request.body.password)) {
-      await log(
-        EventType.loginFailed,
-        ctx.ip(),
-        user.id
-      );
-      throw new InvalidGrant('Unknown username or password');
-    }
-
     if (!user.active) {
       await log(
         EventType.loginFailedInactive,
@@ -143,6 +134,11 @@ class TokenController extends Controller {
         ctx.request.headers.get('User-Agent')!
       );
       throw new InvalidGrant('User Inactive');
+    }
+
+    const { success, errorMessage } = await userService.validateUserCredentials(user, ctx.request.body.password, ctx);
+    if (!success && errorMessage) {
+      throw new InvalidGrant(errorMessage);
     }
 
     await log(

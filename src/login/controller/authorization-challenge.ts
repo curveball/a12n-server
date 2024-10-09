@@ -1,9 +1,9 @@
 import { Controller } from '@curveball/controller';
+import { UnsupportedMediaType } from '@curveball/http-errors';
 import { Context } from '@curveball/kernel';
+import { AuthorizationChallengeRequest } from '../../api-types.js';
 import { getAppClientFromBasicAuth } from '../../app-client/service.js';
 import { UnauthorizedClient } from '../../oauth2/errors.js';
-import { UnsupportedMediaType } from '@curveball/http-errors';
-import { AuthorizationChallengeRequest } from '../../api-types.js';
 import * as loginService from '../service.js';
 
 /**
@@ -44,7 +44,7 @@ class AuthorizationChallengeController extends Controller {
     const request = ctx.request.body;
 
     const session = await loginService.getSession(client, request);
-    const code = await loginService.challenge(client, session, request);
+    const code = await loginService.challenge(client, session, request, ctx);
 
     ctx.response.body = {
       authorization_code: code.code,

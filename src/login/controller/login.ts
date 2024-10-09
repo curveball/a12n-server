@@ -6,12 +6,12 @@ import log from '../../log/service.js';
 import { EventType } from '../../log/types.js';
 import { MFALoginSession } from '../../mfa/types.js';
 import * as webAuthnService from '../../mfa/webauthn/service.js';
-import { getSetting } from '../../server-settings.js';
 import { hasUsers, PrincipalService } from '../../principal/service.js';
-import { PrincipalIdentity, User } from '../../types.js';
-import { isValidRedirect } from '../utilities.js';
-import { loginForm } from '../formats/html.js';
+import { getSetting } from '../../server-settings.js';
 import * as services from '../../services.js';
+import { PrincipalIdentity, User } from '../../types.js';
+import { loginForm } from '../formats/html.js';
+import { isValidRedirect } from '../utilities.js';
 
 class LoginController extends Controller {
 
@@ -56,12 +56,8 @@ class LoginController extends Controller {
         throw err;
       }
     }
-    const user = await principalService.findByIdentity(identity) as User;
 
-    if (!await services.user.validatePassword(user, ctx.request.body.password)) {
-      log(EventType.loginFailed, ctx.ip(), user.id);
-      return this.redirectToLogin(ctx, '', 'Incorrect username or password');
-    }
+    const user = (await principalService.findByIdentity(identity)) as User;
 
     if (!user.active) {
       log(EventType.loginFailedInactive, ctx.ip(), user.id, ctx.request.headers.get('User-Agent'));
@@ -76,6 +72,11 @@ class LoginController extends Controller {
       return;
     }
 
+    const { success, errorMessage } = await services.user.validateUserCredentials(user, ctx.request.body.password, ctx);
+    if (!success && errorMessage) {
+      return this.redirectToLogin(ctx, '', errorMessage);
+    }
+
     ctx.session = {
       user: user,
     };
@@ -88,7 +89,6 @@ class LoginController extends Controller {
     }
 
     ctx.response.redirect(303, getSetting('login.defaultRedirect'));
-
   }
 
   redirectToLogin(ctx: Context<any>, msg: string, error: string) {

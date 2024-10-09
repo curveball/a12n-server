@@ -1,7 +1,12 @@
+import { Context } from '@curveball/core';
+import { UnprocessableContent } from '@curveball/http-errors';
 import * as bcrypt from 'bcrypt';
 import db from '../database.js';
+import log from '../log/service.js';
+import { EventType } from '../log/types.js';
+import * as loginActivityService from '../login/login-activity/service.js';
+import { requireSetting } from '../server-settings.js';
 import { User } from '../types.js';
-import { UnprocessableContent } from '@curveball/http-errors';
 
 export async function createPassword(user: User, password: string): Promise<void> {
 
@@ -67,3 +72,49 @@ function assertValidPassword(password: string) {
   }
 
 }
+
+type AuthenticationResult = {
+  success: boolean;
+  errorMessage?: string;
+}
+
+/**
+ * Validate the user password and handle login attempts.
+ */
+export async function validateUserCredentials(user: User, password: string, ctx: Context): Promise<AuthenticationResult> {
+  const TOO_MANY_FAILED_ATTEMPTS = `Too many failed login attempts, please contact ${requireSetting('smtp.emailFrom')} to unlock your account.`;
+
+  if (await loginActivityService.isAccountLocked(user)) {
+    await loginActivityService.incrementFailedLoginAttempts(user);
+    log(EventType.loginFailedAccountLocked, ctx.ip(), user.id, ctx.request.headers.get('User-Agent'));
+    return {
+      success: false,
+      errorMessage: TOO_MANY_FAILED_ATTEMPTS,
+    };
+  }
+
+  if (!await validatePassword(user, password)) {
+    const incrementedAttempts = await loginActivityService.incrementFailedLoginAttempts(user);
+
+    if (loginActivityService.reachedMaxAttempts(incrementedAttempts)) {
+      log(EventType.accountLocked, ctx.ip(), user.id, ctx.request.headers.get('User-Agent'));
+      return {
+        success: false,
+        errorMessage: TOO_MANY_FAILED_ATTEMPTS,
+      };
+    }
+
+    log(EventType.loginFailed, ctx.ip(), user.id);
+    return {
+      success: false,
+      errorMessage: 'Incorrect username or password',
+    };
+  }
+
+  await loginActivityService.resetFailedLoginAttempts(user);
+
+  return {
+    success: true,
+  };
+}
+

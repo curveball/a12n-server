@@ -230,6 +230,16 @@ async function challengeUsernamePassword(session: LoginSession, username: string
     );
   }
 
+  const { success, errorMessage } = await services.user.validateUserCredentials(user, password, ctx);
+  if (!success && errorMessage) {
+    throw new A12nLoginChallengeError(
+      session,
+      errorMessage,
+      'username-password',
+      true,
+    );
+  }
+
   session.principalId = user.id;
   session.passwordValid = true;
   session.dirty = true;
@@ -248,16 +258,6 @@ async function challengeUsernamePassword(session: LoginSession, username: string
       'Email is not verified',
       'verify-email',
       true
-    );
-  }
-
-  const { success, errorMessage } = await services.user.validateUserCredentials(user, password, ctx);
-  if (!success && errorMessage) {
-    throw new A12nLoginChallengeError(
-      session,
-      errorMessage,
-      'username-password',
-      true,
     );
   }
 

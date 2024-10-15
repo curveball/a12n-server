@@ -69,7 +69,7 @@
     "eff-diceware-passphrase": "^3.0.0",
     "geoip-lite": "^1.0.10",
     "handlebars": "^4.7.7",
-    "jose": "^5.9.2",
+    "jose": "^5.9.3",
     "knex": "^3.0.1",
     "mysql2": "^3.11.2",
     "nodemailer": "^6.9.15",

@@ -12,6 +12,9 @@ export enum EventType {
 
   oauth2BadRedirect = 11,
   generateAccessToken = 12,
+
+  accountLocked = 13, // Logged at the time the account is locked
+  loginFailedAccountLocked = 14, // Logged when a login attempt is made on a locked account
 }
 
 export type LogEntry = {
@@ -34,4 +37,6 @@ export const eventTypeString = new Map<EventType, string>([
   [EventType.loginFailedNotVerified,'login-failed-notverified'],
   [EventType.tokenRevoked,          'token-revoked'],
   [EventType.oauth2BadRedirect,     'oauth2-badredirect'],
+  [EventType.accountLocked, 'account-locked'],
+  [EventType.loginFailedAccountLocked, 'login-failed-account-locked'],
 ]);

@@ -15,6 +15,7 @@ interface Tables {
   server_settings: ServerSettingsRecord;
   user_app_permissions: UserAppPermissionsRecord;
   user_log: UserLogRecord;
+  user_login_activity: UserLoginActivityRecord;
   user_passwords: UserPasswordsRecord;
   user_privileges: UserPrivilegesRecord;
   user_totp: UserTotpRecord;
@@ -158,7 +159,7 @@ export type PrincipalsRecord = {
   modified_at: number;
 
   /**
-   * System are built-in and cannot be deleted
+   * System principals are built-in and cannot be deleted
    */
   system: number;
 };
@@ -211,6 +212,23 @@ export type UserLogRecord = {
   ip: string;
   user_agent: string | null;
   country: string | null;
+};
+export type UserLoginActivityRecord = {
+
+  /**
+   * Foreign key to the ‘principals’ table, representing the user
+   */
+  principal_id: number;
+
+  /**
+   * Tracks the number of consecutive failed login attempts
+   */
+  failed_login_attempts: number;
+
+  /**
+   * Indicates if the user's account is currently locked due to suspicious activity, such as too many failed login attempts
+   */
+  account_locked: number;
 };
 export type UserPasswordsRecord = {
   user_id: number;

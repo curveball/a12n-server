@@ -70,6 +70,7 @@ class IntrospectionController extends Controller {
     }
     if (foundToken) {
       const privileges = (await privilegeService.get(foundToken.principal)).getAll();
+      // For 'developer tokens' clientId will be 0.
       const client = foundToken.clientId !== 0 ? await oauth2ClientService.findById(foundToken.clientId) : undefined;
 
       switch (foundTokenType!) {

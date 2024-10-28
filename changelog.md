@@ -11,6 +11,7 @@ Changelog
   `a12n:access-token:generate` privilege instead of just `admin`. Having the
   `admin` privilege still includes this privilege so this is not a backwards
   compatibility break.
+* Fix: Introspection on developer tokens threw an error.
 
 
 0.26.2 (2024-08-30)

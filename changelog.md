@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.26.4 (????-??-??)
+0.26.4 (2024-10-28)
 -------------------
 
 * New: access-token endpoint now returns refresh token.

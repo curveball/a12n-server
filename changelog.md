@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.26.3 (????-??-??)
+0.26.3 (2024-10-28)
 -------------------
 
 * User accounts are now automatically locked after 5 failed login attempts.

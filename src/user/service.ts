@@ -5,7 +5,7 @@ import db from '../database.js';
 import log from '../log/service.js';
 import { EventType } from '../log/types.js';
 import * as loginActivityService from '../login/login-activity/service.js';
-import { requireSetting } from '../server-settings.js';
+import { getSetting } from '../server-settings.js';
 import { User } from '../types.js';
 
 export async function createPassword(user: User, password: string): Promise<void> {
@@ -82,7 +82,10 @@ type AuthenticationResult = {
  * Validate the user password and handle login attempts.
  */
 export async function validateUserCredentials(user: User, password: string, ctx: Context): Promise<AuthenticationResult> {
-  const TOO_MANY_FAILED_ATTEMPTS = `Too many failed login attempts, please contact ${requireSetting('smtp.emailFrom')} to unlock your account.`;
+
+  const admin = getSetting('smtp.emailFrom') || 'an administrator';
+
+  const TOO_MANY_FAILED_ATTEMPTS = `Too many failed login attempts, please contact ${admin} to unlock your account.`;
 
   if (await loginActivityService.isAccountLocked(user)) {
     await loginActivityService.incrementFailedLoginAttempts(user);

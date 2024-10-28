@@ -6,6 +6,7 @@ import log from '../../log/service.js';
 import { EventType } from '../../log/types.js';
 import { PrincipalService } from '../../principal/service.js';
 import * as oauth2Service from '../service.js';
+import { tokenResponse } from '../formats/json.js';
 
 class UserAccessTokenController extends Controller {
 
@@ -22,11 +23,7 @@ class UserAccessTokenController extends Controller {
       principal: user,
     });
 
-    ctx.response.body = {
-      access_token: token.accessToken,
-      token_type: token.tokenType,
-      expires_in: token.accessTokenExpires - Math.round(Date.now() / 1000),
-    };
+    ctx.response.body = tokenResponse(token);
     log(EventType.generateAccessToken, ctx.ip()!, user.id, ctx.request.headers.get('User-Agent'));
 
   }

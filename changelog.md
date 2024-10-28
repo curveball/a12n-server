@@ -4,6 +4,8 @@ Changelog
 0.26.3 (????-??-??)
 -------------------
 
+* User accounts are now automatically locked after 5 failed login attempts.
+  (@YunhwanJeong).
 * Stricter validation on the 'Create App Client Form.'
 * Looks for database in 'public' searchPath in Postgres. (@Zen-cronic)
 * Fix internal error on user/id route in Postgres. (@Zen-cronic)
@@ -12,6 +14,7 @@ Changelog
   `admin` privilege still includes this privilege so this is not a backwards
   compatibility break.
 * Fix: Introspection on developer tokens threw an error.
+* Fix: CSRF error on change password page (@Zen-cronic).
 
 
 0.26.2 (2024-08-30)

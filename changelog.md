@@ -7,6 +7,10 @@ Changelog
 * Stricter validation on the 'Create App Client Form.'
 * Looks for database in 'public' searchPath in Postgres. (@Zen-cronic)
 * Fix internal error on user/id route in Postgres. (@Zen-cronic)
+* Generating arbitrary access-tokens is now behind the
+  `a12n:access-token:generate` privilege instead of just `admin`. Having the
+  `admin` privilege still includes this privilege so this is not a backwards
+  compatibility break.
 
 
 0.26.2 (2024-08-30)

@@ -256,7 +256,7 @@ export function requireSetting<T extends keyof Settings>(setting: T): Settings[T
     } else {
       msg+'There is literally no way to actually do this, and this is a bug. DM me for a prize.';
     }
-    throw msg;
+    throw new Error(msg);
   }
 
   return value;

@@ -14,8 +14,8 @@ class UserAccessTokenController extends Controller {
     const principalService = new PrincipalService(ctx.privileges);
     const user = await principalService.findByExternalId(ctx.params.id, 'user');
 
-    if (ctx.auth.equals(user) && !ctx.privileges.has('admin')) {
-      throw new Forbidden('You can only generate OAuth2 access tokens for yourself with this endpoint (unless you have the \'admin\' privilege (which you haven\'t))');
+    if (!ctx.auth.equals(user) && !ctx.privileges.has('a12n:access-token:generate')) {
+      throw new Forbidden('You can only generate OAuth2 access tokens for yourself with this endpoint (unless you have the \'a12n:access-token:generate\' privilege (which you haven\'t))');
     }
 
     const token = await oauth2Service.generateTokenDeveloperToken({

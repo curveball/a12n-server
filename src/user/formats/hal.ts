@@ -72,16 +72,23 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
     };
   }
 
+  if (hasControl || currentUserPrivileges.has('a12n:access-token:generate', user.href)) {
+    hal._links['access-token'] = {
+      href: `${user.href}/access-token`,
+      title: 'Generate an access token for this user.',
+      hints: {
+        allow: ['POST'],
+      }
+    }
+
+  }
+
   if (hasControl) {
     hal.hasPassword = hasPassword;
 
     hal._links['auth-factor-collection'] = {
       href: `${user.href}/auth-factor`,
       title: 'List of authentication methods / authentication factors for a user',
-    };
-    hal._links['access-token'] = {
-      href: `${user.href}/access-token`,
-      title: 'Generate an access token for this user.',
     };
     hal._links['active-sessions'] = {
       href: `${user.href}/sessions`,

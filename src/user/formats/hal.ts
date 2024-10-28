@@ -79,7 +79,7 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
       hints: {
         allow: ['POST'],
       }
-    }
+    };
 
   }
 

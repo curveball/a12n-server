@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.26.5 (????-??-??)
+-------------------
+
+* Developer tokens will now be associated with a client_id if an OAuth2 client
+  was used to generate one. This allows them to be refreshed.
+* A scope can now be specified when creating a developer token.
+
+
 0.26.4 (2024-10-28)
 -------------------
 

@@ -21,8 +21,10 @@ class UserAccessTokenController extends Controller {
 
     const token = await oauth2Service.generateTokenDeveloperToken({
       principal: user,
-    });
-
+      scope: ctx.request.body?.scope?.split(' '),
+      client: ctx.auth.appClient ?? undefined,
+    },
+    );
     ctx.response.body = tokenResponse(token);
     log(EventType.generateAccessToken, ctx.ip()!, user.id, ctx.request.headers.get('User-Agent'));
 

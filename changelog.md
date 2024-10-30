@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.26.5 (????-??-??)
+0.26.5 (2024-10-30)
 -------------------
 
 * Developer tokens will now be associated with a client_id if an OAuth2 client

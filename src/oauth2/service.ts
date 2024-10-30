@@ -219,7 +219,7 @@ export async function generateTokenAuthorizationCode(options: GenerateTokenAutho
 type GenerateTokenDeveloperTokenOptions = {
   principal: User;
   client?: AppClient;
-  scope?: string;
+  scope?: string[];
 }
 /**
  * Generates a token for the 'implicit' GrantType
@@ -246,7 +246,8 @@ export function generateTokenDeveloperToken(options: GenerateTokenDeveloperToken
   };
   return generateTokenInternal({
     grantType: 'developer-token',
-    ...options,
+    principal: options.principal,
+    scope: options.scope ?? [],
     secretUsed: false,
     client,
   });

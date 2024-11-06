@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.26.6 (????-??-??)
+0.26.6 (2024-11-06)
 -------------------
 
 * Updated Curveball dependencies

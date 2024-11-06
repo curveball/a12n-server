@@ -83,7 +83,7 @@
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",
-    "@types/chai": "^4.2.15",
+    "@types/chai": "^4.3.20",
     "@types/chai-as-promised": "^7.1.3",
     "@types/eff-diceware-passphrase": "^3.0.2",
     "@types/geoip-lite": "^1.4.1",
@@ -94,7 +94,7 @@
     "@types/sinon-chai": "^3.2.8",
     "@typescript-eslint/eslint-plugin": "^7.16.0",
     "@typescript-eslint/parser": "^7.16.0",
-    "chai": "^4.4.1",
+    "chai": "^4.5.0",
     "chai-as-promised": "^8.0.0",
     "eslint": "^8.0.1",
     "hal-types": "^1.7.6",

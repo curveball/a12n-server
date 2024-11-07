@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.26.7 (????-??-??)
+-------------------
+
+* Updated Curveball dependencies. `CURVEBALL_TRUSTPROXY` should now work as
+  expected.
+
+
 0.26.6 (2024-11-06)
 -------------------
 

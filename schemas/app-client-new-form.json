@@ -12,36 +12,36 @@
     "allowClientCredentials": {
       "type": "string",
       "const": "on",
-      "description": "Can the client can use the 'client_credentials' flow" 
+      "description": "Can the client can use the 'client_credentials' flow"
     },
     "allowAuthorizationCode": {
       "type": "string",
       "const": "on",
-      "description": "Can the client can use the 'authorization_code' flow" 
+      "description": "Can the client can use the 'authorization_code' flow"
     },
     "allowAuthorizationChallenge": {
       "type": "string",
       "const": "on",
-      "description": "Can the client can use the OAuth 2.0 for First Party Applications flow" 
+      "description": "Can the client can use the OAuth 2.0 for First Party Applications flow"
     },
     "allowImplicit": {
       "type": "string",
       "const": "on",
-      "description": "Can the client can use the deprecated 'implicit' flow" 
+      "description": "Can the client can use the deprecated 'implicit' flow"
     },
     "allowRefreshToken": {
       "type": "string",
       "const": "on",
-      "description": "Is the client allowed to refresh tokens" 
+      "description": "Is the client allowed to refresh tokens"
     },
     "allowPassword": {
       "type": "string",
       "const": "on",
-      "description": "Can the client can use the 'password' flow flow" 
+      "description": "Can the client can use the 'password' flow flow"
     },
     "redirectUris": {
       "type": "string",
-      "description": "List of redirect uris for the authorization_code and implicit flows." 
+      "description": "List of redirect uris for the authorization_code and implicit flows."
     },
     "clientId": {
       "type": "string",

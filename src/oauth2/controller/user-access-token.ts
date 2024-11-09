@@ -6,6 +6,7 @@ import log from '../../log/service.js';
 import { EventType } from '../../log/types.js';
 import { PrincipalService } from '../../principal/service.js';
 import * as oauth2Service from '../service.js';
+import { tokenResponse } from '../formats/json.js';
 
 class UserAccessTokenController extends Controller {
 
@@ -14,19 +15,17 @@ class UserAccessTokenController extends Controller {
     const principalService = new PrincipalService(ctx.privileges);
     const user = await principalService.findByExternalId(ctx.params.id, 'user');
 
-    if (ctx.auth.equals(user) && !ctx.privileges.has('admin')) {
-      throw new Forbidden('You can only generate OAuth2 access tokens for yourself with this endpoint (unless you have the \'admin\' privilege (which you haven\'t))');
+    if (!ctx.auth.equals(user) && !ctx.privileges.has('a12n:access-token:generate')) {
+      throw new Forbidden('You can only generate OAuth2 access tokens for yourself with this endpoint (unless you have the \'a12n:access-token:generate\' privilege (which you haven\'t))');
     }
 
     const token = await oauth2Service.generateTokenDeveloperToken({
       principal: user,
-    });
-
-    ctx.response.body = {
-      access_token: token.accessToken,
-      token_type: token.tokenType,
-      expires_in: token.accessTokenExpires - Math.round(Date.now() / 1000),
-    };
+      scope: ctx.request.body?.scope?.split(' '),
+      client: ctx.auth.appClient ?? undefined,
+    },
+    );
+    ctx.response.body = tokenResponse(token);
     log(EventType.generateAccessToken, ctx.ip()!, user.id, ctx.request.headers.get('User-Agent'));
 
   }

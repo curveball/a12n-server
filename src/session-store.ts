@@ -7,7 +7,7 @@ export function getSessionStore(): SessionStore {
 
   if (store) return store;
 
-  if (process.env.REDIS_HOST) {
+  if (process.env.REDIS_URI) {
     store = new RedisStore({
       prefix: 'A12N-session',
       clientOptions: {

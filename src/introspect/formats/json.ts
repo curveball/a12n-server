@@ -5,7 +5,7 @@ import { AppClient } from '../../types.js';
 
 type IntrospectInfo = {
   privileges: PrivilegeMap;
-  client: AppClient;
+  client?: AppClient;
   token: OAuth2Token;
   tokenType: 'bearer' | 'refresh_token';
   origin: string;
@@ -54,16 +54,14 @@ export function introspectResponse(info: IntrospectInfo): IntrospectResponse {
     for(const privilege of privilegeSet) scope.add(privilege);
   }
 
-  return {
+  const resp: IntrospectResponse = {
     active: true,
     scope: (Array.from(scope.values())).join(' '),
     privileges: info.privileges,
-    client_id: info.client.clientId,
     username: info.token.principal.nickname,
     token_type: info.tokenType,
     exp: info.tokenType === 'refresh_token' ? info.token.refreshTokenExpires : info.token.accessTokenExpires,
     sub: url.resolve(info.origin, info.token.principal.href),
-    aud: url.resolve(info.origin, info.client.app.href),
     iss: info.origin,
     _links: {
       'authenticated-as': {
@@ -71,6 +69,12 @@ export function introspectResponse(info: IntrospectInfo): IntrospectResponse {
       }
     }
   };
+
+  if (info.client) {
+    resp.client_id = info.client.clientId;
+    resp.aud =  url.resolve(info.origin, info.client.app.href);
+  }
+  return resp;
 
 }
 

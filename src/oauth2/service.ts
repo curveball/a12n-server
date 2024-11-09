@@ -218,12 +218,14 @@ export async function generateTokenAuthorizationCode(options: GenerateTokenAutho
 
 type GenerateTokenDeveloperTokenOptions = {
   principal: User;
+  client?: AppClient;
+  scope?: string[];
 }
 /**
  * Generates a token for the 'implicit' GrantType
  */
 export function generateTokenDeveloperToken(options: GenerateTokenDeveloperTokenOptions): Promise<OAuth2Token> {
-  const client: AppClient = {
+  const client = options.client ?? {
     id: 0,
     clientId: 'system',
     clientSecret: '',
@@ -244,10 +246,10 @@ export function generateTokenDeveloperToken(options: GenerateTokenDeveloperToken
   };
   return generateTokenInternal({
     grantType: 'developer-token',
-    ...options,
+    principal: options.principal,
+    scope: options.scope ?? [],
     secretUsed: false,
     client,
-    scope: [],
   });
 }
 

@@ -33,6 +33,11 @@ export async function findByClientId(clientId: string): Promise<AppClient> {
 
 export async function findById(id: number): Promise<AppClient> {
 
+  if (id === 0) {
+    // The clientId 0 is used when creating 'developer tokens'. I don't think
+    // this was good design and should be considered technical debt.
+    throw new Error('Invalid id passed. This is a bug');
+  }
   const result = await db('app_clients')
     .select('*')
     .where('id', id);

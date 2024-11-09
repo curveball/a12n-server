@@ -1,8 +1,9 @@
 import { Middleware } from '@curveball/core';
 import { NotFound, Unauthorized } from '@curveball/http-errors';
 import * as oauth2Service from './../oauth2/service.js';
-import { App, User, Principal } from '../types.js';
+import { App, User, Principal, AppClient } from '../types.js';
 import * as privilegeService from '../privilege/service.js';
+import * as services from '../services.js';
 
 const whitelistPath = [
   '/login',
@@ -41,8 +42,15 @@ class AuthHelper {
    */
   public principal: App | User | null;
 
-  constructor(principal: App | User | null) {
+  /**
+   * The App Client that was used to authenticate the user. Note that not
+   * every authentication method uses an app.
+   */
+  public appClient: AppClient | null;
+
+  constructor(principal: App | User | null, appClient: AppClient | null) {
     this.principal = principal;
+    this.appClient = appClient;
   }
 
   /**
@@ -102,8 +110,11 @@ export default function(): Middleware {
           throw e;
         }
       }
-      // We are logged in!
-      ctx.auth = new AuthHelper(token.principal);
+
+      ctx.auth = new AuthHelper(
+        token.principal,
+        token.clientId !== 0 ? await services.appClient.findById(token.clientId) : null,
+      );
       ctx.privileges = await privilegeService.get(ctx.auth.principal!);
 
       return next();
@@ -111,7 +122,8 @@ export default function(): Middleware {
     }
 
     ctx.auth = new AuthHelper(
-      ctx.session.user || null
+      ctx.session.user || null,
+      null
     );
     if (ctx.auth.principal) {
       ctx.privileges = await privilegeService.get(ctx.auth.principal);

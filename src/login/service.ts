@@ -1,11 +1,12 @@
-import { AppClient, Principal, PrincipalIdentity, User } from '../types.js';
-import { getSessionStore } from '../session-store.js';
-import { InvalidGrant, OAuth2Error } from '../oauth2/errors.js';
-import * as services from '../services.js';
 import { BadRequest, NotFound } from '@curveball/http-errors';
+import { Context } from '@curveball/kernel';
 import { AuthorizationChallengeRequest } from '../api-types.js';
+import { InvalidGrant, OAuth2Error } from '../oauth2/errors.js';
 import { OAuth2Code } from '../oauth2/types.js';
 import { getSetting } from '../server-settings.js';
+import * as services from '../services.js';
+import { getSessionStore } from '../session-store.js';
+import { AppClient, Principal, PrincipalIdentity, User } from '../types.js';
 
 type ChallengeRequest = AuthorizationChallengeRequest;
 
@@ -173,8 +174,6 @@ export async function challenge(client: AppClient, session: LoginSession, parame
 
 }
 
-
-
 async function continueLoginSession(client: AppClient, authSession: string): Promise<LoginSession> {
 
   const store = getSessionStore();
@@ -259,10 +258,11 @@ async function challengeUsernamePassword(session: LoginSession, parameters: Chal
     );
   }
 
-  if (!await services.user.validatePassword(user, parameters.password)) {
+  const { success, errorMessage } = await services.user.validateUserCredentials(user, password, ctx);
+  if (!success && errorMessage) {
     throw new A12nLoginChallengeError(
       session,
-      'Incorrect username or password',
+      errorMessage,
       'username-password',
       true,
     );
@@ -273,7 +273,6 @@ async function challengeUsernamePassword(session: LoginSession, parameters: Chal
   session.dirty = true;
 
   if (!user.active) {
-
     throw new A12nLoginChallengeError(
       session,
       'This account is not active. Please contact support',
@@ -289,6 +288,7 @@ async function challengeUsernamePassword(session: LoginSession, parameters: Chal
       true
     );
   }
+
   return user;
 }
 

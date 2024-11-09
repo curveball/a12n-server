@@ -1,10 +1,47 @@
 Changelog
 =========
 
-0.26.3 (????-??-??)
+0.26.7 (2024-11-07)
 -------------------
 
+* Updated Curveball dependencies. `CURVEBALL_TRUSTPROXY` should now work as
+  expected.
+
+
+0.26.6 (2024-11-06)
+-------------------
+
+* Updated Curveball dependencies
+
+
+0.26.5 (2024-10-30)
+-------------------
+
+* Developer tokens will now be associated with a client_id if an OAuth2 client
+  was used to generate one. This allows them to be refreshed.
+* A scope can now be specified when creating a developer token.
+
+
+0.26.4 (2024-10-28)
+-------------------
+
+* New: access-token endpoint now returns refresh token.
+
+
+0.26.3 (2024-10-28)
+-------------------
+
+* User accounts are now automatically locked after 5 failed login attempts.
+  (@YunhwanJeong).
 * Stricter validation on the 'Create App Client Form.'
+* Looks for database in 'public' searchPath in Postgres. (@Zen-cronic)
+* Fix internal error on user/id route in Postgres. (@Zen-cronic)
+* Generating arbitrary access-tokens is now behind the
+  `a12n:access-token:generate` privilege instead of just `admin`. Having the
+  `admin` privilege still includes this privilege so this is not a backwards
+  compatibility break.
+* Fix: Introspection on developer tokens threw an error.
+* Fix: CSRF error on change password page (@Zen-cronic).
 
 
 0.26.2 (2024-08-30)

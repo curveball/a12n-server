@@ -44,7 +44,7 @@ class ResetPasswordController extends Controller {
 
     await UserService.updatePassword(user, resetNewPassword);
 
-    delete ctx.session.resetPasswordUser
+    delete ctx.session.resetPasswordUser;
 
     const log = getLoggerFromContext(ctx, user);
     await log('reset-password-success');

@@ -33,7 +33,7 @@ export const eventTypeMap = {
 export type EventType = keyof typeof eventTypeMap;
 
 export const reverseEventTypeMap = new Map<number, EventType>(
-   (Object.entries(eventTypeMap).map( ([k,v]): [number, EventType] => [v,k as EventType]))
+  (Object.entries(eventTypeMap).map( ([k,v]): [number, EventType] => [v,k as EventType]))
 );
 
 export type LogEntry = {

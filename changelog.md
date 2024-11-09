@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.26.8 (????-??-??)
+-------------------
+
+* Refactored logging system. Less ugly now with fewer enums!
+
+
 0.26.7 (2024-11-07)
 -------------------
 

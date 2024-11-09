@@ -2,8 +2,7 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { NotFound } from '@curveball/http-errors';
 import * as querystring from 'querystring';
-import log from '../../log/service.js';
-import { EventType } from '../../log/types.js';
+import { getLoggerFromContext } from '../../log/service.js';
 import { MFALoginSession } from '../../mfa/types.js';
 import * as webAuthnService from '../../mfa/webauthn/service.js';
 import { hasUsers, PrincipalService } from '../../principal/service.js';
@@ -59,12 +58,14 @@ class LoginController extends Controller {
 
     const user = (await principalService.findByIdentity(identity)) as User;
 
+    const log = getLoggerFromContext(ctx, user);
+
     if (!user.active) {
-      log(EventType.loginFailedInactive, ctx.ip(), user.id, ctx.request.headers.get('User-Agent'));
+      await log('login-failed-inactive');
       return this.redirectToLogin(ctx, '', 'This account is inactive. Please contact Admin');
     }
     if (!identity.verifiedAt) {
-      log(EventType.loginFailedNotVerified, ctx.ip(), user.id, ctx.request.headers.get('User-Agent'));
+      await log('login-failed-notverified');
       return this.redirectToLogin(ctx, '', 'This identity has not been verified');
     }
 
@@ -72,7 +73,7 @@ class LoginController extends Controller {
       return;
     }
 
-    const { success, errorMessage } = await services.user.validateUserCredentials(user, ctx.request.body.password, ctx);
+    const { success, errorMessage } = await services.user.validateUserCredentials(user, ctx.request.body.password, log);
     if (!success && errorMessage) {
       return this.redirectToLogin(ctx, '', errorMessage);
     }
@@ -80,7 +81,7 @@ class LoginController extends Controller {
     ctx.session = {
       user: user,
     };
-    log(EventType.loginSuccess, ctx);
+    await log('login-success');
 
     ctx.status = 303;
     if (ctx.request.body.continue) {

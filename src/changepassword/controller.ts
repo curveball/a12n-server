@@ -1,7 +1,6 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import log from '../log/service.js';
-import { EventType } from '../log/types.js';
+import { getLoggerFromContext } from '../log/service.js';
 import * as UserService from '../user/service.js';
 import { User } from '../types.js';
 import { changePasswordForm } from './formats/html.js';
@@ -45,7 +44,8 @@ class ChangePasswordController extends Controller {
     ctx.session = {
       user: user,
     };
-    log(EventType.changePasswordSuccess, ctx);
+    const log = getLoggerFromContext(ctx);
+    await log('change-password-success');
     ctx.status = 303;
     ctx.response.headers.set('Location', '/');
 

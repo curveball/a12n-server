@@ -1,8 +1,7 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { Forbidden } from '@curveball/http-errors';
-import log from '../../log/service.js';
-import { EventType } from '../../log/types.js';
+import { getLoggerFromContext } from '../../log/service.js';
 import * as UserService from '../../user/service.js';
 import { User } from '../../types.js';
 import { resetPasswordForm } from '../formats/redirect.js';
@@ -45,8 +44,11 @@ class ResetPasswordController extends Controller {
 
     await UserService.updatePassword(user, resetNewPassword);
 
-    delete ctx.session.resetPasswordUser;
-    log(EventType.resetPasswordSuccess, ctx.ip()!, user.id);
+    delete ctx.session.resetPasswordUser
+
+    const log = getLoggerFromContext(ctx, user);
+    await log('reset-password-success');
+
     ctx.status = 303;
     ctx.response.headers.set('Location', '/login?msg=Your+new+password+has+been+saved');
 

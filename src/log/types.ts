@@ -1,21 +1,40 @@
-export enum EventType {
-  loginSuccess = 1,
-  loginFailed = 2,
-  totpFailed = 3,
-  changePasswordSuccess = 4,
-  resetPasswordRequest = 5,
-  resetPasswordSuccess = 6,
-  loginFailedInactive = 7,
-  webAuthnFailed = 8,
-  tokenRevoked = 9,
-  loginFailedNotVerified = 10,
+export const eventTypeMap = {
 
-  oauth2BadRedirect = 11,
-  generateAccessToken = 12,
+  'login-success': 1,
+  'login-failed': 2,
 
-  accountLocked = 13, // Logged at the time the account is locked
-  loginFailedAccountLocked = 14, // Logged when a login attempt is made on a locked account
-}
+  // Account was deactivated by an admin
+  'login-failed-inactive': 8,
+
+  // A credential used by a user to log in (like an email address) was not
+  // verified. The credential must be verifiedd before it can be used.
+  'login-failed-notverified': 10,
+
+  // A user tried to log in using an account that was previously locked
+  'login-failed-account-locked': 14,
+
+  'totp-failed': 3,
+  'webauthn-failed': 8,
+
+  'change-password-success': 5,
+
+  'reset-password-request': 6,
+  'reset-password-success': 7,
+
+  'token-revoked': 8,
+  'oauth2-badredirect': 11,
+  'generate-access-token': 12,
+
+  // Triggered when an account is locked down due to a security trigger, such
+  // as getting a password wrong 5 times.
+  'account-locked': 13,
+} as const;
+
+export type EventType = keyof typeof eventTypeMap;
+
+export const reverseEventTypeMap = new Map<number, EventType>(
+   (Object.entries(eventTypeMap).map( ([k,v]): [number, EventType] => [v,k as EventType]))
+);
 
 export type LogEntry = {
   time: Date;
@@ -25,18 +44,10 @@ export type LogEntry = {
   country: string|null;
 };
 
-export const eventTypeString = new Map<EventType, string>([
-  [EventType.loginSuccess,          'login-success'],
-  [EventType.loginFailed,           'login-failed'],
-  [EventType.totpFailed,            'totp-failed'],
-  [EventType.webAuthnFailed,        'webauthn-failed'],
-  [EventType.changePasswordSuccess, 'change-password-success'],
-  [EventType.resetPasswordRequest,  'reset-password-request'],
-  [EventType.resetPasswordSuccess,  'reset-password-success'],
-  [EventType.loginFailedInactive,   'login-failed-inactive'],
-  [EventType.loginFailedNotVerified,'login-failed-notverified'],
-  [EventType.tokenRevoked,          'token-revoked'],
-  [EventType.oauth2BadRedirect,     'oauth2-badredirect'],
-  [EventType.accountLocked, 'account-locked'],
-  [EventType.loginFailedAccountLocked, 'login-failed-account-locked'],
-]);
+/**
+ * A function that logs user security event.
+ *
+ * This function is initialized to be associated to a specific user,
+ * making it easy to pass around.
+ */
+export type UserEventLogger = (eventType: EventType) => Promise<void>

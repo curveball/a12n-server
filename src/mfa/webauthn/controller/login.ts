@@ -3,8 +3,7 @@ import { Context } from '@curveball/core';
 import { generateAuthenticationOptions, verifyAuthenticationResponse } from '@simplewebauthn/server';
 import { isoBase64URL } from '@simplewebauthn/server/helpers';
 
-import log from '../../../log/service.js';
-import { EventType } from '../../../log/types.js';
+import { getLoggerFromContext } from '../../../log/service.js';
 import { getSetting } from '../../../server-settings.js';
 
 import * as webauthnService from '../service.js';
@@ -45,6 +44,7 @@ class WebAuthnLoginRequestController extends Controller {
     const authenticatorDevice = await webauthnService.findDeviceByUserAndId(user, body.id);
 
     let verification;
+    const log = getLoggerFromContext(ctx, user);
     try {
       verification = await verifyAuthenticationResponse({
         response: body,
@@ -58,7 +58,7 @@ class WebAuthnLoginRequestController extends Controller {
         }
       });
     } catch (error: any) {
-      log(EventType.totpFailed, ctx.ip(), user.id);
+      await log('totp-failed');
       ctx.status = 400;
       ctx.response.body = { error: error.message };
       return;
@@ -75,7 +75,7 @@ class WebAuthnLoginRequestController extends Controller {
     ctx.session = {
       user: user,
     };
-    log(EventType.loginSuccess, ctx);
+    await log('login-success');
     ctx.response.body = { verified };
   }
 }

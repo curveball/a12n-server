@@ -1,9 +1,7 @@
-import { Context } from '@curveball/core';
 import { UnprocessableContent } from '@curveball/http-errors';
 import * as bcrypt from 'bcrypt';
 import db from '../database.js';
-import log from '../log/service.js';
-import { EventType } from '../log/types.js';
+import { UserEventLogger } from '../log/types.js';
 import * as loginActivityService from '../login/login-activity/service.js';
 import { getSetting } from '../server-settings.js';
 import { User } from '../types.js';
@@ -81,7 +79,7 @@ type AuthenticationResult = {
 /**
  * Validate the user password and handle login attempts.
  */
-export async function validateUserCredentials(user: User, password: string, ctx: Context): Promise<AuthenticationResult> {
+export async function validateUserCredentials(user: User, password: string, log: UserEventLogger): Promise<AuthenticationResult> {
 
   const admin = getSetting('smtp.emailFrom') || 'an administrator';
 
@@ -89,7 +87,7 @@ export async function validateUserCredentials(user: User, password: string, ctx:
 
   if (await loginActivityService.isAccountLocked(user)) {
     await loginActivityService.incrementFailedLoginAttempts(user);
-    log(EventType.loginFailedAccountLocked, ctx.ip(), user.id, ctx.request.headers.get('User-Agent'));
+    await log('login-failed-account-locked');
     return {
       success: false,
       errorMessage: TOO_MANY_FAILED_ATTEMPTS,
@@ -100,14 +98,14 @@ export async function validateUserCredentials(user: User, password: string, ctx:
     const incrementedAttempts = await loginActivityService.incrementFailedLoginAttempts(user);
 
     if (loginActivityService.reachedMaxAttempts(incrementedAttempts)) {
-      log(EventType.accountLocked, ctx.ip(), user.id, ctx.request.headers.get('User-Agent'));
+      await log('account-locked');
       return {
         success: false,
         errorMessage: TOO_MANY_FAILED_ATTEMPTS,
       };
     }
 
-    log(EventType.loginFailed, ctx.ip(), user.id);
+    await log('login-failed');
     return {
       success: false,
       errorMessage: 'Incorrect username or password',

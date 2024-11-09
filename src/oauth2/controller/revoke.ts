@@ -1,7 +1,6 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import log from '../../log/service.js';
-import { EventType } from '../../log/types.js';
+import { getLoggerFromContext } from '../../log/service.js';
 import { revokeByAccessRefreshToken } from '../service.js';
 import { AppClient } from '../../types.js';
 import {
@@ -26,7 +25,8 @@ class RevokeController extends Controller {
 
     await revokeByAccessRefreshToken(oauth2Client, token);
 
-    log(EventType.tokenRevoked, ctx);
+    const log = getLoggerFromContext(ctx);
+    await log('token-revoked');
 
     ctx.status = 200;
 

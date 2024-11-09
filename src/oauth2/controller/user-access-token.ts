@@ -2,8 +2,7 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { Forbidden } from '@curveball/http-errors';
 
-import log from '../../log/service.js';
-import { EventType } from '../../log/types.js';
+import { getLoggerFromContext } from '../../log/service.js';
 import { PrincipalService } from '../../principal/service.js';
 import * as oauth2Service from '../service.js';
 import { tokenResponse } from '../formats/json.js';
@@ -26,7 +25,8 @@ class UserAccessTokenController extends Controller {
     },
     );
     ctx.response.body = tokenResponse(token);
-    log(EventType.generateAccessToken, ctx.ip()!, user.id, ctx.request.headers.get('User-Agent'));
+    const log = getLoggerFromContext(ctx, user);
+    await log('generate-access-token');
 
   }
 

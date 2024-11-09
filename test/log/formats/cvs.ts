@@ -1,28 +1,28 @@
 import { expect } from 'chai';
 import { describe, it } from 'node:test';
 
-import { EventType } from '../../../src/log/types.js';
 import csv from '../../../src/log/formats/csv.js';
+import { LogEntry } from '../../../src/log/types.js';
 
 describe('csv', () => {
   it('should return formatted log string', () => {
-    const log = [
+    const log: LogEntry[] = [
       {
         time: new Date(0),
         ip: '127.0.0.1',
-        eventType: EventType.loginSuccess,
+        eventType: 'login-success',
         userAgent: 'User Agent',
         country: null,
       },{
         time: new Date(1),
         ip: '127.0.0.1',
-        eventType: EventType.loginFailedInactive,
+        eventType: 'login-failed-inactive',
         userAgent: 'User, Agent',
         country: 'ca',
       },{
         time: new Date(2),
         ip: '127.0.0.1',
-        eventType: EventType.changePasswordSuccess,
+        eventType: 'change-password-success',
         userAgent: 'User Agent"',
         country: 'ca',
       }

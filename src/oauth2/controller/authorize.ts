@@ -7,8 +7,7 @@ import { InvalidClient, InvalidRequest, UnsupportedGrantType } from '../errors.j
 import * as oauth2Service from '../service.js';
 import { CodeChallengeMethod } from '../types.js';
 import { AppClient } from '../../types.js';
-import log from '../../log/service.js';
-import { EventType } from '../../log/types.js';
+import { getLoggerFromContext } from '../../log/service.js';
 import { findByClientId } from '../../app-client/service.js';
 import * as userAppPermissions from '../../user-app-permissions/service.js';
 import { generateJWTIDToken } from '../jwt.js';
@@ -51,10 +50,11 @@ class AuthorizeController extends Controller {
       throw new UnsupportedGrantType('The current client is not allowed to use the ' + grantType + ' grant_type');
     }
 
+    const log = getLoggerFromContext(ctx);
     try {
       await oauth2Service.requireRedirectUri(oauth2Client, params.redirectUri);
     } catch (err) {
-      await log(EventType.oauth2BadRedirect, ctx);
+      await log('oauth2-badredirect');
       throw err;
     }
 

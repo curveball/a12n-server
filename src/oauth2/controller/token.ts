@@ -122,7 +122,11 @@ class TokenController extends Controller {
         throw new InvalidRequest('The "password" grant type is only valid for users');
       }
     } catch (err) {
-      throw new InvalidGrant('Unknown username or password');
+      if (err instanceof NotFound) {
+        throw new InvalidGrant('Unknown username or password');
+      } else {
+        throw err;
+      }
     }
 
     const log = getLoggerFromContext(ctx, user);

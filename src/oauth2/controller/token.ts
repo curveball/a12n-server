@@ -5,8 +5,7 @@ import {
   getAppClientFromBasicAuth,
   getAppClientFromBody,
 } from '../../app-client/service.js';
-import log from '../../log/service.js';
-import { EventType } from '../../log/types.js';
+import { getLoggerFromContext } from '../../log/service.js';
 import * as principalIdentityService from '../../principal-identity/service.js';
 import { PrincipalService } from '../../principal/service.js';
 import { AppClient, User } from '../../types.js';
@@ -123,30 +122,25 @@ class TokenController extends Controller {
         throw new InvalidRequest('The "password" grant type is only valid for users');
       }
     } catch (err) {
-      throw new InvalidGrant('Unknown username or password');
+      if (err instanceof NotFound) {
+        throw new InvalidGrant('Unknown username or password');
+      } else {
+        throw err;
+      }
     }
 
+    const log = getLoggerFromContext(ctx, user);
     if (!user.active) {
-      await log(
-        EventType.loginFailedInactive,
-        ctx.ip(),
-        user.id,
-        ctx.request.headers.get('User-Agent')!
-      );
+      await log('login-failed-inactive');
       throw new InvalidGrant('User Inactive');
     }
 
-    const { success, errorMessage } = await userService.validateUserCredentials(user, ctx.request.body.password, ctx);
+    const { success, errorMessage } = await userService.validateUserCredentials(user, ctx.request.body.password, log);
     if (!success && errorMessage) {
       throw new InvalidGrant(errorMessage);
     }
 
-    await log(
-      EventType.loginSuccess,
-      ctx.ip(),
-      user.id,
-      ctx.request.headers.get('User-Agent')!
-    );
+    await log('login-success');
 
     const scope: string[] = ctx.request.body.scope?.split(' ') ?? [];
 

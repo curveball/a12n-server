@@ -1,4 +1,4 @@
-import { eventTypeString, LogEntry } from '../types.js';
+import { LogEntry } from '../types.js';
 import { stringify } from 'csv-stringify/sync';
 
 export default function csv(log: LogEntry[]): string {
@@ -14,7 +14,6 @@ export default function csv(log: LogEntry[]): string {
     },
     cast: {
       date: (value) => value.toISOString(),
-      number: (value) => eventTypeString.get(value)!,
     }
   });
 

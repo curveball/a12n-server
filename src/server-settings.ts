@@ -254,6 +254,7 @@ export function requireSetting<T extends keyof Settings>(setting: T): Settings[T
     } else if (info.env) {
       msg+=`You should provide a value with the "${info.env}" environment variable.`;
     } else {
+      // eslint-disable-next-line @typescript-eslint/no-unused-expressions
       msg+'There is literally no way to actually do this, and this is a bug. DM me for a prize.';
     }
     throw new Error(msg);

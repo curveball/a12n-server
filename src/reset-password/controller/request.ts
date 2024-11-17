@@ -1,9 +1,9 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { NotFound, BadRequest } from '@curveball/http-errors';
-import { EventType } from '../../log/types.js';
 import { resetPasswordRequestForm } from '../formats/html.js';
 import * as services from '../../services.js';
+import { getLoggerFromContext } from '../../log/service.js';
 
 /**
  * This controller is used for requesting change password when the user forgot the password.
@@ -47,7 +47,8 @@ class ResetPasswordRequestController extends Controller {
       throw new BadRequest('This endpoint can only be called for principals of type \'user\'.');
     }
     await services.resetPassword.sendResetPasswordEmail(user, identity);
-    await services.log.log(EventType.resetPasswordRequest, ctx.ip()!, user.id);
+    const log = getLoggerFromContext(ctx, user);
+    await log('reset-password-request');
 
     ctx.redirect(303, '/reset-password?msg=Password+reset+request+submitted.+Please+check+your+email+for+further+instructions.');
   }

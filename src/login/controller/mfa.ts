@@ -6,7 +6,7 @@ import * as querystring from 'querystring';
 import { isValidRedirect } from '../utilities.js';
 import { MFALoginSession } from '../../mfa/types.js';
 import { mfaForm } from '../formats/html.js';
-import { EventType } from '../../log/types.js';
+import { getLoggerFromContext } from '../../log/service.js';
 
 class MFAController extends Controller {
 
@@ -42,9 +42,11 @@ class MFAController extends Controller {
       return this.redirectToLogin(ctx);
     }
 
+    const log = getLoggerFromContext(ctx, user);
+
     if (ctx.request.body.totp) {
       if (!await services.mfaTotp.validateTotp(user, ctx.request.body.totp)) {
-        services.log.log(EventType.totpFailed, ctx.ip(), user.id);
+        await log('totp-failed');
         return this.redirectToMfa(ctx, 'Incorrect TOTP code');
       }
     } else {
@@ -58,7 +60,7 @@ class MFAController extends Controller {
     ctx.session = {
       user: user,
     };
-    services.log.log(EventType.loginSuccess, ctx);
+    await log('login-success');
 
     ctx.status = 303;
     if (ctx.request.body.continue) {

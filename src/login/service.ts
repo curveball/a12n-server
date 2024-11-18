@@ -1,5 +1,4 @@
 import { BadRequest, NotFound } from '@curveball/http-errors';
-import { Context } from '@curveball/kernel';
 import { AuthorizationChallengeRequest } from '../api-types.js';
 import { InvalidGrant, OAuth2Error } from '../oauth2/errors.js';
 import { OAuth2Code } from '../oauth2/types.js';

@@ -44,7 +44,7 @@ class AuthorizationChallengeController extends Controller {
     const request = ctx.request.body;
 
     const session = await loginService.getSession(client, request);
-    const code = await loginService.challenge(client, session, request, ctx);
+    const code = await loginService.challenge(client, session, request);
 
     ctx.response.body = {
       authorization_code: code.code,

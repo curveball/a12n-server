@@ -9,14 +9,15 @@ import * as principalIdentityService from '../principal-identity/service.js';
 /**
  * 2 hour token timeout
  */
-const tokenTTL = 7200;
+const defaultTokenTTL = 7200;
 
 /**
  * This function will create a unique token then store it in the database
  */
 export async function createToken(user: User, expiresIn: number | null, identity: PrincipalIdentity|null): Promise<OneTimeToken> {
   const token = await generateSecretToken();
-  const expiresAt = Math.floor(Date.now() / 1000) + (expiresIn ?? tokenTTL);
+  if (expiresIn==null) expiresIn = defaultTokenTTL;
+  const expiresAt = Math.floor(Date.now() / 1000) + expiresIn;
 
   await db('verification_token').insert({
     principal_id: user.id,
@@ -29,7 +30,7 @@ export async function createToken(user: User, expiresIn: number | null, identity
   return {
     token,
     expires: new Date(expiresAt*1000),
-    ttl: tokenTTL,
+    ttl: expiresIn
   };
 }
 

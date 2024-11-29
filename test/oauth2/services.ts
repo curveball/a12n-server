@@ -10,7 +10,7 @@ describe('oauth2 services', () => {
       const codeChallengeMethod = 'S256';
 
       // should not throw
-      validatePKCE(codeVerifier, codeChallenge, codeChallengeMethod)
+      validatePKCE(codeVerifier, codeChallenge, codeChallengeMethod);
     });
 
     it('should fail to validate the sha256 codeVerifier', () => {
@@ -29,7 +29,7 @@ describe('oauth2 services', () => {
       const codeChallengeMethod = 'plain';
 
       // should not throw
-      validatePKCE(codeVerifier, codeChallenge, codeChallengeMethod)
+      validatePKCE(codeVerifier, codeChallenge, codeChallengeMethod);
     });
 
     it('should fail to validate the plain codeVerifier', () => {

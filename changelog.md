@@ -5,6 +5,7 @@ Changelog
 -------------------
 
 * Refactored logging system. Less ugly now with fewer enums!
+* Return the correct 'ttl' value for a verification-token.
 
 
 0.26.7 (2024-11-07)

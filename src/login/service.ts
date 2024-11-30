@@ -6,7 +6,7 @@ import { getSetting } from '../server-settings.js';
 import * as services from '../services.js';
 import { getSessionStore } from '../session-store.js';
 import { AppClient, Principal, PrincipalIdentity, User } from '../types.js';
-import { getLoggerFromContext } from '../log/service.js';
+import { getLogger } from '../log/service.js';
 
 type ChallengeRequest = AuthorizationChallengeRequest;
 
@@ -258,8 +258,12 @@ async function challengeUsernamePassword(session: LoginSession, parameters: Chal
     );
   }
 
-  const log = getLoggerFromContext(ctx, user);
-  const { success, errorMessage } = await services.user.validateUserCredentials(user, password, log);
+  const log = getLogger(
+    user,
+    parameters.remote_addr ?? null,
+    parameters.user_agent ?? null
+  );
+  const { success, errorMessage } = await services.user.validateUserCredentials(user, parameters.password, log);
   if (!success && errorMessage) {
     throw new A12nLoginChallengeError(
       session,

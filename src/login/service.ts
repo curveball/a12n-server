@@ -319,6 +319,7 @@ async function challengeTotp(session: LoginSession, parameters: ChallengeRequest
     // User didn't have TOTP so we just pass them
     session.totpPassed = true;
     session.dirty = true;
+    return;
   }
   if (!parameters.totp_code) {
     // No TOTP code was provided

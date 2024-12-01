@@ -28,7 +28,7 @@
       "description": "A 6 digit TOTP code / authenticator app code",
       "minLength": 6,
       "maxLength": 6,
-      "pattern": "/^[0-9]{6}$/"
+      "pattern": "^[0-9]{6}$"
     },
     "remote_addr": {
       "description": "Ip address (ipv4 or ipv6) of the client making the request. For logging and anomaly detection.",

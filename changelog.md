@@ -10,6 +10,10 @@ Changelog
   `user_agent`, so the server can keep accurate logs of the users' browser
   that's trying to authenticate.
 * Return the correct 'ttl' value for a verification-token.
+* Instead of 1 generic error with a few parameters, the server now emits
+  invididual error codes for each kind of error that may be emitted from the
+  authorization_challenge endpoint. This is change is based on examples in more
+  recent drafts and should simplify the process for clients a bit.
 
 
 0.26.7 (2024-11-07)

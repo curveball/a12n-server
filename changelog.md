@@ -9,6 +9,7 @@ Changelog
 * `authorization_challenge` clients can now specify `remote_addr` and
   `user_agent`, so the server can keep accurate logs of the users' browser
   that's trying to authenticate.
+* Return the correct 'ttl' value for a verification-token.
 
 
 0.26.7 (2024-11-07)

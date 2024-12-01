@@ -13,7 +13,8 @@ Changelog
 * Instead of 1 generic error with a few parameters, the server now emits
   invididual error codes for each kind of error that may be emitted from the
   authorization_challenge endpoint. This is change is based on examples in more
-  recent drafts and should simplify the process for clients a bit.
+  recent drafts and should simplify the process for clients a bit. This is a BC
+  break for `authorization_challenge`.
 
 
 0.26.7 (2024-11-07)

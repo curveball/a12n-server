@@ -210,8 +210,7 @@ async function challengeUsernamePassword(session: LoginSession, parameters: Chal
     throw new A12nLoginChallengeError(
       session,
       'A username and password are required',
-      'username-password',
-      false,
+      'username_or_password_required',
     );
 
   }
@@ -225,8 +224,7 @@ async function challengeUsernamePassword(session: LoginSession, parameters: Chal
       throw new A12nLoginChallengeError(
         session,
         'Incorrect username or password',
-        'username-password',
-        true
+        'username_or_password_required',
       );
     } else {
       throw err;
@@ -241,8 +239,7 @@ async function challengeUsernamePassword(session: LoginSession, parameters: Chal
       throw new A12nLoginChallengeError(
         session,
         'Incorrect username or password',
-        'username-password',
-        true
+        'username_or_password_required',
       );
     } else {
       throw err;
@@ -253,8 +250,7 @@ async function challengeUsernamePassword(session: LoginSession, parameters: Chal
     throw new A12nLoginChallengeError(
       session,
       'Credentials are not associated with a user',
-      'username-password',
-      true,
+      'not_a_user',
     );
   }
 
@@ -268,8 +264,7 @@ async function challengeUsernamePassword(session: LoginSession, parameters: Chal
     throw new A12nLoginChallengeError(
       session,
       errorMessage,
-      'username-password',
-      true,
+      'username_or_password_required',
     );
   }
 
@@ -281,16 +276,14 @@ async function challengeUsernamePassword(session: LoginSession, parameters: Chal
     throw new A12nLoginChallengeError(
       session,
       'This account is not active. Please contact support',
-      'activate',
-      false,
+      'account_not_active',
     );
   }
   if (identity.verifiedAt === null) {
     throw new A12nLoginChallengeError(
       session,
       'Email is not verified',
-      'verify-email',
-      true
+      'email_not_verified',
     );
   }
 
@@ -326,8 +319,7 @@ async function challengeTotp(session: LoginSession, parameters: ChallengeRequest
     throw new A12nLoginChallengeError(
       session,
       'Please provide a TOTP code from the user\'s authenticator app.',
-      'totp',
-      false,
+      'totp_required',
     );
   }
   if (!await services.mfaTotp.validateTotp(user, parameters.totp_code)) {
@@ -335,8 +327,7 @@ async function challengeTotp(session: LoginSession, parameters: ChallengeRequest
     throw new A12nLoginChallengeError(
       session,
       'Incorrect TOTP code. Make sure your system clock is set to the correct time and try again',
-      'totp',
-      true
+      'totp_invalid',
     );
   }
 
@@ -346,26 +337,38 @@ async function challengeTotp(session: LoginSession, parameters: ChallengeRequest
 
 }
 
+/*
 type ChallengeType =
   | 'username-password' // We want a username and password
   | 'activate' // Account is inactive. There's nothing the user can do.
-  | 'verify-email' // We recognized the email address, but it was never verified
-  | 'totp' // Please supply a TOTP code.
+*/
+
+type ChallengeErrorCode =
+  // Account is not activated
+  | 'account_not_active'
+  // The principal associated with the credentials are not a user
+  | 'not_a_user'
+  // Username or password was wrong
+  | 'username_or_password_invalid'
+  // Username or password must be provided
+  | 'username_or_password_required'
+  // User must enter a TOTP code to continue
+  | 'totp_required'
+  // The TOTP code that was provided is invalid.
+  | 'totp_invalid'
+  // The email address used to log in was not verified
+  | 'email_not_verified';
 
 class A12nLoginChallengeError extends OAuth2Error {
 
   httpStatus = 400;
-  errorCode = 'a12n_login_challenge';
-
+  errorCode: ChallengeErrorCode;
   session: LoginSession;
-  userChallenge: ChallengeType;
-  wasFail: boolean;
 
-  constructor(session: LoginSession, message: string, userChallenge: ChallengeType, wasFail: boolean) {
+  constructor(session: LoginSession, message: string,errorCode: ChallengeErrorCode) {
 
     super(message);
-    this.userChallenge = userChallenge;
-    this.wasFail = wasFail;
+    this.errorCode = errorCode;
     this.session = session;
 
   }
@@ -375,8 +378,6 @@ class A12nLoginChallengeError extends OAuth2Error {
     return {
       error: this.errorCode,
       error_description: this.message,
-      challenge: this.userChallenge,
-      was_fail: this.wasFail,
       auth_session: this.session.authSession,
       expires_at: this.session.expiresAt,
     };

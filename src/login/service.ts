@@ -86,7 +86,7 @@ const LOGIN_SESSION_EXPIRY = 60*20;
  * a login session id. (authSession).
  *
  * This function can be used to either kick off a new session, or continue the session.
- */ 
+ */
 export async function getSession(client: AppClient, parameters: ChallengeRequest): Promise<LoginSession> {
 
   if (parameters.auth_session) {
@@ -327,7 +327,7 @@ async function challengeTotp(session: LoginSession, parameters: ChallengeRequest
       session,
       'Please provide a TOTP code from the user\'s authenticator app.',
       'totp',
-      false, 
+      false,
     );
   }
   if (!await services.mfaTotp.validateTotp(user, parameters.totp_code)) {

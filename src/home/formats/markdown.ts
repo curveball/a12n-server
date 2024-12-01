@@ -61,7 +61,7 @@ OAuth2 endpoints
 * <a href="/token" rel="token">Token endpoint</a>
 * <a href="/.well-known/oauth-authorization-server" rel="oauth_server_metadata_uri">Authorization Server Metadata</a> ([RFC8414][RFC8414])
 * <a href="/.well-known/jwks.json" rel="jwks">JSON Web Key Sets</a> ([RFC7517][RFC7517])
-* <a href="/authorization-challenge" rel="OAuth 2.0 for First-Party Applications">Authorization Challenge Endpoint</a> ([draft][draft-parecki-oauth-first-party-apps]) <span class="link-badge status-experimental">Experimental</span>
+* <a href="/authorization-challenge" rel="OAuth 2.0 for First-Party Applications">Authorization Challenge Endpoint</a> ([draft][draft-ietf-oauth-first-party-apps]) <span class="link-badge status-experimental">Experimental</span>
 
 
 Other API endpoints
@@ -77,7 +77,7 @@ _Version ${version}_
 [RFC7662]: https://tools.ietf.org/html/rfc7662 "OAuth 2.0 Token Introspection"
 [RFC8414]: https://tools.ietf.org/html/rfc8414 "OAuth 2.0 Authorization Server Metadata"
 [RFC7517]: https://tools.ietf.org/html/rfc7517 "JSON Web Key (JWK)"
-[draft-parecki-oauth-first-party-apps]: https://www.ietf.org/archive/id/draft-parecki-oauth-first-party-apps-00.html "OAuth 2.0 for First-Party Applications"
+[draft-ietf-oauth-first-party-apps]: https://datatracker.ietf.org/doc/html/draft-ietf-oauth-first-party-apps "OAuth 2.0 for First-Party Applications"
 `;
 
 };

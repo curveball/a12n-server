@@ -1,12 +1,12 @@
 import { BadRequest, NotFound } from '@curveball/http-errors';
-import { Context } from '@curveball/kernel';
 import { AuthorizationChallengeRequest } from '../api-types.js';
 import { InvalidGrant, OAuth2Error } from '../oauth2/errors.js';
 import { OAuth2Code } from '../oauth2/types.js';
+import { getSetting } from '../server-settings.js';
 import * as services from '../services.js';
 import { getSessionStore } from '../session-store.js';
 import { AppClient, Principal, PrincipalIdentity, User } from '../types.js';
-import { getLoggerFromContext } from '../log/service.js';
+import { getLogger } from '../log/service.js';
 
 type ChallengeRequest = AuthorizationChallengeRequest;
 
@@ -24,10 +24,7 @@ type LoginSession = {
    */
   principalId: number | null;
 
-  /**
-   * Password was checked.
-   */
-  passwordValid: boolean;
+
 
   /**
    * List of OAuth2 scopes
@@ -39,6 +36,16 @@ type LoginSession = {
    * set this to true to indicate the session store should be updated.
    */
   dirty: boolean;
+
+  /**
+   * Password was checked.
+   */
+  passwordPassed: boolean;
+
+  /**
+   * TOTP code has been checked
+   */
+  totpPassed: boolean;
 
 };
 
@@ -52,7 +59,15 @@ type LoginSessionStage2 = LoginSession & {
   /**
    * Password was checked.
    */
-  passwordValid: true;
+  passwordPassed: true;
+
+}
+type LoginSessionStage3 = LoginSession & {
+
+  /**
+   * TOTP code has been checked
+   */
+  totpPassed: true;
 
 }
 
@@ -61,6 +76,17 @@ type LoginSessionStage2 = LoginSession & {
  */
 const LOGIN_SESSION_EXPIRY = 60*20;
 
+/**
+ * Get a login session by providing login information.
+ *
+ * Logins may consist of multiple steps. We need to keep track of what information
+ * was supplied across each step.
+ *
+ * This function starts such a session, which may later be continued by using
+ * a login session id. (authSession).
+ *
+ * This function can be used to either kick off a new session, or continue the session.
+ */
 export async function getSession(client: AppClient, parameters: ChallengeRequest): Promise<LoginSession> {
 
   if (parameters.auth_session) {
@@ -74,8 +100,7 @@ export async function getSession(client: AppClient, parameters: ChallengeRequest
 
 }
 
-
-export async function startLoginSession(client: AppClient, scope?: string[]): Promise<LoginSession> {
+async function startLoginSession(client: AppClient, scope?: string[]): Promise<LoginSession> {
 
   const store = getSessionStore();
   const id: string = await store.newSessionId();
@@ -85,44 +110,13 @@ export async function startLoginSession(client: AppClient, scope?: string[]): Pr
     appClientId: client.id,
     expiresAt: Math.floor(Date.now() / 1000) + LOGIN_SESSION_EXPIRY,
     principalId: null,
-    passwordValid: false,
+    passwordPassed: false,
+    totpPassed: false,
     scope,
     dirty: true,
   };
 
 }
-
-export async function continueLoginSession(client: AppClient, authSession: string): Promise<LoginSession> {
-
-  const store = getSessionStore();
-  const session: LoginSession|null = await store.get(authSession) as LoginSession|null;
-
-  if (session === null) {
-    throw new InvalidGrant('Invalid auth_session');
-  }
-
-  if (session.appClientId != client.id) {
-    throw new InvalidGrant('The client you authenticated with did not start this login session');
-  }
-
-  return session;
-
-}
-
-export async function storeSession(session: LoginSession) {
-
-  const store = getSessionStore();
-  await store.set(session.authSession, session, session.expiresAt);
-
-}
-async function deleteSession(session: LoginSession) {
-
-  const store = getSessionStore();
-  await store.delete(session.authSession);
-
-}
-
-
 
 /**
  * Validate a login challenge request.
@@ -133,28 +127,24 @@ async function deleteSession(session: LoginSession) {
  * If more credentials are needed or if any information is incorrect, an error
  * will be thrown.
  */
-export async function challenge(client: AppClient, session: LoginSession, parameters: ChallengeRequest, ctx: Context): Promise<OAuth2Code> {
+export async function challenge(client: AppClient, session: LoginSession, parameters: ChallengeRequest): Promise<OAuth2Code> {
+
+  let user;
 
   try {
     if (!session.principalId) {
-      if (parameters.username === undefined || parameters.username === undefined) {
-        throw new A12nLoginChallengeError(
-          session,
-          'A username and password are required',
-          'username-password',
-          false,
-        );
+      await challengeUsernamePassword(session, parameters);
+    }
+    assertSessionStage2(session);
 
-      }
-      await challengeUsernamePassword(
-        session,
-        parameters.username!,
-        parameters.password!,
-        ctx,
-      );
+    const principalService = new services.principal.PrincipalService('insecure');
+    user = await principalService.findById(session.principalId, 'user');
 
+    if (!session.totpPassed) {
+      await challengeTotp(session, parameters, user);
     }
 
+    assertSessionStage3(session);
 
   } finally {
 
@@ -165,10 +155,8 @@ export async function challenge(client: AppClient, session: LoginSession, parame
 
   }
 
-  assertSessionStage2(session);
 
-  const principalService = new services.principal.PrincipalService('insecure');
-  const user = await principalService.findById(session.principalId, 'user');
+
 
   await deleteSession(session);
 
@@ -186,13 +174,52 @@ export async function challenge(client: AppClient, session: LoginSession, parame
 
 }
 
-async function challengeUsernamePassword(session: LoginSession, username: string, password: string, ctx: Context): Promise<User> {
+async function continueLoginSession(client: AppClient, authSession: string): Promise<LoginSession> {
 
+  const store = getSessionStore();
+  const session: LoginSession|null = await store.get(authSession) as LoginSession|null;
+
+  if (session === null) {
+    throw new InvalidGrant('Invalid auth_session');
+  }
+
+  if (session.appClientId != client.id) {
+    throw new InvalidGrant('The client you authenticated with did not start this login session');
+  }
+
+  return session;
+
+}
+
+async function storeSession(session: LoginSession) {
+
+  const store = getSessionStore();
+  await store.set(session.authSession, session, session.expiresAt);
+
+}
+async function deleteSession(session: LoginSession) {
+
+  const store = getSessionStore();
+  await store.delete(session.authSession);
+
+}
+
+async function challengeUsernamePassword(session: LoginSession, parameters: ChallengeRequest): Promise<User> {
+
+  if (parameters.username === undefined || parameters.password === undefined) {
+    throw new A12nLoginChallengeError(
+      session,
+      'A username and password are required',
+      'username-password',
+      false,
+    );
+
+  }
   const principalService = new services.principal.PrincipalService('insecure');
   let user: Principal;
   let identity: PrincipalIdentity;
   try {
-    identity = await services.principalIdentity.findByUri('mailto:' + username);
+    identity = await services.principalIdentity.findByUri('mailto:' + parameters.username);
   } catch (err) {
     if (err instanceof NotFound) {
       throw new A12nLoginChallengeError(
@@ -231,8 +258,12 @@ async function challengeUsernamePassword(session: LoginSession, username: string
     );
   }
 
-  const log = getLoggerFromContext(ctx, user);
-  const { success, errorMessage } = await services.user.validateUserCredentials(user, password, log);
+  const log = getLogger(
+    user,
+    parameters.remote_addr ?? null,
+    parameters.user_agent ?? null
+  );
+  const { success, errorMessage } = await services.user.validateUserCredentials(user, parameters.password, log);
   if (!success && errorMessage) {
     throw new A12nLoginChallengeError(
       session,
@@ -243,7 +274,7 @@ async function challengeUsernamePassword(session: LoginSession, username: string
   }
 
   session.principalId = user.id;
-  session.passwordValid = true;
+  session.passwordPassed = true;
   session.dirty = true;
 
   if (!user.active) {
@@ -266,11 +297,60 @@ async function challengeUsernamePassword(session: LoginSession, username: string
   return user;
 }
 
+/**
+ * This function is responsible for ensuring that if TOTP is set up for a user,
+ * it gets checked.
+ */
+async function challengeTotp(session: LoginSession, parameters: ChallengeRequest, user: User): Promise<void> {
+
+  const serverTotpMode = getSetting('totp');
+  if (serverTotpMode === 'disabled') {
+    // Server-wide TOTP disabled.
+    session.totpPassed = true;
+    session.dirty = true;
+    return;
+  }
+  const hasTotp = await services.mfaTotp.hasTotp(user);
+  if (!hasTotp) {
+    // Does this server require TOTP
+    if (serverTotpMode === 'required') {
+      throw new InvalidGrant('This server is configured to require TOTP, and this user does not have TOTP set up. Logging in is not possible for this user in its current state. Contact an administrator');
+    }
+    // User didn't have TOTP so we just pass them
+    session.totpPassed = true;
+    session.dirty = true;
+    return;
+  }
+  if (!parameters.totp_code) {
+    // No TOTP code was provided
+    throw new A12nLoginChallengeError(
+      session,
+      'Please provide a TOTP code from the user\'s authenticator app.',
+      'totp',
+      false,
+    );
+  }
+  if (!await services.mfaTotp.validateTotp(user, parameters.totp_code)) {
+    // TOTP code was incorrect
+    throw new A12nLoginChallengeError(
+      session,
+      'Incorrect TOTP code. Make sure your system clock is set to the correct time and try again',
+      'totp',
+      true
+    );
+  }
+
+  // TOTP check successful!
+  session.totpPassed = true;
+  session.dirty = true;
+
+}
 
 type ChallengeType =
   | 'username-password' // We want a username and password
   | 'activate' // Account is inactive. There's nothing the user can do.
   | 'verify-email' // We recognized the email address, but it was never verified
+  | 'totp' // Please supply a TOTP code.
 
 class A12nLoginChallengeError extends OAuth2Error {
 
@@ -303,8 +383,6 @@ class A12nLoginChallengeError extends OAuth2Error {
 
   }
 
-
-
 }
 
 function assertSessionStage2(session: LoginSession): asserts session is LoginSessionStage2 {
@@ -312,8 +390,15 @@ function assertSessionStage2(session: LoginSession): asserts session is LoginSes
   if (!session.principalId) {
     throw new Error('Invalid state: missing principalId');
   }
-  if (!session.passwordValid) {
-    throw new Error('Invalid state: passwordValid was false');
+  if (!session.passwordPassed) {
+    throw new Error('Invalid state: passwordPassed was false');
+  }
+
+}
+function assertSessionStage3(session: LoginSession): asserts session is LoginSessionStage3 {
+
+  if (!session.totpPassed)  {
+    throw new Error('Invalid state: totpChecked should have been true');
   }
 
 }

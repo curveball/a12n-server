@@ -1,10 +1,14 @@
 Changelog
 =========
 
-0.26.8 (????-??-??)
+0.27.0 (????-??-??)
 -------------------
 
+* `authorization_challenge` now supports a TOTP challenge step!
 * Refactored logging system. Less ugly now with fewer enums!
+* `authorization_challenge` clients can now specify `remote_addr` and
+  `user_agent`, so the server can keep accurate logs of the users' browser
+  that's trying to authenticate.
 * Return the correct 'ttl' value for a verification-token.
 
 

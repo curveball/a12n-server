@@ -169,7 +169,22 @@ export interface AuthorizationChallengeRequest {
    */
   auth_session?: string;
   username?: string;
+  /**
+   * User-supplied password
+   */
   password?: string;
+  /**
+   * A 6 digit TOTP code / authenticator app code
+   */
+  totp_code?: string;
+  /**
+   * Ip address (ipv4 or ipv6) of the client making the request. For logging and anomaly detection.
+   */
+  remote_addr?: string;
+  /**
+   * User-Agent string as provided from the original browser client that made the request, if any.
+   */
+  user_agent?: string;
 }
 /* eslint-disable */
 /**

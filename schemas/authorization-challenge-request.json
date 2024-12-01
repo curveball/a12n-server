@@ -20,8 +20,28 @@
       "type": "string"
     },
     "password": {
+      "type": "string",
+      "description": "User-supplied password"
+    },
+    "totp_code": {
+      "type": "string",
+      "description": "A 6 digit TOTP code / authenticator app code",
+      "minLength": 6,
+      "maxLength": 6,
+      "pattern": "^[0-9]{6}$"
+    },
+    "remote_addr": {
+      "description": "Ip address (ipv4 or ipv6) of the client making the request. For logging and anomaly detection.",
+      "oneOf": [
+        {"format": "ipv4", "type": "string"},
+        {"format": "ipv6", "type": "string"}
+      ]
+    },
+    "user_agent": {
+      "description": "User-Agent string as provided from the original browser client that made the request, if any.",
       "type": "string"
     }
+
   }
 
 }

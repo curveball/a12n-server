@@ -224,7 +224,7 @@ async function challengeUsernamePassword(session: LoginSession, parameters: Chal
       throw new A12nLoginChallengeError(
         session,
         'Incorrect username or password',
-        'username_or_password_required',
+        'username_or_password_invalid',
       );
     } else {
       throw err;

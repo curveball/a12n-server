@@ -105,13 +105,14 @@ export async function validateUserCredentials(user: User, password: string, log:
       };
     }
 
-    await log('login-failed');
+    await log('password-check-failed');
     return {
       success: false,
       errorMessage: 'Incorrect username or password',
     };
   }
 
+  await log('password-check-success');
   await loginActivityService.resetFailedLoginAttempts(user);
 
   return {

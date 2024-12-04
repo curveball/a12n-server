@@ -1,4 +1,5 @@
 import { BadRequest, NotFound } from '@curveball/http-errors';
+import { LoginSession, LoginSessionStage2, LoginSessionStage3 } from './types.js';
 import { AuthorizationChallengeRequest } from '../api-types.js';
 import { InvalidGrant, OAuth2Error } from '../oauth2/errors.js';
 import { OAuth2Code } from '../oauth2/types.js';
@@ -7,69 +8,9 @@ import * as services from '../services.js';
 import { getSessionStore } from '../session-store.js';
 import { AppClient, Principal, PrincipalIdentity, User } from '../types.js';
 import { getLogger } from '../log/service.js';
+import { UserEventLogger } from '../log/types.js';
 
 type ChallengeRequest = AuthorizationChallengeRequest;
-
-type LoginSession = {
-  authSession: string;
-  appClientId: number;
-
-  /**
-   * Unix timestamp (in seconds) when the login session expires
-   */
-  expiresAt: number;
-
-  /**
-   * User id
-   */
-  principalId: number | null;
-
-
-
-  /**
-   * List of OAuth2 scopes
-   */
-  scope?: string[];
-
-  /**
-   * Internal marker. If something related to the session changed we'll
-   * set this to true to indicate the session store should be updated.
-   */
-  dirty: boolean;
-
-  /**
-   * Password was checked.
-   */
-  passwordPassed: boolean;
-
-  /**
-   * TOTP code has been checked
-   */
-  totpPassed: boolean;
-
-};
-
-type LoginSessionStage2 = LoginSession & {
-
-  /**
-   * User id
-   */
-  principalId: number;
-
-  /**
-   * Password was checked.
-   */
-  passwordPassed: true;
-
-}
-type LoginSessionStage3 = LoginSession & {
-
-  /**
-   * TOTP code has been checked
-   */
-  totpPassed: true;
-
-}
 
 /**
  * How long until a login session expires (in seconds)
@@ -130,21 +71,32 @@ async function startLoginSession(client: AppClient, scope?: string[]): Promise<L
 export async function challenge(client: AppClient, session: LoginSession, parameters: ChallengeRequest): Promise<OAuth2Code> {
 
   let user;
+  // If set to true, we'll log this as a 'session started' event for this user.
+  let logSessionStart = false;
 
   try {
+    const principalService = new services.principal.PrincipalService('insecure');
     if (!session.principalId) {
       await challengeUsernamePassword(session, parameters);
+      logSessionStart = true;
     }
     assertSessionStage2(session);
 
-    const principalService = new services.principal.PrincipalService('insecure');
     user = await principalService.findById(session.principalId, 'user');
+    const log = getLogger(
+      user,
+      parameters.remote_addr ?? null,
+      parameters.user_agent ?? null
+    );
+    if (logSessionStart) log('login-challenge-started');
 
     if (!session.totpPassed) {
-      await challengeTotp(session, parameters, user);
+      await challengeTotp(session, parameters, user, log);
     }
 
     assertSessionStage3(session);
+
+    log('login-challenge-success');
 
   } finally {
 
@@ -154,9 +106,6 @@ export async function challenge(client: AppClient, session: LoginSession, parame
     }
 
   }
-
-
-
 
   await deleteSession(session);
 
@@ -264,7 +213,7 @@ async function challengeUsernamePassword(session: LoginSession, parameters: Chal
     throw new A12nLoginChallengeError(
       session,
       errorMessage,
-      'username_or_password_required',
+      'username_or_password_invalid',
     );
   }
 
@@ -273,6 +222,7 @@ async function challengeUsernamePassword(session: LoginSession, parameters: Chal
   session.dirty = true;
 
   if (!user.active) {
+    log('login-failed-inactive');
     throw new A12nLoginChallengeError(
       session,
       'This account is not active. Please contact support',
@@ -280,6 +230,7 @@ async function challengeUsernamePassword(session: LoginSession, parameters: Chal
     );
   }
   if (identity.verifiedAt === null) {
+    log('login-failed-notverified');
     throw new A12nLoginChallengeError(
       session,
       'Email is not verified',
@@ -294,7 +245,7 @@ async function challengeUsernamePassword(session: LoginSession, parameters: Chal
  * This function is responsible for ensuring that if TOTP is set up for a user,
  * it gets checked.
  */
-async function challengeTotp(session: LoginSession, parameters: ChallengeRequest, user: User): Promise<void> {
+async function challengeTotp(session: LoginSession, parameters: ChallengeRequest, user: User, log: UserEventLogger): Promise<void> {
 
   const serverTotpMode = getSetting('totp');
   if (serverTotpMode === 'disabled') {
@@ -323,25 +274,22 @@ async function challengeTotp(session: LoginSession, parameters: ChallengeRequest
     );
   }
   if (!await services.mfaTotp.validateTotp(user, parameters.totp_code)) {
+    log('totp-failed');
     // TOTP code was incorrect
     throw new A12nLoginChallengeError(
       session,
       'Incorrect TOTP code. Make sure your system clock is set to the correct time and try again',
       'totp_invalid',
     );
-  }
+  } else {
+    log('totp-success');
+  };
 
   // TOTP check successful!
   session.totpPassed = true;
   session.dirty = true;
 
 }
-
-/*
-type ChallengeType =
-  | 'username-password' // We want a username and password
-  | 'activate' // Account is inactive. There's nothing the user can do.
-*/
 
 type ChallengeErrorCode =
   // Account is not activated
@@ -365,7 +313,7 @@ class A12nLoginChallengeError extends OAuth2Error {
   errorCode: ChallengeErrorCode;
   session: LoginSession;
 
-  constructor(session: LoginSession, message: string,errorCode: ChallengeErrorCode) {
+  constructor(session: LoginSession, message: string, errorCode: ChallengeErrorCode) {
 
     super(message);
     this.errorCode = errorCode;
@@ -403,5 +351,3 @@ function assertSessionStage3(session: LoginSession): asserts session is LoginSes
   }
 
 }
-
-

@@ -43,7 +43,8 @@ export async function findByUser(user: Principal): Promise<LogEntry[]> {
 
   const result = await db('user_log')
     .select('*')
-    .where({user_id: user.id});
+    .where({user_id: user.id})
+    .orderBy('time', 'desc');
 
   return result.map( (row: UserLogRecord) => {
     return {

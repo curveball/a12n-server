@@ -15,6 +15,9 @@ Changelog
   authorization_challenge endpoint. This is change is based on examples in more
   recent drafts and should simplify the process for clients a bit. This is a BC
   break for `authorization_challenge`.
+* Renamed `login_failed` event to `password-check-failed`.
+* Added events: `password-check-succes`, `totp-success`,
+  `login-challenge-started`, `login-challenge-success`
 
 
 0.26.7 (2024-11-07)

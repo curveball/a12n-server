@@ -1,7 +1,19 @@
+/**
+ * List of possible events along with their database code.
+ *
+ * There's no significance to the number, other than the order at which the log
+ * messages were introduced.
+ */
 export const eventTypeMap = {
 
+  // Successful login via the login screen
   'login-success': 1,
-  'login-failed': 2,
+
+  // User entered a correct password
+  'password-check-success' : 18,
+
+  // User entered an incorrect password
+  'password-check-failed' : 2,
 
   // Account was deactivated by an admin
   'login-failed-inactive': 8,
@@ -13,7 +25,11 @@ export const eventTypeMap = {
   // A user tried to log in using an account that was previously locked
   'login-failed-account-locked': 14,
 
+  // TOTP challenge failed
   'totp-failed': 3,
+  // TOTP challenge successful
+  'totp-success': 15,
+
   'webauthn-failed': 8,
 
   'change-password-success': 5,
@@ -28,6 +44,13 @@ export const eventTypeMap = {
   // Triggered when an account is locked down due to a security trigger, such
   // as getting a password wrong 5 times.
   'account-locked': 13,
+
+  // Triggered when the user started a new authorization challenge
+  // login session.
+  'login-challenge-started': 16,
+
+  // Triggered after a successful login challenge process.
+  'login-challenge-success': 17,
 } as const;
 
 export type EventType = keyof typeof eventTypeMap;

@@ -1,4 +1,4 @@
-import { expect } from 'chai';
+import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 
 import csv from '../../../src/log/formats/csv.js';
@@ -33,6 +33,6 @@ describe('csv', () => {
 1970-01-01T00:00:00.002Z,change-password-success,127.0.0.1,"User Agent""",ca
 `;
 
-    expect(csv(log)).to.equal(expected);
+    assert.equal(csv(log), expected);
   });
 });

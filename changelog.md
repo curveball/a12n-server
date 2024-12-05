@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.27.0 (????-??-??)
+0.27.0 (2024-12-05)
 -------------------
 
 * `authorization_challenge` now supports a TOTP challenge step!

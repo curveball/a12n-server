@@ -7,12 +7,12 @@ their own.
 
 The project implements OAuth2 standards where applicable.
 
-![a12n-server home screenshot](https://raw.githubusercontent.com/curveball/a12n-server/master/docs/screenshot-0.19.png)
+![a12n-server home screenshot](https://raw.githubusercontent.com/curveball/a12n-server/master/docs/screenshot-0.27.png)
 
 Requirements
 ------------
 
-* Node.js 16.x
+* Node.js 18.x
 * MySQL, Postgres or Sqlite
 
 Try it out!

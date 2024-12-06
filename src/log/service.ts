@@ -6,10 +6,17 @@ import geoip from 'geoip-lite';
 import { UserLogRecord } from 'knex/types/tables.js';
 
 export function getLoggerFromContext(ctx: Context, principal?: Principal|number): UserEventLogger {
+
+  let principalId;
+  if (typeof principal === 'number') {
+    principalId = principal;
+  } else {
+    principalId = principal?.id ?? ctx.session.user?.id;
+  }
   return (et: EventType) => addLogEntry(
     et,
     ctx.ip() ?? '',
-    principal ?? ctx.session.user?.id,
+    principalId,
     ctx.request.headers.get('User-Agent')
   );
 }

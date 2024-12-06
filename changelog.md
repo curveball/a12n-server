@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.27.1 (????-??-??)
+0.27.1 (2024-12-06)
 -------------------
 
 * Fix HTTP/500 error when requesting a developer access token.

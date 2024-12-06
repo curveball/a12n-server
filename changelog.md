@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.27.2 (????-??-??)
+0.27.2 (2024-12-06)
 -------------------
 
 * Fix missing entries in files section in package.json, preventing the "npx

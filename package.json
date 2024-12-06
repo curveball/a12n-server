@@ -27,7 +27,7 @@
     "assets",
     "dist",
     "package.json",
-    "schema",
+    "schemas",
     "src",
     "templates"
   ],

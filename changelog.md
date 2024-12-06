@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.27.4 (????-??-??)
+-------------------
+
+* Schemas misspelled as 'schema'. Sorry for all the releases, I dont know to do
+  a clean test of npx without doing a release first, so the feedback loop is
+  change->release->test.
+
+
 0.27.3 (2024-12-06)
 -------------------
 

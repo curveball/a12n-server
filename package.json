@@ -22,11 +22,14 @@
     "url": "git+https://github.com/curveball/a12n-server.git"
   },
   "files": [
-    "package.json",
-    "README.md",
-    "dist",
     "LICENSE",
-    "src"
+    "README.md",
+    "assets",
+    "dist",
+    "package.json",
+    "schema",
+    "src",
+    "templates"
   ],
   "contributors": [
     {

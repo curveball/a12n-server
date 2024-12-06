@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.27.3 (????-??-??)
+0.27.3 (2024-12-06)
 -------------------
 
 * Copy simplewebauthn browser bundle into assets directory for easier

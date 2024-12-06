@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.27.2 (????-??-??)
+-------------------
+
+* Fix missing entries in files section in package.json, preventing the "npx
+  @curveball/a12n-server" tool from working.
+
+
 0.27.1 (2024-12-06)
 -------------------
 

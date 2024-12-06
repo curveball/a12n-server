@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.27.4 (????-??-??)
+0.27.4 (2024-12-06)
 -------------------
 
 * Schemas misspelled as 'schema'. Sorry for all the releases, I dont know to do

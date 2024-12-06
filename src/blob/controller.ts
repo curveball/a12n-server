@@ -7,7 +7,6 @@ import { readFileSync } from 'node:fs';
 
 const dir = dirname(fileURLToPath(import.meta.url));
 const assetPath = dir + '/../../assets';
-const webauthnPath = dir + '/../../node_modules/@simplewebauthn/browser/dist/bundle';
 
 function readSync(basePath: string, filename: string) {
   return readFileSync(join(basePath, filename));
@@ -24,7 +23,7 @@ const files: Record<string, {data: Buffer; type: string}> = {
   },
   'simplewebauthn-browser.min.js': {
     type: 'text/javascript',
-    data: readSync(webauthnPath, 'index.umd.min.js'),
+    data: readSync(assetPath, 'simplewebauthn-browser.min.js'),
   },
   'webauthn.js': {
     type: 'text/javascript',

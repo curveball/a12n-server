@@ -63,7 +63,6 @@
     "@curveball/session": "^1.0.0",
     "@curveball/session-redis": "^1.0.0",
     "@curveball/validator": "^1.0.0",
-    "@simplewebauthn/browser": "^10.0.0",
     "@simplewebauthn/server": "^10.0.0",
     "bcrypt": "^5.0.1",
     "csv-stringify": "^6.0.5",
@@ -98,7 +97,8 @@
     "tsc-watch": "^6.0.4",
     "tsx": "^4.16.2",
     "typescript": "^5.2.2",
-    "typescript-eslint": "^8.13.0"
+    "typescript-eslint": "^8.13.0",
+    "@simplewebauthn/browser": "^10.0.0"
   },
   "engines": {
     "node": ">= 18"

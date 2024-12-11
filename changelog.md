@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.27.5 (????-??-??)
+-------------------
+
+* #555: Another fix for launching the a12nserver npx script. (@Zen-cronic)
+
+
 0.27.4 (2024-12-06)
 -------------------
 

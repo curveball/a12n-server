@@ -26,6 +26,7 @@
     "README.md",
     "assets",
     "dist",
+    ".env.defaults",
     "package.json",
     "schemas",
     "src",

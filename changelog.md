@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.27.6 (????-??-??)
+0.27.6 (2024-12-16)
 -------------------
 
 * Update @curveball/browser, which fixes an issue with submitting HTML forms

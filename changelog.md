@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.27.6 (????-??-??)
+-------------------
+
+* Update @curveball/browser, which fixes an issue with submitting HTML forms
+  that don't use GET or POST.
+
+
 0.27.5 (2024-12-11)
 -------------------
 

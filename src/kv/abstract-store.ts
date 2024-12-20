@@ -24,4 +24,11 @@ export abstract class KvStore {
    */
   abstract delete(key: string): Promise<void>;
 
+  /**
+   * Clean up this store and free up memory and events.
+   */
+  destroy() {
+
+  }
+
 }

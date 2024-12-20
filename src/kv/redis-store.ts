@@ -33,7 +33,12 @@ export class RedisKvStore extends KvStore {
   async set(key: string, value: any, options?: SetOptions): Promise<void> {
 
     if (options?.ttl) {
-      await this.redis.setEx(key, Math.floor(options.ttl / 1000), JSON.stringify(value));
+      const newTtl = options.ttl / 1000;
+      await this.redis.setEx(
+        key,
+        newTtl,
+        JSON.stringify(value)
+      );
     } else {
       await this.redis.set(key, JSON.stringify(value));
     }
@@ -48,6 +53,12 @@ export class RedisKvStore extends KvStore {
   async delete(key: string): Promise<void> {
 
     await this.redis.del(key);
+
+  }
+
+  destroy() {
+
+    this.redis.disconnect();
 
   }
 

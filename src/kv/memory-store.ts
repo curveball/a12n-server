@@ -113,4 +113,10 @@ export class MemoryKvStore extends KvStore {
 
   }
 
+  destroy() {
+
+    if (this.gcTimer) clearTimeout(this.gcTimer);
+
+  }
+
 }

@@ -132,7 +132,7 @@ async function continueLoginSession(client: AppClient, authSession: string): Pro
 
   const session = await services.kv.get<LoginSession>(
     sessionKey(authSession)
-  )
+  );
 
   if (session === null) {
     throw new InvalidGrant('Invalid auth_session');

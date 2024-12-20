@@ -21,7 +21,7 @@ export function getStore(): KvStore {
 
 export function get<T>(key: string): Promise<T | null> {
 
-  return getStore().get<T>(key); 
+  return getStore().get<T>(key);
 
 }
 
@@ -40,18 +40,19 @@ export function del(key: string): Promise<void> {
  */
 export function getSessionStore(): SessionStore {
 
+  const store = getStore();
   return {
     get: (id: string): Promise<Record<string, any>|null> => {
-      return kvStore.get<Record<string, any>>('a12n:session:' + id);
+      return store.get<Record<string, any>>('a12n:session:' + id);
     },
-      
+
     set: (id: string, values: Record<string, any>, expire: number): Promise<void> => {
-    return kvStore.set('a12n:session:' + id, values, { ttl: expire * 1000 });
+      return store.set('a12n:session:' + id, values, { ttl: expire * 1000 });
 
     },
 
     delete: (id: string): Promise<void> => {
-      return kvStore.delete(id);
+      return store.delete(id);
     },
 
     newSessionId() {

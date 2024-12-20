@@ -11,8 +11,9 @@ export class RedisKvStore extends KvStore {
 
     super();
     this.redis = createClient({
-      url: redisUri,  
+      url: redisUri,
     });
+    this.redis.connect();
   }
 
   /**
@@ -22,7 +23,7 @@ export class RedisKvStore extends KvStore {
 
     const val = await this.redis.get(key);
     if (val===null) return null;
-    return JSON.parse(val); 
+    return JSON.parse(val);
 
   }
 

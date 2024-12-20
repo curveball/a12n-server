@@ -58,6 +58,7 @@ class CreateUserController extends Controller {
           uri: 'mailto:' + ctx.request.body.email,
           principal: newUser,
           isPrimary: true,
+          isMfa: false,
           label: null,
           markVerified: !!ctx.request.body.markEmailValid,
         }

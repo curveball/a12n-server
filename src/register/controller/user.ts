@@ -85,9 +85,10 @@ class UserRegistrationController extends Controller {
         principal: user,
         label: null,
         isPrimary: true,
+        isMfa: false,
         // If this was the first run, we assume the email is verified
         // to make it quicker to log in.
-        markVerified: firstRun
+        markVerified: firstRun,
       }
     );
 

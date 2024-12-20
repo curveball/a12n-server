@@ -126,6 +126,11 @@ export type PrincipalIdentitiesRecord = {
   label: string | null;
 
   /**
+   * This identiy can be used for MFA checks
+   */
+  is_mfa: number;
+
+  /**
    * When the identity was verified, for example through an email verification link. If set to null the identity has not been verified.
    */
   verified_at: number | null;

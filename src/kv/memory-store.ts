@@ -107,8 +107,8 @@ export class MemoryKvStore extends KvStore {
         // the next GC
         return;
       }
-      // Scheduling the next run, but waiting at least 10 minutes.
-      this.scheduleGc(Math.max(60000, next-Date.now()));
+      // Scheduling the next run
+      this.scheduleGc();
     }, timeout);
 
   }

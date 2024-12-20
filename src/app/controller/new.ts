@@ -62,6 +62,7 @@ class CreateAppController extends Controller {
         uri: identity,
         principal: newApp,
         isPrimary: true,
+        isMfa: false,
         label: null,
         markVerified: false,
       });

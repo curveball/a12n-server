@@ -51,6 +51,7 @@ class AppCollectionController extends Controller {
         uri: identity.href,
         principal: app,
         isPrimary: true,
+        isMfa: false,
         label: identity.title ?? null,
         markVerified: false,
       });

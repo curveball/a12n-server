@@ -13,7 +13,7 @@ import routes from './routes.js';
 import { getSetting } from './server-settings.js';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { getSessionStore } from './session-store.js';
+import * as services from './services.js';
 
 /**
  * The 'main middleware'.
@@ -40,7 +40,7 @@ export default function (): Middleware {
 
   middlewares.push(
     session({
-      store: getSessionStore(),
+      store: services.kv.getSessionStore(),
       cookieName: 'A12N',
       expiry: 60 * 60 * 24 * 7,
     }),

@@ -5,10 +5,10 @@ import { InvalidGrant, OAuth2Error } from '../oauth2/errors.js';
 import { OAuth2Code } from '../oauth2/types.js';
 import { getSetting } from '../server-settings.js';
 import * as services from '../services.js';
-import { getSessionStore } from '../session-store.js';
 import { AppClient, Principal, PrincipalIdentity, User } from '../types.js';
 import { getLogger } from '../log/service.js';
 import { UserEventLogger } from '../log/types.js';
+import { generateSecretToken } from '../crypto.js';
 
 type ChallengeRequest = AuthorizationChallengeRequest;
 
@@ -43,8 +43,7 @@ export async function getSession(client: AppClient, parameters: ChallengeRequest
 
 async function startLoginSession(client: AppClient, scope?: string[]): Promise<LoginSession> {
 
-  const store = getSessionStore();
-  const id: string = await store.newSessionId();
+  const id: string = await generateSecretToken();
 
   return {
     authSession: id,
@@ -123,10 +122,17 @@ export async function challenge(client: AppClient, session: LoginSession, parame
 
 }
 
+function sessionKey(id: string): string {
+
+  return 'a12n:authorization_challenge:session:' + id;
+
+}
+
 async function continueLoginSession(client: AppClient, authSession: string): Promise<LoginSession> {
 
-  const store = getSessionStore();
-  const session: LoginSession|null = await store.get(authSession) as LoginSession|null;
+  const session = await services.kv.get<LoginSession>(
+    sessionKey(authSession)
+  )
 
   if (session === null) {
     throw new InvalidGrant('Invalid auth_session');
@@ -142,14 +148,18 @@ async function continueLoginSession(client: AppClient, authSession: string): Pro
 
 async function storeSession(session: LoginSession) {
 
-  const store = getSessionStore();
-  await store.set(session.authSession, session, session.expiresAt);
+  await services.kv.set(
+    sessionKey(session.authSession),
+    session,
+    {
+      ttl: session.expiresAt - Date.now(),
+    }
+  );
 
 }
 async function deleteSession(session: LoginSession) {
 
-  const store = getSessionStore();
-  await store.delete(session.authSession);
+  await services.kv.del(sessionKey(session.authSession));
 
 }
 

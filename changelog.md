@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.27.7 (????-??-??)
+-------------------
+
+* Refactored and centralized abstract cache system, supporting redis/valkey and
+  memory stores.
+
+
 0.27.6 (2024-12-16)
 -------------------
 

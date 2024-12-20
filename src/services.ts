@@ -10,3 +10,4 @@ export * as resetPassword from './reset-password/service.js';
 export * as userAuthFactor from './user-auth-factor/service.js';
 export * as user from './user/service.js';
 export * as verificationToken from './verification-token/service.js';
+export * as kv from './kv/service.js';

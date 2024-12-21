@@ -1,5 +1,5 @@
 import { BadRequest, NotFound } from '@curveball/http-errors';
-import { LoginSession, LoginSessionStage2, LoginSessionStage3 } from './types.js';
+import { LoginSession } from './types.js';
 import { AuthorizationChallengeRequest } from '../api-types.js';
 import { InvalidGrant, OAuth2Error } from '../oauth2/errors.js';
 import { OAuth2Code } from '../oauth2/types.js';
@@ -50,8 +50,7 @@ async function startLoginSession(client: AppClient, scope?: string[]): Promise<L
     appClientId: client.id,
     expiresAt: Math.floor(Date.now() / 1000) + LOGIN_SESSION_EXPIRY,
     principalId: null,
-    passwordPassed: false,
-    totpPassed: false,
+    authFactorsPassed: [],
     scope,
     dirty: true,
   };
@@ -89,7 +88,7 @@ export async function challenge(client: AppClient, session: LoginSession, parame
     );
     if (logSessionStart) log('login-challenge-started');
 
-    if (!session.totpPassed) {
+    if (!session.authFactorsPassed.includes('totp')) {
       await challengeTotp(session, parameters, user, log);
     }
 
@@ -228,7 +227,7 @@ async function challengeUsernamePassword(session: LoginSession, parameters: Chal
   }
 
   session.principalId = user.id;
-  session.passwordPassed = true;
+  session.authFactorsPassed.push('password');
   session.dirty = true;
 
   if (!user.active) {
@@ -260,7 +259,7 @@ async function challengeTotp(session: LoginSession, parameters: ChallengeRequest
   const serverTotpMode = getSetting('totp');
   if (serverTotpMode === 'disabled') {
     // Server-wide TOTP disabled.
-    session.totpPassed = true;
+    session.authFactorsPassed.push('totp');
     session.dirty = true;
     return;
   }
@@ -271,7 +270,7 @@ async function challengeTotp(session: LoginSession, parameters: ChallengeRequest
       throw new InvalidGrant('This server is configured to require TOTP, and this user does not have TOTP set up. Logging in is not possible for this user in its current state. Contact an administrator');
     }
     // User didn't have TOTP so we just pass them
-    session.totpPassed = true;
+    session.authFactorsPassed.push('totp');
     session.dirty = true;
     return;
   }
@@ -296,7 +295,7 @@ async function challengeTotp(session: LoginSession, parameters: ChallengeRequest
   };
 
   // TOTP check successful!
-  session.totpPassed = true;
+  session.authFactorsPassed.push('totp');
   session.dirty = true;
 
 }
@@ -344,20 +343,20 @@ class A12nLoginChallengeError extends OAuth2Error {
 
 }
 
-function assertSessionStage2(session: LoginSession): asserts session is LoginSessionStage2 {
+function assertSessionStage2(session: LoginSession): asserts session is LoginSession & {principalId: number} {
 
   if (!session.principalId) {
     throw new Error('Invalid state: missing principalId');
   }
-  if (!session.passwordPassed) {
-    throw new Error('Invalid state: passwordPassed was false');
+  if (!session.authSession.includes('password')) {
+    throw new Error('Invalid state: password was not checked');
   }
 
 }
-function assertSessionStage3(session: LoginSession): asserts session is LoginSessionStage3 {
+function assertSessionStage3(session: LoginSession) {
 
-  if (!session.totpPassed)  {
-    throw new Error('Invalid state: totpChecked should have been true');
+  if (!session.authSession.includes('totp'))  {
+    throw new Error('Invalid state: totp was not checked');
   }
 
 }

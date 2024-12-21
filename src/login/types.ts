@@ -1,3 +1,5 @@
+import { AuthFactorType } from '../user-auth-factor/types.js';
+
 /**
  * The login session represents an ongoing login process for a specific
  * user.
@@ -41,42 +43,9 @@ export type LoginSession = {
   dirty: boolean;
 
   /**
-   * Password was checked.
+   * Which Auth Factors have been successfully checked during the current
+   * session.
    */
-  passwordPassed: boolean;
-
-  /**
-   * TOTP code has been checked
-   */
-  totpPassed: boolean;
+  authFactorsPassed: AuthFactorType[];
 
 };
-
-/**
- * A login session that's successfully passed the credentials-check stage.
- */
-export type LoginSessionStage2 = LoginSession & {
-
-  /**
-   * User id
-   */
-  principalId: number;
-
-  /**
-   * Password was checked.
-   */
-  passwordPassed: true;
-
-}
-
-/**
- * A login session that's passed the TOTP check
- */
-export type LoginSessionStage3 = LoginSessionStage2 & {
-
-  /**
-   * TOTP code has been checked
-   */
-  totpPassed: true;
-
-}

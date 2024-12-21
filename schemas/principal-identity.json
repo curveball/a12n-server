@@ -1,0 +1,42 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://curveballjs.org/schemas/a12nserver/principal-identity.json",
+  "type": "object",
+  "title": "PrincipalIdentity",
+  "description": "This object represents an identity associated with a principal. For example, this could be an email associated with a user. Identities can be verified, can be used as MFA devices and always have a URI, such as a mailto: or tel: uri.",
+
+  "required": ["isPrimary"],
+  "additionalProperties": false,
+
+  "properties": {
+    "_links": {},
+    "label": {
+      "type": "string",
+      "description": "The user-supplied label asssociated with the identity. For example 'home phone'"
+    },
+    "isPrimary": {
+      "type": "boolean",
+      "description": "If set to true this is considered the main identity."
+    },
+    "isMfa": {
+      "type": "boolean",
+      "description": "If set to true, this identity may be used as an MFA device"
+    },
+    "verifiedAt": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "Time when the identify was verified. Null if the identity is not verified."
+    },
+    "createdAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Time when the identify was verified. Null if the identity is not verified."
+    },
+    "modifiedAt": {
+      "type": "string",
+      "format": "date-time",
+      "description": "Time when the identify was verified. Null if the identity is not verified."
+    }
+
+  }
+}

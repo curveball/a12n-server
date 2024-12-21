@@ -124,6 +124,7 @@ function recordToModel(principal: Principal, record: PrincipalIdentitiesRecord):
     externalId: record.external_id,
     label: record.label,
     isPrimary: !!record.is_primary,
+    isMfa: !!record.is_mfa,
     verifiedAt: record.verified_at ? new Date(+record.verified_at) : null,
     createdAt: new Date(+record.created_at),
     modifiedAt: new Date(+record.modified_at),

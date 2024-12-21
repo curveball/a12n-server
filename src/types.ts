@@ -107,6 +107,13 @@ export type PrincipalIdentity = {
   isPrimary: boolean;
 
   /**
+   * If set to true, this identity may be used as an MFA device.
+   *
+   * For example, for email identities we could set a verification code.
+   */
+  isMfa: boolean;
+
+  /**
    * Optional, user supplied label for the identity. For example 'Home', 'Work' or 'Mobile'.
    */
   label: string | null;

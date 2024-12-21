@@ -1,7 +1,7 @@
 import { Principal, PrincipalIdentity, NewPrincipalIdentity } from '../types.js';
 import knex, { insertAndGetId } from '../database.js';
 import { PrincipalIdentitiesRecord } from 'knex/types/tables.js';
-import { NotFound } from '@curveball/http-errors';
+import { NotFound, MethodNotAllowed } from '@curveball/http-errors';
 import { generatePublicId } from '../crypto.js';
 import { PrincipalService } from '../principal/service.js';
 
@@ -110,6 +110,14 @@ export async function markVerified(identity: PrincipalIdentity): Promise<void> {
     .where({
       id: identity.id,
     });
+
+}
+
+export async function sendVerificationRequest(identity: PrincipalIdentity): Promise<void> {
+
+  if (!identity.uri.startsWith('mailto:')) {
+    throw new MethodNotAllowed('Only email identities can be verified currently. Make a feature request if you want to support other kinds of identities');
+  }
 
 }
 

@@ -8,7 +8,7 @@ export async function findForUser(principal: User): Promise<UserAuthFactor[]> {
   const result:UserAuthFactor[] = [];
   if (await services.user.hasPassword(principal)) {
     result.push({
-      href: `${principal.href}/auth-factor/pw`,
+      href: `${principal.href}/password`,
       title: 'Password',
       type: 'password',
     });
@@ -20,6 +20,25 @@ export async function findForUser(principal: User): Promise<UserAuthFactor[]> {
       type: 'totp',
     });
   }
+
+  const identities = await services.principalIdentity.findByPrincipal(principal);
+
+  for(const identity of identities) {
+    if (!identity.isMfa) {
+      continue;
+    }
+    if (identity.uri.startsWith('mailto:')) {
+      /**
+       * We're only supporting email right now, but more will follow
+       */
+      result.push({
+        href: identity.href,
+        type: 'email-otp',
+        title: identity.label ?? 'Email verification',
+      });
+    }
+  }
+
 
   return result;
 

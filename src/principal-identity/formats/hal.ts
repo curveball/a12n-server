@@ -36,7 +36,7 @@ export function item(principal: Principal, identity: PrincipalIdentity): HalReso
     _links: {
       self: {
         href: identity.href,
-        title: identity.uri,
+        title: identity.label ?? undefined,
       },
       principal: {
         href: principal.href,
@@ -47,11 +47,16 @@ export function item(principal: Principal, identity: PrincipalIdentity): HalReso
         title: 'Back to collection',
       },
       about: {
-        href: identity.href,
+        href: identity.uri,
+      },
+      'describedby': {
+        href: 'https://curveballjs.org/schemas/a12nserver/principal-identity.json',
+        type: 'application/schema+json'
       }
     },
     label: identity.label,
     isPrimary: identity.isPrimary,
+    isMfa: identity.isMfa,
     verifiedAt: identity.verifiedAt?.toISOString() ?? null,
     createdAt: identity.createdAt.toISOString(),
     modifiedAt: identity.modifiedAt.toISOString(),

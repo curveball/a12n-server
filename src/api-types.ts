@@ -319,15 +319,15 @@ export interface PrincipalIdentity {
    */
   isMfa?: boolean;
   /**
-   * Time when the identify was verified. Null if the identity is not verified.
+   * Time when the identify was last verified. null if the identity is not verified.
    */
   verifiedAt?: string | null;
   /**
-   * Time when the identify was verified. Null if the identity is not verified.
+   * Time when the identify resource was created.
    */
   createdAt?: string;
   /**
-   * Time when the identify was verified. Null if the identity is not verified.
+   * Time when the identify resource was last modified.
    */
   modifiedAt?: string;
 }

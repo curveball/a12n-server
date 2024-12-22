@@ -14,7 +14,7 @@ export function registrationForm(msg: string, error: string, mfaRegistrationEnab
     action: '/register',
     mfaRegistrationEnabled,
     hiddenFields,
-  });
+  }, 'minimal-form');
 
 }
 
@@ -27,6 +27,6 @@ export function mfaRegistrationForm(msg: string, error: string, totpEnabled: boo
     action: '/register/mfa',
     totpEnabled,
     webAuthnEnabled,
-  });
+  }, 'minimal-form');
 
 }

@@ -8,6 +8,6 @@ export function changePasswordForm(msg: string, error: string, csrfToken: string
     error: error,
     action: '/change-password',
     csrfToken: csrfToken,
-  });
+  }, 'minimal-form');
 
 }

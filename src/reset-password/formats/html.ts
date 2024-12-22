@@ -7,6 +7,6 @@ export function resetPasswordRequestForm(msg: string, error: string) {
     msg: msg,
     error: error,
     action: '/reset-password',
-  });
+  }, 'minimal-form');
 
 }

@@ -17,7 +17,7 @@ class PrincipalIdentityVerify extends Controller {
       throw new Forbidden('You can only use this API for yourself, or if you have \'admin\' privileges');
     }
 
-    await services.principalIdentity.sendVerificationRequest(identity);
+    await services.principalIdentity.sendVerificationRequest(identity, ctx.ip()!);
     ctx.response.body = hal.verifyResponseForm(identity);
 
   }

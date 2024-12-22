@@ -4,6 +4,7 @@ import { PrincipalIdentitiesRecord } from 'knex/types/tables.js';
 import { NotFound, MethodNotAllowed } from '@curveball/http-errors';
 import { generatePublicId } from '../crypto.js';
 import { PrincipalService } from '../principal/service.js';
+import { sendTemplatedMail } from '../mailer/service.js';
 
 export async function findByPrincipal(principal: Principal): Promise<PrincipalIdentity[]> {
 
@@ -113,11 +114,22 @@ export async function markVerified(identity: PrincipalIdentity): Promise<void> {
 
 }
 
-export async function sendVerificationRequest(identity: PrincipalIdentity): Promise<void> {
+export async function sendVerificationRequest(identity: PrincipalIdentity, ip: string): Promise<void> {
 
   if (!identity.uri.startsWith('mailto:')) {
     throw new MethodNotAllowed('Only email identities can be verified currently. Make a feature request if you want to support other kinds of identities');
   }
+
+  await sendTemplatedMail({
+    templateName: 'emails/verify-email',
+    to: identity.uri.slice(7),
+    subject: 'Verify your email',
+  }, {
+    code: Math.floor(Math.random()*1000000),
+    name: identity.principal.nickname,
+    date: new Date().toISOString(),
+    ip,
+  });
 
 }
 

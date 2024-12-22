@@ -6,6 +6,6 @@ export function registrationForm(msg: string, error: string): string {
     title: 'Register MFA Device',
     msg: msg,
     error: error,
-  });
+  }, 'minimal-form');
 
 }

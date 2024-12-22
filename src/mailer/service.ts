@@ -43,7 +43,7 @@ export async function sendTemplatedMail(emailInfo: TemplatedEmail, templateVaria
   return sendMail({
     to: emailInfo.to,
     subject: emailInfo.subject,
-    html: render(emailInfo.templateName, templateVariables, false)
-  })
+    html: render(emailInfo.templateName, templateVariables, 'email')
+  });
 
 }

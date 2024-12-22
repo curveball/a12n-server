@@ -18,5 +18,5 @@ export function createUserForm(options: Options) {
     error: options.error,
     action: '/user/new',
     hiddenFields,
-  });
+  }, 'minimal-form');
 }

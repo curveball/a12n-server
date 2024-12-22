@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://curveballjs.org/schemas/a12nserver/principal-identity-verify-form.json",
+  "type": "object",
+  "title": "PrincipalIdentityVerifyForm",
+  "description": "This is the form submitted by the user when they are verifiying an identity.",
+
+  "required": ["code"],
+  "additionalProperties": false,
+
+  "properties": {
+    "code": {
+      "type": "string",
+      "description": "The verification code",
+      "pattern": "^[0-9]{6}$"
+    }
+  }
+}

@@ -31,6 +31,7 @@ import passwordToken from './reset-password/controller/token.js';
 import principalIdentityCollection from './principal-identity/controller/collection.js';
 import principalIdentityItem from './principal-identity/controller/item.js';
 import principalIdentityVerify from './principal-identity/controller/verify.js';
+import principalIdentityVerifyResponse from './principal-identity/controller/verify-response.js';
 import privilegeCollection from './privilege/controller/collection.js';
 import privilegeItem from './privilege/controller/item.js';
 import privilegeSearch from './privilege/controller/search.js';
@@ -123,6 +124,7 @@ const routes = [
   router('/user/:id/identity', principalIdentityCollection),
   router('/user/:id/identity/:identityId', principalIdentityItem),
   router('/user/:id/identity/:identityId/verify', principalIdentityVerify),
+  router('/user/:id/identity/:identityId/verify-response', principalIdentityVerifyResponse),
   router('/user/:id/auth-factor', userAuthFactorCollection),
   router('/user/:id/auth-factor/new/totp', totpAddToUserController),
 

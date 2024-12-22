@@ -49,6 +49,20 @@ export function generatePassword(): string {
 
 }
 
+/**
+ * Generates a short code for verification purposes.
+ *
+ * For example, this code might be sent over email or SMS. It doesn't
+ * have a lot of entropy so there's a risk of bruteforcing, which needs
+ * to be protected against.
+ */
+export function generateVerificationDigits(digits = 6): string {
+
+  return crypto.randomInt(0,10**digits)
+    .toString()
+    .padStart(digits, '0');
+
+}
 
 function generateUrlSafeString(bytes: number): Promise<string> {
 

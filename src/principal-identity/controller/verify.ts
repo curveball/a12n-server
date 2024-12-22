@@ -1,6 +1,5 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import * as hal from '../formats/hal.js';
 import { Forbidden } from '@curveball/http-errors';
 import * as services from '../../services.js';
 
@@ -18,7 +17,7 @@ class PrincipalIdentityVerify extends Controller {
     }
 
     await services.principalIdentity.sendVerificationRequest(identity, ctx.ip()!);
-    ctx.response.body = hal.verifyResponseForm(identity);
+    ctx.redirect(303, `${identity.href}/verify-response`);
 
   }
 

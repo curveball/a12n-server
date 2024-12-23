@@ -1,14 +1,15 @@
 import { BadRequest, NotFound } from '@curveball/http-errors';
-import { LoginSession } from './types.js';
+import { LoginSession, LoginChallengeContext } from './types.js';
 import { AuthorizationChallengeRequest } from '../api-types.js';
-import { InvalidGrant, OAuth2Error } from '../oauth2/errors.js';
+import { InvalidGrant } from '../oauth2/errors.js';
 import { OAuth2Code } from '../oauth2/types.js';
-import { getSetting } from '../server-settings.js';
 import * as services from '../services.js';
-import { AppClient, Principal, PrincipalIdentity, User } from '../types.js';
+import { AppClient } from '../types.js';
 import { getLogger } from '../log/service.js';
-import { UserEventLogger } from '../log/types.js';
 import { generateSecretToken } from '../crypto.js';
+import { LoginChallengePassword } from './challenge/password.js';
+import { LoginChallengeTotp } from './challenge/totp.js';
+import { A12nLoginChallengeError } from './error.js';
 
 type ChallengeRequest = AuthorizationChallengeRequest;
 
@@ -50,12 +51,15 @@ async function startLoginSession(client: AppClient, scope?: string[]): Promise<L
     appClientId: client.id,
     expiresAt: Math.floor(Date.now() / 1000) + LOGIN_SESSION_EXPIRY,
     principalId: null,
+    principalIdentityId: null,
     authFactorsPassed: [],
     scope,
-    dirty: true,
   };
 
 }
+
+const passwordChallenge = new LoginChallengePassword();
+const totpChallenge = new LoginChallengeTotp();
 
 /**
  * Validate a login challenge request.
@@ -68,39 +72,32 @@ async function startLoginSession(client: AppClient, scope?: string[]): Promise<L
  */
 export async function challenge(client: AppClient, session: LoginSession, parameters: ChallengeRequest): Promise<OAuth2Code> {
 
-  let user;
-  // If set to true, we'll log this as a 'session started' event for this user.
-  let logSessionStart = false;
-
+  // If the session doesn't already have a principalId, we must log a 'session start'
+  // event.
+  const logSessionStart = !session.principalId;
+  const loginContext = await initChallengeContext(
+    session,
+    parameters
+  );
   try {
-    const principalService = new services.principal.PrincipalService('insecure');
-    if (!session.principalId) {
-      await challengeUsernamePassword(session, parameters);
-      logSessionStart = true;
-    }
-    assertSessionStage2(session);
 
-    user = await principalService.findById(session.principalId, 'user');
-    const log = getLogger(
-      user,
-      parameters.remote_addr ?? null,
-      parameters.user_agent ?? null
-    );
-    if (logSessionStart) log('login-challenge-started');
+    await passwordChallenge.challenge(loginContext);
+
+    if (logSessionStart) loginContext.log('login-challenge-started');
 
     if (!session.authFactorsPassed.includes('totp')) {
-      await challengeTotp(session, parameters, user, log);
+      totpChallenge.challenge(loginContext);
     }
 
     assertSessionStage3(session);
 
-    log('login-challenge-success');
+    loginContext.log('login-challenge-success');
 
   } finally {
 
-    if (session.dirty) {
+    if (loginContext.dirty) {
       await storeSession(session);
-      session.dirty = false;
+      loginContext.dirty = false;
     }
 
   }
@@ -109,7 +106,7 @@ export async function challenge(client: AppClient, session: LoginSession, parame
 
   return await services.oauth2.generateAuthorizationCode({
     client,
-    principal: user,
+    principal: loginContext.principal,
     scope: session.scope ?? [],
     redirectUri: null,
     grantType: 'authorization_challenge',
@@ -162,75 +159,54 @@ async function deleteSession(session: LoginSession) {
 
 }
 
-async function challengeUsernamePassword(session: LoginSession, parameters: ChallengeRequest): Promise<User> {
+async function initChallengeContext(session: LoginSession, parameters: ChallengeRequest): Promise<LoginChallengeContext> {
 
-  if (parameters.username === undefined || parameters.password === undefined) {
-    throw new A12nLoginChallengeError(
-      session,
-      'A username and password are required',
-      'username_or_password_required',
-    );
+  let principal;
+  let identity;
+  let dirty = false;
+  const ps = new services.principal.PrincipalService('insecure');
+  if (session.principalIdentityId && session.principalId) {
 
-  }
-  const principalService = new services.principal.PrincipalService('insecure');
-  let user: Principal;
-  let identity: PrincipalIdentity;
-  try {
-    identity = await services.principalIdentity.findByUri('mailto:' + parameters.username);
-  } catch (err) {
-    if (err instanceof NotFound) {
+    principal = await ps.findById(session.principalId);
+    identity = await services.principalIdentity.findById(principal, session.principalIdentityId);
+  } else {
+    if (parameters.username === undefined) {
       throw new A12nLoginChallengeError(
         session,
-        'Incorrect username or password',
-        'username_or_password_invalid',
-      );
-    } else {
-      throw err;
-    }
-
-  }
-
-  try {
-    user = await principalService.findByIdentity(identity);
-  } catch (err) {
-    if (err instanceof NotFound) {
-      throw new A12nLoginChallengeError(
-        session,
-        'Incorrect username or password',
+        'A username and password are required',
         'username_or_password_required',
       );
-    } else {
-      throw err;
     }
-  }
+    try {
+      identity = await services.principalIdentity.findByUri('mailto:' + parameters.username);
+      principal = identity.principal;
 
-  if (user.type !== 'user') {
+    } catch (err) {
+      if (err instanceof NotFound) {
+        throw new A12nLoginChallengeError(
+          session,
+          'Incorrect username or password',
+          'username_or_password_invalid',
+        );
+      } else {
+        throw err;
+      }
+    }
+    dirty = true;
+  }
+  if (principal.type !== 'user') {
     throw new A12nLoginChallengeError(
       session,
       'Credentials are not associated with a user',
       'not_a_user',
     );
   }
-
   const log = getLogger(
-    user,
+    principal,
     parameters.remote_addr ?? null,
     parameters.user_agent ?? null
   );
-  const { success, errorMessage } = await services.user.validateUserCredentials(user, parameters.password, log);
-  if (!success && errorMessage) {
-    throw new A12nLoginChallengeError(
-      session,
-      errorMessage,
-      'username_or_password_invalid',
-    );
-  }
-
-  session.principalId = user.id;
-  session.authFactorsPassed.push('password');
-  session.dirty = true;
-
-  if (!user.active) {
+  if (!principal.active) {
     log('login-failed-inactive');
     throw new A12nLoginChallengeError(
       session,
@@ -246,113 +222,21 @@ async function challengeUsernamePassword(session: LoginSession, parameters: Chal
       'email_not_verified',
     );
   }
-
-  return user;
-}
-
-/**
- * This function is responsible for ensuring that if TOTP is set up for a user,
- * it gets checked.
- */
-async function challengeTotp(session: LoginSession, parameters: ChallengeRequest, user: User, log: UserEventLogger): Promise<void> {
-
-  const serverTotpMode = getSetting('totp');
-  if (serverTotpMode === 'disabled') {
-    // Server-wide TOTP disabled.
-    session.authFactorsPassed.push('totp');
-    session.dirty = true;
-    return;
-  }
-  const hasTotp = await services.mfaTotp.hasTotp(user);
-  if (!hasTotp) {
-    // Does this server require TOTP
-    if (serverTotpMode === 'required') {
-      throw new InvalidGrant('This server is configured to require TOTP, and this user does not have TOTP set up. Logging in is not possible for this user in its current state. Contact an administrator');
-    }
-    // User didn't have TOTP so we just pass them
-    session.authFactorsPassed.push('totp');
-    session.dirty = true;
-    return;
-  }
-  if (!parameters.totp_code) {
-    // No TOTP code was provided
-    throw new A12nLoginChallengeError(
-      session,
-      'Please provide a TOTP code from the user\'s authenticator app.',
-      'totp_required',
-    );
-  }
-  if (!await services.mfaTotp.validateTotp(user, parameters.totp_code)) {
-    log('totp-failed');
-    // TOTP code was incorrect
-    throw new A12nLoginChallengeError(
-      session,
-      'Incorrect TOTP code. Make sure your system clock is set to the correct time and try again',
-      'totp_invalid',
-    );
-  } else {
-    log('totp-success');
+  return {
+    principal,
+    identity,
+    log,
+    session: {
+      ...session,
+      principalId: identity.principal.id,
+      principalIdentityId: identity.id,
+    },
+    parameters,
+    dirty,
   };
 
-  // TOTP check successful!
-  session.authFactorsPassed.push('totp');
-  session.dirty = true;
-
 }
 
-type ChallengeErrorCode =
-  // Account is not activated
-  | 'account_not_active'
-  // The principal associated with the credentials are not a user
-  | 'not_a_user'
-  // Username or password was wrong
-  | 'username_or_password_invalid'
-  // Username or password must be provided
-  | 'username_or_password_required'
-  // User must enter a TOTP code to continue
-  | 'totp_required'
-  // The TOTP code that was provided is invalid.
-  | 'totp_invalid'
-  // The email address used to log in was not verified
-  | 'email_not_verified';
-
-class A12nLoginChallengeError extends OAuth2Error {
-
-  httpStatus = 400;
-  errorCode: ChallengeErrorCode;
-  session: LoginSession;
-
-  constructor(session: LoginSession, message: string, errorCode: ChallengeErrorCode) {
-
-    super(message);
-    this.errorCode = errorCode;
-    this.session = session;
-
-  }
-
-  serializeErrorBody() {
-
-    return {
-      error: this.errorCode,
-      error_description: this.message,
-      auth_session: this.session.authSession,
-      expires_at: this.session.expiresAt,
-    };
-
-  }
-
-}
-
-function assertSessionStage2(session: LoginSession): asserts session is LoginSession & {principalId: number} {
-
-  if (!session.principalId) {
-    throw new Error('Invalid state: missing principalId');
-  }
-  if (!session.authSession.includes('password')) {
-    throw new Error('Invalid state: password was not checked');
-  }
-
-}
 function assertSessionStage3(session: LoginSession) {
 
   if (!session.authSession.includes('totp'))  {

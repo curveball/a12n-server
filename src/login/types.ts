@@ -1,4 +1,7 @@
+import { User, PrincipalIdentity } from '../types.js';
 import { AuthFactorType } from '../user-auth-factor/types.js';
+import { UserEventLogger } from '../log/types.js';
+import { AuthorizationChallengeRequest } from '../api-types.js';
 
 /**
  * The login session represents an ongoing login process for a specific
@@ -32,15 +35,14 @@ export type LoginSession = {
   principalId: number | null;
 
   /**
+   * Identity ID
+   */
+  principalIdentityId: number | null;
+
+  /**
    * List of OAuth2 scopes
    */
   scope?: string[];
-
-  /**
-   * Internal marker. If something related to the session changed we'll
-   * set this to true to indicate the session store should be updated.
-   */
-  dirty: boolean;
 
   /**
    * Which Auth Factors have been successfully checked during the current
@@ -49,3 +51,57 @@ export type LoginSession = {
   authFactorsPassed: AuthFactorType[];
 
 };
+
+/**
+ * A login session with a confirmed principal id and identity.
+ */
+export type LoginSessionWithPrincipal = LoginSession & {
+
+  /**
+   * User id
+   */
+  principalId: number;
+
+  /**
+   * Identity ID
+   */
+  principalIdentityId: number;
+}
+
+
+export type LoginChallengeContext = {
+
+  /**
+   * The user that's trying to authenticate
+   */
+  principal: User;
+
+  /**
+   * The identity (email address usually) of the principal that was used to
+   * start this challenge, usually supplied as a username.
+   */
+  identity: PrincipalIdentity;
+
+  /**
+   * Easy access to a logger
+   */
+  log: UserEventLogger;
+
+  /**
+   * Parameters sent with the *current* request.
+   */
+  parameters: AuthorizationChallengeRequest;
+
+  /**
+   * Session data associated with the login challenge process.
+   * This is persistent data.
+   */
+  session: LoginSession;
+
+  /**
+   * Set to true if session data changed and we need to save
+   * it again.
+   */
+  dirty: boolean;
+
+}

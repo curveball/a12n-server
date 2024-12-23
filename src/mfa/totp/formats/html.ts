@@ -22,6 +22,6 @@ export function registrationForm(params: RegisterFormParams): string {
     secret: params.secret,
     qrCode: params.qrCode,
     'csrf-token': params.csrfToken,
-  });
+  }, 'minimal-form');
 
 }

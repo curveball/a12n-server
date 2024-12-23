@@ -18,5 +18,5 @@ export function createGroupForm(options: Options) {
     error: options.error,
     action: '/group/new',
     hiddenFields,
-  });
+  }, 'minimal-form');
 }

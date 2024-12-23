@@ -11,9 +11,12 @@ type Template = (parameters?: Params) => string;
 
 const templates: Map<string, Template> = new Map();
 
-export function render(name: string, params?: Params, renderLayoutWrapper = true): string {
+/**
+ * Renders a handlebars template
+ */
+export function render(name: string, params: Params, layout: 'minimal-form' | 'email'): string {
 
-  const layoutTemplate = getTemplate('layout');
+  const layoutTemplate = getTemplate('layout/' + layout);
   const pageTemplate = getTemplate(name);
 
   const newParams = {};
@@ -22,18 +25,16 @@ export function render(name: string, params?: Params, renderLayoutWrapper = true
     logoUrl: getSetting('logo_url')
   });
 
-  if (renderLayoutWrapper) {
-    return layoutTemplate({
-      ...newParams,
-      body: pageTemplate(newParams)
-    });
-  } else {
-    return pageTemplate(newParams);
-  }
+  return layoutTemplate({
+    ...newParams,
+    body: pageTemplate(newParams)
+  });
 
 }
 
-
+/**
+ * Returns a template by name
+ */
 export function getTemplate(name: string): Template {
 
   // Don't cache in dev
@@ -49,6 +50,9 @@ export function getTemplate(name: string): Template {
 
 }
 
+/**
+ * Loads a template from disk
+ */
 export function loadTemplate(name: string): Template {
 
   const template = hb.compile(

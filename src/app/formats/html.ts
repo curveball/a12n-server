@@ -42,5 +42,5 @@ export function createAppForm(options: Options) {
     nickname: options.nickname,
     url: options.url,
     hiddenFields
-  });
+  }, 'minimal-form');
 }

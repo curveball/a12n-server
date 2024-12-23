@@ -25,17 +25,17 @@
     "verifiedAt": {
       "type": ["string", "null"],
       "format": "date-time",
-      "description": "Time when the identify was verified. Null if the identity is not verified."
+      "description": "Time when the identify was last verified. null if the identity is not verified."
     },
     "createdAt": {
       "type": "string",
       "format": "date-time",
-      "description": "Time when the identify was verified. Null if the identity is not verified."
+      "description": "Time when the identify resource was created."
     },
     "modifiedAt": {
       "type": "string",
       "format": "date-time",
-      "description": "Time when the identify was verified. Null if the identity is not verified."
+      "description": "Time when the identify resource was last modified."
     }
 
   }

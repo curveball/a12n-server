@@ -13,6 +13,6 @@ export function logoutForm(msg: string, error: string, continueUri?: string) {
     error: error,
     action: '/logout',
     hiddenFields,
-  });
+  }, 'minimal-form');
 
 }

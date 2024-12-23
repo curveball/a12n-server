@@ -11,7 +11,7 @@ export function loginForm(msg: string, error: string, hiddenFields: KeyValue, re
     registrationEnabled,
     registrationUri,
     resetPasswordUri,
-  });
+  }, 'minimal-form');
 
 }
 
@@ -30,6 +30,6 @@ export function mfaForm(
     useWebAuthn,
     hiddenFields: hiddenFields,
     action: '/login/mfa',
-  });
+  }, 'minimal-form');
 
 }

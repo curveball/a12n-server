@@ -43,3 +43,4 @@ export async function findForUser(principal: User): Promise<UserAuthFactor[]> {
   return result;
 
 }
+

@@ -1,9 +1,11 @@
 import { Principal, PrincipalIdentity, NewPrincipalIdentity } from '../types.js';
 import knex, { insertAndGetId } from '../database.js';
 import { PrincipalIdentitiesRecord } from 'knex/types/tables.js';
-import { NotFound } from '@curveball/http-errors';
+import { NotFound, MethodNotAllowed, BadRequest } from '@curveball/http-errors';
 import { generatePublicId } from '../crypto.js';
-import { PrincipalService } from '../principal/service.js';
+import { sendTemplatedMail } from '../mailer/service.js';
+import * as services from '../services.js';
+import { generateVerificationDigits } from '../crypto.js';
 
 export async function findByPrincipal(principal: Principal): Promise<PrincipalIdentity[]> {
 
@@ -56,7 +58,7 @@ export async function findByUri(arg1: Principal|string, arg2?:string): Promise<P
       .first();
 
     if (!result) throw new NotFound(`Identity "${arg1}" not found`);
-    const principalService = new PrincipalService('insecure');
+    const principalService = new services.principal.PrincipalService('insecure');
     const principalObj = await principalService.findById(result.principal_id);
 
     return recordToModel(principalObj, result);
@@ -113,6 +115,62 @@ export async function markVerified(identity: PrincipalIdentity): Promise<void> {
 
 }
 
+export async function sendVerificationRequest(identity: PrincipalIdentity, ip: string): Promise<void> {
+
+  if (!identity.uri.startsWith('mailto:')) {
+    throw new MethodNotAllowed('Only email identities can be verified currently. Make a feature request if you want to support other kinds of identities');
+  }
+
+  await sendTemplatedMail({
+    templateName: 'emails/verify-email',
+    to: identity.uri.slice(7),
+    subject: 'Verify your email',
+  }, {
+    code: await getCodeForIdentity(identity),
+    expireMinutes: CODE_LIFETIME_MINUTES,
+    name: identity.principal.nickname,
+    date: new Date().toISOString(),
+    ip,
+  });
+
+}
+
+const identityNS = 'a12n:identity-verification:';
+
+export async function verifyIdentity(identity: PrincipalIdentity, code: string): Promise<void> {
+
+  const storedCode = await services.kv.get(identityNS + identity.externalId);
+  // Delete code after, whether it was correct or not.
+  await services.kv.del(identityNS + identity.externalId);
+
+  if (storedCode === null) {
+    throw new BadRequest('Verification code incorrect or expired. Try restarting the verification process');
+  } else if (storedCode !== code) {
+    throw new BadRequest('Verification code incorrect');
+  }
+
+  await markVerified(identity);
+
+}
+
+const CODE_LIFETIME_MINUTES = 30;
+
+/**
+ * Generates a secret code for an identity that may be used to validate ownership later.
+ *
+ * An identity will only have 1 active code.
+ */
+async function getCodeForIdentity(identity: PrincipalIdentity): Promise<string> {
+
+  const code = generateVerificationDigits();
+  await services.kv.set(
+    identityNS + identity.externalId,
+    code,
+    { ttl: CODE_LIFETIME_MINUTES * 60000 }
+  );
+  return code;
+
+}
 
 function recordToModel(principal: Principal, record: PrincipalIdentitiesRecord): PrincipalIdentity {
 

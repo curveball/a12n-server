@@ -7,6 +7,7 @@ Changelog
 * Refactored and centralized abstract cache system, supporting redis/valkey and
   memory stores.
 * Email identities can now be verified in the admin UI and via the API.
+* Allow authorization_challenge to be preselected in 'new client'
 
 
 0.27.6 (2024-12-16)

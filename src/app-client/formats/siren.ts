@@ -56,7 +56,7 @@ export function newClient(user: App, query: NewClientQuery ) {
             name: 'allowAuthorizationChallenge',
             title: 'Allow "OAuth 2.0 Authorization Challenge for First-Party applications" flow (experimental and only for trusted applications!)',
             type: 'checkbox',
-            value: allowedGrantTypes.includes('allowAuthorizationChallenge') ? 'on' : '',
+            value: allowedGrantTypes.includes('authorization_challenge') ? 'on' : '',
           },
           {
             name: 'allowImplicit',

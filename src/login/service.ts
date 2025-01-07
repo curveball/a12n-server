@@ -81,28 +81,28 @@ export async function challenge(client: AppClient, session: LoginSession, parame
   );
   try {
 
-    await passwordChallenge.challenge(loginContext);
+    if (!session.authFactorsPassed.includes('password')) {
+      await passwordChallenge.challenge(loginContext);
+    }
 
     if (logSessionStart) loginContext.log('login-challenge-started');
 
     if (!session.authFactorsPassed.includes('totp')) {
-      totpChallenge.challenge(loginContext);
+      await totpChallenge.challenge(loginContext);
     }
-
-    assertSessionStage3(session);
 
     loginContext.log('login-challenge-success');
 
   } finally {
 
     if (loginContext.dirty) {
-      await storeSession(session);
+      await storeSession(loginContext.session);
       loginContext.dirty = false;
     }
 
   }
 
-  await deleteSession(session);
+  await deleteSession(loginContext.session);
 
   return await services.oauth2.generateAuthorizationCode({
     client,
@@ -148,7 +148,7 @@ async function storeSession(session: LoginSession) {
     sessionKey(session.authSession),
     session,
     {
-      ttl: session.expiresAt - Date.now(),
+      ttl: session.expiresAt * 1000 - Date.now(),
     }
   );
 
@@ -234,13 +234,5 @@ async function initChallengeContext(session: LoginSession, parameters: Challenge
     parameters,
     dirty,
   };
-
-}
-
-function assertSessionStage3(session: LoginSession) {
-
-  if (!session.authSession.includes('totp'))  {
-    throw new Error('Invalid state: totp was not checked');
-  }
 
 }

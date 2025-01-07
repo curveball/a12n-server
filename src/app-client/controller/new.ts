@@ -22,3 +22,4 @@ class NewClientController extends Controller {
 }
 
 export default new NewClientController();
+

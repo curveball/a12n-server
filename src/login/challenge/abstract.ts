@@ -1,4 +1,4 @@
-import { LoginChallengeContext } from '../types.js';
+import { LoginChallengeContext, AuthorizationChallengeRequest } from '../types.js';
 import { User } from '../../types.js';
 
 export abstract class AbstractLoginChallenge {
@@ -17,6 +17,20 @@ export abstract class AbstractLoginChallenge {
    */
   abstract hasFactor(): Promise<boolean>;
 
-  abstract challenge(loginContext: LoginChallengeContext): Promise<void>;
+  /**
+   * Handle the user response to a challenge.
+   *
+   * Should return true if the challenge passed.
+   * Should throw an Error ihe challenge failed.
+   */
+  abstract checkResponse(loginContext: LoginChallengeContext): Promise<boolean>;
+
+  /**
+   * Should return true if parameters contain a response to the challenge.
+   *
+   * For example, for the password challenge this checks if the paremters contained
+   * a 'password' key.
+   */
+  abstract parametersHasResponse(parameters: AuthorizationChallengeRequest): boolean;
 
 }

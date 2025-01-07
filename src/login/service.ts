@@ -83,13 +83,13 @@ export async function challenge(client: AppClient, session: LoginSession, parame
   try {
 
     if (!session.authFactorsPassed.includes('password')) {
-      await passwordChallenge.challenge(loginContext);
+      await passwordChallenge.checkResponse(loginContext);
     }
 
     if (logSessionStart) loginContext.log('login-challenge-started');
 
     if (!session.authFactorsPassed.includes('totp')) {
-      await totpChallenge.challenge(loginContext);
+      await totpChallenge.checkResponse(loginContext);
     }
 
     loginContext.log('login-challenge-success');

@@ -1,9 +1,10 @@
 import { AbstractLoginChallenge } from './abstract.js';
-import { LoginChallengeContext } from '../types.js';
+import { LoginChallengeContext, AuthorizationChallengeRequest } from '../types.js';
 import { A12nLoginChallengeError } from '../error.js';
 import * as services from '../../services.js';
 import { InvalidGrant } from '../../oauth2/errors.js';
 import { getSetting } from '../../server-settings.js';
+
 export class LoginChallengeTotp extends AbstractLoginChallenge {
 
   /**
@@ -12,20 +13,22 @@ export class LoginChallengeTotp extends AbstractLoginChallenge {
    * For example, if a user has a TOTP device setup this should
    * return true for the totp challenge class.
    */
-  hasFactor(): Promise<boolean> {
+  async hasFactor(): Promise<boolean> {
 
+    const serverTotpMode = getSetting('totp');
+    if (serverTotpMode === 'disabled') return false;
     return services.mfaTotp.hasTotp(this.principal);
 
   }
 
-  async challenge(loginContext: LoginChallengeContext): Promise<void> {
+  async checkResponse(loginContext: LoginChallengeContext): Promise<boolean> {
 
     const serverTotpMode = getSetting('totp');
     if (serverTotpMode === 'disabled') {
       // Server-wide TOTP disabled.
       loginContext.session.authFactorsPassed.push('totp');
       loginContext.dirty = true;
-      return;
+      return true;
     }
     const hasTotp = await services.mfaTotp.hasTotp(loginContext.principal);
     if (!hasTotp) {
@@ -36,7 +39,7 @@ export class LoginChallengeTotp extends AbstractLoginChallenge {
       // User didn't have TOTP so we just pass them
       loginContext.session.authFactorsPassed.push('totp');
       loginContext.dirty = true;
-      return;
+      return true;
     }
     if (!loginContext.parameters.totp_code) {
       // No TOTP code was provided
@@ -61,6 +64,18 @@ export class LoginChallengeTotp extends AbstractLoginChallenge {
     // TOTP check successful!
     loginContext.session.authFactorsPassed.push('totp');
     loginContext.dirty = true;
+    return true;
+
+  }
+  /**
+   * Should return true if parameters contain a response to the challenge.
+   *
+   * For example, for the password challenge this checks if the paremters contained
+   * a 'password' key.
+   */
+  parametersHasResponse(parameters: AuthorizationChallengeRequest): boolean {
+
+    return parameters.totp_code !== undefined;
 
   }
 

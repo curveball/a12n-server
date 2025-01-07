@@ -2,6 +2,7 @@ import { User, PrincipalIdentity } from '../types.js';
 import { AuthFactorType } from '../user-auth-factor/types.js';
 import { UserEventLogger } from '../log/types.js';
 import { AuthorizationChallengeRequest } from '../api-types.js';
+export { AuthorizationChallengeRequest } from '../api-types.js';
 
 /**
  * The login session represents an ongoing login process for a specific

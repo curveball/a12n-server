@@ -1,5 +1,5 @@
 import { AbstractLoginChallenge } from './abstract.js';
-import { LoginChallengeContext } from '../types.js';
+import { LoginChallengeContext, AuthorizationChallengeRequest } from '../types.js';
 import { A12nLoginChallengeError } from '../error.js';
 import * as services from '../../services.js';
 
@@ -16,7 +16,13 @@ export class LoginChallengePassword extends AbstractLoginChallenge {
 
   }
 
-  async challenge(loginContext: LoginChallengeContext): Promise<void> {
+  /**
+   * Handle the user response to a challenge.
+   *
+   * Should return true if the challenge passed.
+   * Should throw an Error ihe challenge failed.
+   */
+  async checkResponse(loginContext: LoginChallengeContext): Promise<boolean> {
 
     if (loginContext.parameters.password === undefined) {
       throw new A12nLoginChallengeError(
@@ -38,6 +44,19 @@ export class LoginChallengePassword extends AbstractLoginChallenge {
 
     loginContext.session.authFactorsPassed.push('password');
     loginContext.dirty = true;
+    return true;
+
+  }
+
+  /**
+   * Should return true if parameters contain a response to the challenge.
+   *
+   * For example, for the password challenge this checks if the paremters contained
+   * a 'password' key.
+   */
+  parametersHasResponse(parameters: AuthorizationChallengeRequest): boolean {
+
+    return parameters.password  !== undefined;
 
   }
 

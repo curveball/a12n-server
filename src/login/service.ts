@@ -58,8 +58,6 @@ async function startLoginSession(client: AppClient, scope?: string[]): Promise<L
 
 }
 
-const passwordChallenge = new LoginChallengePassword();
-const totpChallenge = new LoginChallengeTotp();
 
 /**
  * Validate a login challenge request.
@@ -79,6 +77,9 @@ export async function challenge(client: AppClient, session: LoginSession, parame
     session,
     parameters
   );
+  const passwordChallenge = new LoginChallengePassword(loginContext.principal);
+  const totpChallenge = new LoginChallengeTotp(loginContext.principal);
+
   try {
 
     if (!session.authFactorsPassed.includes('password')) {

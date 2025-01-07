@@ -6,6 +6,18 @@ import { InvalidGrant } from '../../oauth2/errors.js';
 import { getSetting } from '../../server-settings.js';
 export class LoginChallengeTotp extends AbstractLoginChallenge {
 
+  /**
+   * Returns true if the user has this auth factor set up.
+   *
+   * For example, if a user has a TOTP device setup this should
+   * return true for the totp challenge class.
+   */
+  hasFactor(): Promise<boolean> {
+
+    return services.mfaTotp.hasTotp(this.principal);
+
+  }
+
   async challenge(loginContext: LoginChallengeContext): Promise<void> {
 
     const serverTotpMode = getSetting('totp');

@@ -4,14 +4,16 @@ import { LoginSession } from './types.js';
 type ChallengeErrorCode =
   // Account is not activated
   | 'account_not_active'
-  // The principal associated with the credentials are not a user
+  // The principal associated with the credentials is not a user
   | 'not_a_user'
   // The user doesn't have any credentials set up
   | 'no_credentials'
   // Username or password was wrong
   | 'username_or_password_invalid'
-  // Username or password must be provided
-  | 'username_or_password_required'
+  // Username must be provided
+  | 'username_required'
+  // Password must be provided
+  | 'password_required'
   // User must enter a TOTP code to continue
   | 'totp_required'
   // The TOTP code that was provided is invalid.

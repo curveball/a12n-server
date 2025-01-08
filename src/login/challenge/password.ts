@@ -1,9 +1,13 @@
 import { AbstractLoginChallenge } from './abstract.js';
-import { LoginChallengeContext, AuthorizationChallengeRequest } from '../types.js';
+import { LoginChallengeContext, AuthorizationChallengeRequest, LoginSession } from '../types.js';
 import { A12nLoginChallengeError } from '../error.js';
 import * as services from '../../services.js';
 
-export class LoginChallengePassword extends AbstractLoginChallenge {
+type PasswordParameters = {
+  password: string;
+}
+
+export class LoginChallengePassword extends AbstractLoginChallenge<PasswordParameters> {
 
   /**
    * The type of authentication factor this class provides.
@@ -30,15 +34,7 @@ export class LoginChallengePassword extends AbstractLoginChallenge {
    */
   async checkResponse(loginContext: LoginChallengeContext): Promise<boolean> {
 
-    if (loginContext.parameters.password === undefined) {
-      throw new A12nLoginChallengeError(
-        loginContext.session,
-        'A username and password are required',
-        'username_or_password_required',
-      );
-
-    }
-
+    this.validateParameters(loginContext.parameters);
     const { success, errorMessage } = await services.user.validateUserCredentials(loginContext.principal, loginContext.parameters.password, loginContext.log);
     if (!success && errorMessage) {
       throw new A12nLoginChallengeError(
@@ -58,9 +54,23 @@ export class LoginChallengePassword extends AbstractLoginChallenge {
    * For example, for the password challenge this checks if the paremters contained
    * a 'password' key.
    */
-  parametersHasResponse(parameters: AuthorizationChallengeRequest): boolean {
+  parametersContainsResponse(parameters: AuthorizationChallengeRequest): parameters is PasswordParameters {
 
     return parameters.password  !== undefined;
+
+  }
+
+  /**
+   * Emits the challenge. This is done in situations that no credentials have
+   * been received yet.
+   */
+  challenge(session: LoginSession): never {
+
+    throw new A12nLoginChallengeError(
+      session,
+      'A username and password are required',
+      'password_required',
+    );
 
   }
 

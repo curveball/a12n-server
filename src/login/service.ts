@@ -100,7 +100,7 @@ export async function challenge(client: AppClient, session: LoginSession, parame
         // This challenge has already been checked previously.
         continue;
       }
-      if (challenge.parametersHasResponse(parameters)) {
+      if (challenge.parametersContainsResponse(parameters)) {
         // The user did submit a value for this challenge. Lets check it.
         const challengeResult = await challenge.checkResponse(loginContext);
         if (challengeResult) {
@@ -116,7 +116,7 @@ export async function challenge(client: AppClient, session: LoginSession, parame
     // complete just 2 challenges.
     for(const challenge of challenges) {
       if (!loginContext.session.challengesCompleted.includes(challenge.authFactor)) {
-        challenge.challenge();
+        challenge.challenge(loginContext.session);
       }
     }
 
@@ -202,8 +202,8 @@ async function initChallengeContext(session: LoginSession, parameters: Challenge
     if (parameters.username === undefined) {
       throw new A12nLoginChallengeError(
         session,
-        'A username and password are required',
-        'username_or_password_required',
+        'A username is required',
+        'username_required',
       );
     }
     try {
@@ -269,7 +269,7 @@ async function initChallengeContext(session: LoginSession, parameters: Challenge
 /**
  * Returns the full list of login challenges the user has setup up.
  */
-async function getChallengesForPrincipal(principal: User): Promise<AbstractLoginChallenge[]> {
+async function getChallengesForPrincipal(principal: User): Promise<AbstractLoginChallenge<unknown>[]> {
 
   const challenges = [
     new LoginChallengePassword(principal),

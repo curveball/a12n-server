@@ -1,11 +1,15 @@
 import { AbstractLoginChallenge } from './abstract.js';
-import { LoginChallengeContext, AuthorizationChallengeRequest } from '../types.js';
+import { LoginChallengeContext, AuthorizationChallengeRequest, LoginSession } from '../types.js';
 import { A12nLoginChallengeError } from '../error.js';
 import * as services from '../../services.js';
 import { InvalidGrant } from '../../oauth2/errors.js';
 import { getSetting } from '../../server-settings.js';
 
-export class LoginChallengeTotp extends AbstractLoginChallenge {
+type TotpParameters = {
+  totp_code: string;
+}
+
+export class LoginChallengeTotp extends AbstractLoginChallenge<TotpParameters> {
 
   /**
    * The type of authentication factor this class provides.
@@ -72,9 +76,23 @@ export class LoginChallengeTotp extends AbstractLoginChallenge {
    * For example, for the password challenge this checks if the paremters contained
    * a 'password' key.
    */
-  parametersHasResponse(parameters: AuthorizationChallengeRequest): boolean {
+  parametersContainsResponse(parameters: AuthorizationChallengeRequest): parameters is TotpParameters {
 
     return parameters.totp_code !== undefined;
+
+  }
+
+  /**
+   * Emits the challenge. This is done in situations that no credentials have
+   * been received yet.
+   */
+  challenge(session: LoginSession): never {
+
+    throw new A12nLoginChallengeError(
+      session,
+      'Please provide a TOTP code from the user\'s authenticator app.',
+      'totp_required',
+    );
 
   }
 

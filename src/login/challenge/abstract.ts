@@ -1,8 +1,8 @@
-import { LoginChallengeContext, AuthorizationChallengeRequest } from '../types.js';
+import { LoginChallengeContext, AuthorizationChallengeRequest, LoginSession } from '../types.js';
 import { User } from '../../types.js';
 import { AuthFactorType } from '../../user-auth-factor/types.js';
 
-export abstract class AbstractLoginChallenge {
+export abstract class AbstractLoginChallenge<TChallengeParameters> {
 
   /**
    * The principal associated with the process.
@@ -42,12 +42,24 @@ export abstract class AbstractLoginChallenge {
    * For example, for the password challenge this checks if the paremters contained
    * a 'password' key.
    */
-  abstract parametersHasResponse(parameters: AuthorizationChallengeRequest): boolean;
+  abstract parametersContainsResponse(parameters: AuthorizationChallengeRequest): parameters is TChallengeParameters & AuthorizationChallengeRequest;
 
   /**
    * Emits the challenge. This is done in situations that no credentials have
    * been received yet.
    */
-  abstract challenge(): never; 
+  abstract challenge(session: LoginSession): never;
+
+  /**
+   * Validates whether the parameters object contains expected values.
+   *
+   * This for instance will make sure  that a 'possword' key was provided for
+   * the Password challenge.
+   */
+  validateParameters(parameters: AuthorizationChallengeRequest): asserts parameters is TChallengeParameters & AuthorizationChallengeRequest {
+    if (!this.parametersContainsResponse(parameters)) {
+      throw new Error('Invalid state. This should normally not happen unless there\'s a logic bug');
+    }
+  }
 
 }

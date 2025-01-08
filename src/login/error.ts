@@ -6,6 +6,8 @@ type ChallengeErrorCode =
   | 'account_not_active'
   // The principal associated with the credentials are not a user
   | 'not_a_user'
+  // The user doesn't have any credentials set up
+  | 'no_credentials'
   // Username or password was wrong
   | 'username_or_password_invalid'
   // Username or password must be provided

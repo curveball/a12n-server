@@ -1,9 +1,20 @@
 import { LoginChallengeContext, AuthorizationChallengeRequest } from '../types.js';
 import { User } from '../../types.js';
+import { AuthFactorType } from '../../user-auth-factor/types.js';
 
 export abstract class AbstractLoginChallenge {
 
+  /**
+   * The principal associated with the process.
+   *
+   * This class will only be used for a single user, so this lets you cache responses if needed.
+   */
   protected principal: User;
+
+  /**
+   * The type of authentication factor this class provides.
+   */
+  abstract readonly authFactor: AuthFactorType;
 
   constructor(principal: User) {
     this.principal = principal;
@@ -15,7 +26,7 @@ export abstract class AbstractLoginChallenge {
    * For example, if a user has a TOTP device setup this should
    * return true for the totp challenge class.
    */
-  abstract hasFactor(): Promise<boolean>;
+  abstract userHasChallenge(): Promise<boolean>;
 
   /**
    * Handle the user response to a challenge.
@@ -32,5 +43,11 @@ export abstract class AbstractLoginChallenge {
    * a 'password' key.
    */
   abstract parametersHasResponse(parameters: AuthorizationChallengeRequest): boolean;
+
+  /**
+   * Emits the challenge. This is done in situations that no credentials have
+   * been received yet.
+   */
+  abstract challenge(): never; 
 
 }

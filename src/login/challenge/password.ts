@@ -4,13 +4,19 @@ import { A12nLoginChallengeError } from '../error.js';
 import * as services from '../../services.js';
 
 export class LoginChallengePassword extends AbstractLoginChallenge {
+
+  /**
+   * The type of authentication factor this class provides.
+   */
+ readonly authFactor = 'password';
+
   /**
    * Returns true if the user has this auth factor set up.
    *
    * For example, if a user has a TOTP device setup this should
    * return true for the totp challenge class.
    */
-  hasFactor(): Promise<boolean> {
+  userHasChallenge(): Promise<boolean> {
 
     return services.user.hasPassword(this.principal);
 
@@ -42,8 +48,6 @@ export class LoginChallengePassword extends AbstractLoginChallenge {
       );
     }
 
-    loginContext.session.authFactorsPassed.push('password');
-    loginContext.dirty = true;
     return true;
 
   }

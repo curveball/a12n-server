@@ -4,12 +4,13 @@ import { AuthorizationChallengeRequest } from '../api-types.js';
 import { InvalidGrant } from '../oauth2/errors.js';
 import { OAuth2Code } from '../oauth2/types.js';
 import * as services from '../services.js';
-import { AppClient } from '../types.js';
+import { AppClient, User } from '../types.js';
 import { getLogger } from '../log/service.js';
 import { generateSecretToken } from '../crypto.js';
 import { LoginChallengePassword } from './challenge/password.js';
 import { LoginChallengeTotp } from './challenge/totp.js';
 import { A12nLoginChallengeError } from './error.js';
+import { AbstractLoginChallenge } from './challenge/abstract.js';
 
 type ChallengeRequest = AuthorizationChallengeRequest;
 
@@ -52,7 +53,7 @@ async function startLoginSession(client: AppClient, scope?: string[]): Promise<L
     expiresAt: Math.floor(Date.now() / 1000) + LOGIN_SESSION_EXPIRY,
     principalId: null,
     principalIdentityId: null,
-    authFactorsPassed: [],
+    challengesCompleted: [],
     scope,
   };
 
@@ -73,23 +74,50 @@ export async function challenge(client: AppClient, session: LoginSession, parame
   // If the session doesn't already have a principalId, we must log a 'session start'
   // event.
   const logSessionStart = !session.principalId;
+
   const loginContext = await initChallengeContext(
     session,
     parameters
   );
-  const passwordChallenge = new LoginChallengePassword(loginContext.principal);
-  const totpChallenge = new LoginChallengeTotp(loginContext.principal);
+
+ if (logSessionStart) loginContext.log('login-challenge-started');
+
+  const challenges = await getChallengesForPrincipal(loginContext.principal);
+
+  if (challenges.length === 0) {
+    throw new A12nLoginChallengeError(
+      session,
+      'This user exists but has no credentials set up in their account',
+      'no_credentials',
+    );
+
+  }
 
   try {
 
-    if (!session.authFactorsPassed.includes('password')) {
-      await passwordChallenge.checkResponse(loginContext);
+    for(const challenge of challenges) {
+      if (loginContext.session.challengesCompleted.includes(challenge.authFactor)) {
+        // This challenge has already been checked previously.
+        continue;
+      }
+      if (challenge.parametersHasResponse(parameters)) {
+        // The user did submit a value for this challenge. Lets check it.
+        const challengeResult = await challenge.checkResponse(loginContext);
+        if (challengeResult) {
+          // Challenge passed.
+          loginContext.session.challengesCompleted.push(challenge.authFactor);
+          loginContext.dirty = true;
+        }
+      }
+
     }
 
-    if (logSessionStart) loginContext.log('login-challenge-started');
-
-    if (!session.authFactorsPassed.includes('totp')) {
-      await totpChallenge.checkResponse(loginContext);
+    // Right now every challenge has to be met. In the future we will let users
+    // complete just 2 challenges.
+    for(const challenge of challenges) {
+      if (!loginContext.session.challengesCompleted.includes(challenge.authFactor)) {
+        challenge.challenge();
+      }
     }
 
     loginContext.log('login-challenge-success');
@@ -235,5 +263,25 @@ async function initChallengeContext(session: LoginSession, parameters: Challenge
     parameters,
     dirty,
   };
+
+}
+
+/**
+ * Returns the full list of login challenges the user has setup up.
+ */
+async function getChallengesForPrincipal(principal: User): Promise<AbstractLoginChallenge[]> {
+
+  const challenges = [
+    new LoginChallengePassword(principal),
+    new LoginChallengeTotp(principal)
+  ];
+
+  const result = [];
+  for(const challenge of challenges) {
+    if (await challenge.userHasChallenge()) {
+      result.push(challenge);
+    }
+  }
+  return result;
 
 }

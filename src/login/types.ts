@@ -49,7 +49,7 @@ export type LoginSession = {
    * Which Auth Factors have been successfully checked during the current
    * session.
    */
-  authFactorsPassed: AuthFactorType[];
+  challengesCompleted: AuthFactorType[];
 
 };
 

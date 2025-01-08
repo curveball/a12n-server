@@ -8,12 +8,17 @@ import { getSetting } from '../../server-settings.js';
 export class LoginChallengeTotp extends AbstractLoginChallenge {
 
   /**
+   * The type of authentication factor this class provides.
+   */
+ readonly authFactor = 'totp';
+
+  /**
    * Returns true if the user has this auth factor set up.
    *
    * For example, if a user has a TOTP device setup this should
    * return true for the totp challenge class.
    */
-  async hasFactor(): Promise<boolean> {
+  async userHasChallenge(): Promise<boolean> {
 
     const serverTotpMode = getSetting('totp');
     if (serverTotpMode === 'disabled') return false;
@@ -26,8 +31,6 @@ export class LoginChallengeTotp extends AbstractLoginChallenge {
     const serverTotpMode = getSetting('totp');
     if (serverTotpMode === 'disabled') {
       // Server-wide TOTP disabled.
-      loginContext.session.authFactorsPassed.push('totp');
-      loginContext.dirty = true;
       return true;
     }
     const hasTotp = await services.mfaTotp.hasTotp(loginContext.principal);
@@ -37,8 +40,6 @@ export class LoginChallengeTotp extends AbstractLoginChallenge {
         throw new InvalidGrant('This server is configured to require TOTP, and this user does not have TOTP set up. Logging in is not possible for this user in its current state. Contact an administrator');
       }
       // User didn't have TOTP so we just pass them
-      loginContext.session.authFactorsPassed.push('totp');
-      loginContext.dirty = true;
       return true;
     }
     if (!loginContext.parameters.totp_code) {
@@ -62,8 +63,6 @@ export class LoginChallengeTotp extends AbstractLoginChallenge {
     };
 
     // TOTP check successful!
-    loginContext.session.authFactorsPassed.push('totp');
-    loginContext.dirty = true;
     return true;
 
   }

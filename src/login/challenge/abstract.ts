@@ -1,4 +1,4 @@
-import { AuthorizationChallengeRequest, LoginSession } from '../types.js';
+import { AuthorizationChallengeRequest } from '../types.js';
 import { User } from '../../types.js';
 import { AuthFactorType } from '../../user-auth-factor/types.js';
 import { UserEventLogger } from '../../log/types.js';
@@ -44,7 +44,7 @@ export abstract class AbstractLoginChallenge<TChallengeParameters> {
    * Should return true if the challenge passed.
    * Should throw an Error ihe challenge failed.
    */
-  abstract checkResponse(session: LoginSession, parameters: TChallengeParameters): Promise<boolean>;
+  abstract checkResponse(parameters: TChallengeParameters): Promise<boolean>;
 
   /**
    * Should return true if parameters contain a response to the challenge.
@@ -60,7 +60,7 @@ export abstract class AbstractLoginChallenge<TChallengeParameters> {
    * This notifies the user that some kind of response is expected as a reply
    * to this challenge.
    */
-  abstract challenge(session: LoginSession): never;
+  abstract challenge(): never;
 
   /**
    * Validates whether the parameters object contains expected values.

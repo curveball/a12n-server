@@ -1,5 +1,5 @@
 import { AbstractLoginChallenge } from './abstract.js';
-import { AuthorizationChallengeRequest, LoginSession } from '../types.js';
+import { AuthorizationChallengeRequest } from '../types.js';
 import { A12nLoginChallengeError } from '../error.js';
 import * as services from '../../services.js';
 import { InvalidGrant } from '../../oauth2/errors.js';
@@ -35,7 +35,7 @@ export class LoginChallengeTotp extends AbstractLoginChallenge<TotpParameters> {
 
   }
 
-  async checkResponse(session: LoginSession, parameters: TotpParameters): Promise<boolean> {
+  async checkResponse(parameters: TotpParameters): Promise<boolean> {
 
     const serverTotpMode = getSetting('totp');
     if (serverTotpMode === 'disabled') {
@@ -54,7 +54,6 @@ export class LoginChallengeTotp extends AbstractLoginChallenge<TotpParameters> {
     if (!parameters.totp_code) {
       // No TOTP code was provided
       throw new A12nLoginChallengeError(
-        session,
         'Please provide a TOTP code from the user\'s authenticator app.',
         'totp_required',
       );
@@ -63,7 +62,6 @@ export class LoginChallengeTotp extends AbstractLoginChallenge<TotpParameters> {
       this.log('totp-failed');
       // TOTP code was incorrect
       throw new A12nLoginChallengeError(
-        session,
         'Incorrect TOTP code. Make sure your system clock is set to the correct time and try again',
         'totp_invalid',
       );
@@ -93,10 +91,9 @@ export class LoginChallengeTotp extends AbstractLoginChallenge<TotpParameters> {
    * This notifies the user that some kind of response is expected as a reply
    * to this challenge.
    */
-  challenge(session: LoginSession): never {
+  challenge(): never {
 
     throw new A12nLoginChallengeError(
-      session,
       'Please provide a TOTP code from the user\'s authenticator app.',
       'totp_required',
     );

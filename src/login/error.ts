@@ -25,24 +25,31 @@ export class A12nLoginChallengeError extends OAuth2Error {
 
   httpStatus = 400;
   errorCode: ChallengeErrorCode;
-  session: LoginSession;
+  session: LoginSession | null;
 
-  constructor(session: LoginSession, message: string, errorCode: ChallengeErrorCode) {
+  constructor(message: string, errorCode: ChallengeErrorCode, session?: LoginSession) {
 
     super(message);
     this.errorCode = errorCode;
-    this.session = session;
+    this.session = session ?? null;
 
   }
 
   serializeErrorBody() {
 
-    return {
-      error: this.errorCode,
-      error_description: this.message,
-      auth_session: this.session.authSession,
-      expires_at: this.session.expiresAt,
-    };
+    if (this.session) {
+      return {
+        error: this.errorCode,
+        error_description: this.message,
+        auth_session: this.session.authSession,
+        expires_at: this.session.expiresAt,
+      };
+    } else {
+      return {
+        error: this.errorCode,
+        error_description: this.message,
+      };
+    }
 
   }
 

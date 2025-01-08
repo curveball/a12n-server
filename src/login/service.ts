@@ -76,31 +76,33 @@ export async function challenge(client: AppClient, session: LoginSession, parame
   // event.
   const logSessionStart = !session.principalId;
 
-  const {
-    principal,
-    identity,
-    log,
-  } = await initChallengeContext(
-    session,
-    parameters
-  );
-  session.principalId = principal.id;
-  session.principalIdentityId = identity.id;
-
-  if (logSessionStart) log('login-challenge-started');
-
-  const challenges = await getChallengesForPrincipal(principal, log);
-
-  if (challenges.length === 0) {
-    throw new A12nLoginChallengeError(
-      session,
-      'This user exists but has no credentials set up in their account',
-      'no_credentials',
-    );
-
-  }
+  // If set to true, the session will be deleted instead of stored
+  let success = false;
 
   try {
+
+    const {
+      principal,
+      identity,
+      log,
+    } = await initChallengeContext(
+      session,
+      parameters
+    );
+    session.principalId = principal.id;
+    session.principalIdentityId = identity.id;
+
+    if (logSessionStart) log('login-challenge-started');
+
+    const challenges = await getChallengesForPrincipal(principal, log);
+
+    if (challenges.length === 0) {
+      throw new A12nLoginChallengeError(
+        'This user exists but has no credentials set up in their account',
+        'no_credentials',
+      );
+
+    }
 
     for(const challenge of challenges) {
       if (session.challengesCompleted.includes(challenge.authFactor)) {
@@ -109,7 +111,7 @@ export async function challenge(client: AppClient, session: LoginSession, parame
       }
       if (challenge.parametersContainsResponse(parameters)) {
         // The user did submit a value for this challenge. Lets check it.
-        const challengeResult = await challenge.checkResponse(session, parameters);
+        const challengeResult = await challenge.checkResponse(parameters);
         if (challengeResult) {
           // Challenge passed.
           session.challengesCompleted.push(challenge.authFactor);
@@ -125,32 +127,41 @@ export async function challenge(client: AppClient, session: LoginSession, parame
       // passes. If this is not the case we're going to emit a challenge error.
       for(const challenge of challenges) {
         if (!session.challengesCompleted.includes(challenge.authFactor)) {
-          challenge.challenge(session);
+          challenge.challenge();
         }
       }
     }
 
     log('login-challenge-success');
+    success = true;
+    return await services.oauth2.generateAuthorizationCode({
+      client,
+      principal,
+      scope: session.scope ?? [],
+      redirectUri: null,
+      grantType: 'authorization_challenge',
+      browserSessionId: session.authSession,
+      codeChallenge: null,
+      codeChallengeMethod: null,
+      nonce: null,
+    });
+
+  } catch (err) {
+
+    if (err instanceof A12nLoginChallengeError) {
+      err.session = session;
+    }
+    throw err;
 
   } finally {
 
-    await storeSession(session);
+    if (success) {
+      await deleteSession(session);
+    } else {
+      await storeSession(session);
+    }
 
   }
-
-  await deleteSession(session);
-
-  return await services.oauth2.generateAuthorizationCode({
-    client,
-    principal,
-    scope: session.scope ?? [],
-    redirectUri: null,
-    grantType: 'authorization_challenge',
-    browserSessionId: session.authSession,
-    codeChallenge: null,
-    codeChallengeMethod: null,
-    nonce: null,
-  });
 
 }
 
@@ -207,7 +218,6 @@ async function initChallengeContext(session: LoginSession, parameters: Challenge
   } else {
     if (parameters.username === undefined) {
       throw new A12nLoginChallengeError(
-        session,
         'A username is required',
         'username_required',
       );
@@ -219,7 +229,6 @@ async function initChallengeContext(session: LoginSession, parameters: Challenge
     } catch (err) {
       if (err instanceof NotFound) {
         throw new A12nLoginChallengeError(
-          session,
           'Incorrect username or password',
           'username_or_password_invalid',
         );
@@ -230,7 +239,6 @@ async function initChallengeContext(session: LoginSession, parameters: Challenge
   }
   if (principal.type !== 'user') {
     throw new A12nLoginChallengeError(
-      session,
       'Credentials are not associated with a user',
       'not_a_user',
     );
@@ -243,7 +251,6 @@ async function initChallengeContext(session: LoginSession, parameters: Challenge
   if (!principal.active) {
     log('login-failed-inactive');
     throw new A12nLoginChallengeError(
-      session,
       'This account is not active. Please contact support',
       'account_not_active',
     );
@@ -251,7 +258,6 @@ async function initChallengeContext(session: LoginSession, parameters: Challenge
   if (identity.verifiedAt === null) {
     log('login-failed-notverified');
     throw new A12nLoginChallengeError(
-      session,
       'Email is not verified',
       'email_not_verified',
     );

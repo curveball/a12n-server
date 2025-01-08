@@ -80,7 +80,7 @@ export async function challenge(client: AppClient, session: LoginSession, parame
     parameters
   );
 
- if (logSessionStart) loginContext.log('login-challenge-started');
+  if (logSessionStart) loginContext.log('login-challenge-started');
 
   const challenges = await getChallengesForPrincipal(loginContext.principal);
 
@@ -112,11 +112,15 @@ export async function challenge(client: AppClient, session: LoginSession, parame
 
     }
 
-    // Right now every challenge has to be met. In the future we will let users
-    // complete just 2 challenges.
-    for(const challenge of challenges) {
-      if (!loginContext.session.challengesCompleted.includes(challenge.authFactor)) {
-        challenge.challenge(loginContext.session);
+    const completedChallenges = new Set(loginContext.session.challengesCompleted);
+
+    if (completedChallenges.size < 2 && challenges.length > 1) {
+      // If there are 2 or more auth factors set up, we want at least 2 successful
+      // passes. If this is not the case we're going to emit a challenge error.
+      for(const challenge of challenges) {
+        if (!loginContext.session.challengesCompleted.includes(challenge.authFactor)) {
+          challenge.challenge(loginContext.session);
+        }
       }
     }
 

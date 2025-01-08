@@ -14,7 +14,7 @@ export class LoginChallengeTotp extends AbstractLoginChallenge<TotpParameters> {
   /**
    * The type of authentication factor this class provides.
    */
- readonly authFactor = 'totp';
+  readonly authFactor = 'totp';
 
   /**
    * Returns true if the user has this auth factor set up.

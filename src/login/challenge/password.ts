@@ -12,7 +12,7 @@ export class LoginChallengePassword extends AbstractLoginChallenge<PasswordParam
   /**
    * The type of authentication factor this class provides.
    */
- readonly authFactor = 'password';
+  readonly authFactor = 'password';
 
   /**
    * Returns true if the user has this auth factor set up.

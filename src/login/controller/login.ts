@@ -12,6 +12,9 @@ import { PrincipalIdentity, User } from '../../types.js';
 import { loginForm } from '../formats/html.js';
 import { isValidRedirect } from '../utilities.js';
 
+/**
+ * The Login controller renders the basic login form
+ */
 class LoginController extends Controller {
 
   async get(ctx: Context) {

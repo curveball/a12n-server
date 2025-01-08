@@ -1,5 +1,5 @@
 import { BadRequest, NotFound } from '@curveball/http-errors';
-import { LoginSession, LoginChallengeContext } from './types.js';
+import { LoginSession } from './types.js';
 import { AuthorizationChallengeRequest } from '../api-types.js';
 import { InvalidGrant } from '../oauth2/errors.js';
 import { OAuth2Code } from '../oauth2/types.js';
@@ -11,6 +11,7 @@ import { LoginChallengePassword } from './challenge/password.js';
 import { LoginChallengeTotp } from './challenge/totp.js';
 import { A12nLoginChallengeError } from './error.js';
 import { AbstractLoginChallenge } from './challenge/abstract.js';
+import { UserEventLogger } from '../log/types.js';
 
 type ChallengeRequest = AuthorizationChallengeRequest;
 
@@ -75,14 +76,21 @@ export async function challenge(client: AppClient, session: LoginSession, parame
   // event.
   const logSessionStart = !session.principalId;
 
-  const loginContext = await initChallengeContext(
+  let {
+    principal,
+    identity,
+    dirty,
+    log,
+  } = await initChallengeContext(
     session,
     parameters
   );
+  session.principalId = principal.id;
+  session.principalIdentityId = identity.id;
 
-  if (logSessionStart) loginContext.log('login-challenge-started');
+  if (logSessionStart) log('login-challenge-started');
 
-  const challenges = await getChallengesForPrincipal(loginContext.principal);
+  const challenges = await getChallengesForPrincipal(principal, log);
 
   if (challenges.length === 0) {
     throw new A12nLoginChallengeError(
@@ -96,50 +104,50 @@ export async function challenge(client: AppClient, session: LoginSession, parame
   try {
 
     for(const challenge of challenges) {
-      if (loginContext.session.challengesCompleted.includes(challenge.authFactor)) {
+      if (session.challengesCompleted.includes(challenge.authFactor)) {
         // This challenge has already been checked previously.
         continue;
       }
       if (challenge.parametersContainsResponse(parameters)) {
         // The user did submit a value for this challenge. Lets check it.
-        const challengeResult = await challenge.checkResponse(loginContext);
+        const challengeResult = await challenge.checkResponse(session, parameters);
         if (challengeResult) {
           // Challenge passed.
-          loginContext.session.challengesCompleted.push(challenge.authFactor);
-          loginContext.dirty = true;
+          session.challengesCompleted.push(challenge.authFactor);
+          dirty = true;
         }
       }
 
     }
 
-    const completedChallenges = new Set(loginContext.session.challengesCompleted);
+    const completedChallenges = new Set(session.challengesCompleted);
 
     if (completedChallenges.size < 2 && challenges.length > 1) {
       // If there are 2 or more auth factors set up, we want at least 2 successful
       // passes. If this is not the case we're going to emit a challenge error.
       for(const challenge of challenges) {
-        if (!loginContext.session.challengesCompleted.includes(challenge.authFactor)) {
-          challenge.challenge(loginContext.session);
+        if (!session.challengesCompleted.includes(challenge.authFactor)) {
+          challenge.challenge(session);
         }
       }
     }
 
-    loginContext.log('login-challenge-success');
+    log('login-challenge-success');
 
   } finally {
 
-    if (loginContext.dirty) {
-      await storeSession(loginContext.session);
-      loginContext.dirty = false;
+    if (dirty) {
+      await storeSession(session);
+      dirty = false;
     }
 
   }
 
-  await deleteSession(loginContext.session);
+  await deleteSession(session);
 
   return await services.oauth2.generateAuthorizationCode({
     client,
-    principal: loginContext.principal,
+    principal,
     scope: session.scope ?? [],
     redirectUri: null,
     grantType: 'authorization_challenge',
@@ -192,7 +200,7 @@ async function deleteSession(session: LoginSession) {
 
 }
 
-async function initChallengeContext(session: LoginSession, parameters: ChallengeRequest): Promise<LoginChallengeContext> {
+async function initChallengeContext(session: LoginSession, parameters: ChallengeRequest) {
 
   let principal;
   let identity;
@@ -259,12 +267,6 @@ async function initChallengeContext(session: LoginSession, parameters: Challenge
     principal,
     identity,
     log,
-    session: {
-      ...session,
-      principalId: identity.principal.id,
-      principalIdentityId: identity.id,
-    },
-    parameters,
     dirty,
   };
 
@@ -273,11 +275,11 @@ async function initChallengeContext(session: LoginSession, parameters: Challenge
 /**
  * Returns the full list of login challenges the user has setup up.
  */
-async function getChallengesForPrincipal(principal: User): Promise<AbstractLoginChallenge<unknown>[]> {
+async function getChallengesForPrincipal(principal: User, log: UserEventLogger): Promise<AbstractLoginChallenge<unknown>[]> {
 
   const challenges = [
-    new LoginChallengePassword(principal),
-    new LoginChallengeTotp(principal)
+    new LoginChallengePassword(principal, log),
+    new LoginChallengeTotp(principal, log)
   ];
 
   const result = [];

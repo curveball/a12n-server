@@ -1,5 +1,5 @@
 import { AbstractLoginChallenge } from './abstract.js';
-import { LoginChallengeContext, AuthorizationChallengeRequest, LoginSession } from '../types.js';
+import { AuthorizationChallengeRequest, LoginSession } from '../types.js';
 import { A12nLoginChallengeError } from '../error.js';
 import * as services from '../../services.js';
 import { InvalidGrant } from '../../oauth2/errors.js';
@@ -9,6 +9,11 @@ type TotpParameters = {
   totp_code: string;
 }
 
+/**
+ * Time-based-one-time-passwords.
+ *
+ * This strategy handles authenticator apps.
+ */
 export class LoginChallengeTotp extends AbstractLoginChallenge<TotpParameters> {
 
   /**
@@ -30,14 +35,14 @@ export class LoginChallengeTotp extends AbstractLoginChallenge<TotpParameters> {
 
   }
 
-  async checkResponse(loginContext: LoginChallengeContext): Promise<boolean> {
+  async checkResponse(session: LoginSession, parameters: TotpParameters): Promise<boolean> {
 
     const serverTotpMode = getSetting('totp');
     if (serverTotpMode === 'disabled') {
       // Server-wide TOTP disabled.
       return true;
     }
-    const hasTotp = await services.mfaTotp.hasTotp(loginContext.principal);
+    const hasTotp = await services.mfaTotp.hasTotp(this.principal);
     if (!hasTotp) {
       // Does this server require TOTP
       if (serverTotpMode === 'required') {
@@ -46,24 +51,24 @@ export class LoginChallengeTotp extends AbstractLoginChallenge<TotpParameters> {
       // User didn't have TOTP so we just pass them
       return true;
     }
-    if (!loginContext.parameters.totp_code) {
+    if (!parameters.totp_code) {
       // No TOTP code was provided
       throw new A12nLoginChallengeError(
-        loginContext.session,
+        session,
         'Please provide a TOTP code from the user\'s authenticator app.',
         'totp_required',
       );
     }
-    if (!await services.mfaTotp.validateTotp(loginContext.principal, loginContext.parameters.totp_code)) {
-      loginContext.log('totp-failed');
+    if (!await services.mfaTotp.validateTotp(this.principal, parameters.totp_code)) {
+      this.log('totp-failed');
       // TOTP code was incorrect
       throw new A12nLoginChallengeError(
-        loginContext.session,
+        session,
         'Incorrect TOTP code. Make sure your system clock is set to the correct time and try again',
         'totp_invalid',
       );
     } else {
-      loginContext.log('totp-success');
+      this.log('totp-success');
     };
 
     // TOTP check successful!

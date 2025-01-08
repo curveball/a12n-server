@@ -1,8 +1,17 @@
-import { LoginChallengeContext, AuthorizationChallengeRequest, LoginSession } from '../types.js';
+import { AuthorizationChallengeRequest, LoginSession } from '../types.js';
 import { User } from '../../types.js';
 import { AuthFactorType } from '../../user-auth-factor/types.js';
+import { UserEventLogger } from '../../log/types.js';
 
+/**
+ * This abstract class is implemented by various authentication challenge strategies.
+ */
 export abstract class AbstractLoginChallenge<TChallengeParameters> {
+
+  /**
+   * The type of authentication factor this class provides.
+   */
+  abstract readonly authFactor: AuthFactorType;
 
   /**
    * The principal associated with the process.
@@ -12,12 +21,13 @@ export abstract class AbstractLoginChallenge<TChallengeParameters> {
   protected principal: User;
 
   /**
-   * The type of authentication factor this class provides.
+   * Logger function
    */
-  abstract readonly authFactor: AuthFactorType;
+  protected log: UserEventLogger;
 
-  constructor(principal: User) {
+  constructor(principal: User, logger: UserEventLogger) {
     this.principal = principal;
+    this.log = logger;
   }
 
   /**
@@ -34,7 +44,7 @@ export abstract class AbstractLoginChallenge<TChallengeParameters> {
    * Should return true if the challenge passed.
    * Should throw an Error ihe challenge failed.
    */
-  abstract checkResponse(loginContext: LoginChallengeContext): Promise<boolean>;
+  abstract checkResponse(session: LoginSession, parameters: TChallengeParameters): Promise<boolean>;
 
   /**
    * Should return true if parameters contain a response to the challenge.

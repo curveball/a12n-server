@@ -1,5 +1,5 @@
 import { AbstractLoginChallenge } from './abstract.js';
-import { LoginChallengeContext, AuthorizationChallengeRequest, LoginSession } from '../types.js';
+import { AuthorizationChallengeRequest, LoginSession } from '../types.js';
 import { A12nLoginChallengeError } from '../error.js';
 import * as services from '../../services.js';
 
@@ -7,6 +7,9 @@ type PasswordParameters = {
   password: string;
 }
 
+/**
+ * Password-based authentication strategy.
+ */
 export class LoginChallengePassword extends AbstractLoginChallenge<PasswordParameters> {
 
   /**
@@ -32,13 +35,12 @@ export class LoginChallengePassword extends AbstractLoginChallenge<PasswordParam
    * Should return true if the challenge passed.
    * Should throw an Error ihe challenge failed.
    */
-  async checkResponse(loginContext: LoginChallengeContext): Promise<boolean> {
+  async checkResponse(session: LoginSession, parameters: PasswordParameters): Promise<boolean> {
 
-    this.validateParameters(loginContext.parameters);
-    const { success, errorMessage } = await services.user.validateUserCredentials(loginContext.principal, loginContext.parameters.password, loginContext.log);
+    const { success, errorMessage } = await services.user.validateUserCredentials(this.principal, parameters.password, this.log);
     if (!success && errorMessage) {
       throw new A12nLoginChallengeError(
-        loginContext.session,
+        session,
         errorMessage,
         'username_or_password_invalid',
       );

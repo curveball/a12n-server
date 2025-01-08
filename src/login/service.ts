@@ -76,10 +76,9 @@ export async function challenge(client: AppClient, session: LoginSession, parame
   // event.
   const logSessionStart = !session.principalId;
 
-  let {
+  const {
     principal,
     identity,
-    dirty,
     log,
   } = await initChallengeContext(
     session,
@@ -114,7 +113,6 @@ export async function challenge(client: AppClient, session: LoginSession, parame
         if (challengeResult) {
           // Challenge passed.
           session.challengesCompleted.push(challenge.authFactor);
-          dirty = true;
         }
       }
 
@@ -136,10 +134,7 @@ export async function challenge(client: AppClient, session: LoginSession, parame
 
   } finally {
 
-    if (dirty) {
-      await storeSession(session);
-      dirty = false;
-    }
+    await storeSession(session);
 
   }
 
@@ -204,7 +199,6 @@ async function initChallengeContext(session: LoginSession, parameters: Challenge
 
   let principal;
   let identity;
-  let dirty = false;
   const ps = new services.principal.PrincipalService('insecure');
   if (session.principalIdentityId && session.principalId) {
 
@@ -233,7 +227,6 @@ async function initChallengeContext(session: LoginSession, parameters: Challenge
         throw err;
       }
     }
-    dirty = true;
   }
   if (principal.type !== 'user') {
     throw new A12nLoginChallengeError(
@@ -267,7 +260,6 @@ async function initChallengeContext(session: LoginSession, parameters: Challenge
     principal,
     identity,
     log,
-    dirty,
   };
 
 }

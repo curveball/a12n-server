@@ -1,7 +1,4 @@
-import { User, PrincipalIdentity } from '../types.js';
 import { AuthFactorType } from '../user-auth-factor/types.js';
-import { UserEventLogger } from '../log/types.js';
-import { AuthorizationChallengeRequest } from '../api-types.js';
 export { AuthorizationChallengeRequest } from '../api-types.js';
 
 /**
@@ -67,42 +64,4 @@ export type LoginSessionWithPrincipal = LoginSession & {
    * Identity ID
    */
   principalIdentityId: number;
-}
-
-
-export type LoginChallengeContext = {
-
-  /**
-   * The user that's trying to authenticate
-   */
-  principal: User;
-
-  /**
-   * The identity (email address usually) of the principal that was used to
-   * start this challenge, usually supplied as a username.
-   */
-  identity: PrincipalIdentity;
-
-  /**
-   * Easy access to a logger
-   */
-  log: UserEventLogger;
-
-  /**
-   * Parameters sent with the *current* request.
-   */
-  parameters: AuthorizationChallengeRequest;
-
-  /**
-   * Session data associated with the login challenge process.
-   * This is persistent data.
-   */
-  session: LoginSession;
-
-  /**
-   * Set to true if session data changed and we need to save
-   * it again.
-   */
-  dirty: boolean;
-
 }

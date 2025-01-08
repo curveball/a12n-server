@@ -1,4 +1,5 @@
 import { AuthFactorType } from '../user-auth-factor/types.js';
+export { AuthorizationChallengeRequest } from '../api-types.js';
 
 /**
  * The login session represents an ongoing login process for a specific
@@ -32,20 +33,35 @@ export type LoginSession = {
   principalId: number | null;
 
   /**
+   * Identity ID
+   */
+  principalIdentityId: number | null;
+
+  /**
    * List of OAuth2 scopes
    */
   scope?: string[];
 
   /**
-   * Internal marker. If something related to the session changed we'll
-   * set this to true to indicate the session store should be updated.
-   */
-  dirty: boolean;
-
-  /**
    * Which Auth Factors have been successfully checked during the current
    * session.
    */
-  authFactorsPassed: AuthFactorType[];
+  challengesCompleted: AuthFactorType[];
 
 };
+
+/**
+ * A login session with a confirmed principal id and identity.
+ */
+export type LoginSessionWithPrincipal = LoginSession & {
+
+  /**
+   * User id
+   */
+  principalId: number;
+
+  /**
+   * Identity ID
+   */
+  principalIdentityId: number;
+}

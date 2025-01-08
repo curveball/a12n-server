@@ -8,6 +8,11 @@ import { MFALoginSession } from '../../mfa/types.js';
 import { mfaForm } from '../formats/html.js';
 import { getLoggerFromContext } from '../../log/service.js';
 
+/**
+ * Multi-factor-auth controller
+ *
+ * Handles both TOTP and Webauthn
+ */
 class MFAController extends Controller {
 
   async get(ctx: Context) {

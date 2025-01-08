@@ -45,15 +45,17 @@ export abstract class AbstractLoginChallenge<TChallengeParameters> {
   abstract parametersContainsResponse(parameters: AuthorizationChallengeRequest): parameters is TChallengeParameters & AuthorizationChallengeRequest;
 
   /**
-   * Emits the challenge. This is done in situations that no credentials have
-   * been received yet.
+   * Emits the initial challenge.
+   *
+   * This notifies the user that some kind of response is expected as a reply
+   * to this challenge.
    */
   abstract challenge(session: LoginSession): never;
 
   /**
    * Validates whether the parameters object contains expected values.
    *
-   * This for instance will make sure  that a 'possword' key was provided for
+   * This for instance will make sure  that a 'password' key was provided for
    * the Password challenge.
    */
   validateParameters(parameters: AuthorizationChallengeRequest): asserts parameters is TChallengeParameters & AuthorizationChallengeRequest {

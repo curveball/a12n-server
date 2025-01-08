@@ -83,8 +83,10 @@ export class LoginChallengeTotp extends AbstractLoginChallenge<TotpParameters> {
   }
 
   /**
-   * Emits the challenge. This is done in situations that no credentials have
-   * been received yet.
+   * Emits the initial challenge.
+   *
+   * This notifies the user that some kind of response is expected as a reply
+   * to this challenge.
    */
   challenge(session: LoginSession): never {
 

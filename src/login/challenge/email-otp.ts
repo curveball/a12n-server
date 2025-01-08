@@ -50,7 +50,12 @@ export class LoginChallengeEmailOtp extends AbstractLoginChallenge<EmailOtpParam
       return true;
     } catch (err) {
       if (err instanceof BadRequest) {
-        throw new A12nLoginChallengeError('Invalid or expired email_otp_code', 'email_otp_invalid');
+        await services.principalIdentity.sendOtpRequest(identity, this.ip);
+        throw new A12nLoginChallengeError(
+          'Invalid or expired email_otp_code',
+          'email_otp_invalid',
+          { censored_email: censor(identity.uri) }
+        );
       } else {
         throw err;
       }
@@ -66,7 +71,7 @@ export class LoginChallengeEmailOtp extends AbstractLoginChallenge<EmailOtpParam
    */
   parametersContainsResponse(parameters: AuthorizationChallengeRequest): parameters is EmailOtpParameters & AuthorizationChallengeRequest {
 
-    return parameters.email_opt_code !== undefined;
+    return parameters.email_otp_code !== undefined;
 
   }
 

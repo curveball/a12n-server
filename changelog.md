@@ -4,6 +4,9 @@ Changelog
 0.27.7 (????-??-??)
 -------------------
 
+* #563: Users can now enter a code sent to them by email as a
+  one-time-password. This feature has been added to the authorizion_challege /
+  first party auth API but is not yet exposed to the admin interface.
 * Refactored and centralized abstract cache system, supporting redis/valkey and
   memory stores.
 * Email identities can now be verified in the admin UI and via the API.

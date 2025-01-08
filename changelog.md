@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.27.7 (????-??-??)
+0.28.0 (????-??-??)
 -------------------
 
 * #563: Users can now enter a code sent to them by email as a

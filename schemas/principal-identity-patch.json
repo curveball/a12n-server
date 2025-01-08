@@ -1,0 +1,16 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://curveballjs.org/schemas/a12nserver/principal-identity-patch.json",
+  "type": "object",
+  "title": "PrincipalIdentityPatch",
+  "description": "Patch format for the principal-identity resource",
+
+  "required": ["isMfa"],
+  "additionalProperties": false,
+
+  "properties": {
+    "isMfa": {
+      "type": "string"
+    }
+  }
+}

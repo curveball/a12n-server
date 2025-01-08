@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.28.0 (????-??-??)
+0.28.0 (2025-01-08)
 -------------------
 
 * #563: Users can now enter a code sent to them by email as a

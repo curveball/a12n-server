@@ -33,7 +33,7 @@ export class RedisKvStore extends KvStore {
   async set(key: string, value: any, options?: SetOptions): Promise<void> {
 
     if (options?.ttl) {
-      const newTtl = options.ttl / 1000;
+      const newTtl = Math.floor(options.ttl / 1000);
       await this.redis.setEx(
         key,
         newTtl,

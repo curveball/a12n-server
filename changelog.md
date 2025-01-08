@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.28.1 (????-??-??)
+-------------------
+
+* Fix a timing bug when using Redis as the kv store.
+
+
 0.28.0 (2025-01-08)
 -------------------
 

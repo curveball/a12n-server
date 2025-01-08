@@ -30,7 +30,7 @@
       "maxLength": 6,
       "pattern": "^[0-9]{6}$"
     },
-    "email_opt_code": {
+    "email_otp_code": {
       "type": "string",
       "description": "A 6 digit one-time password sent to an email address.",
       "minLength": 6,

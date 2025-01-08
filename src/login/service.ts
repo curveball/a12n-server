@@ -9,6 +9,7 @@ import { getLogger } from '../log/service.js';
 import { generateSecretToken } from '../crypto.js';
 import { LoginChallengePassword } from './challenge/password.js';
 import { LoginChallengeTotp } from './challenge/totp.js';
+import { LoginChallengeEmailOtp } from './challenge/email-otp.js';
 import { A12nLoginChallengeError } from './error.js';
 import { AbstractLoginChallenge } from './challenge/abstract.js';
 import { UserEventLogger } from '../log/types.js';
@@ -94,7 +95,7 @@ export async function challenge(client: AppClient, session: LoginSession, parame
 
     if (logSessionStart) log('login-challenge-started');
 
-    const challenges = await getChallengesForPrincipal(principal, log);
+    const challenges = await getChallengesForPrincipal(principal, log, parameters.remote_addr!);
 
     if (challenges.length === 0) {
       throw new A12nLoginChallengeError(
@@ -127,7 +128,7 @@ export async function challenge(client: AppClient, session: LoginSession, parame
       // passes. If this is not the case we're going to emit a challenge error.
       for(const challenge of challenges) {
         if (!session.challengesCompleted.includes(challenge.authFactor)) {
-          challenge.challenge();
+          await challenge.challenge();
         }
       }
     }
@@ -273,11 +274,12 @@ async function initChallengeContext(session: LoginSession, parameters: Challenge
 /**
  * Returns the full list of login challenges the user has setup up.
  */
-async function getChallengesForPrincipal(principal: User, log: UserEventLogger): Promise<AbstractLoginChallenge<unknown>[]> {
+async function getChallengesForPrincipal(principal: User, log: UserEventLogger, ip: string): Promise<AbstractLoginChallenge<unknown>[]> {
 
   const challenges = [
-    new LoginChallengePassword(principal, log),
-    new LoginChallengeTotp(principal, log)
+    new LoginChallengePassword(principal, log, ip),
+    new LoginChallengeEmailOtp(principal, log, ip),
+    new LoginChallengeTotp(principal, log, ip)
   ];
 
   const result = [];

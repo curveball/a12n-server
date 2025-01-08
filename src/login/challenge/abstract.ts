@@ -25,9 +25,15 @@ export abstract class AbstractLoginChallenge<TChallengeParameters> {
    */
   protected log: UserEventLogger;
 
-  constructor(principal: User, logger: UserEventLogger) {
+  /**
+   * IP address of the client initiating authentication.
+   */
+  protected ip: string;
+
+  constructor(principal: User, logger: UserEventLogger, ip: string) {
     this.principal = principal;
     this.log = logger;
+    this.ip = ip;
   }
 
   /**
@@ -60,7 +66,7 @@ export abstract class AbstractLoginChallenge<TChallengeParameters> {
    * This notifies the user that some kind of response is expected as a reply
    * to this challenge.
    */
-  abstract challenge(): never;
+  abstract challenge(): Promise<never>;
 
   /**
    * Validates whether the parameters object contains expected values.

@@ -4,21 +4,25 @@ import { LoginSession } from './types.js';
 type ChallengeErrorCode =
   // Account is not activated
   | 'account_not_active'
-  // The principal associated with the credentials is not a user
+  // The principal associated with the credentials is not a user.
   | 'not_a_user'
-  // The user doesn't have any credentials set up
+  // The user doesn't have any credentials set up.
   | 'no_credentials'
-  // Username or password was wrong
+  // Username or password was wrong.
   | 'username_or_password_invalid'
-  // Username must be provided
+  // Username must be provided.
   | 'username_required'
-  // Password must be provided
+  // Password must be provided.
   | 'password_required'
-  // User must enter a TOTP code to continue
+  // User must enter a TOTP code to continue.
   | 'totp_required'
   // The TOTP code that was provided is invalid.
   | 'totp_invalid'
-  // The email address used to log in was not verified
+  // The user must enter the code sent to them by email.
+  | 'email_otp_required'
+  // The OTP code the user entered was invalid or expired.
+  | 'email_otp_invalid'
+  // The email address used to log in was not verified.
   | 'email_not_verified';
 
 export class A12nLoginChallengeError extends OAuth2Error {

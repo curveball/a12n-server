@@ -134,6 +134,28 @@ export async function sendVerificationRequest(identity: PrincipalIdentity, ip: s
   });
 
 }
+export async function sendOtpRequest(identity: PrincipalIdentity, ip: string): Promise<void> {
+
+  if (!identity.uri.startsWith('mailto:')) {
+    throw new MethodNotAllowed('Only email identities can be verified currently. Make a feature request if you want to support other kinds of identities');
+  }
+  if (!identity.isMfa) {
+    throw new MethodNotAllowed('This identity is not configured for mfa');
+  }
+
+  await sendTemplatedMail({
+    templateName: 'emails/totp-email',
+    to: identity.uri.slice(7),
+    subject: 'Your login code',
+  }, {
+    code: await getCodeForIdentity(identity),
+    expireMinutes: CODE_LIFETIME_MINUTES,
+    name: identity.principal.nickname,
+    date: new Date().toISOString(),
+    ip,
+  });
+
+}
 
 const identityNS = 'a12n:identity-verification:';
 

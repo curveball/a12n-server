@@ -66,7 +66,6 @@ export class LoginChallengeEmailOtp extends AbstractLoginChallenge<EmailOtpParam
    */
   parametersContainsResponse(parameters: AuthorizationChallengeRequest): parameters is EmailOtpParameters & AuthorizationChallengeRequest {
 
-    console.log('contains-response', parameters);
     return parameters.email_opt_code !== undefined;
 
   }
@@ -79,12 +78,14 @@ export class LoginChallengeEmailOtp extends AbstractLoginChallenge<EmailOtpParam
    */
   async challenge(): Promise<never> {
 
-    console.log('challenge-now');
     const identity = await this.findMfaIdentity(true);
-    await services.principalIdentity.sendVerificationRequest(identity, this.ip);
+    await services.principalIdentity.sendOtpRequest(identity, this.ip);
     throw new A12nLoginChallengeError(
       `An email has been sent to ${identity.uri.slice(7)} with a code to verify your identity.`,
-      'email_otp_required'
+      'email_otp_required',
+      {
+        censored_email: censor(identity.uri)
+      }
     );
 
   }
@@ -95,7 +96,7 @@ export class LoginChallengeEmailOtp extends AbstractLoginChallenge<EmailOtpParam
    * Finds a MFA identity that uses a mailto: address.
    */
   private async findMfaIdentity(must: true): Promise<PrincipalIdentity>;
-  private async findMfaIdentity(): Promise<PrincipalIdentity|null>; 
+  private async findMfaIdentity(): Promise<PrincipalIdentity|null>;
   private async findMfaIdentity(must = false): Promise<PrincipalIdentity|null> {
 
     if (this.identityCache) return this.identityCache;
@@ -106,9 +107,24 @@ export class LoginChallengeEmailOtp extends AbstractLoginChallenge<EmailOtpParam
         return identity;
       }
     }
-    if (must) throw new Error('Could not find an email identity usable for ma');
+    if (must) throw new Error('Could not find an email identity usable for MFA');
     return null;
 
   }
+
+}
+
+function censor(email: string): string {
+
+  email = email.toLowerCase();
+  if (email.startsWith('mailto:')) email = email.slice(7);
+
+  const [user, domain] = email.split('@');
+  return (
+    user.slice(0, 2).padEnd(user.length, '*') +
+    '@' +
+    domain.slice(0, 2).padEnd(domain.length-2, '*') +
+    domain.slice(-2)
+  );
 
 }

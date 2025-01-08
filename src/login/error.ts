@@ -25,17 +25,23 @@ type ChallengeErrorCode =
   // The email address used to log in was not verified.
   | 'email_not_verified';
 
+type ExtraParams = {
+  censored_email?: string;
+};
+
 export class A12nLoginChallengeError extends OAuth2Error {
 
   httpStatus = 400;
   errorCode: ChallengeErrorCode;
   session: LoginSession | null;
+  extraParams: ExtraParams;
 
-  constructor(message: string, errorCode: ChallengeErrorCode, session?: LoginSession) {
+  constructor(message: string, errorCode: ChallengeErrorCode, extraParams: ExtraParams = {}, session?: LoginSession) {
 
     super(message);
     this.errorCode = errorCode;
     this.session = session ?? null;
+    this.extraParams = extraParams;
 
   }
 
@@ -47,11 +53,13 @@ export class A12nLoginChallengeError extends OAuth2Error {
         error_description: this.message,
         auth_session: this.session.authSession,
         expires_at: this.session.expiresAt,
+        ...this.extraParams,
       };
     } else {
       return {
         error: this.errorCode,
         error_description: this.message,
+        ...this.extraParams,
       };
     }
 

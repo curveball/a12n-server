@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.27.7 (????-??-??)
+0.28.0 (????-??-??)
 -------------------
 
 * #563: Users can now enter a code sent to them by email as a
@@ -11,6 +11,7 @@ Changelog
   memory stores.
 * Email identities can now be verified in the admin UI and via the API.
 * Allow authorization_challenge to be preselected in 'new client'
+* Add button in admin UI to enable/disable MFA for a specific email identity.
 
 
 0.27.6 (2024-12-16)

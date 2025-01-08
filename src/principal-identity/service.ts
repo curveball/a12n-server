@@ -103,6 +103,21 @@ export async function create(identity: NewPrincipalIdentity): Promise<PrincipalI
   };
 
 }
+
+export async function update(identity: PrincipalIdentity): Promise<void> {
+
+  await knex('principal_identities')
+    .update({
+      modified_at: Date.now(),
+      is_primary: +identity.isPrimary,
+      is_mfa: +identity.isMfa,
+      label: identity.label,
+    }).where({
+      id: identity.id,
+    });
+
+}
+
 export async function markVerified(identity: PrincipalIdentity): Promise<void> {
 
   await knex('principal_identities')

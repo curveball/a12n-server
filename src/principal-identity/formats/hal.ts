@@ -72,6 +72,20 @@ export function item(principal: Principal, identity: PrincipalIdentity): HalReso
         target: `${identity.href}/verify`,
       }
     };
+    if (identity.verifiedAt) {
+      res._templates['set-mfa'] = {
+        method: 'PATCH',
+        title: identity.isMfa ? 'Disable for MFA' : 'Enable for MFA',
+        target: `${identity.href}`,
+        properties: [
+          {
+            name: 'isMfa',
+            type: 'hidden',
+            value: identity.isMfa ? '0' : '1',
+          }
+        ]
+      };
+    };
   }
 
   return res;

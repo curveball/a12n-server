@@ -59,8 +59,6 @@ class UserController extends Controller {
     ctx.status = 204;
 
   }
-
-
 }
 
 export default new UserController();

@@ -12,8 +12,8 @@ class PrincipalIdentityCollection extends Controller {
     const principal = await principalService.findByExternalId(ctx.params.id, 'user');
     const identities = await services.principalIdentity.findByPrincipal(principal);
 
-    if (ctx.auth.equals(principal) && !ctx.privileges.has('admin')) {
-      throw new Forbidden('You can only use this API for yourself, or if you have \'admin\' privileges');
+    if (ctx.auth.equals(principal) && !ctx.privileges.has('a12n:user:manage-identities')) {
+      throw new Forbidden('You can only use this API for yourself, or if you have the \'a12n:user:manage-identities\'privilege');
     }
 
     ctx.response.body = hal.collection(

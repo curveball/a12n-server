@@ -6,6 +6,9 @@ Changelog
 
 * Add a new privilege for managing user identities. Before this change it was
   required to have the 'admin' privilege to do this.
+* Verify response endpoint is now exposed as a form on the identity resource.
+* It's now possible to mark an identity as an MFA identity when verifying using
+  the 'enableMfa' property.
 
 
 0.28.1 (2025-01-08)

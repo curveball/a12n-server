@@ -310,6 +310,10 @@ export interface PrincipalIdentityVerifyForm {
    * The verification code
    */
   code: string;
+  /**
+   * If verification was successful, turn on MFA for this identity.
+   */
+  enableMfa?: boolean;
 }
 /* eslint-disable */
 /**

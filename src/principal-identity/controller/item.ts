@@ -14,8 +14,8 @@ class PrincipalIdentityItem extends Controller {
 
     const identity = await services.principalIdentity.findByExternalId(principal,ctx.params.identityId);
 
-    if (ctx.auth.equals(principal) && !ctx.privileges.has('admin')) {
-      throw new Forbidden('You can only use this API for yourself, or if you have \'admin\' privileges');
+    if (ctx.auth.equals(principal) && !ctx.privileges.has('a12n:user:manage-identities')) {
+      throw new Forbidden('You can only use this API for yourself, or if you have the \'a12n:user:manage-identities\'privilege');
     }
 
     ctx.response.body = hal.item(
@@ -33,8 +33,8 @@ class PrincipalIdentityItem extends Controller {
 
     const identity = await services.principalIdentity.findByExternalId(principal,ctx.params.identityId);
 
-    if (ctx.auth.equals(principal) && !ctx.privileges.has('admin')) {
-      throw new Forbidden('You can only use this API for yourself, or if you have \'admin\' privileges');
+    if (ctx.auth.equals(principal) && !ctx.privileges.has('a12n:user:manage-identities')) {
+      throw new Forbidden('You can only use this API for yourself, or if you have the \'a12n:user:manage-identities\'privilege');
     }
 
     const isMfa = !!(+ctx.request.body.isMfa);

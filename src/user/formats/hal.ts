@@ -82,6 +82,12 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
     };
 
   }
+  if (hasControl || currentUserPrivileges.has('a12n:user:manage-identities', user.href)) {
+    hal._links['identity-collection'] = {
+      href: `${user.href}/identity`,
+      title: 'List of identities the user is associated with'
+    };
+  }
 
   if (hasControl) {
     hal.hasPassword = hasPassword;
@@ -98,9 +104,14 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
       href: `${user.href}/app-permission`,
       title: 'App Permissions',
     };
-    hal._links['identity-collection'] = {
-      href: `${user.href}/identity`,
-      title: 'List of identities the user is associated with'
+    hal._links['edit-form'] = {
+      href: `${user.href}/edit`,
+      title: `Edit ${user.nickname}`
+    };
+
+    hal._links['privileges'] = {
+      href: `${user.href}/edit/privileges`,
+      title: 'Change privilege policy',
     };
   }
   if (currentUserPrivileges.has('a12n:user:change-password', user.href)) {
@@ -110,16 +121,6 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
       hints: {
         allow: ['PUT'],
       }
-    };
-
-    hal._links['edit-form'] = {
-      href: `${user.href}/edit`,
-      title: `Edit ${user.nickname}`
-    };
-
-    hal._links['privileges'] = {
-      href: `${user.href}/edit/privileges`,
-      title: 'Change privilege policy',
     };
   }
 

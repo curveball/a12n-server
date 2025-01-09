@@ -70,6 +70,19 @@ export function item(principal: Principal, identity: PrincipalIdentity): HalReso
         method: 'POST',
         title: identity.verifiedAt ? 'Re-verify' : 'Verify',
         target: `${identity.href}/verify`,
+      },
+      'verify-response': {
+        method: 'POST',
+        title: 'Submit verification code',
+        target: `${identity.href}/verify-response`,
+        properties: [
+          {
+            name: 'code',
+            type: 'text',
+            prompt: 'Code',
+            regex: '^[0-9]{6}$'
+          }
+        ],
       }
     };
     if (identity.verifiedAt) {

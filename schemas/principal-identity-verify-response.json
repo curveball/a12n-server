@@ -13,6 +13,10 @@
       "type": "string",
       "description": "The verification code",
       "pattern": "^[0-9]{6}$"
+    },
+    "enableMfa": {
+      "type": "boolean",
+      "description": "If verification was successful, turn on MFA for this identity."
     }
   }
 }

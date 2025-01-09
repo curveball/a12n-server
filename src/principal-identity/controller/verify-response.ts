@@ -35,6 +35,10 @@ class PrincipalIdentityVerify extends Controller {
 
     try {
       await services.principalIdentity.verifyIdentity(identity, ctx.request.body.code);
+      if (ctx.request.body.enableMfa && !identity.isMfa) {
+        identity.isMfa = true;
+        await services.principalIdentity.update(identity);
+      }
       ctx.response.body = hal.verifySuccess(identity);
     } catch (err) {
       if (isHttpError(err)) {

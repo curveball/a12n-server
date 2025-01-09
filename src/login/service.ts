@@ -123,7 +123,7 @@ export async function challenge(client: AppClient, session: LoginSession, parame
 
     const completedChallenges = new Set(session.challengesCompleted);
 
-    if (completedChallenges.size < 2 && challenges.length > 1) {
+    if ((completedChallenges.size < 2 && challenges.length > 1) || completedChallenges.size < 1) {
       // If there are 2 or more auth factors set up, we want at least 2 successful
       // passes. If this is not the case we're going to emit a challenge error.
       for(const challenge of challenges) {

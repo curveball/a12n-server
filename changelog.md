@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.28.2 (????-??-??)
+-------------------
+
+* Add a new privilege for managing user identities. Before this change it was
+  required to have the 'admin' privilege to do this.
+
+
 0.28.1 (2025-01-08)
 -------------------
 

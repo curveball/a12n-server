@@ -5,6 +5,11 @@ Changelog
 -------------------
 
 * Login challenge now prefers TOTP challenge over Email OTP by default.
+* Fix admin logout.
+* Cosmetic fixes in email templalates.
+* Fix bug in password reset form.
+* User can now override the a12n-server application title via the `APP_NAME`
+  environment variable.
 
 
 0.28.2 (2025-01-09)

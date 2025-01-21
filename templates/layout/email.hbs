@@ -12,19 +12,16 @@
     font-weight: 300;
     box-sizing: border-box;
     color:#212121;
+
   }
-
   th { text-align: left; }
-
-  div {
+  div, address {
     font-size: 18px;
     margin: 2em auto;
-    padding: 0;
-    border-radius: .5ex;
-    background:white;
     max-width: 25em;
-    box-shadow: 0 1ex 7em -3ex#b0c4d5;
-    overflow: hidden;
+  }
+  address {
+    color: #999;
   }
 
 </style>
@@ -32,5 +29,8 @@
   <div>
     {{{body}}}
   </div>
+  <address>
+    <p>This email was sent to you by {{ appName }}.</p>
+  </address>
 </body>
 </html>

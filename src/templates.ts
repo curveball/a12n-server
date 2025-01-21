@@ -21,7 +21,7 @@ export function render(name: string, params: Params, layout: 'minimal-form' | 'e
 
   const newParams = {};
   Object.assign(newParams, params, {
-    appName: 'Auth API',
+    appName: getSetting('app_name'),
     logoUrl: getSetting('logo_url')
   });
 

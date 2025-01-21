@@ -278,8 +278,8 @@ async function getChallengesForPrincipal(principal: User, log: UserEventLogger, 
 
   const challenges = [
     new LoginChallengePassword(principal, log, ip),
+    new LoginChallengeTotp(principal, log, ip),
     new LoginChallengeEmailOtp(principal, log, ip),
-    new LoginChallengeTotp(principal, log, ip)
   ];
 
   const result = [];

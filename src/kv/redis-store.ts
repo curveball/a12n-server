@@ -1,5 +1,8 @@
 import { createClient } from 'redis';
 import { KvStore, SetOptions } from './abstract-store.js';
+import dbg from 'debug';
+
+const debug = dbg('redis-store');
 
 type RedisConnection = ReturnType<typeof createClient>;
 
@@ -21,6 +24,7 @@ export class RedisKvStore extends KvStore {
    */
   async get<T>(key: string): Promise<T | null> {
 
+    debug('Returning %s', key);
     const val = await this.redis.get(key);
     if (val===null) return null;
     return JSON.parse(val);
@@ -32,6 +36,7 @@ export class RedisKvStore extends KvStore {
    */
   async set(key: string, value: any, options?: SetOptions): Promise<void> {
 
+    debug('Storing %s', key);
     if (options?.ttl) {
       const newTtl = Math.floor(options.ttl / 1000);
       await this.redis.setEx(
@@ -52,6 +57,7 @@ export class RedisKvStore extends KvStore {
    */
   async delete(key: string): Promise<void> {
 
+    debug('Deleting: %s', key);
     await this.redis.del(key);
 
   }

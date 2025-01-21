@@ -5,6 +5,7 @@ Changelog
 -------------------
 
 * Login challenge now prefers TOTP challenge over Email OTP by default.
+* Fix admin logout.
 
 
 0.28.2 (2025-01-09)

@@ -36,6 +36,8 @@ export type Settings = {
   'webauthn.relyingPartyId': string | null;
   'webauthn.serviceName': string;
   'logo_url': string;
+  'app_name': string;
+
 
 }
 
@@ -54,6 +56,12 @@ export const settingsRules: SettingsRules = {
     description: 'The application logo to display on the a12nserver pages',
     fromDb: true,
     default: '/_hal-browser/assets/curveball-logo.svg'
+  },
+  'app_name' : {
+    description: 'Application name to display on admin pages and emails.',
+    fromDb: true,
+    env: 'APP_NAME',
+    default: 'a12n-server'
   },
   'login.defaultRedirect': {
     description: 'This is the url that the user will be redirected to after the log in to a12nserver, and no other redirect_uri is provided by the application. It\'s a good idea to set this to your application URL',

@@ -14,14 +14,14 @@ export async function sendResetPasswordEmail(user: User, identity: PrincipalIden
 
   const token = await createToken(user, null, identity);
 
-  if (!identity.href.startsWith('mailto:')) {
+  if (!identity.uri.startsWith('mailto:')) {
     throw new BadRequest('You can only request a password reset with an email address.');
   }
 
   // send mail with defined transport object
   await sendTemplatedMail(
     {
-      to: identity.href.substring(7), // list of receivers
+      to: identity.uri.substring(7), // list of receivers
       subject: 'Password reset request', // Subject line
       templateName: 'emails/reset-password-email',
     },

@@ -45,7 +45,7 @@ export default function (): Middleware {
       expiry: 60 * 60 * 24 * 7,
     }),
     browser({
-      title: 'a12n-server',
+      title: process.env.APP_NAME || 'a12n-server',
       stylesheets: [
         '/assets/extra.css'
       ],

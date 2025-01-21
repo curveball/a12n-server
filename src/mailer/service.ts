@@ -15,6 +15,12 @@ export function getDefaultSender() {
 
 }
 
+export function getAppName(): string {
+
+  return requireSetting('app_name');
+
+};
+
 type Email = {
   to: string;
   subject: string;
@@ -39,6 +45,8 @@ type TemplatedEmail = {
   templateName: string;
 }
 export async function sendTemplatedMail(emailInfo: TemplatedEmail, templateVariables: Record<string, string | number>) {
+
+  templateVariables.appName = getAppName();
 
   return sendMail({
     to: emailInfo.to,

@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.28.3 (????-??-??)
+0.28.3 (2025-01-21)
 -------------------
 
 * Login challenge now prefers TOTP challenge over Email OTP by default.

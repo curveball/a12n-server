@@ -52,7 +52,7 @@ export function getSessionStore(): SessionStore {
     },
 
     delete: (id: string): Promise<void> => {
-      return store.delete(id);
+      return store.delete('a12n:session:' + id);
     },
 
     newSessionId() {

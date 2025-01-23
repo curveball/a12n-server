@@ -1,45 +1,84 @@
 Contributing guidelines
 =======================
 
-Getting a server up and running
+Thanks for considering contribution to this project! 
+
+
+🚀 Getting Started
 -------------------------------
 
-The standard instructions for getting a server up and running are [here](./docs/getting-started.md),
-but to make it easier to do development, you might want to consider not running the server in Docker.
+Pre-requisites:
+- `node` <= 18 and `npm` 
+- `mysql`, `sqlite` or `postgres`
 
-To do this, follow the instructions from the getting started guide for getting MySQL up and runnning
-and creating your initial users, but skip the Docker installation.
+See [Getting Started](./docs/getting-started.md) for standard instructions.
 
-Instead, you need to have a working `node` and `npm` executable, and run:
+Instead of using Docker, run the server locally and connect to a local MySQL database.
 
-```sh
-npm i
-```
-
-This will install all dependencies.
-After that, set the correct environment variables and run `make` to start the server locally:
+1. Install all dependencies: `npm i`
+2. Create a `.env` file by copying `.env.defaults` with `cp .env.default .env` and set the following in `.env`:
 
 ```sh
 export MYSQL_HOST=127.0.0.1
-export MYSQL_PASSWORD=....
+export MYSQL_PASSWORD=.... # your password
 export MYSQL_USER=root
 export MYSQL_DATABASE=a12nserver
-make
 ```
+3. run `make` to start the server locally.
 
-Picking an issue
+
+🧦 Linting
+-------
+`make fix` will run ESLint to fix style issues.
+
+⚙️ Tools and Tech
 ----------------
 
-If you're looking to contribute, the [Issues list](https://github.com/evert/a12n-server/issues) has tags
-to help you find an issue. The issues require different skill levels, so for your first issue pick
-something you are comfortable with.
+This project dogfoods [`@curveball`](https://github.com/curveball) packages built from modern web and HTTP standards. 
 
-Code quality
--------------
+A non-exhaustive overview of core tools:
 
-The source has a linter installed. It's very easy to run it and fix linting-related issues:
+| Tool | Rationale |
+|------|-------------|
+| [TypeScript](https://www.typescriptlang.org/) | Type safety |
+| [Node.js](https://nodejs.org/) | Runtime |
+| [Knex](https://knexjs.org/) | Database migrations |
+| [Handlebars](https://handlebarsjs.com/) | Lightweight view templating |
+| [ESLint](https://eslint.org/) | Linting |
+| [jose](https://github.com/panva/jose) | JSON Object encryption and signing |
+| [bcrypt](https://github.com/kelektiv/node.bcrypt.js) | Password hashing |
+| [nodemailer](https://nodemailer.com/about/) | Email dispatch |
 
-    make fix
-    
-In this stage of the project we don't require any (unit)tests, but they are welcomed.
 
+👀 Whats Inside
+---------------
+
+```sh 
+.
+.gitignore
+.env.defaults             default environment variables
+├── Dockerfile
+├── LICENSE
+├── Makefile
+├── README.md
+├── assets                static files for running in browser (css, js)
+├── bin                   scripts for generating JSON schemas and db migration
+├── changelog.md
+├── _dist                 built output of type definitions
+├── docs
+├── eslint.config.mjs
+├── _node_modules
+├── package-lock.json
+├── package.json
+├── schemas
+├── src                   All source code including endpoint controllers and types
+├── templates             HTML view templates created with Handlebars
+├── test                  unit/integration tests
+└── tsconfig.json
+```
+
+Pick an issue 🏷️
+----------------
+
+Check out the tagged [Issues list](https://github.com/evert/a12n-server/issues) and [labels](https://github.com/curveball/a12n-server/labels). 
+The issues require different skill levels, so for your first issue, pick something you're comfortable with.

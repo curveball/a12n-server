@@ -1,11 +1,9 @@
-Authentication API
+`@curveball/a12n-server`: A simple authentication server
 ==================
 
-This package aims to provide a simple authentication system. The goal is to
-provide a simple authentication system for developers considering building
-their own.
+*a12n* is short for "authentication".
 
-The project implements OAuth2 standards where applicable.
+The goal of this project is to provide a simple authentication system for developers. We aim to apply OAuth2 standards where applicable.
 
 ![a12n-server home screenshot](https://raw.githubusercontent.com/curveball/a12n-server/master/docs/screenshot-0.27.png)
 
@@ -18,11 +16,10 @@ Requirements
 Try it out!
 -----------
 
-You can quickly get a test server up and running by running these commands:
+Get a test server by running:
 
 ```sh
-mkdir a12n-server
-cd a12n-server
+mkdir a12n-server && cd a12n-server
 npx @curveball/a12n-server
 ```
 
@@ -30,14 +27,22 @@ This will automatically create a configuration file and sqlite database in the
 current directory.
 
 Then, just open [http://localhost:8531/](http://localhost:8531/) to create
-your admin account.
+your admin account
 
+🍭 Features
+-------
 
-Features
---------
+This project has been used in production since 2018 and is still actively 
+developed and maintained. `a12n-server` is part of a series of `@curveball` packages based on modern HTTP standards.
 
-* A simple browseable API.
-* OAuth2
+Instead of rolling your own authentication system, you get *A LOT* of features for free 🪄:
+
+* Browsable API endpoints with:
+  * errors and responses displayed in HTML and JSON 
+  * [HAL](https://stateless.group/hal_specification.html)-formatted user resources.
+* Admin UI with user permission and app management
+* A flat permission model
+* OAuth2 implementation
   * Supported grants: `implicit`, `client_credentials`, `authorization_code`
     and `password`.
   * [OAuth2 discovery document][1].
@@ -50,24 +55,17 @@ Features
 * MFA
   * Google Authenticator (TOTP).
   * WebauthN / Yubikeys
-* A simple, flat, permission model.
-* Registration, lost password.
+* Registration flow with one-time passcode (OTP)
+* Forgot-my-password flow
 * [`secret-token:` URI scheme][6]
 
-
-Documentation
+📂 Documentation
 -------------
 
-Check out the [Docs folder](https://github.com/curveball/a12n-server/tree/master/docs)
-
-The state of this project
--------------------------
-
-If you are thinking of building a new authentication system, and decide to use
-this project instead, you get a lot of features for free.
-
-The project has been used in production since 2018 and is still actively
-developed.
+- [🚀 Getting Started](/docs/getting-started.md)
+- [🛠️ Configuration](/docs/server-settings.md)
+- [📝 Contribution Guidelines](/.github/CONTRIBUTING.md)
+- [📰 Code of Conduct](/.github/CODE_OF_CONDUCT.md)
 
 
 [1]: https://tools.ietf.org/html/rfc8414 "OAuth 2.0 Authorization Server Metadata"

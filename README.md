@@ -1,9 +1,9 @@
 `@curveball/a12n-server`: A simple authentication server
 ==================
 
-The goal of this project is to provide a simple authentication system for developers.
-
 *a12n* is short for "authentication".
+
+The goal of this project is to provide a simple authentication system for developers. We aim to apply OAuth2 standards where applicable.
 
 ![a12n-server home screenshot](https://raw.githubusercontent.com/curveball/a12n-server/master/docs/screenshot-0.27.png)
 

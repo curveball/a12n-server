@@ -58,6 +58,9 @@ inspect-brk: build
 src/db-types.js:
 	./bin/generate-db-types.mjs
 
+src/api-types.js:
+	./bin/generate-api-types.mjs
+ 
 assets/simplewebauthn-browser.min.js: node_modules/@simplewebauthn/browser/dist/bundle/index.umd.min.js
 	cp node_modules/@simplewebauthn/browser/dist/bundle/index.umd.min.js assets/simplewebauthn-browser.min.js
 

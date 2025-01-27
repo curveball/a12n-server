@@ -182,6 +182,10 @@ export interface AuthorizationChallengeRequest {
    */
   email_otp_code?: string;
   /**
+   * A 6 digit one-time password sent to an email address.
+   */
+  email_verification_code?: string;
+  /**
    * Ip address (ipv4 or ipv6) of the client making the request. For logging and anomaly detection.
    */
   remote_addr?: string;

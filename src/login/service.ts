@@ -256,13 +256,13 @@ async function initChallengeContext(session: LoginSession, parameters: Challenge
       'account_not_active',
     );
   }
-  if (identity.verifiedAt === null) {
-    log('login-failed-notverified');
-    throw new A12nLoginChallengeError(
-      'Email is not verified',
-      'email_not_verified',
-    );
-  }
+  // if (identity.verifiedAt === null) {
+  //   log('login-failed-notverified');
+  //   throw new A12nLoginChallengeError(
+  //     'Email is not verified',
+  //     'email_not_verified',
+  //   );
+  // }
   return {
     principal,
     identity,
@@ -278,6 +278,7 @@ async function getChallengesForPrincipal(principal: User, log: UserEventLogger, 
 
   const challenges = [
     new LoginChallengePassword(principal, log, ip),
+    // insert new challenge
     new LoginChallengeTotp(principal, log, ip),
     new LoginChallengeEmailOtp(principal, log, ip),
   ];

@@ -1,6 +1,6 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { NotFound } from '@curveball/http-errors';
+import { NotFound, Forbidden } from '@curveball/http-errors';
 import * as querystring from 'querystring';
 import { getLoggerFromContext } from '../../log/service.js';
 import { MFALoginSession } from '../../mfa/types.js';
@@ -46,6 +46,10 @@ class LoginController extends Controller {
   }
 
   async post(ctx: Context<any>) {
+
+    if (!ctx.accepts('html')) {
+      throw new Forbidden('Hey there! It looks like you tried to directly submit to the /login endpoint. This is not allowed. If you want to authenticate your app with a12n-server, you should use an OAuth2 flow instead. This form and endpoint is only meant for humans.');
+    }
 
     const principalService = new PrincipalService('insecure');
     let identity: PrincipalIdentity;

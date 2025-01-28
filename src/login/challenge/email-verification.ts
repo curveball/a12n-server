@@ -54,7 +54,7 @@ export class LoginChallengeEmailVerification extends AbstractLoginChallenge<Emai
       return true;
     } catch (err) {
       if (err instanceof BadRequest) {
-        await services.principalIdentity.sendVerificationRequest(identity, this.ip)
+        await services.principalIdentity.sendVerificationRequest(identity, this.ip);
         throw new A12nLoginChallengeError(
           'Invalid or expired email_verification',
           'email_not_verified',
@@ -68,10 +68,10 @@ export class LoginChallengeEmailVerification extends AbstractLoginChallenge<Emai
   }
 
 
-parametersContainsResponse(parameters: AuthorizationChallengeRequest): parameters is EmailVerification & AuthorizationChallengeRequest {
-   return parameters.email_verification_code !== undefined;
-}
-  
+  parametersContainsResponse(parameters: AuthorizationChallengeRequest): parameters is EmailVerification & AuthorizationChallengeRequest {
+    return parameters.email_verification_code !== undefined;
+  }
+
 
   /**
    * Emits the initial challenge.
@@ -82,7 +82,7 @@ parametersContainsResponse(parameters: AuthorizationChallengeRequest): parameter
   async challenge(): Promise<never> {
 
     const identity = await this.findMfaIdentity(true);
-    await services.principalIdentity.sendVerificationRequest(identity, this.ip)
+    await services.principalIdentity.sendVerificationRequest(identity, this.ip);
     throw new A12nLoginChallengeError(
       `An email has been sent to ${identity.uri.slice(7)} with a code to verify your identity.`,
       'email_not_verified',

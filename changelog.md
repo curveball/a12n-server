@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.28.4 (????-??-??)
+-------------------
+
+* Adding a friendly error message to devs trying to directly POST to the /login
+  endpoint.
+
+
 0.28.3 (2025-01-21)
 -------------------
 

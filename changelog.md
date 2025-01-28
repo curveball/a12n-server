@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.28.4 (????-??-??)
+0.28.4 (2025-01-28)
 -------------------
 
 * Logging with an unverified email is no longer a blocker for the
@@ -13,7 +13,6 @@ Changelog
 * Added some guides for getting a basic OAuth2 integration up and running using
   vanilla Javascript.
 * Added guide on testing SMTP.
-
 
 
 0.28.3 (2025-01-21)

@@ -114,12 +114,13 @@ export class LoginChallengeEmailVerification extends AbstractLoginChallenge<Emai
     return null;
 
   }
-
+  /**
+   * Check if the identity is an email address and unverified
+   */
   private async findUnverifiedEmailIdentity(must = false): Promise<PrincipalIdentity|null> {
     if (this.identityCache) return this.identityCache;
     const identities = await services.principalIdentity.findByPrincipal(this.principal);
     for (const identity of identities) {
-      // Check if the identity is an email address and unverified
       if (identity.uri.startsWith('mailto:') && identity.isMfa && identity.verifiedAt === null) {
         this.identityCache = identity;
         return identity;

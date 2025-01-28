@@ -38,8 +38,8 @@ export abstract class AbstractLoginChallenge<TChallengeParameters> {
 
   constructor(principal: User, identity: PrincipalIdentity, logger: UserEventLogger, ip: string) {
     this.principal = principal;
-    this.log = logger;
     this.identity = identity;
+    this.log = logger;
     this.ip = ip;
   }
 

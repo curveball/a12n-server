@@ -47,7 +47,7 @@ class LoginController extends Controller {
 
   async post(ctx: Context<any>) {
 
-    if (ctx.request.headers.has('origin') || !ctx.accepts('html')) {
+    if (!ctx.accepts('html')) {
       throw new Forbidden('Hey there! It looks like you tried to directly submit to the /login endpoint. This is not allowed. If you want to authenticate your app with a12n-server, you should use an OAuth2 flow instead. This form and endpoint is only meant for humans.');
     }
 

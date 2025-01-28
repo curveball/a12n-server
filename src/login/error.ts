@@ -23,7 +23,9 @@ type ChallengeErrorCode =
   // The OTP code the user entered was invalid or expired.
   | 'email_otp_invalid'
   // The email address used to log in was not verified.
-  | 'email_not_verified';
+  | 'email_not_verified'
+  // Email verification expired and the user must enter a OTP to continue
+  | 'email_verification_code_invalid';
 
 type ExtraParams = {
   censored_email?: string;

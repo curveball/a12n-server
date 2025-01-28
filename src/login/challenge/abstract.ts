@@ -1,7 +1,8 @@
 import { AuthorizationChallengeRequest } from '../types.js';
-import { User } from '../../types.js';
+import { PrincipalIdentity, User } from '../../types.js';
 import { AuthFactorType } from '../../user-auth-factor/types.js';
 import { UserEventLogger } from '../../log/types.js';
+
 
 /**
  * This abstract class is implemented by various authentication challenge strategies.
@@ -30,9 +31,15 @@ export abstract class AbstractLoginChallenge<TChallengeParameters> {
    */
   protected ip: string;
 
-  constructor(principal: User, logger: UserEventLogger, ip: string) {
+  /**
+   * Specific identity that the user used to login
+   */
+  protected identity: PrincipalIdentity;
+
+  constructor(principal: User, identity: PrincipalIdentity, logger: UserEventLogger, ip: string) {
     this.principal = principal;
     this.log = logger;
+    this.identity = identity;
     this.ip = ip;
   }
 

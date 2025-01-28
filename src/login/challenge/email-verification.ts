@@ -57,7 +57,7 @@ export class LoginChallengeEmailVerification extends AbstractLoginChallenge<Emai
         await services.principalIdentity.sendVerificationRequest(identity, this.ip);
         throw new A12nLoginChallengeError(
           'Invalid or expired email_verification',
-          'email_not_verified',
+          'email_verification_code_invalid',
           { censored_email: censor(identity.uri) }
         );
       } else {
@@ -85,7 +85,7 @@ export class LoginChallengeEmailVerification extends AbstractLoginChallenge<Emai
     await services.principalIdentity.sendVerificationRequest(identity, this.ip);
     throw new A12nLoginChallengeError(
       `An email has been sent to ${identity.uri.slice(7)} with a code to verify your identity.`,
-      'email_not_verified',
+      'email_verification_code_invalid',
       {
         censored_email: censor(identity.uri)
       }
@@ -115,22 +115,21 @@ export class LoginChallengeEmailVerification extends AbstractLoginChallenge<Emai
 
   }
   /**
-   * Check if the identity is an email address and unverified
+   * Check the provided identity is an email address and unverified
    */
   private async findUnverifiedEmailIdentity(must = false): Promise<PrincipalIdentity|null> {
-    if (this.identityCache) return this.identityCache;
-    const identities = await services.principalIdentity.findByPrincipal(this.principal);
-    for (const identity of identities) {
-      if (identity.uri.startsWith('mailto:') && identity.isMfa && identity.verifiedAt === null) {
-        this.identityCache = identity;
-        return identity;
-      }
+
+    if (this.identity.uri.startsWith('mailto:') && this.identity.verifiedAt === null) {
+      return this.identity;
     }
-    if (must) throw new Error('Could not find an unverified email identity usable for MFA');
+
+    if (must) {
+      throw new Error('Could not find an unverified email identity usable for MFA');
+    }
+
     return null;
   }
 }
-
 
 
 function censor(email: string): string {

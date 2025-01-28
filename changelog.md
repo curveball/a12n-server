@@ -1,11 +1,18 @@
 Changelog
 =========
 
-0.28.4 (????-??-??)
+0.28.4 (2025-01-28)
 -------------------
 
+* Logging with an unverified email is no longer a blocker for the
+  authorization-challenge system. Users can now verify their email address
+  during the login process. (@chelsearoman-ca)
 * Adding a friendly error message to devs trying to directly POST to the /login
   endpoint.
+* Refreshed getting started and CONTRIBUTING documents. (@usrrname)
+* Added some guides for getting a basic OAuth2 integration up and running using
+  vanilla Javascript.
+* Added guide on testing SMTP.
 
 
 0.28.3 (2025-01-21)

@@ -22,7 +22,7 @@ export class LoginChallengeEmailVerification extends AbstractLoginChallenge<Emai
 
   /**
   * Checks if the user has an unverified email.
-  * Returns true if an unverified email identity is found,
+  * Returns true if an unverified email identity is found.
   */
 
   async userHasChallenge(): Promise<boolean> {

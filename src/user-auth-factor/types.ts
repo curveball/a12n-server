@@ -1,4 +1,4 @@
-export type AuthFactorType = 'password' | 'totp' | 'email-otp';
+export type AuthFactorType = 'password' | 'totp' | 'email-otp' | 'email-verification';
 
 export interface UserAuthFactor {
 

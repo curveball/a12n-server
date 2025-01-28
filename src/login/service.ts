@@ -4,7 +4,7 @@ import { AuthorizationChallengeRequest } from '../api-types.js';
 import { InvalidGrant } from '../oauth2/errors.js';
 import { OAuth2Code } from '../oauth2/types.js';
 import * as services from '../services.js';
-import { AppClient, User } from '../types.js';
+import { AppClient, PrincipalIdentity, User } from '../types.js';
 import { getLogger } from '../log/service.js';
 import { generateSecretToken } from '../crypto.js';
 import { LoginChallengePassword } from './challenge/password.js';
@@ -13,6 +13,7 @@ import { LoginChallengeEmailOtp } from './challenge/email-otp.js';
 import { A12nLoginChallengeError } from './error.js';
 import { AbstractLoginChallenge } from './challenge/abstract.js';
 import { UserEventLogger } from '../log/types.js';
+import { LoginChallengeEmailVerification } from './challenge/email-verification.js';
 
 type ChallengeRequest = AuthorizationChallengeRequest;
 
@@ -95,7 +96,7 @@ export async function challenge(client: AppClient, session: LoginSession, parame
 
     if (logSessionStart) log('login-challenge-started');
 
-    const challenges = await getChallengesForPrincipal(principal, log, parameters.remote_addr!);
+    const challenges = await getChallengesForPrincipal(principal, identity, log, parameters.remote_addr!);
 
     if (challenges.length === 0) {
       throw new A12nLoginChallengeError(
@@ -256,13 +257,6 @@ async function initChallengeContext(session: LoginSession, parameters: Challenge
       'account_not_active',
     );
   }
-  if (identity.verifiedAt === null) {
-    log('login-failed-notverified');
-    throw new A12nLoginChallengeError(
-      'Email is not verified',
-      'email_not_verified',
-    );
-  }
   return {
     principal,
     identity,
@@ -274,12 +268,13 @@ async function initChallengeContext(session: LoginSession, parameters: Challenge
 /**
  * Returns the full list of login challenges the user has setup up.
  */
-async function getChallengesForPrincipal(principal: User, log: UserEventLogger, ip: string): Promise<AbstractLoginChallenge<unknown>[]> {
+async function getChallengesForPrincipal(principal: User, identity: PrincipalIdentity,log: UserEventLogger, ip: string): Promise<AbstractLoginChallenge<unknown>[]> {
 
   const challenges = [
-    new LoginChallengePassword(principal, log, ip),
-    new LoginChallengeTotp(principal, log, ip),
-    new LoginChallengeEmailOtp(principal, log, ip),
+    new LoginChallengePassword(principal, identity, log, ip),
+    new LoginChallengeEmailVerification(principal, identity, log, ip),
+    new LoginChallengeTotp(principal, identity, log, ip),
+    new LoginChallengeEmailOtp(principal, identity, log, ip),
   ];
 
   const result = [];

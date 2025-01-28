@@ -2,7 +2,6 @@ import { AbstractLoginChallenge } from './abstract.js';
 import { AuthorizationChallengeRequest } from '../types.js';
 import { A12nLoginChallengeError } from '../error.js';
 import * as services from '../../services.js';
-import { PrincipalIdentity } from '../../types.js';
 import { BadRequest } from '@curveball/http-errors';
 import { markVerified } from '../../principal-identity/service.js';
 
@@ -27,10 +26,7 @@ export class LoginChallengeEmailVerification extends AbstractLoginChallenge<Emai
   */
 
   async userHasChallenge(): Promise<boolean> {
-
-    const identity = await this.findUnverifiedEmailIdentity();
-    return identity !== null;
-
+    return  this.identity.uri.startsWith('mailto:') && this.identity.verifiedAt === null;
   }
 
   /**
@@ -41,7 +37,7 @@ export class LoginChallengeEmailVerification extends AbstractLoginChallenge<Emai
    */
   async checkResponse(parameters: EmailVerification): Promise<boolean> {
 
-    const identity = await this.findMfaIdentity(true);
+    const identity = await this.identity;
 
     try {
       await services.principalIdentity.verifyIdentity(
@@ -81,7 +77,7 @@ export class LoginChallengeEmailVerification extends AbstractLoginChallenge<Emai
    */
   async challenge(): Promise<never> {
 
-    const identity = await this.findMfaIdentity(true);
+    const identity = await this.identity;
     await services.principalIdentity.sendVerificationRequest(identity, this.ip);
     throw new A12nLoginChallengeError(
       `An email has been sent to ${identity.uri.slice(7)} with a code to verify your identity.`,
@@ -91,43 +87,6 @@ export class LoginChallengeEmailVerification extends AbstractLoginChallenge<Emai
       }
     );
 
-  }
-
-  private identityCache: PrincipalIdentity | null = null;
-
-  /**
-   * Finds a MFA identity that uses a mailto: address.
-   */
-  private async findMfaIdentity(must: true): Promise<PrincipalIdentity>;
-  private async findMfaIdentity(): Promise<PrincipalIdentity|null>;
-  private async findMfaIdentity(must = false): Promise<PrincipalIdentity|null> {
-
-    if (this.identityCache) return this.identityCache;
-    const identities = await services.principalIdentity.findByPrincipal(this.principal);
-    for (const identity of identities) {
-      if (identity.isMfa && identity.uri.startsWith('mailto:')) {
-        this.identityCache = identity;
-        return identity;
-      }
-    }
-    if (must) throw new Error('Could not find an email identity usable for MFA');
-    return null;
-
-  }
-  /**
-   * Check the provided identity is an email address and unverified
-   */
-  private async findUnverifiedEmailIdentity(must = false): Promise<PrincipalIdentity|null> {
-
-    if (this.identity.uri.startsWith('mailto:') && this.identity.verifiedAt === null) {
-      return this.identity;
-    }
-
-    if (must) {
-      throw new Error('Could not find an unverified email identity usable for MFA');
-    }
-
-    return null;
   }
 }
 

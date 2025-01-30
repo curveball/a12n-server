@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.28.5 (????-??-??)
+0.28.5 (2025-01-30)
 -------------------
 
 * Fix: authorization_challenge was emitting an incorrect error for users

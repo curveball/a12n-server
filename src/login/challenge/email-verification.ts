@@ -81,7 +81,7 @@ export class LoginChallengeEmailVerification extends AbstractLoginChallenge<Emai
     await services.principalIdentity.sendVerificationRequest(identity, this.ip);
     throw new A12nLoginChallengeError(
       `An email has been sent to ${identity.uri.slice(7)} with a code to verify your identity.`,
-      'email_verification_code_invalid',
+      'email_not_verified',
       {
         censored_email: censor(identity.uri)
       }

@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.28.5 (????-??-??)
+-------------------
+
+* Fix: authorization_challenge was emitting an incorrect error for users
+  logging in with unverified email addresses.
+
+
 0.28.4 (2025-01-28)
 -------------------
 

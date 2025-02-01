@@ -33,3 +33,4 @@ export function mfaForm(
   }, 'minimal-form');
 
 }
+

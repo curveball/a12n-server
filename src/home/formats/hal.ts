@@ -49,6 +49,11 @@ export default (version: string, authenticatedUser: Principal, isAdmin: boolean,
         title: 'OAuth 2.0 Authorization Server Metadata'
       },
 
+      'openid-configuration' : {
+        href: '/.well-known/openid-confguration',
+        title: 'OpenID Connect Discovery Document'
+      },
+
       'jwks': {
         href: '/.well-known/jwks.json',
         title: 'JSON Web Key Set (JWKS)',

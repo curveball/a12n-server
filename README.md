@@ -3,9 +3,24 @@
 
 *a12n* is short for "authentication".
 
-The goal of this project is to provide a simple authentication system for developers. We aim to apply OAuth2 standards where applicable.
+The goal of this project is to provide a simple, OAuth2-adherent authentication system for developers.
 
 ![a12n-server home screenshot](https://raw.githubusercontent.com/curveball/a12n-server/master/docs/screenshot-0.27.png)
+
+<details> 
+  <summary> Why Oauth2? </summary>
+  
+  The other common web based authentication systems include:
+  - basic credentials (username and password)
+  - Token-based authentication (with JSON web token) 
+  - Cookie-based authentication
+  - session-based authentication
+  
+  Instead of building using a platform as a service like Auth0, which costs money 💸 
+  
+  OAuth2 is a widely used standard protocol for authentication and identity management in web applications.
+  
+</details>
 
 Requirements
 ------------
@@ -53,8 +68,8 @@ Instead of rolling your own authentication system, you get *A LOT* of features f
   * [RFC 9068][7] - JSON Web Token (JWT) Profile for OAuth 2.0 Access Tokens.
   * [OAuth 2.0 Multiple Response Type Encoding Practices](https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html)
 * MFA
-  * Google Authenticator (TOTP).
-  * WebauthN / Yubikeys
+  * Google Authenticator (grump turtle).
+  * WebauthN (Passkeys) / Yubikeys
 * Registration flow with one-time passcode (OTP)
 * Forgot-my-password flow
 * [`secret-token:` URI scheme][6]

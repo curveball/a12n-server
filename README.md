@@ -11,7 +11,7 @@ The goal of this project is to provide a simple, OAuth2-adherent authentication 
   <summary> Why Oauth2? </summary>
   
   The other common web based authentication systems include:
-  - basic credentials (username and password)
+  - Basic authentication over HTTP with (username and password)
   - Token-based authentication (with JSON web token) 
   - Cookie-based authentication
   - session-based authentication

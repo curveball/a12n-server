@@ -14,9 +14,9 @@ The goal of this project is to provide a simple, OAuth2-adherent authentication 
   - Basic authentication over HTTP with (username and password)
   - Token-based authentication (with JSON web token) 
   - Cookie-based authentication
-  - session-based authentication
+  - Session-based authentication
   
-  Instead of building using a platform as a service like Auth0, which costs money 💸 
+  Instead of building using a platform as a service like Auth0, which costs money 💸 , you can use this server on a self-hosted solution!
   
   OAuth2 is a widely used standard protocol for authentication and identity management in web applications.
   

@@ -2,7 +2,7 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { metadata } from '../formats/json.js';
 
-class MetadataController extends Controller {
+class OpenIdConfigurationController extends Controller {
 
   async get(ctx: Context) {
 
@@ -13,4 +13,4 @@ class MetadataController extends Controller {
 
 }
 
-export default new MetadataController();
+export default new OpenIdConfigurationController();

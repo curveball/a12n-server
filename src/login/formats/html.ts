@@ -33,3 +33,17 @@ export function mfaForm(
   }, 'minimal-form');
 
 }
+
+export function experimentalLoginForm(msg: string, error: string, hiddenFields: KeyValue, registrationEnabled: boolean, registrationUri: string, resetPasswordUri: string): string {
+  return render('login-experimental', {
+    title: 'Login',
+    msg: msg,
+    error: error,
+    hiddenFields: hiddenFields,
+    action: '/login',
+    registrationEnabled,
+    registrationUri,
+    resetPasswordUri,
+  }, 'minimal-form');
+
+}

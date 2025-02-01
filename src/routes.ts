@@ -20,6 +20,7 @@ import jwks from './jwks/controller.js';
 import login from './login/controller/login.js';
 import loginMfa from './login/controller/mfa.js';
 import loginWebAuthn from './mfa/webauthn/controller/login.js';
+import loginExperimental from './login/controller/experimental.js';
 import logout from './logout/controller.js';
 import oauth2Authorize from './oauth2/controller/authorize.js';
 import oauth2AuthorizationChallenge from './login/controller/authorization-challenge.js';
@@ -28,6 +29,7 @@ import oauth2Metadata from './well-known/controller/oauth2-metadata.js';
 import oauth2Revoke from './oauth2/controller/revoke.js';
 import oauth2Token from './oauth2/controller/token.js';
 import passwordToken from './reset-password/controller/token.js';
+import openidConfiguration from './well-known/controller/openid-configuration.js';
 import principalIdentityCollection from './principal-identity/controller/collection.js';
 import principalIdentityItem from './principal-identity/controller/item.js';
 import principalIdentityVerify from './principal-identity/controller/verify.js';
@@ -83,6 +85,7 @@ const routes = [
   router('/authorization-challenge', oauth2ErrorHandler, oauth2AuthorizationChallenge),
 
   router('/login', login),
+  router('/login/experimental', loginExperimental),
   router('/login/mfa', loginMfa),
   router('/login/mfa/webauthn', loginWebAuthn),
   router('/logout', logout),
@@ -135,6 +138,7 @@ const routes = [
 
   router('/.well-known/jwks.json', jwks),
   router('/.well-known/oauth-authorization-server', oauth2Metadata),
+  router('/.well-known/openid-configuration', openidConfiguration),
   router('/.well-known/change-password', changePasswordRedirect),
 ];
 

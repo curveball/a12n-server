@@ -18,6 +18,7 @@ const whitelistPath = [
   '/revoke',
   '/.well-known/jwks.json',
   '/.well-known/oauth-authorization-server',
+  '/.well-known/openid-configuration',
 ];
 
 declare module '@curveball/kernel' {

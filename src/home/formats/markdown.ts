@@ -63,6 +63,11 @@ OAuth2 endpoints
 * <a href="/.well-known/jwks.json" rel="jwks">JSON Web Key Sets</a> ([RFC7517][RFC7517])
 * <a href="/authorization-challenge" rel="OAuth 2.0 for First-Party Applications">Authorization Challenge Endpoint</a> ([draft][draft-ietf-oauth-first-party-apps]) <span class="link-badge status-experimental">Experimental</span>
 
+OpenID Connect endpoints
+------------------------
+
+* <a href="/.well-known/openid-configuration" rel="openid-configuration">OpenID Configuration</a>.
+
 
 Other API endpoints
 -------------------

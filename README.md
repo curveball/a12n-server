@@ -11,15 +11,23 @@ The goal of this project is to provide a simple, OAuth2-adherent authentication 
   <summary> Why Oauth2? </summary>
   
   The other common web based authentication systems include:
-  - Basic authentication over HTTP with (username and password)
+  - Basic authentication over HTTP with (username and password) - insecure 
   - Token-based authentication (with JSON web token) 
-  - Cookie-based authentication
+  - Cookie-based authentication 
   - Session-based authentication
   
+  A combination of the above usually appear in any authentication implementation.
+
   Instead of building using a platform as a service like Auth0, which costs money 💸 , you can use this server on a self-hosted solution!
   
-  OAuth2 is a widely used standard protocol for authentication and identity management in web applications.
-  
+  OAuth2 is a widely used standard protocol for authorization and identity management for web applications.
+  OAuth2 [grant types](https://oauth.net/2/grant-types/): 
+  - implicit (by default disabled on auth12-server as it is vulnerable to exploitation)
+  - authorization code (optional extension with Proof Key for Code Exchange (PKCE) to guard against CSRF)
+  - client credentials (client app id and secret)
+  - device code 
+
+  See: [Oauth2 RFC](https://tools.ietf.org/html/rfc6749)
 </details>
 
 Requirements
@@ -70,7 +78,7 @@ Instead of rolling your own authentication system, you get *A LOT* of features f
 * MFA
   * Google Authenticator (grump turtle).
   * WebauthN (Passkeys) / Yubikeys
-* Registration flow with one-time passcode (OTP)
+* Registration flow with time-based one-time passcode (TOTP)
 * Forgot-my-password flow
 * [`secret-token:` URI scheme][6]
 

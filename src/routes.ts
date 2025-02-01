@@ -20,7 +20,6 @@ import jwks from './jwks/controller.js';
 import login from './login/controller/login.js';
 import loginMfa from './login/controller/mfa.js';
 import loginWebAuthn from './mfa/webauthn/controller/login.js';
-import loginExperimental from './login/controller/experimental.js';
 import logout from './logout/controller.js';
 import oauth2Authorize from './oauth2/controller/authorize.js';
 import oauth2AuthorizationChallenge from './login/controller/authorization-challenge.js';
@@ -85,7 +84,6 @@ const routes = [
   router('/authorization-challenge', oauth2ErrorHandler, oauth2AuthorizationChallenge),
 
   router('/login', login),
-  router('/login/experimental', loginExperimental),
   router('/login/mfa', loginMfa),
   router('/login/mfa/webauthn', loginWebAuthn),
   router('/logout', logout),

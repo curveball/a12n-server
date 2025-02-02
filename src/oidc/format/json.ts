@@ -49,7 +49,7 @@ export function userInfo(user: User, identities: PrincipalIdentity[]): UserInfo 
     sub: resolve(origin, user.href),
     name: user.nickname,
     updated_at: Math.floor(user.modifiedAt.getTime() / 1000 ),
-  }
+  };
 
   if (emailIdentity) {
     result.email = emailIdentity.uri.substring(7);

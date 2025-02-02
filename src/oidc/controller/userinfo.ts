@@ -1,6 +1,6 @@
-import { Controller } from "@curveball/controller";
-import { Context } from "@curveball/core";
-import { BadRequest } from "@curveball/http-errors";
+import { Controller } from '@curveball/controller';
+import { Context } from '@curveball/core';
+import { BadRequest } from '@curveball/http-errors';
 import { userInfo } from '../format/json.js';
 import * as services from '../../services.js';
 

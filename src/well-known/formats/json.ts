@@ -33,6 +33,9 @@ type MetaData = {
   revocation_endpoint: string;
   revocation_endpoint_auth_methods_supported: AuthMethod[];
 
+  // https://openid.net/specs/openid-connect-core-1_0.html#UserInfo
+  userinfo_endpoint: string;
+
   // https://www.ietf.org/archive/id/draft-parecki-oauth-first-party-apps-00.html
   authorization_challenge_endpoint: string;
 
@@ -62,6 +65,8 @@ export function metadata(): MetaData {
     introspection_endpoint: '/introspect',
     revocation_endpoint: '/revoke',
     revocation_endpoint_auth_methods_supported: ['client_secret_basic'],
+
+    userinfo_endpoint: '/userinfo',
 
     authorization_challenge_endpoint: '/authorization-challenge',
 

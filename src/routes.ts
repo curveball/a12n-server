@@ -1,9 +1,9 @@
 import router from '@curveball/router';
+import staticMw from '@curveball/static';
 
 import app from './app/controller/item.js';
 import appNew from './app/controller/new.js';
 import apps from './app/controller/collection.js';
-import blob from './blob/controller.js';
 import changePassword from './changepassword/controller.js';
 import changePasswordRedirect from './well-known/controller/change-password.js';
 import client from './app-client/controller/item.js';
@@ -28,7 +28,8 @@ import oauth2Metadata from './well-known/controller/oauth2-metadata.js';
 import oauth2Revoke from './oauth2/controller/revoke.js';
 import oauth2Token from './oauth2/controller/token.js';
 import passwordToken from './reset-password/controller/token.js';
-import openidConfiguration from './well-known/controller/openid-configuration.js';
+import oidcConfiguration from './well-known/controller/openid-configuration.js';
+import oidcUserInfo from './oidc/controller/userinfo.js';
 import principalIdentityCollection from './principal-identity/controller/collection.js';
 import principalIdentityItem from './principal-identity/controller/item.js';
 import principalIdentityVerify from './principal-identity/controller/verify.js';
@@ -60,11 +61,12 @@ import verificationTokenExchange from './verification-token/controller/exchange.
 import webAuthnRegistration from './mfa/webauthn/controller/registration.js';
 import userAuthFactorCollection from './user-auth-factor/controller/collection.js';
 import totpAddToUserController from './mfa/totp/controller/add-to-user.js';
+import { fileURLToPath } from 'url';
+import { join } from 'path';
 
 const routes = [
   router('/', home),
-  router('/assets/:filename', blob),
-
+  router('/assets/*filename', staticMw({staticDir: join(fileURLToPath(import.meta.url), '/../../assets')})),
   router('/app', apps),
   router('/app/new', appNew),
   router('/app/:id', app),
@@ -129,6 +131,8 @@ const routes = [
   router('/user/:id/auth-factor', userAuthFactorCollection),
   router('/user/:id/auth-factor/new/totp', totpAddToUserController),
 
+  router('/userinfo', oidcUserInfo),
+
   router('/change-password', changePassword),
   router('/reset-password', resetPassword),
   router('/reset-password/token/:token', passwordToken),
@@ -136,7 +140,7 @@ const routes = [
 
   router('/.well-known/jwks.json', jwks),
   router('/.well-known/oauth-authorization-server', oauth2Metadata),
-  router('/.well-known/openid-configuration', openidConfiguration),
+  router('/.well-known/openid-configuration', oidcConfiguration),
   router('/.well-known/change-password', changePasswordRedirect),
 ];
 

@@ -53,8 +53,7 @@ ${getSetting('registration.enabled')?'* <a href="/register" rel="registration">P
 * <a href="/change-password" rel="change-password">Change Password</a>
 
 
-OAuth2 endpoints
-----------------
+<h2 class="oauth2">OAuth2 endpoints</h2>
 
 * <a href="/authorize" rel="authorize">Authorization endpoint</a>
 * <a href="/introspect" rel="introspection">Introspection endpoint</a> ([RFC7662][RFC7662])
@@ -63,10 +62,10 @@ OAuth2 endpoints
 * <a href="/.well-known/jwks.json" rel="jwks">JSON Web Key Sets</a> ([RFC7517][RFC7517])
 * <a href="/authorization-challenge" rel="OAuth 2.0 for First-Party Applications">Authorization Challenge Endpoint</a> ([draft][draft-ietf-oauth-first-party-apps]) <span class="link-badge status-experimental">Experimental</span>
 
-OpenID Connect endpoints
-------------------------
+<h2 class="oidc">OpenID Connect endpoints</h2>
 
-* <a href="/.well-known/openid-configuration" rel="openid-configuration">OpenID Configuration</a>.
+* <a href="/.well-known/openid-configuration" rel="openid-configuration">OpenID Configuration</a>
+* <a href="/userinfo" rel="openid-userinfo">UserInfo endpoint</a>
 
 
 Other API endpoints

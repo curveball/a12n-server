@@ -31,4 +31,14 @@
   padding: 10px 0 0 0;
   text-align: right;
 }
+.oauth2 {
+  background: url('/assets/image/oauth.svg') no-repeat 0 center;
+  background-size: 1em;
+  padding-left: calc(1em + 5px);
+}
 
+.oidc {
+  background: url('/assets/image/oidc.svg') no-repeat 0 center;
+  background-size: 1em;
+  padding-left: calc(1em + 5px);
+}

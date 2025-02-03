@@ -10,6 +10,6 @@ export function setLoginSession(ctx: Context, user: User) {
   ctx.session = {
     user,
     loginTime: new Date().getTime(),
-  }
+  };
 
 }

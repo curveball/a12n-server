@@ -151,7 +151,7 @@ export class TemporarilyUnavailable extends OAuth2Error {
  */
 export class LoginRequired extends OAuth2Error {
 
-  httpStatus = 401;
+  httpStatus = 400;
   errorCode = 'login_required';
 
 }

@@ -3,7 +3,7 @@
 The OAuth 2.0 Authorization Code Flow is one of three grant types of OAuth2 that enables an application to access data on a user's behalf.
 This allows an application to selectively receive more sensitive, opt-in information about a user.
 
-For more detailed information about the Authorization Code Flow, see the [OAuth 2.0 Authorization Framework RFC]().
+For more detailed information about the Authorization Code Flow, see the [OAuth2 RFC](https://www.rfc-editor.org/rfc/rfc6749.html) 
 
 Currently, `a12n-server`'s' authorization code flow provides access tokens for the following requests:
 
@@ -11,7 +11,6 @@ Currently, `a12n-server`'s' authorization code flow provides access tokens for t
 ...
 ...
 
-## Authorization Code Flow
 
 The Authorization Code Flow has two main steps: the authorization code request and the access token request.
 

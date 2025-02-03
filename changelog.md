@@ -6,6 +6,9 @@ Changelog
 
 * Workaround for authjs incorrectly encoding colon in Basic Auth with
   percent-encoding.
+* #590: When a OIDC client doesn't provide a nonce, the server encoded the nonce as
+  'null' in the id token. It should have simply been omitted and this was
+  breaking authjs.
 
 
 0.28.5 (2025-01-30)

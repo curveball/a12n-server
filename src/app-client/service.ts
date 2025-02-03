@@ -100,6 +100,9 @@ export async function getAppClientFromBasicAuth(ctx: Context): Promise<AppClient
       throw e;
     }
   }
+  // Some broken clients urlencode ":" so this is a workaround.
+  basicAuth[1] = basicAuth[1].replace(/%3A/ig, ':');
+
   if (!await validateSecret(oauth2Client, basicAuth[1])) {
     throw new Unauthorized('Client id or secret incorrect', 'Basic');
   }

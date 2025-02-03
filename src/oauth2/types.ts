@@ -73,4 +73,58 @@ export type OAuth2Code = {
   code: string;
 };
 
+
 export type CodeChallengeMethod = 'plain' | 'S256';
+
+// Possible values for the 'display' parameter
+export type AuthorizeParamsDisplay = 'page' | 'popup' | 'touch' | 'wap';
+
+export const authorizeParamsPromptValues = ['none', 'login', 'consent', 'select_account'] as const;
+export type AuthorizeParamsPrompt = typeof authorizeParamsPromptValues[number];
+type OAuth2ResponseMode = 'query' | 'fragment';
+
+/**
+ * This object represents query parameters passed to the authorization oauth2
+ * endpoint when `auhtorization_code` flow is used.
+ */
+export type AuthorizeParamsCode = {
+  responseType: 'code' | 'code id_token';
+  clientId: string;
+  redirectUri?: string;
+  scope: string[];
+  grantType: 'authorization_code' | 'authorization_challenge';
+  state?: string;
+
+  /**
+   * See https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html
+   */
+  responseMode: OAuth2ResponseMode;
+
+  // PCKE extension
+  codeChallenge?: string;
+  codeChallengeMethod?: CodeChallengeMethod;
+
+  // OpenID Connect extension
+  nonce?: string;
+  display?: AuthorizeParamsDisplay;
+  prompt?: AuthorizeParamsPrompt[];
+};
+
+/**
+ * This object represents query parameters passed to the authorization oauth2
+ * endpoint when implicit flow is used.
+ */
+export type AuthorizeParamsToken = {
+  responseType: 'token';
+  clientId: string;
+  redirectUri?: string;
+  scope: string[];
+  state?: string;
+
+  /**
+   * See https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html
+   */
+  responseMode: OAuth2ResponseMode;
+}
+
+export type AuthorizeParams = AuthorizeParamsCode | AuthorizeParamsToken;

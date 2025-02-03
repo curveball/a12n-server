@@ -7,18 +7,20 @@ Changelog
 * The dev server now automatically generates a JWT private key when it's ran
   for the first time. This enables OpenID Connect to be used without further
   configuration.
-* Auth.js / NextAuth.js support validated. Our implementation had a few bugs, and
-  authjs also had some issues that the server now has workarounds in place for.
+* Auth.js / NextAuth.js support validated. Our implementation had a few bugs,
+  and authjs also had some issues that the server now has workarounds in place
+  for.
 * Workaround for authjs incorrectly encoding colon in Basic Auth with
   percent-encoding.
-* #590: When a OIDC client doesn't provide a nonce, the server encoded the nonce as
-  'null' in the id token. It should have simply been omitted and this was
-  breaking authjs.
+* #590: When a OIDC client doesn't provide a nonce, the server encoded the
+  nonce as 'null' in the id token. It should have simply been omitted and this
+  was breaking authjs.
 * Added OpenID Connect endpoints to home screen.
 * Fixed validation bugs in the OAuth2 app update screen.
 * Support for the OIDC /.well-known/openid-configuration endpoint.
 * Added 'email', 'phone' and 'name' claims to OpenID id token.
 * Support for OpenID Connect 'userinfo' endpoint.
+* #596: Support for 'prompt' parameter in OIDC authorize request.
 
 
 0.28.5 (2025-01-30)

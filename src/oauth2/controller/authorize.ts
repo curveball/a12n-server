@@ -144,6 +144,7 @@ class AuthorizeController extends Controller {
         client: oauth2Client,
         nonce: params.nonce ?? null,
         identities,
+        loginTime: ctx.session.loginTime,
       });
     }
 

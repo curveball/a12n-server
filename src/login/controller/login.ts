@@ -10,7 +10,7 @@ import { getSetting } from '../../server-settings.js';
 import * as services from '../../services.js';
 import { PrincipalIdentity, User } from '../../types.js';
 import { loginForm } from '../formats/html.js';
-import { isValidRedirect } from '../utilities.js';
+import { isValidRedirect, setLoginSession } from '../utilities.js';
 
 /**
  * The Login controller renders the basic login form
@@ -85,9 +85,7 @@ class LoginController extends Controller {
       return this.redirectToLogin(ctx, '', errorMessage);
     }
 
-    ctx.session = {
-      user: user,
-    };
+    setLoginSession(ctx, user);
     await log('login-success');
 
     ctx.status = 303;

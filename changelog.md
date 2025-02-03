@@ -21,6 +21,10 @@ Changelog
 * Added 'email', 'phone' and 'name' claims to OpenID id token.
 * Support for OpenID Connect 'userinfo' endpoint.
 * #596: Support for 'prompt' parameter in OIDC authorize request.
+* Support for `auth_time` in OIDC id_token
+* Force users to go through login process after changing their password. Before
+  this change a change-password token was enough to complete login, but this
+  could allow a user to circumvent other authentication factors such as TOTP.
 
 
 0.28.5 (2025-01-30)

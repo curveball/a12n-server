@@ -3,7 +3,7 @@ import { Context } from '@curveball/core';
 import * as services from '../../services.js';
 
 import * as querystring from 'querystring';
-import { isValidRedirect } from '../utilities.js';
+import { isValidRedirect, setLoginSession } from '../utilities.js';
 import { MFALoginSession } from '../../mfa/types.js';
 import { mfaForm } from '../formats/html.js';
 import { getLoggerFromContext } from '../../log/service.js';
@@ -62,9 +62,7 @@ class MFAController extends Controller {
       return this.redirectToMfa(ctx, 'Invalid continue URL provided');
     }
 
-    ctx.session = {
-      user: user,
-    };
+    setLoginSession(ctx, user);
     await log('login-success');
 
     ctx.status = 303;

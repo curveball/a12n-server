@@ -48,10 +48,13 @@ export async function generateJWTIDToken(options: IDTokenOptions) {
 
   const privateKey = getPrivateKey();
 
-  const jwt = await new SignJWT({
-    nonce: options.nonce,
+  const body: Record<string, string> = {
+  };
 
-  })
+  if (options.nonce) {
+    body.nonce = options.nonce;
+  }
+  const jwt = await new SignJWT(body)
     .setProtectedHeader({
       alg: 'RS256',
     })

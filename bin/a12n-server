@@ -5,12 +5,23 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import dotenv from 'dotenv';
+import { generateKeyPairSync } from 'node:crypto';
 
 dotenv.config();
 
 if (!isConfigured()) {
   console.info('a12nserver not configured! Writing default configuration to ".env"');
-  fs.copyFileSync(path.join(path.dirname(fileURLToPath(import.meta.url)) + '/../.env.defaults'), path.join(process.cwd(), './.env'));
+  let dotEnvSource = fs.readFileSync(
+    path.join(path.dirname(fileURLToPath(import.meta.url)) + '/../.env.defaults'),
+    'utf-8'
+  );
+
+  console.info('Generating a private key for JWT');
+  const privateKey = generatePrivateKey();
+
+  dotEnvSource = dotEnvSource.replace(/#\sJWT_PRIVATE_KEY=.*/, `JWT_PRIVATE_KEY="${privateKey}"`);
+
+  fs.writeFileSync('.env', dotEnvSource);
 
   // Reloading .env
   dotenv.config();
@@ -26,3 +37,15 @@ function isConfigured() {
 
 }
 
+function generatePrivateKey() {
+
+  const { privateKey } = generateKeyPairSync('rsa', {
+    modulusLength: 4096,
+    privateKeyEncoding: {
+      type: 'pkcs8',
+      format: 'pem'
+    }
+  });
+  return privateKey;
+
+}

@@ -62,6 +62,7 @@
     "@curveball/problem": "^1.0.0",
     "@curveball/router": "^2.0.0",
     "@curveball/session": "^1.0.0",
+    "@curveball/static": "^1.0.0",
     "@curveball/validator": "^1.0.0",
     "@simplewebauthn/server": "^10.0.0",
     "@types/debug": "^4.1.12",

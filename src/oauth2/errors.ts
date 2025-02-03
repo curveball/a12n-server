@@ -142,3 +142,16 @@ export class TemporarilyUnavailable extends OAuth2Error {
   errorCode = 'temporarily_unavailable';
 
 }
+
+/**
+ * OpenID Connect specific error code.
+ *
+ * This is emitted when the client initiated an authorization_code flow with prompt=none,
+ * but the user was not logged in.
+ */
+export class LoginRequired extends OAuth2Error {
+
+  httpStatus = 400;
+  errorCode = 'login_required';
+
+}

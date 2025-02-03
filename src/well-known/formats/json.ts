@@ -1,4 +1,3 @@
-import { resolve } from 'url';
 import { getGlobalOrigin } from '@curveball/kernel';
 
 type AuthMethod = 'client_secret_basic';
@@ -43,15 +42,17 @@ type MetaData = {
 
 export function metadata(): MetaData {
 
-  return {
-    issuer: getGlobalOrigin(),
-    authorization_endpoint: '/authorize',
+  const origin = getGlobalOrigin();
 
-    token_endpoint: '/token',
+  return {
+    issuer: origin,
+    authorization_endpoint: origin + '/authorize',
+
+    token_endpoint: origin + '/token',
     token_endpoint_auth_methods_supported: ['client_secret_basic'],
     token_endpoint_auth_signing_alg_values_supported: ['RS256'],
 
-    jwks_uri: resolve(getGlobalOrigin(), '/.well-known/jwks.json'),
+    jwks_uri: origin + '/.well-known/jwks.json',
 
     scopes_supported: ['openid'],
 
@@ -60,15 +61,15 @@ export function metadata(): MetaData {
     grant_types_supported: ['client_credentials', 'implicit', 'authorization_code', 'refresh_token'],
     id_token_signing_alg_values_supported: ['RS256'],
 
-    service_documentation: getGlobalOrigin(),
+    service_documentation: origin,
     ui_locales_supported: ['en'],
-    introspection_endpoint: '/introspect',
-    revocation_endpoint: '/revoke',
+    introspection_endpoint: origin + '/introspect',
+    revocation_endpoint: origin + '/revoke',
     revocation_endpoint_auth_methods_supported: ['client_secret_basic'],
 
-    userinfo_endpoint: '/userinfo',
+    userinfo_endpoint: origin + '/userinfo',
 
-    authorization_challenge_endpoint: '/authorization-challenge',
+    authorization_challenge_endpoint: origin + '/authorization-challenge',
 
   };
 

@@ -43,7 +43,8 @@ type IDTokenOptions = {
   principal: User;
   client: AppClient;
   nonce: null | string;
-  identities: PrincipalIdentity[]
+  identities: PrincipalIdentity[];
+  loginTime: number | null;
 }
 
 export async function generateJWTIDToken(options: IDTokenOptions) {
@@ -55,6 +56,10 @@ export async function generateJWTIDToken(options: IDTokenOptions) {
   if (options.nonce) {
     body.nonce = options.nonce;
   }
+  if (options.loginTime) {
+    body.auth_time = Math.floor(options.loginTime / 1000);
+  }
+
   const jwt = await new SignJWT(body)
     .setProtectedHeader({
       alg: 'RS256',

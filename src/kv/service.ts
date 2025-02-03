@@ -33,6 +33,13 @@ export function del(key: string): Promise<void> {
   return getStore().delete(key);
 }
 
+/**
+ * KV prefix for session data.
+ *
+ * This contains a version number, which will change whenever the structure of the session data
+ * changes, but when it does it will cause all existing sessions to be invalidated.
+ */
+const sessionKeyPrefix = 'a12n:session:2:';
 
 /**
  * Returns a SessionStore, which is the interface @curveball/session
@@ -43,16 +50,16 @@ export function getSessionStore(): SessionStore {
   const store = getStore();
   return {
     get: (id: string): Promise<Record<string, any>|null> => {
-      return store.get<Record<string, any>>('a12n:session:' + id);
+      return store.get<Record<string, any>>(sessionKeyPrefix + id);
     },
 
     set: (id: string, values: Record<string, any>, expire: number): Promise<void> => {
-      return store.set('a12n:session:' + id, values, { ttl: expire * 1000 });
+      return store.set(sessionKeyPrefix + id, values, { ttl: expire * 1000 });
 
     },
 
     delete: (id: string): Promise<void> => {
-      return store.delete('a12n:session:' + id);
+      return store.delete(sessionKeyPrefix + id);
     },
 
     newSessionId() {

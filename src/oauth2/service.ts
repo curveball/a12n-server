@@ -12,6 +12,7 @@ import { Oauth2TokensRecord, Oauth2CodesRecord } from 'knex/types/tables.js';
 import { App, User, GrantType, AppClient } from '../types.js';
 import * as userAppPermissionsService from '../user-app-permissions/service.js';
 import * as principalIdentityService from '../principal-identity/service.js';
+import { getSessionStore } from '../kv/service.js';
 
 const oauth2TokenFields: (keyof Oauth2TokensRecord)[] = [
   'id',
@@ -163,6 +164,9 @@ export async function generateTokenAuthorizationCode(options: GenerateTokenAutho
   const codeRecord = codeResult;
   const expirySettings = getTokenExpiry();
 
+  const browserSession = codeRecord.browser_session_id ? await getSessionStore().get(codeRecord.browser_session_id) : null;
+  const loginTime: number|null = browserSession?.loginTime ?? null;
+
   await db('oauth2_codes')
     .delete()
     .where({code: codeRecord.code});
@@ -207,6 +211,7 @@ export async function generateTokenAuthorizationCode(options: GenerateTokenAutho
       principal: user,
       nonce: codeRecord.nonce,
       identities,
+      loginTime,
     });
     return {
       ...result,

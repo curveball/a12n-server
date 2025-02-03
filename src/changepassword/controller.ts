@@ -41,9 +41,6 @@ class ChangePasswordController extends Controller {
 
     await UserService.updatePassword(user, userNewPassword);
 
-    ctx.session = {
-      user: user,
-    };
     const log = getLoggerFromContext(ctx);
     await log('change-password-success');
     ctx.status = 303;

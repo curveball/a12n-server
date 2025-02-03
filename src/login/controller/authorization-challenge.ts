@@ -36,7 +36,7 @@ class AuthorizationChallengeController extends Controller {
     }
 
     if (!ctx.request.is('application/x-www-form-urlencoded')) {
-      throw new UnsupportedMediaType('This endpoint requires thei request to use the "application/x-www-form-urlencoded" content-type');
+      throw new UnsupportedMediaType('This endpoint requires the request to use the "application/x-www-form-urlencoded" content-type');
     }
 
     ctx.request.validate<AuthorizationChallengeRequest>('https://curveballjs.org/schemas/a12nserver/authorization-challenge-request.json');

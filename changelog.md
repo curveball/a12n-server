@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.29.0 (????-??-??)
+-------------------
+
+* Workaround for authjs incorrectly encoding colon in Basic Auth with
+  percent-encoding.
+
+
 0.28.5 (2025-01-30)
 -------------------
 

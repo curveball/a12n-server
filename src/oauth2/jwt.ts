@@ -1,9 +1,10 @@
-import { User, App, AppClient } from '../types.js';
+import { User, App, AppClient, PrincipalIdentity } from '../types.js';
 import { generateSecretToken } from '../crypto.js';
 import { getSetting } from '../server-settings.js';
 import { createPrivateKey, KeyObject, createPublicKey } from 'crypto';
 import { SignJWT } from 'jose';
 import { getGlobalOrigin } from '@curveball/kernel';
+import { userInfo } from '../oidc/format/json.js';
 
 type AccessTokenOptions = {
   principal: User|App;
@@ -39,17 +40,17 @@ export async function generateJWTAccessToken(options: AccessTokenOptions): Promi
 }
 
 type IDTokenOptions = {
-  principal: User|App;
+  principal: User;
   client: AppClient;
   nonce: null | string;
+  identities: PrincipalIdentity[]
 }
 
 export async function generateJWTIDToken(options: IDTokenOptions) {
 
   const privateKey = getPrivateKey();
 
-  const body: Record<string, string> = {
-  };
+  const body: Record<string, number|string|boolean> = userInfo(options.principal, options.identities);
 
   if (options.nonce) {
     body.nonce = options.nonce;
@@ -66,7 +67,6 @@ export async function generateJWTIDToken(options: IDTokenOptions) {
     .sign(privateKey);
 
   return jwt;
-
 
 }
 

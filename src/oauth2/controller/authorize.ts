@@ -11,6 +11,7 @@ import { getLoggerFromContext } from '../../log/service.js';
 import { findByClientId } from '../../app-client/service.js';
 import * as userAppPermissions from '../../user-app-permissions/service.js';
 import { generateJWTIDToken } from '../jwt.js';
+import * as services from '../../services.js';
 
 /**
  * The Authorize controller is responsible for handing requests to the oauth2
@@ -123,6 +124,8 @@ class AuthorizeController extends Controller {
       nonce: params.nonce ?? null,
     });
 
+    const identities = await services.principalIdentity.findByPrincipal(ctx.session.user);
+
     const redirectParams: Record<string, string> = {
       code: code.code,
     };
@@ -133,6 +136,7 @@ class AuthorizeController extends Controller {
         principal: ctx.session.user,
         client: oauth2Client,
         nonce: params.nonce ?? null,
+        identities,
       });
     }
 

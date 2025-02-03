@@ -11,6 +11,7 @@ import { generateJWTAccessToken, generateJWTIDToken } from './jwt.js';
 import { Oauth2TokensRecord, Oauth2CodesRecord } from 'knex/types/tables.js';
 import { App, User, GrantType, AppClient } from '../types.js';
 import * as userAppPermissionsService from '../user-app-permissions/service.js';
+import * as principalIdentityService from '../principal-identity/service.js';
 
 const oauth2TokenFields: (keyof Oauth2TokensRecord)[] = [
   'id',
@@ -188,6 +189,7 @@ export async function generateTokenAuthorizationCode(options: GenerateTokenAutho
 
   const principalService = new PrincipalService('insecure');
   const user = await principalService.findById(codeRecord.principal_id, 'user');
+  const identities = await principalIdentityService.findByPrincipal(user);
   if (!user.active) {
     throw new Error(`User ${user.href} is not active`);
   }
@@ -204,6 +206,7 @@ export async function generateTokenAuthorizationCode(options: GenerateTokenAutho
       client: options.client,
       principal: user,
       nonce: codeRecord.nonce,
+      identities,
     });
     return {
       ...result,

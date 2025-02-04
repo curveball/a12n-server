@@ -8,14 +8,15 @@
   "author": "Evert Pot (https://evertpot.com/)",
   "license": "MIT",
   "scripts": {
-    "prepublishOnly": "make build",
+    "prepare": "node bin/a12n-server",
     "test": "make test",
     "lint": "make lint",
     "fix": "make fix",
     "tsc": "tsc",
     "start": "make start",
     "start:watch": "tsc-watch --onSuccess 'node dist/app.js'",
-    "build": "make build"
+    "build": "make build",
+    "prepublishOnly": "make build"
   },
   "repository": {
     "type": "git",

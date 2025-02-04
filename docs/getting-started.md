@@ -33,6 +33,14 @@ cd a12n-server
 npm install
 ```
 
+Setup the environment:
+
+```sh
+npm run prepare
+```
+
+This will create a `.env` file with a private JWT for local development of OAuth2/OIDC flows.
+
 2. Configuring the server
 
 Copy `.env.defaults` to `.env` and open the file up in your editor.
@@ -41,11 +49,13 @@ Copy `.env.defaults` to `.env` and open the file up in your editor.
 cp .env.defaults .env
 ```
 
-You can go through the file and uncomment or set environment variables to your liking.
+You can go through the `.env` file and uncomment or set environment variables to your liking.
 
-For the database, pick the section of your choice. If your database is setup
-correctly and a12nserver has access to it, it will automatically connect to it
-on start and build the database schema.
+For the database, pick the section of your choice. If your database is setup correctly and a12nserver has access to it, it will automatically connect to it on start and build the database schema.
+
+See [Server Settings](./server-settings.md) for all config options.
+
+🔋 Restart your server after changing the `.env` file.
 
 ## Run Docker
 

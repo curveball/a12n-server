@@ -1,5 +1,5 @@
 Integrating your app with a12n-server
--------------------------------------
+=====================================
 
 The main use-case for a12n-server is handle authentication of users in your
 application, so you don't have to write basic features such as storing users,

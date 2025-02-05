@@ -1,7 +1,11 @@
-{:toc}
-
 Getting started
 ===============
+
+Contents:
+
+* [The dev server](#the-dev-server)
+* [Deploying in production](#deploying-in-production)
+* [Running from source](#running-from-source)
 
 
 The dev server

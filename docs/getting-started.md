@@ -79,7 +79,7 @@ First, do a git checkout of the source and install dependendencies:
 ```sh
 git clone git@github.com:curveball/a12n-server.git
 cd a12n-server
-npm i`
+npm i
 ```
 
 Next, the easiest way to get started is to copy the sample `.env` file, which is enough

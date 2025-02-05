@@ -22,7 +22,7 @@ To store a string, it needs to be surrounded by double-quotes. For example, a le
 |  `smtp.emailFrom`            | String  | `null` | The "from" address that should be used for all outgoing emails
 | `totp`                      | String  | `enabled` | Whether TOTP is enabled. TOTP uses authenticator apps like Google Authenticator and Authy. This can be set to "enabled", "disabled", and "required"
 | `totp.serviceName`          | String  | `a12n-server API` | The name of the application that should show up in authenticator apps
-| webauthn                  | String  | `enabled` | Whether webauthn is "enabled", "disabled" or "required".'
+| `webauthn`                  | String  | `enabled` | Whether webauthn is "enabled", "disabled" or "required".'
 | `webauthn.serviceName`      | String  | `a12n-server` | The service name that should appear in Webauthn dialogs.
 | `webauthn.expectedOrigin`   | String  | `null` | The "origin" of this server. This must be set for webauthn to work
 | `webauthn.relyingPartyId`   | String  | `null` | The origin of the application performing the login.

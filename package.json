@@ -7,15 +7,16 @@
   "homepage": "https://github.com/curveball/a12n-server#readme",
   "author": "Evert Pot (https://evertpot.com/)",
   "license": "MIT",
+  "bin": "./bin/a12n-server",
   "scripts": {
-    "prepublishOnly": "make build",
     "test": "make test",
     "lint": "make lint",
     "fix": "make fix",
     "tsc": "tsc",
     "start": "make start",
     "start:watch": "tsc-watch --onSuccess 'node dist/app.js'",
-    "build": "make build"
+    "build": "make build",
+    "prepublishOnly": "make build"
   },
   "repository": {
     "type": "git",
@@ -107,6 +108,5 @@
   "engines": {
     "node": ">= 18"
   },
-  "bin": "./bin/a12n-server",
   "types": "dist/"
 }

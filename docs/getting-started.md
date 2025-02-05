@@ -1,99 +1,103 @@
-- [Getting started](#getting-started)
-  - [Get your dev env up and running](#get-your-dev-env-up-and-running)
-  - [Run Docker](#run-docker)
-  - [Database Setup](#database-setup)
-    - [MySQL setup](#mysql-setup)
-    - [Postgres setup](#postgres-setup)
-    - [Sqlite setup](#sqlite-setup)
-  - [Running the server](#running-the-server)
-  - [Creating the first user](#creating-the-first-user)
-
 Getting started
 ===============
 
-To set up this server in your development environment, the following must be
-installed:
+Contents:
 
-1. NodeJS (version 18 or higher) and `npm`.
-2. `git`.
-3. MySQL, PostgreSQL or SQLite. SQLite is not recommended for production.
+* [The dev server](#the-dev-server)
+* [Deploying in production](#deploying-in-production)
+* [Running from source](#running-from-source)
 
 
-If you are deploying in production, we recommend the
-[official docker images][1].
+The dev server
+--------------
 
-Get your dev env up and running
---------------------------------------------------
+There are a few different ways to run a12n-server. We recommend new users start
+with the `npx` script. This will automatically download the latest version of
+the server, create a default configuration and a sqlite database.
 
-1. Get the source:
+To use this, simply create an empty directory and run: 
+
+```sh
+npx @curveball/a12n-server
+```
+
+This creates `a12nserver.sqlite`, and a `.env` file with settings. After that,
+you can open <https://localhost:8531> in your browser to continue set up.
+
+The `npx` command is provided by Node / NPM, so make sure those dependencies
+are installed first.
+
+
+Deploying in production
+-----------------------
+
+In production we recommend using the official Docker image. This automatically
+gets built for every release.
+
+You should also use a regular database. Both MySQL and Postgres are supported.
+
+A minimum configuration might look like this;
+
+```sh
+docker run \
+  -e DB_DRIVER=postgresql \
+  -e DB_HOST=host \
+  -e DB_USER=user \
+  -e DB_PASSWORD=password \
+  -e DB_DATABASE=a12n \
+  -p 8531:8531 \
+  ghcr.io/curveball/a12n-server/a12nserver:0.28.5
+```
+
+You should also set a few more environment variables for all the features to work.
+
+```
+# Should be an RSA private key, and is require for JWT and OpenID Connect support.
+JWT_PRIVATE_KEY= 
+
+# Should be set to the domainname where this will be hosted. Required for absolute
+# urls to be correct.
+CURVEBALL_ORIGIN=https://auth.example.org/
+
+# Should be set to point to an smtp server. Required for validation, otp,
+# invitation and lost-password emails.
+SMTP_URL=smtp://username:password@my-mail-server.org:1025
+SMTP_EMAIL_FROM=Your friendly neighbourhood auth server <no-reply@example.org>
+
+# Should point to a Redis server. Required if multiple load-balanced instances are running
+REDIS_URI=redis://some-redis-serveR:6379
+```
+
+Running from source
+-------------------
+
+If you are interested to run a12n-server from the github source, for making modifications
+or running the latest development version, you can follow the instructions below.
+
+First, do a git checkout of the source and install dependendencies:
 
 ```sh
 git clone git@github.com:curveball/a12n-server.git
 cd a12n-server
-npm install
+npm i
 ```
 
-2. Configuring the server
-
-Copy `.env.defaults` to `.env` and open the file up in your editor.
+Next, the easiest way to get started is to copy the sample `.env` file, which is enough
+to run the server on a sqlite database.
 
 ```sh
 cp .env.defaults .env
 ```
 
-You can go through the file and uncomment or set environment variables to your liking.
-
-For the database, pick the section of your choice. If your database is setup
-correctly and a12nserver has access to it, it will automatically connect to it
-on start and build the database schema.
-
-## Run Docker
-
-1. Ensure [Docker Dashboard](https://www.docker.com/products/docker-desktop/) is installed and running
-
-2. Run `make`, and a sqlite file will be generated in the root of this project.
-
-## Database Setup
-
-### MySQL setup
-
-After you have MySQL up and running, create new empty database (/schema) & user for `a12n-server`. Replace 'your_password' with a proper user password of your creation.
-
-```sh
-mysql> CREATE DATABASE a12nserver;
-mysql> CREATE USER 'a12nserver' IDENTIFIED BY 'your_password';
-mysql> GRANT SELECT, INSERT, UPDATE, DELETE, ALTER, CREATE, DROP ON a12nserver.* TO 'a12nserver';
-mysql> FLUSH PRIVILEGES;
-```
-
-### Postgres setup
-
-TODO
-
-
-### Sqlite setup
-
-TODO
-
-
-Running the server
-------------------
-
-After all that, all you have to do is run:
+After this, you can edit your `.env` for any changes you want to make and then run the
+server with:
 
 ```sh
 make start
 ```
 
-If you are developing a12nserver, you might prefer `make start-dev` which
-automatically restarts the server when you make a chance.
+Or to start the auto-restarting development server:
 
-
-Creating the first user
------------------------
-
-After installation, you can open the server via `https://localhost:8531/`,
-which will prompt you to create your first admin user.
-
-
-[1]: https://github.com/curveball/a12n-server/pkgs/container/a12n-server%2Fa12nserver
+```sh
+make start-dev
+```

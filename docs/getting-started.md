@@ -27,6 +27,10 @@ you can open <https://localhost:8531> in your browser to continue set up.
 The `npx` command is provided by Node / NPM, so make sure those dependencies
 are installed first.
 
+### What's next
+
+After running your dev server, you will probably want to integrate it with your
+application. If so, read the [integration guide](./integration.md).
 
 Deploying in production
 -----------------------

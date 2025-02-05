@@ -40,6 +40,7 @@ export async function query<T = any>(query: string, params: Knex.ValueDict | Kne
 
   switch (settings?.client) {
     case 'pg':
+    case 'postgres':
       return (result as RawPostgreSQLResult<T>).rows;
     case 'sqlite3':
       return (result as RawSqlite3Result<T>);

@@ -8,7 +8,6 @@
   "author": "Evert Pot (https://evertpot.com/)",
   "license": "MIT",
   "scripts": {
-    "prepare": "node bin/a12n-server",
     "test": "make test",
     "lint": "make lint",
     "fix": "make fix",

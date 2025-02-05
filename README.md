@@ -41,13 +41,16 @@ Instead of rolling your own authentication system, you get *A LOT* of features f
 
 The server supports core features such as:
 
-* Your database with users.
+* A User API that can be used to create, update, delete and list users.
 * User registration, login, lost password.
 * Multi-factor auth including
   * TOTP (Google Authenticator)
   * Email one-time passcodes.
   * Hardware keys support (WebauthN)
 * Groups (roles) and permissions that can be assigned to users or groups.
+* A browser-based admin interface.
+* A REST API that can be traversed using a standard browser, as it spits out
+  both JSON and HTML.
 
 The server supports OAuth2 and OpenID Connect, with support for the following features and standards:
 

@@ -7,6 +7,7 @@
   "homepage": "https://github.com/curveball/a12n-server#readme",
   "author": "Evert Pot (https://evertpot.com/)",
   "license": "MIT",
+  "bin": "./bin/a12n-server",
   "scripts": {
     "test": "make test",
     "lint": "make lint",
@@ -107,6 +108,5 @@
   "engines": {
     "node": ">= 18"
   },
-  "bin": "./bin/a12n-server",
   "types": "dist/"
 }

@@ -1,13 +1,4 @@
-- [Getting started](#getting-started)
-  - [Get your dev env up and running](#get-your-dev-env-up-and-running)
-  - [Run Docker](#run-docker)
-  - [Database Setup](#database-setup)
-    - [MySQL setup](#mysql-setup)
-    - [Postgres setup](#postgres-setup)
-    - [Sqlite setup](#sqlite-setup)
-  - [Running the server](#running-the-server)
-  - [Creating the first user](#creating-the-first-user)
-
+{:toc}
 
 Getting started
 ===============

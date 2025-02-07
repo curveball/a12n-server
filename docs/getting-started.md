@@ -50,7 +50,7 @@ docker run \
   -e DB_PASSWORD=password \
   -e DB_DATABASE=a12n \
   -p 8531:8531 \
-  ghcr.io/curveball/a12n-server/a12nserver:0.28.5
+  ghcr.io/curveball/a12n-server/a12nserver:0.29.0
 ```
 
 You should also set a few more environment variables for all the features to work.

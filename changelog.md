@@ -26,6 +26,8 @@ Changelog
   this change a change-password token was enough to complete login, but this
   could allow a user to circumvent other authentication factors such as TOTP.
 * Added a small HAL form for easily obtaining developer access tokens.
+* Added a `/me` endpoint that always redirects to the currently authenticated
+  user or app.
 
 
 0.28.5 (2025-01-30)

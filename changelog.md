@@ -25,6 +25,7 @@ Changelog
 * Force users to go through login process after changing their password. Before
   this change a change-password token was enough to complete login, but this
   could allow a user to circumvent other authentication factors such as TOTP.
+* Added a small HAL form for easily obtaining developer access tokens.
 
 
 0.28.5 (2025-01-30)

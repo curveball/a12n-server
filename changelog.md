@@ -4,12 +4,16 @@ Changelog
 0.29.0 (????-??-??)
 -------------------
 
+* OpenID Connect works! The plumbing for this has been in place for some time,
+  but this release supports the `/userinfo` endpoint and enough parameters from
+  the authorization endpoint to make it work the OIDC clients we've tested.
 * The dev server now automatically generates a JWT private key when it's ran
   for the first time. This enables OpenID Connect to be used without further
   configuration.
 * Auth.js / NextAuth.js support validated. Our implementation had a few bugs,
   and authjs also had some issues that the server now has workarounds in place
   for.
+* Lots of documentatation fixes and additions. (Thank you @usrrname).
 * Workaround for authjs incorrectly encoding colon in Basic Auth with
   percent-encoding.
 * #590: When a OIDC client doesn't provide a nonce, the server encoded the
@@ -31,6 +35,7 @@ Changelog
 * Add support for `prefer: transclude=item` header and `?embed=item` query
   parameter on the `/user` collection, allowing clients to get the full
   representation of each user.
+* A refresh of the home endpoint, with a few more links to OIDC endpoints.
 
 
 0.28.5 (2025-01-30)

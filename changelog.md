@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.29.0 (????-??-??)
+0.29.0 (2025-02-07)
 -------------------
 
 * OpenID Connect works! The plumbing for this has been in place for some time,

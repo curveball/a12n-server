@@ -21,6 +21,7 @@ import login from './login/controller/login.js';
 import loginMfa from './login/controller/mfa.js';
 import loginWebAuthn from './mfa/webauthn/controller/login.js';
 import logout from './logout/controller.js';
+import me from './principal/controller/me.js';
 import oauth2Authorize from './oauth2/controller/authorize.js';
 import oauth2AuthorizationChallenge from './login/controller/authorization-challenge.js';
 import oauth2ErrorHandler from './oauth2/oauth2-error-handler.js';
@@ -90,6 +91,7 @@ const routes = [
   router('/login/mfa/webauthn', loginWebAuthn),
   router('/logout', logout),
 
+  router('/me', me),
   router('/health', health),
   router('/introspect', introspect),
 

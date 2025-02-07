@@ -420,7 +420,7 @@ be an empty HTTP response body, with a `201 Created` status code and a
 
 ### Updating a user
 
-* Method: `POST`
+* Method: `PUT`
 * Endpoint: `/user/:id`
 
 To update a user, send a `PUT` request to the user resource. The request
@@ -436,6 +436,16 @@ should should look like this:
 
 A successful request will result in a `204 No Content` response with no
 response body.
+
+When updating users we recommend that clients use the "GET, update, PUT"
+pattern. Meaning that you first fetch the user resource, then update the
+properties in the object that need to be changed, and then send the full
+object back to the server. This ensures that your API will not remove
+properties that future versions of the server add.
+
+Most links are _ignored_ by the server when updating a user. If you want
+to update the users' email address, you need to use the 'identities' API,
+which can be found at `/user/:id/identity`.
 
 ### Other operations
 

@@ -40,7 +40,7 @@ class UserAccessTokenController extends Controller {
           ],
         }
       }
-    }
+    };
 
   }
 

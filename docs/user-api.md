@@ -5,6 +5,19 @@ Most a12n-server features can be programmatically controlled with the REST
 API. In fact, almost every endpoint in the admin interface can also be
 accessed using a standard API client to get the JSON representation back.
 
+Table of contents
+-----------------
+
+* [Authentication](#authentication)
+* [Available operations](#available-operations)
+  * [Fetching a single user](#fetching-a-single-user)
+  * [Getting a list of users](#getting-a-list-of-users)
+  * [Creating a new user](#creating-a-new-user)
+  * [Updating a user](#updating-a-user)
+  * [Setting a user's password](#setting-a-users-password)
+* [Other operations](#other-operations)
+
+
 Authentication
 --------------
 
@@ -447,7 +460,27 @@ Most links are _ignored_ by the server when updating a user. If you want
 to update the users' email address, you need to use the 'identities' API,
 which can be found at `/user/:id/identity`.
 
-### Other operations
+### Setting a user's password
+
+* Method: `PUT`
+* Endpoint: `/user/:id/password`
+
+To set or replace a users' password, send a `PUT` request to the `password`
+resource.
+
+The request body should look like this:
+
+```json
+{
+  "newPassword": "..."
+}
+```
+
+If successful, the server will respond with a `204 No Content` response.
+
+
+Other operations
+----------------
 
 Users link to a number of sub-resources that are used for a variety of
 operations. Each endpoint can be discovered in a browser, where you can

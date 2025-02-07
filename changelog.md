@@ -28,6 +28,9 @@ Changelog
 * Added a small HAL form for easily obtaining developer access tokens.
 * Added a `/me` endpoint that always redirects to the currently authenticated
   user or app.
+* Add support for `prefer: transclude=item` header and `?embed=item` query
+  parameter on the `/user` collection, allowing clients to get the full
+  representation of each user.
 
 
 0.28.5 (2025-01-30)

@@ -4,7 +4,7 @@ import { HalResource } from 'hal-types';
 import { LazyPrivilegeBox } from '../../privilege/service.js';
 import { UserNewResult } from '../../api-types.js';
 
-export function collection(users: User[]): HalResource {
+export function collection(users: User[], embeddedUsers: HalResource[]): HalResource {
 
   const hal: HalResource = {
     _links: {
@@ -20,8 +20,14 @@ export function collection(users: User[]): HalResource {
         templated: true,
       },
     },
-    total: users.length
+    total: users.length,
   };
+
+  if (embeddedUsers.length) {
+    hal._embedded = {
+      item: embeddedUsers
+    };
+  }
 
   return hal;
 

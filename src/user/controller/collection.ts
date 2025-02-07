@@ -4,6 +4,7 @@ import { BadRequest, Conflict, NotFound, UnprocessableContent } from '@curveball
 import * as hal from '../formats/hal.js';
 import * as services from '../../services.js';
 import { PrincipalNew } from '../../api-types.js';
+import { HalResource } from 'hal-types';
 
 class UserCollectionController extends Controller {
 
@@ -11,7 +12,31 @@ class UserCollectionController extends Controller {
 
     const principalService = new services.principal.PrincipalService(ctx.privileges);
     const users = await principalService.findAll('user');
-    ctx.response.body = hal.collection(users);
+    const embed = ctx.request.prefer('transclude').toString().includes('item') || ctx.query.embed?.includes('item');
+
+    const embeddedUsers: HalResource[] = [];
+    if (embed) {
+      // Generate full HAL responses for each user.
+      const isAdmin = ctx.privileges.has('admin');
+
+      for (const user of users) {
+        const hasControl = isAdmin || ctx.auth.equals(user);
+        const hasPassword = hasControl && await services.user.hasPassword(user);
+        embeddedUsers.push(
+          hal.item(
+            user,
+            (await services.privilege.get(user)).getAll(),
+            hasControl,
+            hasPassword,
+            ctx.privileges,
+            await principalService.findGroupsForPrincipal(user),
+            await services.principalIdentity.findByPrincipal(user),
+          )
+        );
+      }
+    }
+
+    ctx.response.body = hal.collection(users, embeddedUsers);
 
   }
 

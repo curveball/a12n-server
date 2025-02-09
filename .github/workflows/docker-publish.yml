@@ -28,8 +28,12 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: docker build
+      - name: Setup docker (missing on MacOS)
+        if: runner.os == 'macos'
+        run: |
+          brew install docker
+          colima start
+    : - name: docker build
         run: docker build . --file Dockerfile
 
   # Push image to GitHub Packages.

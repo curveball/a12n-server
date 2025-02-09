@@ -1,0 +1,22 @@
+name: Docker
+
+on:
+  push:
+    branches:
+      - main
+  # Run tests for any PRs.
+  pull_request:
+
+env:
+  GH_IMAGE_NAME: a12nserver
+
+jobs:
+  # Run tests.
+  # See also https://docs.docker.com/docker-hub/builds/automated-testing/
+  test-build:
+    runs-on: [ubuntu-latest, macos-latest]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build . --file Dockerfile

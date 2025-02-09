@@ -1,5 +1,5 @@
 # Stage 1: build
-FROM node:22-alpine as build-stage
+FROM node:20-alpine as build-stage
 WORKDIR /opt/app
 
 # Needed for building binary Node.js addons
@@ -14,7 +14,7 @@ COPY src src
 RUN npm i --environment=dev && npx tsc && npm prune --production && rm -r src/
 
 # Stage 2: run!
-FROM node:22-alpine
+FROM node:20-alpine
 LABEL org.opencontainers.image.source https://github.com/curveball/a12n-server
 
 

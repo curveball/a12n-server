@@ -3,10 +3,7 @@ FROM node:20-alpine as build-stage
 WORKDIR /opt/app
 
 # Needed for building binary Node.js addons
-RUN apk add python3 make gcc musl-dev g++ py3-pip py3-setuptools lz4-dev
-
-# Needed specifically for ARM64. Not sure why, but without it libsodium doesn't build.
-RUN npm install -g node-gyp 
+RUN apk add python3 make gcc musl-dev g++ py3-pip py3-setuptools libsodium-dev
 
 COPY package.json package.json Makefile tsconfig.json ./
 COPY assets assets

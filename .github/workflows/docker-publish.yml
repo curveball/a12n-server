@@ -33,7 +33,7 @@ jobs:
         run: |
           brew install docker
           colima start
-    : - name: docker build
+      - name: docker build
         run: docker build . --file Dockerfile
 
   # Push image to GitHub Packages.

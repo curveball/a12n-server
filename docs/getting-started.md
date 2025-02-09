@@ -111,7 +111,7 @@ Or to start the auto-restarting development server:
 make start-dev
 ```
 
-Run Docker for development
+Running with docker-compose
 ----------------------
 
 The `Dockerfile.dev` and `docker-compose.yml` file at the root of the project work together to start the

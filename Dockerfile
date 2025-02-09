@@ -2,8 +2,9 @@
 FROM node:22-alpine as build-stage
 WORKDIR /opt/app
 
-# Needed for building @vscode/sqlite3 package
-RUN apk add python3 make gcc musl-dev g++ python3-setuptools
+# Needed for building binary Node.js addons
+RUN apk add python3 make gcc musl-dev g++
+RUN pip install setuptools
 
 COPY package.json package.json Makefile tsconfig.json ./
 COPY assets assets

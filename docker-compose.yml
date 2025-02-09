@@ -9,7 +9,7 @@ services:
       environment:
         - MYSQL_DATABASE=a12nserver
         - MYSQL_USER=a12nserver
-        - MYSQL_ROOT_PASSWORD=password
+        - MYSQL_ROOT_PASSWORD=root # NOTE: not recommended for production
         - MYSQL_PASSWORD='password'
         - DB_HOST=db
         - DB_PASSWORD='password'
@@ -29,6 +29,6 @@ services:
       - DATABASE_URL=mysql://a12nserver:password@db:3306/a12nserver
       - JWT_SECRET=secret
       - CURVEBALL_ORIGIN=http://localhost:8531
-      - JWT_PRIVATE_KEY=secret
+      - JWT_PRIVATE_KEY=jwt_secret.key
     depends_on:
       - db

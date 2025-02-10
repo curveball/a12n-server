@@ -7,6 +7,8 @@ Changelog
 * Removed outdated `eff-diceware-passphrase` dependency. It was breaking the
   build on arm64 due to old transitive dependencies. We've instead included the
   EFF wordlist and generate diceware passwords ourselves.
+* Docker image could not be built on arm64 due to a transative dependency using
+  an old version of libsodium.
 
 
 0.29.0 (2025-02-07)

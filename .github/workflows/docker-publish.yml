@@ -19,19 +19,17 @@ jobs:
   # Run tests.
   # See also https://docs.docker.com/docker-hub/builds/automated-testing/
   test:
-    runs-on: ubuntu-latest
+
+    name: Testing Docker Build for ${{matrix.os}}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, ubuntu-24.04-arm]
 
     steps:
       - uses: actions/checkout@v4
-
-      - name: Run tests
-        run: |
-          if [ -f docker-compose.test.yml ]; then
-            docker-compose --file docker-compose.test.yml build
-            docker-compose --file docker-compose.test.yml run sut
-          else
-            docker build . --file Dockerfile
-          fi
+      - name: docker build
+        run: docker build . --file Dockerfile
 
   # Push image to GitHub Packages.
   # See also https://docs.docker.com/docker-hub/builds/

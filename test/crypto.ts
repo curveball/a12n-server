@@ -67,7 +67,7 @@ describe('Crypto utilities', () => {
 
     it('should generate a password', async () => {
 
-      await loadWordList();
+      await loadWordList(true);
       const password = generatePassword();
       assert.match(password, /^[a-z-]{20,}$/);
       assert.equal(password.split('-').length, 6);

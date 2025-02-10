@@ -43,10 +43,18 @@ export function uuidUrn() {
 
 
 const wordList:string[] = [];
-export async function loadWordList() {
+
+/**
+ * Load the EFF large word list.
+ *
+ * This function has a quiet parameter, so the console statement won't run.
+ *
+ * The reason is that it seems to break node --test.
+ */
+export async function loadWordList(quiet = false) {
   if (wordList.length === 0) {
     const __dirname = dirname(fileURLToPath(import.meta.url));
-    console.info('🎲 Loading EFF large word list');
+    if (!quiet) console.info('🎲 Loading EFF large word list');
     const result = await readFile(join(__dirname, '../assets/eff_large_wordlist.txt'), 'utf8');
     for(const line of result.split('\n')) {
       wordList.push(line.split('\t')[1]);

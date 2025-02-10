@@ -3,7 +3,7 @@ FROM node:20-alpine as build-stage
 WORKDIR /opt/app
 
 # Needed for building binary Node.js addons
-RUN apk add python3 make gcc musl-dev g++ py3-pip py3-setuptools libsodium-dev
+RUN apk add python3 make gcc musl-dev g++
 
 COPY package.json package.json Makefile tsconfig.json ./
 COPY assets assets

@@ -1,5 +1,5 @@
 import * as crypto from 'node:crypto';
-import { readFileSync } from 'node:fs';
+import { readFile } from 'node:fs/promises';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
@@ -47,7 +47,7 @@ export async function loadWordList() {
   if (wordList.length === 0) {
     const __dirname = dirname(fileURLToPath(import.meta.url));
     console.info('🎲 Loading EFF large word list');
-    const result = readFileSync(join(__dirname, '../assets/eff_large_wordlist.txt'), 'utf8');
+    const result = await readFile(join(__dirname, '../assets/eff_large_wordlist.txt'), 'utf8');
     for(const line of result.split('\n')) {
       wordList.push(line.split('\t')[1]);
     }

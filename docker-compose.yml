@@ -26,3 +26,6 @@ services:
         - DB_DATABASE=a12nserver
     depends_on:
       - db
+secrets:
+  JWT_SECRET:
+    file: ./jwt_secret.key

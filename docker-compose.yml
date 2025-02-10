@@ -14,7 +14,7 @@ services:
   a12n-server:
     build: 
       context: .
-      dockerfile: Dockerfile.dev
+      dockerfile: Dockerfile
     labels:
       - org.opencontainers.image.source=https://github.com/curveball/a12n-server
     ports:

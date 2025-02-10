@@ -8,6 +8,7 @@ import { load } from './server-settings.js';
 import './env.js';
 
 import { NAME, VERSION } from './version.js';
+import { loadWordList } from './crypto.js';
 
 console.info('⚾ %s %s', NAME, VERSION);
 
@@ -24,6 +25,7 @@ if (!process.env.PUBLIC_URI) {
 
   await initDb();
   await load();
+  await loadWordList();
 
   const app = new Application();
 

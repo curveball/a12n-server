@@ -1,4 +1,4 @@
-import { generateSecretToken, uuidUrn, generatePublicId, generatePassword, generateVerificationDigits } from '../src/crypto.js';
+import { generateSecretToken, uuidUrn, generatePublicId, generatePassword, generateVerificationDigits, loadWordList } from '../src/crypto.js';
 import { strict as assert } from 'node:assert';
 import { describe, it } from 'node:test';
 
@@ -45,17 +45,6 @@ describe('Crypto utilities', () => {
 
   });
 
-  describe('generatePassword()', () => {
-
-    it('should generate a password', () => {
-
-      const password = generatePassword();
-      assert.match(password, /^[a-z-]{20,}$/);
-
-    });
-
-  });
-
   describe('generateVerificationDigits()', () => {
 
     it('should generate a verification code', () => {
@@ -69,6 +58,20 @@ describe('Crypto utilities', () => {
 
       const code = generateVerificationDigits(8);
       assert.match(code, /^[0-9]{8}$/);
+
+    });
+
+  });
+
+  describe('generatePassword()', () => {
+
+    it('should generate a password', async () => {
+
+      await loadWordList();
+      const password = generatePassword();
+      assert.match(password, /^[a-z-]{20,}$/);
+      assert.equal(password.split('-').length, 6);
+      assert.ok(password.length > 20);
 
     });
 

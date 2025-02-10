@@ -1,5 +1,7 @@
 import * as crypto from 'node:crypto';
-import generatePassphrase from 'eff-diceware-passphrase';
+import { readFile } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 /**
  * Centralized place for all crypto-related functions
@@ -39,14 +41,33 @@ export function uuidUrn() {
 
 }
 
+
+const wordList:string[] = [];
+export async function loadWordList() {
+  if (wordList.length === 0) {
+    const __dirname = dirname(fileURLToPath(import.meta.url));
+    console.info('🎲 Loading EFF large word list');
+    const result = await readFile(join(__dirname, '../assets/eff_large_wordlist.txt'), 'utf8');
+    for(const line of result.split('\n')) {
+      wordList.push(line.split('\t')[1]);
+    }
+  }
+}
+
 /**
  * Generates a random 'diceware' password, which is a memorable password
  * consisting of several words.
  */
 export function generatePassword(): string {
 
-  return generatePassphrase.entropy(45).join('-');
-
+  if (wordList.length < 7000) {
+    throw new Error('EFF wordlist was not loaded. Stopping password generation as a security measure.');
+  }
+  const words = [];
+  for(let i=0; i < 6; i++) {
+    words.push(wordList[crypto.randomInt(0, wordList.length)]);
+  }
+  return words.join('-');
 }
 
 /**

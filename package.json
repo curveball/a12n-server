@@ -72,7 +72,6 @@
     "db-errors": "^0.2.3",
     "debug": "^4.4.0",
     "dotenv": "^16.0.3",
-    "eff-diceware-passphrase": "^3.0.0",
     "geoip-lite": "^1.0.10",
     "handlebars": "^4.7.7",
     "jose": "^5.9.3",

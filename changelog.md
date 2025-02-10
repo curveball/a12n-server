@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.29.1 (????-??-??)
+-------------------
+
+* Removed outdated `eff-diceware-passphrase` dependency. It was breaking the
+  build on arm64 due to old transitive dependencies. We've instead included the
+  EFF wordlist and generate diceware passwords ourselves.
+
+
 0.29.0 (2025-02-07)
 -------------------
 

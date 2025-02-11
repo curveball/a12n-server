@@ -25,7 +25,9 @@ type ChallengeErrorCode =
   // The email address used to log in was not verified.
   | 'email_not_verified'
   // Email verification expired and the user must enter a OTP to continue
-  | 'email_verification_code_invalid';
+  | 'email_verification_code_invalid'
+  // User tried to log in with an incorrect password one too many times.
+  | 'too_many_failed_login_attempts';
 
 type ExtraParams = {
   censored_email?: string;
@@ -68,3 +70,10 @@ export class A12nLoginChallengeError extends OAuth2Error {
   }
 
 }
+
+/**
+ * Errors thrown from validateUserCredentials.
+ */
+export class TooManyLoginAttemptsError extends Error {}
+export class IncorrectPassword extends Error {}
+

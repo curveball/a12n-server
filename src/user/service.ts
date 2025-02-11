@@ -25,10 +25,10 @@ export async function updatePassword(user: User, password: string): Promise<void
     user_id: user.id,
     password: passwordHash,
   })
-  .onConflict('user_id')
-  .merge({
-    password: passwordHash,
-  });
+    .onConflict('user_id')
+    .merge({
+      password: passwordHash,
+    });
 
 }
 

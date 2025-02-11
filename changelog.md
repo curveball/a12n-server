@@ -13,6 +13,9 @@ Changelog
 * This small refactoring allows us to emit `too_many_failed_login_attempts`
   from the `authorization_challenge` system. Before, it emitted
   `invalid_username_or_password` which is confusing.
+* Limit passwords to 72 characters to avoid issues with bcrypt trunctating the
+  input.
+* Fix an issue with lost password not working on MariaDB.
 
 
 0.29.0 (2025-02-07)

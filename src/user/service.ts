@@ -20,12 +20,15 @@ export async function createPassword(user: User, password: string): Promise<void
 export async function updatePassword(user: User, password: string): Promise<void> {
 
   assertValidPassword(password);
+  const passwordHash = await bcrypt.hash(password, 12);
   await db('user_passwords').insert({
     user_id: user.id,
-    password: await bcrypt.hash(password, 12)
+    password: passwordHash,
   })
-    .onConflict('user_id')
-    .merge();
+  .onConflict('user_id')
+  .merge({
+    password: passwordHash,
+  });
 
 }
 
@@ -68,6 +71,9 @@ function assertValidPassword(password: string) {
 
   if (password.length < 8) {
     throw new UnprocessableContent('Passwords must be at least 8 characters');
+  }
+  if (password.length > 72) {
+    throw new UnprocessableContent('Passwords must be at most 72 characters');
   }
 
 }

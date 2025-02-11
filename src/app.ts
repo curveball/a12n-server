@@ -2,13 +2,13 @@
 import { Application } from '@curveball/core';
 import accessLog from '@curveball/accesslog';
 
-import mainMw from './main-mw.js';
-import { init as initDb } from './database.js';
-import { load } from './server-settings.js';
+import mainMw from './main-mw.ts';
+import { init as initDb } from './database.ts';
+import { load } from './server-settings.ts';
 import './env.js';
 
-import { NAME, VERSION } from './version.js';
-import { loadWordList } from './crypto.js';
+import { NAME, VERSION } from './version.ts';
+import { loadWordList } from './crypto.ts';
 
 console.info('⚾ %s %s', NAME, VERSION);
 

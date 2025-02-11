@@ -2,11 +2,11 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { UnprocessableContent, UnsupportedMediaType } from '@curveball/http-errors';
 import { NotFound } from '@curveball/http-errors';
-import * as oauth2Service from '../oauth2/service.js';
-import { OAuth2Token } from '../oauth2/types.js';
-import * as privilegeService from '../privilege/service.js';
-import * as oauth2ClientService from '../app-client/service.js';
-import { introspectResponse, inactive } from './formats/json.js';
+import * as oauth2Service from '../oauth2/service.ts';
+import { OAuth2Token } from '../oauth2/types.ts';
+import * as privilegeService from '../privilege/service.ts';
+import * as oauth2ClientService from '../app-client/service.ts';
+import { introspectResponse, inactive } from './formats/json.ts';
 
 /**
  * The /introspect endpoint allows a client to get more information

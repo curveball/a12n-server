@@ -1,7 +1,7 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { PrincipalService } from '../../principal/service.js';
-import * as userService from '../service.js';
+import { PrincipalService } from '../../principal/service.ts';
+import * as userService from '../service.ts';
 import { UnprocessableContent } from '@curveball/http-errors';
 
 class UserPasswordController extends Controller {

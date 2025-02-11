@@ -1,7 +1,7 @@
-import { PrincipalIdentity, User } from '../types.js';
-import { createToken } from '../verification-token/service.js';
+import { PrincipalIdentity, User } from '../types.ts';
+import { createToken } from '../verification-token/service.ts';
 import { BadRequest } from '@curveball/http-errors';
-import { sendTemplatedMail } from '../mailer/service.js';
+import { sendTemplatedMail } from '../mailer/service.ts';
 
 /**
  * This function is for sending reset password email with validated token

@@ -9,6 +9,8 @@
 
         "resolveJsonModule": true,
 
+        "rewriteRelativeImportExtensions": true,
+
         "sourceMap": true,
         "outDir": "dist",
         "baseUrl": ".",

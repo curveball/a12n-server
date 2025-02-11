@@ -1,9 +1,9 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import * as hal from '../formats/hal.js';
+import * as hal from '../formats/hal.ts';
 import { Forbidden } from '@curveball/http-errors';
-import * as services from '../../services.js';
-import { PrincipalIdentityPatch } from '../../api-types.js';
+import * as services from '../../services.ts';
+import { PrincipalIdentityPatch } from '../../api-types.ts';
 
 class PrincipalIdentityItem extends Controller {
 

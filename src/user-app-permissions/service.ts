@@ -1,8 +1,8 @@
-import db from '../database.js';
-import { App, User } from '../types.js';
-import { UserAppPermission } from './types.js';
-import { PrincipalService } from '../principal/service.js';
-import { UserAppPermissionsRecord } from 'knex/types/tables.js';
+import db from '../database.ts';
+import { App, User } from '../types.ts';
+import { UserAppPermission } from './types.ts';
+import { PrincipalService } from '../principal/service.ts';
+import { UserAppPermissionsRecord } from 'knex/types/tables.ts';
 import { NotFound } from '@curveball/http-errors';
 
 /**

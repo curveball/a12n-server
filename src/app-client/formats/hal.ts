@@ -1,4 +1,4 @@
-import { App, AppClient } from '../../types.js';
+import { App, AppClient } from '../../types.ts';
 import { HalResource } from 'hal-types';
 
 export function collection(app: App, clients: AppClient[]): HalResource {

@@ -3,11 +3,11 @@ import { Context } from '@curveball/core';
 import { generateAuthenticationOptions, verifyAuthenticationResponse } from '@simplewebauthn/server';
 import { isoBase64URL } from '@simplewebauthn/server/helpers';
 
-import { getLoggerFromContext } from '../../../log/service.js';
-import { getSetting } from '../../../server-settings.js';
+import { getLoggerFromContext } from '../../../log/service.ts';
+import { getSetting } from '../../../server-settings.ts';
 
-import * as webauthnService from '../service.js';
-import { MFALoginSession } from '../../types.js';
+import * as webauthnService from '../service.ts';
+import { MFALoginSession } from '../../types.ts';
 
 class WebAuthnLoginRequestController extends Controller {
 

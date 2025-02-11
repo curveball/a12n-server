@@ -1,19 +1,19 @@
 import { BadRequest, NotFound } from '@curveball/http-errors';
-import { LoginSession } from './types.js';
-import { AuthorizationChallengeRequest } from '../api-types.js';
-import { InvalidGrant } from '../oauth2/errors.js';
-import { OAuth2Code } from '../oauth2/types.js';
-import * as services from '../services.js';
-import { AppClient, PrincipalIdentity, User } from '../types.js';
-import { getLogger } from '../log/service.js';
-import { generateSecretToken } from '../crypto.js';
-import { LoginChallengePassword } from './challenge/password.js';
-import { LoginChallengeTotp } from './challenge/totp.js';
-import { LoginChallengeEmailOtp } from './challenge/email-otp.js';
-import { A12nLoginChallengeError } from './error.js';
-import { AbstractLoginChallenge } from './challenge/abstract.js';
-import { UserEventLogger } from '../log/types.js';
-import { LoginChallengeEmailVerification } from './challenge/email-verification.js';
+import { LoginSession } from './types.ts';
+import { AuthorizationChallengeRequest } from '../api-types.ts';
+import { InvalidGrant } from '../oauth2/errors.ts';
+import { OAuth2Code } from '../oauth2/types.ts';
+import * as services from '../services.ts';
+import { AppClient, PrincipalIdentity, User } from '../types.ts';
+import { getLogger } from '../log/service.ts';
+import { generateSecretToken } from '../crypto.ts';
+import { LoginChallengePassword } from './challenge/password.ts';
+import { LoginChallengeTotp } from './challenge/totp.ts';
+import { LoginChallengeEmailOtp } from './challenge/email-otp.ts';
+import { A12nLoginChallengeError } from './error.ts';
+import { AbstractLoginChallenge } from './challenge/abstract.ts';
+import { UserEventLogger } from '../log/types.ts';
+import { LoginChallengeEmailVerification } from './challenge/email-verification.ts';
 
 type ChallengeRequest = AuthorizationChallengeRequest;
 

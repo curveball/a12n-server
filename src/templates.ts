@@ -1,5 +1,5 @@
 import hb from 'handlebars';
-import { getSetting } from './server-settings.js';
+import { getSetting } from './server-settings.ts';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { readFileSync } from 'node:fs';

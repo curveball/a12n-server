@@ -1,6 +1,6 @@
 import { HalResource } from 'hal-types';
-import { User } from '../../types.js';
-import { OneTimeToken } from '../types.js';
+import { User } from '../../types.ts';
+import { OneTimeToken } from '../types.ts';
 
 export function oneTimeToken(user: User, url: string, token: OneTimeToken): HalResource {
 

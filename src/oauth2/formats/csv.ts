@@ -1,5 +1,5 @@
-import { OAuth2Token } from '../types.js';
-import { AppClient } from '../../types.js';
+import { OAuth2Token } from '../types.ts';
+import { AppClient } from '../../types.ts';
 
 import { stringify } from 'csv-stringify/sync';
 

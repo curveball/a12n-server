@@ -2,8 +2,8 @@ import { Controller } from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { Forbidden } from '@curveball/http-errors';
 
-import * as services from '../../services.js';
-import { collection } from '../formats/hal.js';
+import * as services from '../../services.ts';
+import { collection } from '../formats/hal.ts';
 
 class UserAuthFactorCollection extends Controller {
 

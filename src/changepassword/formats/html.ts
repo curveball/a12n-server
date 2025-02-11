@@ -1,4 +1,4 @@
-import { render } from '../../templates.js';
+import { render } from '../../templates.ts';
 
 export function changePasswordForm(msg: string, error: string, csrfToken: string) {
 

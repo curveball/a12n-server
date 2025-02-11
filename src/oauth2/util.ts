@@ -1,7 +1,7 @@
 import { NotImplemented } from '@curveball/http-errors';
-import { InvalidRequest } from './errors.js';
-import { authorizeParamsPromptValues, AuthorizeParamsPrompt, CodeChallengeMethod } from './types.js';
-import { AuthorizeParams, AuthorizeParamsDisplay } from './types.js';
+import { InvalidRequest } from './errors.ts';
+import { authorizeParamsPromptValues, AuthorizeParamsPrompt, CodeChallengeMethod } from './types.ts';
+import { AuthorizeParams, AuthorizeParamsDisplay } from './types.ts';
 
 type OAuth2ResponseMode = 'query' | 'fragment';
 

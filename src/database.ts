@@ -2,7 +2,7 @@
 import { Knex, default as knex } from 'knex';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import './env.js';
+import './env.ts';
 
 let settings: Knex.Config | null = null;
 const db: Knex = knex(getSettings());

@@ -1,11 +1,11 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import * as privilegeService from '../../privilege/service.js';
-import * as userHal from '../formats/hal.js';
-import * as userService from '../service.js';
-import { PrincipalService } from '../../principal/service.js';
-import * as principalIdentityService from '../../principal-identity/service.js';
-import { PrincipalEdit } from '../../api-types.js';
+import * as privilegeService from '../../privilege/service.ts';
+import * as userHal from '../formats/hal.ts';
+import * as userService from '../service.ts';
+import { PrincipalService } from '../../principal/service.ts';
+import * as principalIdentityService from '../../principal-identity/service.ts';
+import { PrincipalEdit } from '../../api-types.ts';
 
 class UserController extends Controller {
 

@@ -1,5 +1,5 @@
 import { Context } from '@curveball/core';
-import{ User } from '../types.js';
+import{ User } from '../types.ts';
 
 export function isValidRedirect(url: string): boolean {
   return url.startsWith('/');

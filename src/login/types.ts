@@ -1,5 +1,5 @@
-import { AuthFactorType } from '../user-auth-factor/types.js';
-export { AuthorizationChallengeRequest } from '../api-types.js';
+import { AuthFactorType } from '../user-auth-factor/types.ts';
+export { AuthorizationChallengeRequest } from '../api-types.ts';
 
 /**
  * The login session represents an ongoing login process for a specific

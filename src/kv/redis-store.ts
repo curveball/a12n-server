@@ -1,5 +1,5 @@
 import { createClient } from 'redis';
-import { KvStore, SetOptions } from './abstract-store.js';
+import { KvStore, SetOptions } from './abstract-store.ts';
 import dbg from 'debug';
 
 const debug = dbg('redis-store');

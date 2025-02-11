@@ -1,6 +1,6 @@
 // @ts-nocheck  old migrations become out of date with the schema, so we just turn type checking off.
 import { Knex } from 'knex';
-import { generatePublicId } from '../crypto.js';
+import { generatePublicId } from '../crypto.ts';
 
 export async function up(knex: Knex): Promise<void> {
 

@@ -1,10 +1,10 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { Forbidden } from '@curveball/http-errors';
-import { getLoggerFromContext } from '../../log/service.js';
-import * as UserService from '../../user/service.js';
-import { User } from '../../types.js';
-import { resetPasswordForm } from '../formats/redirect.js';
+import { getLoggerFromContext } from '../../log/service.ts';
+import * as UserService from '../../user/service.ts';
+import { User } from '../../types.ts';
+import { resetPasswordForm } from '../formats/redirect.ts';
 
 class ResetPasswordController extends Controller {
 

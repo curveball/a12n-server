@@ -1,9 +1,9 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import * as hal from '../formats/hal.js';
+import * as hal from '../formats/hal.ts';
 import { Forbidden, isHttpError } from '@curveball/http-errors';
-import * as services from '../../services.js';
-import { PrincipalIdentityVerifyForm } from '../../api-types.js';
+import * as services from '../../services.ts';
+import { PrincipalIdentityVerifyForm } from '../../api-types.ts';
 
 class PrincipalIdentityVerify extends Controller {
 

@@ -1,11 +1,11 @@
-import { Principal, PrincipalIdentity, NewPrincipalIdentity } from '../types.js';
-import knex, { insertAndGetId } from '../database.js';
-import { PrincipalIdentitiesRecord } from 'knex/types/tables.js';
+import { Principal, PrincipalIdentity, NewPrincipalIdentity } from '../types.ts';
+import knex, { insertAndGetId } from '../database.ts';
+import { PrincipalIdentitiesRecord } from 'knex/types/tables.ts';
 import { NotFound, MethodNotAllowed, BadRequest } from '@curveball/http-errors';
-import { generatePublicId } from '../crypto.js';
-import { sendTemplatedMail } from '../mailer/service.js';
-import * as services from '../services.js';
-import { generateVerificationDigits } from '../crypto.js';
+import { generatePublicId } from '../crypto.ts';
+import { sendTemplatedMail } from '../mailer/service.ts';
+import * as services from '../services.ts';
+import { generateVerificationDigits } from '../crypto.ts';
 
 export async function findByPrincipal(principal: Principal): Promise<PrincipalIdentity[]> {
 

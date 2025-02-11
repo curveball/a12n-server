@@ -1,10 +1,10 @@
-import { OneTimeToken } from './types.js';
-import { PrincipalIdentity, User } from '../types.js';
-import db from '../database.js';
-import { PrincipalService } from '../principal/service.js';
+import { OneTimeToken } from './types.ts';
+import { PrincipalIdentity, User } from '../types.ts';
+import db from '../database.ts';
+import { PrincipalService } from '../principal/service.ts';
 import { BadRequest } from '@curveball/http-errors';
-import { generateSecretToken } from '../crypto.js';
-import * as principalIdentityService from '../principal-identity/service.js';
+import { generateSecretToken } from '../crypto.ts';
+import * as principalIdentityService from '../principal-identity/service.ts';
 
 /**
  * 2 hour token timeout

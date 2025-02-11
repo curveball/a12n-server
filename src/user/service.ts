@@ -1,10 +1,11 @@
 import { UnprocessableContent } from '@curveball/http-errors';
 import * as bcrypt from 'bcrypt';
-import db from '../database.js';
-import { UserEventLogger } from '../log/types.js';
-import * as loginActivityService from '../login/login-activity/service.js';
-import { getSetting } from '../server-settings.js';
-import { User } from '../types.js';
+import db from '../database.ts';
+import { UserEventLogger } from '../log/types.ts';
+import * as loginActivityService from '../login/login-activity/service.ts';
+import { getSetting } from '../server-settings.ts';
+import { User } from '../types.ts';
+import { IncorrectPassword, TooManyLoginAttemptsError } from './error.ts';
 
 export async function createPassword(user: User, password: string): Promise<void> {
 
@@ -19,12 +20,15 @@ export async function createPassword(user: User, password: string): Promise<void
 export async function updatePassword(user: User, password: string): Promise<void> {
 
   assertValidPassword(password);
+  const passwordHash = await bcrypt.hash(password, 12);
   await db('user_passwords').insert({
     user_id: user.id,
-    password: await bcrypt.hash(password, 12)
+    password: passwordHash,
   })
     .onConflict('user_id')
-    .merge();
+    .merge({
+      password: passwordHash,
+    });
 
 }
 
@@ -68,18 +72,21 @@ function assertValidPassword(password: string) {
   if (password.length < 8) {
     throw new UnprocessableContent('Passwords must be at least 8 characters');
   }
+  if (password.length > 72) {
+    throw new UnprocessableContent('Passwords must be at most 72 characters');
+  }
 
 }
 
-type AuthenticationResult = {
-  success: boolean;
-  errorMessage?: string;
-}
 
 /**
  * Validate the user password and handle login attempts.
+ *
+ * Throws one of the following errors:
+ *   * TooManyLoginAttemptsError
+ *   * IncorrectPassword
  */
-export async function validateUserCredentials(user: User, password: string, log: UserEventLogger): Promise<AuthenticationResult> {
+export async function validateUserCredentials(user: User, password: string, log: UserEventLogger): Promise<boolean> {
 
   const admin = getSetting('smtp.emailFrom') || 'an administrator';
 
@@ -88,10 +95,7 @@ export async function validateUserCredentials(user: User, password: string, log:
   if (await loginActivityService.isAccountLocked(user)) {
     await loginActivityService.incrementFailedLoginAttempts(user);
     await log('login-failed-account-locked');
-    return {
-      success: false,
-      errorMessage: TOO_MANY_FAILED_ATTEMPTS,
-    };
+    throw new TooManyLoginAttemptsError(TOO_MANY_FAILED_ATTEMPTS);
   }
 
   if (!await validatePassword(user, password)) {
@@ -99,24 +103,17 @@ export async function validateUserCredentials(user: User, password: string, log:
 
     if (loginActivityService.reachedMaxAttempts(incrementedAttempts)) {
       await log('account-locked');
-      return {
-        success: false,
-        errorMessage: TOO_MANY_FAILED_ATTEMPTS,
-      };
+      throw new TooManyLoginAttemptsError(TOO_MANY_FAILED_ATTEMPTS);
     }
 
     await log('password-check-failed');
-    return {
-      success: false,
-      errorMessage: 'Incorrect username or password',
-    };
+    throw new IncorrectPassword();
+
   }
 
   await log('password-check-success');
   await loginActivityService.resetFailedLoginAttempts(user);
 
-  return {
-    success: true,
-  };
+  return true;
 }
 

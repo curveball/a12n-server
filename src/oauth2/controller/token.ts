@@ -4,15 +4,16 @@ import { NotFound } from '@curveball/http-errors';
 import {
   getAppClientFromBasicAuth,
   getAppClientFromBody,
-} from '../../app-client/service.js';
-import { getLoggerFromContext } from '../../log/service.js';
-import * as principalIdentityService from '../../principal-identity/service.js';
-import { PrincipalService } from '../../principal/service.js';
-import { AppClient, User } from '../../types.js';
-import * as userAppPermissions from '../../user-app-permissions/service.js';
-import * as userService from '../../user/service.js';
-import { InvalidGrant, InvalidRequest, UnsupportedGrantType } from '../errors.js';
-import * as oauth2Service from '../service.js';
+} from '../../app-client/service.ts';
+import { getLoggerFromContext } from '../../log/service.ts';
+import * as principalIdentityService from '../../principal-identity/service.ts';
+import { PrincipalService } from '../../principal/service.ts';
+import { AppClient, User } from '../../types.ts';
+import * as userAppPermissions from '../../user-app-permissions/service.ts';
+import * as userService from '../../user/service.ts';
+import { InvalidGrant, InvalidRequest, UnsupportedGrantType } from '../errors.ts';
+import * as oauth2Service from '../service.ts';
+import { IncorrectPassword, TooManyLoginAttemptsError } from '../../user/error.ts';
 
 class TokenController extends Controller {
 
@@ -135,9 +136,14 @@ class TokenController extends Controller {
       throw new InvalidGrant('User Inactive');
     }
 
-    const { success, errorMessage } = await userService.validateUserCredentials(user, ctx.request.body.password, log);
-    if (!success && errorMessage) {
-      throw new InvalidGrant(errorMessage);
+    try {
+      await userService.validateUserCredentials(user, ctx.request.body.password, log);
+    } catch (err) {
+      if (err instanceof IncorrectPassword || err instanceof TooManyLoginAttemptsError) {
+        throw new InvalidGrant(err.message);
+      } else {
+        throw err;
+      }
     }
 
     await log('login-success');

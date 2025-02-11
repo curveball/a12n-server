@@ -3,9 +3,9 @@ import { Context } from '@curveball/core';
 import { authenticator } from 'otplib';
 import { Forbidden } from '@curveball/http-errors';
 
-import { generateSecret, generateTotpQrcode, save } from '../service.js';
-import { registrationForm } from '../formats/html.js';
-import * as services from '../../../services.js';
+import { generateSecret, generateTotpQrcode, save } from '../service.ts';
+import { registrationForm } from '../formats/html.ts';
+import * as services from '../../../services.ts';
 
 /**
  * This controller is responsible for adding TOTP to an existing user.

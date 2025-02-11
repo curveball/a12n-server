@@ -1,11 +1,11 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { BadRequest } from '@curveball/http-errors';
-import * as privilegeService from '../../privilege/service.js';
-import { PrivilegeMap } from '../../privilege/types.js';
-import * as hal from '../formats/hal.js';
-import { PrincipalService } from '../../principal/service.js';
-import { PrincipalPatchPrivilege } from '../../api-types.js';
+import * as privilegeService from '../../privilege/service.ts';
+import { PrivilegeMap } from '../../privilege/types.ts';
+import * as hal from '../formats/hal.ts';
+import { PrincipalService } from '../../principal/service.ts';
+import { PrincipalPatchPrivilege } from '../../api-types.ts';
 
 type PolicyForm = {
   policyBody: string;

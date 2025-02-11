@@ -1,8 +1,8 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { Forbidden } from '@curveball/http-errors';
-import * as hal from '../formats/hal.js';
-import * as services from '../../services.js';
+import * as hal from '../formats/hal.ts';
+import * as services from '../../services.ts';
 
 class PrincipalIdentityCollection extends Controller {
 

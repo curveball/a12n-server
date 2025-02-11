@@ -1,8 +1,8 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import * as hal from '../formats/hal.js';
-import { PrincipalService } from '../../principal/service.js';
-import { PrincipalNew } from '../../api-types.js';
+import * as hal from '../formats/hal.ts';
+import { PrincipalService } from '../../principal/service.ts';
+import { PrincipalNew } from '../../api-types.ts';
 
 class GroupCollectionController extends Controller {
 

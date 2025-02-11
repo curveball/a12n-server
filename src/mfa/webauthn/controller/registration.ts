@@ -2,9 +2,9 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { generateRegistrationOptions, verifyRegistrationResponse } from '@simplewebauthn/server';
 
-import * as webAuthnService from '../service.js';
-import { getSetting } from '../../../server-settings.js';
-import { User } from '../../../types.js';
+import * as webAuthnService from '../service.ts';
+import { getSetting } from '../../../server-settings.ts';
+import { User } from '../../../types.ts';
 import { isoBase64URL, isoUint8Array } from '@simplewebauthn/server/helpers';
 
 

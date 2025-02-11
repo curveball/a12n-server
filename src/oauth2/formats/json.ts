@@ -1,4 +1,4 @@
-import { OAuth2Token } from '../types.js';
+import { OAuth2Token } from '../types.ts';
 
 export function tokenResponse(token: OAuth2Token) {
   return {

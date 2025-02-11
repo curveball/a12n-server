@@ -8,7 +8,7 @@ Contents:
     - [What's next](#whats-next)
   - [Deploying in production](#deploying-in-production)
   - [Running from source locally](#running-from-source-locally)
-  - [Run Docker for development](#run-docker-for-development)
+  - [Running with docker-compose](#running-with-docker-compose)
     - [Setup](#setup)
     - [Commands](#commands)
 
@@ -117,21 +117,16 @@ Running with docker-compose
 The `Dockerfile.dev` and `docker-compose.yml` file at the root of the project work together to start the
 development server with a MySQL database.
 
-Note: so far this has been built with a bias for ARM64/Apple Silicon machines. 
-
 Prerequisites:
 
 - [Docker Desktop](https://docs.docker.com/desktop/) or CLI
 
 ### Setup
-1. Copy the `.env.defaults` file to `.env` and edit the variables to your liking. 
 1. Ensure the variables match the values in the `docker-compose.yml` file.
 1. Create a RSA JWT private key at the root of the project with `openssl genrsa -out ./jwt_secret.key 4096`
 It will be read by the server from as the `JWT_PRIVATE_KEY` environment variable.
 
 ### Commands
-
-`docker login` to login into the Github container registry. See ["Authenticating to the Container Registry"](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry#authenticating-to-the-container-registry)
 
 First time setup:
 `docker compose up --build` will build the Docker image before starting the container

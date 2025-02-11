@@ -89,7 +89,7 @@ export async function validateUserCredentials(user: User, password: string, log:
   if (await loginActivityService.isAccountLocked(user)) {
     await loginActivityService.incrementFailedLoginAttempts(user);
     await log('login-failed-account-locked');
-    throw new TooManyLoginAttemptsError(TOO_MANY_FAILED_ATTEMPTS)
+    throw new TooManyLoginAttemptsError(TOO_MANY_FAILED_ATTEMPTS);
   }
 
   if (!await validatePassword(user, password)) {
@@ -97,7 +97,7 @@ export async function validateUserCredentials(user: User, password: string, log:
 
     if (loginActivityService.reachedMaxAttempts(incrementedAttempts)) {
       await log('account-locked');
-      throw new TooManyLoginAttemptsError(TOO_MANY_FAILED_ATTEMPTS)
+      throw new TooManyLoginAttemptsError(TOO_MANY_FAILED_ATTEMPTS);
     }
 
     await log('password-check-failed');

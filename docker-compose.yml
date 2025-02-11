@@ -4,13 +4,8 @@ services:
   db:
       image: mysql:8.0
       restart: always
-      ports:
-        - "3306:3306"
       environment:
-        - DB_HOST=db
-        - DB_PASSWORD='password'
-        - DB_USER=a12nserver
-        - DB_DATABASE=a12nserver
+        - MYSQL_ROOT_PASSWORD='password'
   a12n-server:
     build: 
       context: .
@@ -20,10 +15,14 @@ services:
     ports:
       - "8531:8531"
     environment:
-      - NODE_ENV=development
-      - PORT=8531
-      - DATABASE_URL=mysql://a12nserver:password@db:3306/a12nserver
-      - JWT_SECRET=secret
-      - JWT_PRIVATE_KEY=jwt_secret.key
+        - NODE_ENV=development
+        - PORT=8531
+        - DATABASE_URL=mysql://a12nserver:password@db:3306/a12nserver
+        - JWT_SECRET=secret
+        - JWT_PRIVATE_KEY=jwt_secret.key
+        - DB_HOST=db
+        - DB_PASSWORD='password'
+        - DB_USER=root
+        - DB_DATABASE=a12nserver
     depends_on:
       - db

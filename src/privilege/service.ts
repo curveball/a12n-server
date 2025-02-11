@@ -2,7 +2,7 @@ import { Context } from '@curveball/core';
 import db, { query } from '../database.ts';
 import { Principal } from '../types.ts';
 import { Privilege, PrivilegeMap, PrivilegeEntry, InternalPrivilege } from './types.ts';
-import { UserPrivilegesRecord } from 'knex/types/tables.ts';
+import type { UserPrivilegesRecord } from 'knex/types/tables.ts';
 import { PrincipalService } from '../principal/service.ts';
 import { Forbidden } from '@curveball/http-errors';
 

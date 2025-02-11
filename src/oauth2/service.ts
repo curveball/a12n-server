@@ -8,7 +8,7 @@ import { InvalidGrant, InvalidRequest, UnauthorizedClient } from './errors.ts';
 import { CodeChallengeMethod, OAuth2Code, OAuth2Token } from './types.ts';
 import { generateSecretToken } from '../crypto.ts';
 import { generateJWTAccessToken, generateJWTIDToken } from './jwt.ts';
-import { Oauth2TokensRecord, Oauth2CodesRecord } from 'knex/types/tables.ts';
+import type { Oauth2TokensRecord, Oauth2CodesRecord } from 'knex/types/tables.ts';
 import { App, User, GrantType, AppClient } from '../types.ts';
 import * as userAppPermissionsService from '../user-app-permissions/service.ts';
 import * as principalIdentityService from '../principal-identity/service.ts';

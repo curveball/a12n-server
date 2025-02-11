@@ -2,30 +2,35 @@ name: a12n-server-dev
 
 services:
   db:
-      image: mysql:8.0
+      image: postgres:16
       restart: always
+      ports:
+        - "5432:5432"
       environment:
-        - MYSQL_ROOT_PASSWORD='password'
+        - DB_HOST=db
+        - DB_DRIVER=pg
+        - DB_PASSWORD='password'
+        - DB_USER=root
+        - DB_DATABASE=a12nserver
   a12n-server:
     build: 
       context: .
       dockerfile: Dockerfile
-    labels:
-      - org.opencontainers.image.source=https://github.com/curveball/a12n-server
     ports:
       - "8531:8531"
     environment:
         - NODE_ENV=development
         - PORT=8531
-        - DATABASE_URL=mysql://a12nserver:password@db:3306/a12nserver
+        - DATABASE_URL=postgresql://a12nserver:password@db:5432/a12nserver
         - JWT_SECRET=secret
         - JWT_PRIVATE_KEY=jwt_secret.key
-        - DB_HOST=db
-        - DB_PASSWORD='password'
-        - DB_USER=root
-        - DB_DATABASE=a12nserver
     depends_on:
       - db
+
 secrets:
   JWT_SECRET:
     file: ./jwt_secret.key
+
+volumes:
+  db:
+   

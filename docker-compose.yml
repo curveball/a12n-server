@@ -2,7 +2,7 @@ name: a12n-server-dev
 
 services:
   db:
-      image: postgres:16
+      image: postgres
       restart: always
       ports:
         - "5432:5432"
@@ -12,6 +12,7 @@ services:
         - DB_PASSWORD='password'
         - DB_USER=root
         - DB_DATABASE=a12nserver
+        - POSTGRES_PASSWORD=password
   a12n-server:
     build: 
       context: .

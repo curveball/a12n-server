@@ -1,9 +1,9 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { getLoggerFromContext } from '../log/service.js';
-import * as UserService from '../user/service.js';
-import { User } from '../types.js';
-import { changePasswordForm } from './formats/html.js';
+import { getLoggerFromContext } from '../log/service.ts';
+import * as UserService from '../user/service.ts';
+import { User } from '../types.ts';
+import { changePasswordForm } from './formats/html.ts';
 
 class ChangePasswordController extends Controller {
 

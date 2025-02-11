@@ -1,6 +1,6 @@
 import { HalFormsTemplate, HalResource } from 'hal-types';
-import { User } from '../../types.js';
-import { UserAuthFactor } from '../types.js';
+import { User } from '../../types.ts';
+import { UserAuthFactor } from '../types.ts';
 
 export function collection(principal: User, authFactors: UserAuthFactor[]): HalResource  {
 

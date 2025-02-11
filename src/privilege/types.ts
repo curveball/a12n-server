@@ -1,4 +1,4 @@
-import { Principal } from '../types.js';
+import { Principal } from '../types.ts';
 
 export type PrivilegeMap = {
   [resource: string]: string[];

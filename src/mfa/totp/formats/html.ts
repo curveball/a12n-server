@@ -1,4 +1,4 @@
-import { render } from '../../../templates.js';
+import { render } from '../../../templates.ts';
 
 
 type RegisterFormParams = {

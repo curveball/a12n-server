@@ -1,4 +1,4 @@
-import { getSettings } from './database.js';
+import { getSettings } from './database.ts';
 import './env.js';
 
 const settings = getSettings();

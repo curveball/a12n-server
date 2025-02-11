@@ -2,16 +2,16 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { NotFound, Forbidden } from '@curveball/http-errors';
 import * as querystring from 'querystring';
-import { getLoggerFromContext } from '../../log/service.js';
-import { MFALoginSession } from '../../mfa/types.js';
-import * as webAuthnService from '../../mfa/webauthn/service.js';
-import { hasUsers, PrincipalService } from '../../principal/service.js';
-import { getSetting } from '../../server-settings.js';
-import * as services from '../../services.js';
-import { PrincipalIdentity, User } from '../../types.js';
-import { loginForm } from '../formats/html.js';
-import { isValidRedirect, setLoginSession } from '../utilities.js';
-import { IncorrectPassword, TooManyLoginAttemptsError } from '../../user/error.js';
+import { getLoggerFromContext } from '../../log/service.ts';
+import { MFALoginSession } from '../../mfa/types.ts';
+import * as webAuthnService from '../../mfa/webauthn/service.ts';
+import { hasUsers, PrincipalService } from '../../principal/service.ts';
+import { getSetting } from '../../server-settings.ts';
+import * as services from '../../services.ts';
+import { PrincipalIdentity, User } from '../../types.ts';
+import { loginForm } from '../formats/html.ts';
+import { isValidRedirect, setLoginSession } from '../utilities.ts';
+import { IncorrectPassword, TooManyLoginAttemptsError } from '../../user/error.ts';
 
 /**
  * The Login controller renders the basic login form

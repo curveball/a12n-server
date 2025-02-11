@@ -1,4 +1,4 @@
-import { render } from '../../templates.js';
+import { render } from '../../templates.ts';
 
 export function registrationForm(msg: string, error: string, mfaRegistrationEnabled: boolean, firstRunMode: boolean, continueUrl?: string): string {
 

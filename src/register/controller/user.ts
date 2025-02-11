@@ -1,10 +1,10 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { Forbidden, NotFound } from '@curveball/http-errors';
-import { getSetting } from '../../server-settings.js';
-import { registrationForm } from '../formats/html.js';
-import { User } from '../../types.js';
-import * as services from '../../services.js';
+import { getSetting } from '../../server-settings.ts';
+import { registrationForm } from '../formats/html.ts';
+import { User } from '../../types.ts';
+import * as services from '../../services.ts';
 
 class UserRegistrationController extends Controller {
 

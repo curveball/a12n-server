@@ -3,12 +3,12 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { Forbidden, UnprocessableContent } from '@curveball/http-errors';
 
-import * as hal from '../formats/hal.js';
-import { PrincipalService } from '../../principal/service.js';
-import { GrantType, AppClient } from '../../types.js';
-import { findByApp, create } from '../service.js';
-import { generatePublicId, generateSecretToken } from '../../crypto.js';
-import { AppClientNewFormBody } from '../../api-types.js';
+import * as hal from '../formats/hal.ts';
+import { PrincipalService } from '../../principal/service.ts';
+import { GrantType, AppClient } from '../../types.ts';
+import { findByApp, create } from '../service.ts';
+import { generatePublicId, generateSecretToken } from '../../crypto.ts';
+import { AppClientNewFormBody } from '../../api-types.ts';
 
 class ClientCollectionController extends Controller {
 

@@ -1,6 +1,6 @@
-import { UserAppPermission } from '../types.js';
+import { UserAppPermission } from '../types.ts';
 import { HalResource } from 'hal-types';
-import { User } from '../../types.js';
+import { User } from '../../types.ts';
 
 
 export function collection(user: User, userAppPermissions: UserAppPermission[]): HalResource {

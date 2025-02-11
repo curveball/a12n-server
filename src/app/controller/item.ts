@@ -1,9 +1,9 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import * as privilegeService from '../../privilege/service.js';
-import * as hal from '../formats/hal.js';
-import { PrincipalService } from '../../principal/service.js';
-import { PrincipalEdit } from '../../api-types.js';
+import * as privilegeService from '../../privilege/service.ts';
+import * as hal from '../formats/hal.ts';
+import { PrincipalService } from '../../principal/service.ts';
+import { PrincipalEdit } from '../../api-types.ts';
 
 class AppController extends Controller {
 

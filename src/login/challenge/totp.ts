@@ -1,9 +1,9 @@
-import { AbstractLoginChallenge } from './abstract.js';
-import { AuthorizationChallengeRequest } from '../types.js';
-import { A12nLoginChallengeError } from '../error.js';
-import * as services from '../../services.js';
-import { InvalidGrant } from '../../oauth2/errors.js';
-import { getSetting } from '../../server-settings.js';
+import { AbstractLoginChallenge } from './abstract.ts';
+import { AuthorizationChallengeRequest } from '../types.ts';
+import { A12nLoginChallengeError } from '../error.ts';
+import * as services from '../../services.ts';
+import { InvalidGrant } from '../../oauth2/errors.ts';
+import { getSetting } from '../../server-settings.ts';
 
 type TotpParameters = {
   totp_code: string;

@@ -1,10 +1,10 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import * as hal from '../formats/hal.js';
+import * as hal from '../formats/hal.ts';
 import { Forbidden, NotFound } from '@curveball/http-errors';
-import { findByClientId } from '../service.js';
-import { PrincipalService } from '../../principal/service.js';
-import * as oauth2Service from '../../oauth2/service.js';
+import { findByClientId } from '../service.ts';
+import { PrincipalService } from '../../principal/service.ts';
+import * as oauth2Service from '../../oauth2/service.ts';
 
 class ClientController extends Controller {
 

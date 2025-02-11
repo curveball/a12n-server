@@ -1,9 +1,9 @@
 import { Context } from '@curveball/core';
-import db from '../database.js';
-import { Principal } from '../types.js';
-import { EventType, LogEntry, reverseEventTypeMap, UserEventLogger, eventTypeMap } from './types.js';
+import db from '../database.ts';
+import { Principal } from '../types.ts';
+import { EventType, LogEntry, reverseEventTypeMap, UserEventLogger, eventTypeMap } from './types.ts';
 import geoip from 'geoip-lite';
-import { UserLogRecord } from 'knex/types/tables.js';
+import { UserLogRecord } from 'knex/types/tables.ts';
 
 export function getLoggerFromContext(ctx: Context, principal?: Principal|number): UserEventLogger {
 

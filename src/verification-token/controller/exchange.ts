@@ -3,14 +3,14 @@ import { Context } from '@curveball/core';
 
 import { Forbidden } from '@curveball/http-errors';
 
-import { tokenResponse } from '../../oauth2/formats/json.js';
+import { tokenResponse } from '../../oauth2/formats/json.ts';
 
-import * as tokenService from '../service.js';
-import * as oauth2Service from '../../oauth2/service.js';
-import * as oauth2ClientService from '../../app-client/service.js';
-import { PrincipalService } from '../../principal/service.js';
-import * as principalIdentityService from '../../principal-identity/service.js';
-import { VerificationTokenExchangeRequest } from '../../api-types.js';
+import * as tokenService from '../service.ts';
+import * as oauth2Service from '../../oauth2/service.ts';
+import * as oauth2ClientService from '../../app-client/service.ts';
+import { PrincipalService } from '../../principal/service.ts';
+import * as principalIdentityService from '../../principal-identity/service.ts';
+import { VerificationTokenExchangeRequest } from '../../api-types.ts';
 
 class OneTimeTokenExchangeController extends Controller {
 

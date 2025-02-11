@@ -1,8 +1,8 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { PrincipalService } from '../../principal/service.js';
-import { createGroupForm } from '../formats/html.js';
-import { GroupNewFormBody } from '../../api-types.js';
+import { PrincipalService } from '../../principal/service.ts';
+import { createGroupForm } from '../formats/html.ts';
+import { GroupNewFormBody } from '../../api-types.ts';
 
 class CreateGroupController extends Controller {
 

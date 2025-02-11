@@ -1,9 +1,9 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { authenticator } from 'otplib';
-import { generateSecret, generateTotpQrcode, save } from '../service.js';
-import { registrationForm } from '../formats/html.js';
-import { User } from '../../../types.js';
+import { generateSecret, generateTotpQrcode, save } from '../service.ts';
+import { registrationForm } from '../formats/html.ts';
+import { User } from '../../../types.ts';
 
 
 class TOTPRegisterController extends Controller {

@@ -1,7 +1,7 @@
-import { User } from '../types.js';
-import { UserAuthFactor } from './types.js';
+import { User } from '../types.ts';
+import { UserAuthFactor } from './types.ts';
 
-import * as services from '../services.js';
+import * as services from '../services.ts';
 
 export async function findForUser(principal: User): Promise<UserAuthFactor[]> {
 

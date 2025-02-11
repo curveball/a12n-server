@@ -1,11 +1,11 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { NotFound } from '@curveball/http-errors';
-import { createUserForm } from '../formats/html.js';
-import * as services from '../../services.js';
-import { UserNewFormBody } from '../../api-types.js';
-import { generatePassword } from '../../crypto.js';
-import { newUserResult } from '../formats/hal.js';
+import { createUserForm } from '../formats/html.ts';
+import * as services from '../../services.ts';
+import { UserNewFormBody } from '../../api-types.ts';
+import { generatePassword } from '../../crypto.ts';
+import { newUserResult } from '../formats/hal.ts';
 
 class CreateUserController extends Controller {
 

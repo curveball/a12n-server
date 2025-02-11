@@ -1,18 +1,18 @@
 import { NotFound } from '@curveball/http-errors';
 import * as crypto from 'crypto';
 
-import db, { query } from '../database.js';
-import { getSetting } from '../server-settings.js';
-import { PrincipalService } from '../principal/service.js';
-import { InvalidGrant, InvalidRequest, UnauthorizedClient } from './errors.js';
-import { CodeChallengeMethod, OAuth2Code, OAuth2Token } from './types.js';
-import { generateSecretToken } from '../crypto.js';
-import { generateJWTAccessToken, generateJWTIDToken } from './jwt.js';
-import { Oauth2TokensRecord, Oauth2CodesRecord } from 'knex/types/tables.js';
-import { App, User, GrantType, AppClient } from '../types.js';
-import * as userAppPermissionsService from '../user-app-permissions/service.js';
-import * as principalIdentityService from '../principal-identity/service.js';
-import { getSessionStore } from '../kv/service.js';
+import db, { query } from '../database.ts';
+import { getSetting } from '../server-settings.ts';
+import { PrincipalService } from '../principal/service.ts';
+import { InvalidGrant, InvalidRequest, UnauthorizedClient } from './errors.ts';
+import { CodeChallengeMethod, OAuth2Code, OAuth2Token } from './types.ts';
+import { generateSecretToken } from '../crypto.ts';
+import { generateJWTAccessToken, generateJWTIDToken } from './jwt.ts';
+import { Oauth2TokensRecord, Oauth2CodesRecord } from 'knex/types/tables.ts';
+import { App, User, GrantType, AppClient } from '../types.ts';
+import * as userAppPermissionsService from '../user-app-permissions/service.ts';
+import * as principalIdentityService from '../principal-identity/service.ts';
+import { getSessionStore } from '../kv/service.ts';
 
 const oauth2TokenFields: (keyof Oauth2TokensRecord)[] = [
   'id',

@@ -1,14 +1,14 @@
 import * as bcrypt from 'bcrypt';
 import { Context } from '@curveball/core';
 import { NotFound, Unauthorized, Conflict } from '@curveball/http-errors';
-import { AppClientsRecord } from 'knex/types/tables.js';
+import { AppClientsRecord } from 'knex/types/tables.ts';
 import { wrapError, UniqueViolationError } from 'db-errors';
 
-import { PrincipalService } from '../principal/service.js';
-import db, { insertAndGetId } from '../database.js';
-import { InvalidRequest } from '../oauth2/errors.js';
-import parseBasicAuth from './parse-basic-auth.js';
-import { App, GrantType, AppClient } from '../types.js';
+import { PrincipalService } from '../principal/service.ts';
+import db, { insertAndGetId } from '../database.ts';
+import { InvalidRequest } from '../oauth2/errors.ts';
+import parseBasicAuth from './parse-basic-auth.ts';
+import { App, GrantType, AppClient } from '../types.ts';
 
 export async function findByClientId(clientId: string): Promise<AppClient> {
 

@@ -1,8 +1,8 @@
-import { AbstractLoginChallenge } from './abstract.js';
-import { AuthorizationChallengeRequest } from '../types.js';
-import { A12nLoginChallengeError } from '../error.js';
-import * as services from '../../services.js';
-import { PrincipalIdentity } from '../../types.js';
+import { AbstractLoginChallenge } from './abstract.ts';
+import { AuthorizationChallengeRequest } from '../types.ts';
+import { A12nLoginChallengeError } from '../error.ts';
+import * as services from '../../services.ts';
+import { PrincipalIdentity } from '../../types.ts';
 import { BadRequest } from '@curveball/http-errors';
 
 type EmailOtpParameters = {

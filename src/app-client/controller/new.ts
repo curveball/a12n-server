@@ -1,8 +1,8 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import * as siren from '../formats/siren.js';
+import * as siren from '../formats/siren.ts';
 import { Forbidden } from '@curveball/http-errors';
-import { PrincipalService } from '../../principal/service.js';
+import { PrincipalService } from '../../principal/service.ts';
 
 class NewClientController extends Controller {
 

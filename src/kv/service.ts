@@ -1,8 +1,8 @@
 import { SessionStore } from '@curveball/session';
-import { KvStore, SetOptions } from './abstract-store.js';
-import { MemoryKvStore } from './memory-store.js';
-import { RedisKvStore } from './redis-store.js';
-import { generateSecretToken } from '../crypto.js';
+import { KvStore, SetOptions } from './abstract-store.ts';
+import { MemoryKvStore } from './memory-store.ts';
+import { RedisKvStore } from './redis-store.ts';
+import { generateSecretToken } from '../crypto.ts';
 
 let kvStore: KvStore;
 

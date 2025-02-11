@@ -1,7 +1,7 @@
-import { AuthorizationChallengeRequest } from '../types.js';
-import { PrincipalIdentity, User } from '../../types.js';
-import { AuthFactorType } from '../../user-auth-factor/types.js';
-import { UserEventLogger } from '../../log/types.js';
+import { AuthorizationChallengeRequest } from '../types.ts';
+import { PrincipalIdentity, User } from '../../types.ts';
+import { AuthFactorType } from '../../user-auth-factor/types.ts';
+import { UserEventLogger } from '../../log/types.ts';
 
 
 /**

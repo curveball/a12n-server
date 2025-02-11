@@ -2,10 +2,10 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { Forbidden } from '@curveball/http-errors';
 
-import { getLoggerFromContext } from '../../log/service.js';
-import { PrincipalService } from '../../principal/service.js';
-import * as oauth2Service from '../service.js';
-import { tokenResponse } from '../formats/json.js';
+import { getLoggerFromContext } from '../../log/service.ts';
+import { PrincipalService } from '../../principal/service.ts';
+import * as oauth2Service from '../service.ts';
+import { tokenResponse } from '../formats/json.ts';
 
 /**
  * The /user/x/access-token endpoint is used to generate one-off access

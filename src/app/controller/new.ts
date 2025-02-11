@@ -1,9 +1,9 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { createAppForm } from '../formats/html.js';
-import * as services from '../../services.js';
+import { createAppForm } from '../formats/html.ts';
+import * as services from '../../services.ts';
 import { Conflict, NotFound, UnprocessableContent } from '@curveball/http-errors';
-import { AppNewFormBody } from '../../api-types.js';
+import { AppNewFormBody } from '../../api-types.ts';
 
 class CreateAppController extends Controller {
 

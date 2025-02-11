@@ -10,6 +10,9 @@ Changelog
 * Docker image could not be built on arm64 due to a transative dependency using
   an old version of libsodium.
 * Reduced docker image from 366MB to 216MB with no loss of functionality.
+* This small refactoring allows us to emit `too_many_failed_login_attempts`
+  from the `authorization_challenge` system. Before, it emitted
+  `invalid_username_or_password` which is confusing.
 
 
 0.29.0 (2025-02-07)

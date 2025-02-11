@@ -2,6 +2,7 @@ import { AbstractLoginChallenge } from './abstract.js';
 import { AuthorizationChallengeRequest } from '../types.js';
 import { A12nLoginChallengeError } from '../error.js';
 import * as services from '../../services.js';
+import { IncorrectPassword, TooManyLoginAttemptsError } from '../../user/error.js';
 
 type PasswordParameters = {
   password: string;
@@ -37,12 +38,22 @@ export class LoginChallengePassword extends AbstractLoginChallenge<PasswordParam
    */
   async checkResponse(parameters: PasswordParameters): Promise<boolean> {
 
-    const { success, errorMessage } = await services.user.validateUserCredentials(this.principal, parameters.password, this.log);
-    if (!success && errorMessage) {
-      throw new A12nLoginChallengeError(
-        errorMessage,
-        'username_or_password_invalid',
-      );
+    try {
+      await services.user.validateUserCredentials(this.principal, parameters.password, this.log);
+    } catch (err) {
+      if (err instanceof IncorrectPassword) {
+        throw new A12nLoginChallengeError(
+          err.message,
+          'username_or_password_invalid',
+        );
+      } else if (err instanceof TooManyLoginAttemptsError) {
+        throw new A12nLoginChallengeError(
+          err.message,
+          'too_many_failed_login_attempts',
+        );
+      } else {
+        throw err;
+      }
     }
 
     return true;

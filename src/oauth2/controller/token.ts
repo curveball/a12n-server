@@ -13,6 +13,7 @@ import * as userAppPermissions from '../../user-app-permissions/service.js';
 import * as userService from '../../user/service.js';
 import { InvalidGrant, InvalidRequest, UnsupportedGrantType } from '../errors.js';
 import * as oauth2Service from '../service.js';
+import { IncorrectPassword, TooManyLoginAttemptsError } from '../../user/error.js';
 
 class TokenController extends Controller {
 
@@ -135,9 +136,14 @@ class TokenController extends Controller {
       throw new InvalidGrant('User Inactive');
     }
 
-    const { success, errorMessage } = await userService.validateUserCredentials(user, ctx.request.body.password, log);
-    if (!success && errorMessage) {
-      throw new InvalidGrant(errorMessage);
+    try {
+      await userService.validateUserCredentials(user, ctx.request.body.password, log);
+    } catch (err) {
+      if (err instanceof IncorrectPassword || err instanceof TooManyLoginAttemptsError) {
+        throw new InvalidGrant(err.message);
+      } else {
+        throw err;
+      }
     }
 
     await log('login-success');

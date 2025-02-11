@@ -11,6 +11,7 @@ import * as services from '../../services.js';
 import { PrincipalIdentity, User } from '../../types.js';
 import { loginForm } from '../formats/html.js';
 import { isValidRedirect, setLoginSession } from '../utilities.js';
+import { IncorrectPassword, TooManyLoginAttemptsError } from '../../user/error.js';
 
 /**
  * The Login controller renders the basic login form
@@ -80,9 +81,14 @@ class LoginController extends Controller {
       return;
     }
 
-    const { success, errorMessage } = await services.user.validateUserCredentials(user, ctx.request.body.password, log);
-    if (!success && errorMessage) {
-      return this.redirectToLogin(ctx, '', errorMessage);
+    try {
+      await services.user.validateUserCredentials(user, ctx.request.body.password, log);
+    } catch (err) {
+      if (err instanceof IncorrectPassword || err instanceof TooManyLoginAttemptsError) {
+        return this.redirectToLogin(ctx, '', err.message);
+      } else {
+        throw err;
+      }
     }
 
     setLoginSession(ctx, user);

@@ -1,6 +1,6 @@
 import * as nodemailer from 'nodemailer';
-import { requireSetting } from '../server-settings.js';
-import { render } from '../templates.js';
+import { requireSetting } from '../server-settings.ts';
+import { render } from '../templates.ts';
 
 export function getEmailTransport() {
 

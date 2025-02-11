@@ -1,10 +1,10 @@
-import { User, App, AppClient, PrincipalIdentity } from '../types.js';
-import { generateSecretToken } from '../crypto.js';
-import { getSetting } from '../server-settings.js';
+import { User, App, AppClient, PrincipalIdentity } from '../types.ts';
+import { generateSecretToken } from '../crypto.ts';
+import { getSetting } from '../server-settings.ts';
 import { createPrivateKey, KeyObject, createPublicKey } from 'crypto';
 import { SignJWT } from 'jose';
 import { getGlobalOrigin } from '@curveball/kernel';
-import { userInfo } from '../oidc/format/json.js';
+import { userInfo } from '../oidc/format/json.ts';
 
 type AccessTokenOptions = {
   principal: User|App;

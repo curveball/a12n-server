@@ -1,7 +1,7 @@
 import { NotFound } from '@curveball/http-errors';
-import { UserLoginActivityRecord } from 'knex/types/tables.js';
-import db from '../../database.js';
-import { User } from '../../types.js';
+import { UserLoginActivityRecord } from 'knex/types/tables.ts';
+import db from '../../database.ts';
+import { User } from '../../types.ts';
 
 const MAX_FAILED_ATTEMPTS = 5;
 

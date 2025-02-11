@@ -1,5 +1,5 @@
-import { getSetting } from '../../server-settings.js';
-import { App, User, ServerStats } from '../../types.js';
+import { getSetting } from '../../server-settings.ts';
+import { App, User, ServerStats } from '../../types.ts';
 
 function statsBlock(kind: string, count: number): string {
 

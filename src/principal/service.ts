@@ -1,4 +1,4 @@
-import { LazyPrivilegeBox } from '../privilege/service.js';
+import { LazyPrivilegeBox } from '../privilege/service.ts';
 import {
   App,
   BasePrincipal,
@@ -9,14 +9,14 @@ import {
   PrincipalStats,
   PrincipalType,
   User,
-} from '../types.js';
-import db, {insertAndGetId} from '../database.js';
-import { PrincipalsRecord } from 'knex/types/tables.js';
+} from '../types.ts';
+import db, {insertAndGetId} from '../database.ts';
+import { PrincipalsRecord } from 'knex/types/tables.ts';
 import {
   NotFound,
 } from '@curveball/http-errors';
-import { generatePublicId } from '../crypto.js';
-import * as PrincipalIdentityService from '../principal-identity/service.js';
+import { generatePublicId } from '../crypto.ts';
+import * as PrincipalIdentityService from '../principal-identity/service.ts';
 
 /**
  * This class provides a wrapper around the principal service APIs.

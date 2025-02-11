@@ -1,6 +1,6 @@
-import { Principal, PrincipalIdentity } from '../../types.js';
+import { Principal, PrincipalIdentity } from '../../types.ts';
 import { HalResource } from 'hal-types';
-import { PrincipalIdentity as HalPrincipalIdentity } from '../../api-types.js';
+import { PrincipalIdentity as HalPrincipalIdentity } from '../../api-types.ts';
 import { HttpError } from '@curveball/http-errors';
 
 export function collection(principal: Principal, identities: PrincipalIdentity[]): HalResource {

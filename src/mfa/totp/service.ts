@@ -1,13 +1,13 @@
 import { authenticator } from 'otplib';
 
-import { UserTotpRecord } from 'knex/types/tables.js';
+import { UserTotpRecord } from 'knex/types/tables.ts';
 import { Conflict } from '@curveball/http-errors';
 import * as QRCode from 'qrcode';
 
-import { getSetting } from '../../server-settings.js';
-import db from '../../database.js';
-import { NewTotpDevice, TotpDevice } from './types.js';
-import { User } from '../../types.js';
+import { getSetting } from '../../server-settings.ts';
+import db from '../../database.ts';
+import { NewTotpDevice, TotpDevice } from './types.ts';
+import { User } from '../../types.ts';
 
 const MAX_FAILURES = 10;
 

@@ -1,5 +1,5 @@
 import { resolve } from 'url';
-import { User, PrincipalIdentity } from '../../types.js';
+import { User, PrincipalIdentity } from '../../types.ts';
 import { getGlobalOrigin } from '@curveball/kernel';
 
 type UserInfo = {

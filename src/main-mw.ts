@@ -7,13 +7,13 @@ import session from '@curveball/session';
 import validator from '@curveball/validator';
 import { invokeMiddlewares, Middleware } from '@curveball/core';
 
-import login from './middleware/login.js';
-import csrf from './middleware/csrf.js';
-import routes from './routes.js';
-import { getSetting } from './server-settings.js';
+import login from './middleware/login.ts';
+import csrf from './middleware/csrf.ts';
+import routes from './routes.ts';
+import { getSetting } from './server-settings.ts';
 import { dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import * as services from './services.js';
+import * as services from './services.ts';
 
 /**
  * The 'main middleware'.

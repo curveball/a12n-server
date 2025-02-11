@@ -1,5 +1,5 @@
-import { OAuth2Error } from '../oauth2/errors.js';
-import { LoginSession } from './types.js';
+import { OAuth2Error } from '../oauth2/errors.ts';
+import { LoginSession } from './types.ts';
 
 type ChallengeErrorCode =
   // Account is not activated

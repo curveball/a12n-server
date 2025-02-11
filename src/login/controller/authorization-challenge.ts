@@ -1,10 +1,10 @@
 import { Controller } from '@curveball/controller';
 import { UnsupportedMediaType } from '@curveball/http-errors';
 import { Context } from '@curveball/kernel';
-import { AuthorizationChallengeRequest } from '../../api-types.js';
-import { getAppClientFromBasicAuth } from '../../app-client/service.js';
-import { UnauthorizedClient } from '../../oauth2/errors.js';
-import * as loginService from '../service.js';
+import { AuthorizationChallengeRequest } from '../../api-types.ts';
+import { getAppClientFromBasicAuth } from '../../app-client/service.ts';
+import { UnauthorizedClient } from '../../oauth2/errors.ts';
+import * as loginService from '../service.ts';
 
 /**
  * The authorization challenge controller is an implementation of OAuth 2.0

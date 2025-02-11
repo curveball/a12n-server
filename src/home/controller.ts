@@ -1,9 +1,9 @@
 import Controller, { accept, method } from '@curveball/controller';
 import { Context } from '@curveball/core';
-import hal from './formats/hal.js';
-import markdown from './formats/markdown.js';
-import { getServerStats } from './service.js';
-import { VERSION } from '../version.js';
+import hal from './formats/hal.ts';
+import markdown from './formats/markdown.ts';
+import { getServerStats } from './service.ts';
+import { VERSION } from '../version.ts';
 
 class HomeController extends Controller {
 

@@ -1,9 +1,9 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import * as hal from '../formats/hal.js';
+import * as hal from '../formats/hal.ts';
 import { resolve } from 'url';
-import { VerificationTokenGenerateRequest } from '../../api-types.js';
-import * as services from '../../services.js';
+import { VerificationTokenGenerateRequest } from '../../api-types.ts';
+import * as services from '../../services.ts';
 
 class OneTimeTokenController extends Controller {
 

@@ -1,12 +1,12 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import * as hal from '../formats/hal.js';
+import * as hal from '../formats/hal.ts';
 import { Forbidden, NotFound, UnprocessableContent } from '@curveball/http-errors';
-import { PrincipalService } from '../../principal/service.js';
-import { findByClientId, edit } from '../service.js';
-import * as oauth2Service from '../../oauth2/service.js';
-import { GrantType } from '../../types.js';
-import { AppClientEditFormBody } from '../../api-types.js';
+import { PrincipalService } from '../../principal/service.ts';
+import { findByClientId, edit } from '../service.ts';
+import * as oauth2Service from '../../oauth2/service.ts';
+import { GrantType } from '../../types.ts';
+import { AppClientEditFormBody } from '../../api-types.ts';
 
 class EditClientController extends Controller {
 

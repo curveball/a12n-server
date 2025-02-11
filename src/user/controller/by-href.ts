@@ -1,6 +1,6 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { PrincipalService } from '../../principal/service.js';
+import { PrincipalService } from '../../principal/service.ts';
 
 class UserByHrefController extends Controller {
 

@@ -1,9 +1,9 @@
 import { Middleware } from '@curveball/core';
 import { NotFound, Unauthorized } from '@curveball/http-errors';
-import * as oauth2Service from './../oauth2/service.js';
-import { App, User, Principal, AppClient } from '../types.js';
-import * as privilegeService from '../privilege/service.js';
-import * as services from '../services.js';
+import * as oauth2Service from './../oauth2/service.ts';
+import { App, User, Principal, AppClient } from '../types.ts';
+import * as privilegeService from '../privilege/service.ts';
+import * as services from '../services.ts';
 
 const whitelistPath = [
   '/login',

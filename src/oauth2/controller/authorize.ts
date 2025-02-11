@@ -3,16 +3,16 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { NotFound } from '@curveball/http-errors';
 
-import { InvalidClient, InvalidRequest, LoginRequired, UnsupportedGrantType } from '../errors.js';
-import * as oauth2Service from '../service.js';
-import { AppClient } from '../../types.js';
-import { getLoggerFromContext } from '../../log/service.js';
-import { findByClientId } from '../../app-client/service.js';
-import * as userAppPermissions from '../../user-app-permissions/service.js';
-import { generateJWTIDToken } from '../jwt.js';
-import * as services from '../../services.js';
-import { parseAuthorizationQuery } from '../util.js';
-import { AuthorizeParamsCode, AuthorizeParamsToken } from '../types.js';
+import { InvalidClient, InvalidRequest, LoginRequired, UnsupportedGrantType } from '../errors.ts';
+import * as oauth2Service from '../service.ts';
+import { AppClient } from '../../types.ts';
+import { getLoggerFromContext } from '../../log/service.ts';
+import { findByClientId } from '../../app-client/service.ts';
+import * as userAppPermissions from '../../user-app-permissions/service.ts';
+import { generateJWTIDToken } from '../jwt.ts';
+import * as services from '../../services.ts';
+import { parseAuthorizationQuery } from '../util.ts';
+import { AuthorizeParamsCode, AuthorizeParamsToken } from '../types.ts';
 
 /**
  * The Authorize controller is responsible for handing requests to the oauth2

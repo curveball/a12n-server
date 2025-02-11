@@ -1,4 +1,4 @@
-import { render } from '../../templates.js';
+import { render } from '../../templates.ts';
 type KeyValue = { [key: string]: string };
 
 export function loginForm(msg: string, error: string, hiddenFields: KeyValue, registrationEnabled: boolean, registrationUri: string, resetPasswordUri: string): string {

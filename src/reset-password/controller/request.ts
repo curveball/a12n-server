@@ -1,9 +1,9 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { NotFound, BadRequest } from '@curveball/http-errors';
-import { resetPasswordRequestForm } from '../formats/html.js';
-import * as services from '../../services.js';
-import { getLoggerFromContext } from '../../log/service.js';
+import { resetPasswordRequestForm } from '../formats/html.ts';
+import * as services from '../../services.ts';
+import { getLoggerFromContext } from '../../log/service.ts';
 
 /**
  * This controller is used for requesting change password when the user forgot the password.

@@ -2,20 +2,20 @@ import Controller, { accept, method } from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { Forbidden, NotFound, NotImplemented } from '@curveball/http-errors';
 
-import * as csv from '../formats/csv.js';
+import * as csv from '../formats/csv.ts';
 
-import { PrincipalService } from '../../principal/service.js';
-import * as oauth2Service from '../service.js';
-import * as oauth2ClientService from '../../app-client/service.js';
+import { PrincipalService } from '../../principal/service.ts';
+import * as oauth2Service from '../service.ts';
+import * as oauth2ClientService from '../../app-client/service.ts';
 
 import {
   App,
   AppClient,
   Principal,
   User,
-} from '../../types.js';
+} from '../../types.ts';
 
-import { OAuth2Token } from '../types.js';
+import { OAuth2Token } from '../types.ts';
 
 class ActiveSessions extends Controller {
 

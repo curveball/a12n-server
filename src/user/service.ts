@@ -1,11 +1,11 @@
 import { UnprocessableContent } from '@curveball/http-errors';
 import * as bcrypt from 'bcrypt';
-import db from '../database.js';
-import { UserEventLogger } from '../log/types.js';
-import * as loginActivityService from '../login/login-activity/service.js';
-import { getSetting } from '../server-settings.js';
-import { User } from '../types.js';
-import { IncorrectPassword, TooManyLoginAttemptsError } from './error.js';
+import db from '../database.ts';
+import { UserEventLogger } from '../log/types.ts';
+import * as loginActivityService from '../login/login-activity/service.ts';
+import { getSetting } from '../server-settings.ts';
+import { User } from '../types.ts';
+import { IncorrectPassword, TooManyLoginAttemptsError } from './error.ts';
 
 export async function createPassword(user: User, password: string): Promise<void> {
 

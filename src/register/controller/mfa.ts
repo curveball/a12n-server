@@ -1,10 +1,10 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 
-import { mfaRegistrationForm } from '../formats/html.js';
+import { mfaRegistrationForm } from '../formats/html.ts';
 
-import { getSetting } from '../../server-settings.js';
-import { User } from '../../types.js';
+import { getSetting } from '../../server-settings.ts';
+import { User } from '../../types.ts';
 
 
 class MFAController extends Controller {

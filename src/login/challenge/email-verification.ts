@@ -1,9 +1,9 @@
-import { AbstractLoginChallenge } from './abstract.js';
-import { AuthorizationChallengeRequest } from '../types.js';
-import { A12nLoginChallengeError } from '../error.js';
-import * as services from '../../services.js';
+import { AbstractLoginChallenge } from './abstract.ts';
+import { AuthorizationChallengeRequest } from '../types.ts';
+import { A12nLoginChallengeError } from '../error.ts';
+import * as services from '../../services.ts';
 import { BadRequest } from '@curveball/http-errors';
-import { markVerified } from '../../principal-identity/service.js';
+import { markVerified } from '../../principal-identity/service.ts';
 
 type EmailVerification = {
   email_verification_code: string;

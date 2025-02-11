@@ -1,8 +1,8 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { Forbidden } from '@curveball/http-errors';
-import { resetPasswordForm } from '../formats/redirect.js';
-import { validateToken } from '../../verification-token/service.js';
+import { resetPasswordForm } from '../formats/redirect.ts';
+import { validateToken } from '../../verification-token/service.ts';
 
 /**
  * This controller is used for validating token and rendering reset password form.

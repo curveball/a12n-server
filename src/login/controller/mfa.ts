@@ -1,12 +1,12 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import * as services from '../../services.js';
+import * as services from '../../services.ts';
 
 import * as querystring from 'querystring';
-import { isValidRedirect, setLoginSession } from '../utilities.js';
-import { MFALoginSession } from '../../mfa/types.js';
-import { mfaForm } from '../formats/html.js';
-import { getLoggerFromContext } from '../../log/service.js';
+import { isValidRedirect, setLoginSession } from '../utilities.ts';
+import { MFALoginSession } from '../../mfa/types.ts';
+import { mfaForm } from '../formats/html.ts';
+import { getLoggerFromContext } from '../../log/service.ts';
 
 /**
  * Multi-factor-auth controller

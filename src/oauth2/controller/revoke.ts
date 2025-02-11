@@ -1,12 +1,12 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { getLoggerFromContext } from '../../log/service.js';
-import { revokeByAccessRefreshToken } from '../service.js';
-import { AppClient } from '../../types.js';
+import { getLoggerFromContext } from '../../log/service.ts';
+import { revokeByAccessRefreshToken } from '../service.ts';
+import { AppClient } from '../../types.ts';
 import {
   getAppClientFromBasicAuth,
   getAppClientFromBody,
-} from '../../app-client/service.js';
+} from '../../app-client/service.ts';
 
 
 class RevokeController extends Controller {

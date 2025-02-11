@@ -1,7 +1,7 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import * as hal from '../formats/hal.js';
-import { PrincipalService } from '../../principal/service.js';
+import * as hal from '../formats/hal.ts';
+import { PrincipalService } from '../../principal/service.ts';
 
 class UserEditController extends Controller {
 

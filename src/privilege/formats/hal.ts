@@ -1,4 +1,4 @@
-import { Privilege, PrivilegeEntry } from '../types.js';
+import { Privilege, PrivilegeEntry } from '../types.ts';
 import { HalResource } from 'hal-types';
 
 export function collection(privileges: Privilege[]): HalResource {

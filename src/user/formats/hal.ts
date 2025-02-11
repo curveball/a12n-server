@@ -1,8 +1,8 @@
-import { PrivilegeMap } from '../../privilege/types.js';
-import { Principal, Group, User, PrincipalIdentity } from '../../types.js';
+import { PrivilegeMap } from '../../privilege/types.ts';
+import { Principal, Group, User, PrincipalIdentity } from '../../types.ts';
 import { HalResource } from 'hal-types';
-import { LazyPrivilegeBox } from '../../privilege/service.js';
-import { UserNewResult } from '../../api-types.js';
+import { LazyPrivilegeBox } from '../../privilege/service.ts';
+import { UserNewResult } from '../../api-types.ts';
 
 export function collection(users: User[], embeddedUsers: HalResource[]): HalResource {
 

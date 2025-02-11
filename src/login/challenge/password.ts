@@ -1,8 +1,8 @@
-import { AbstractLoginChallenge } from './abstract.js';
-import { AuthorizationChallengeRequest } from '../types.js';
-import { A12nLoginChallengeError } from '../error.js';
-import * as services from '../../services.js';
-import { IncorrectPassword, TooManyLoginAttemptsError } from '../../user/error.js';
+import { AbstractLoginChallenge } from './abstract.ts';
+import { AuthorizationChallengeRequest } from '../types.ts';
+import { A12nLoginChallengeError } from '../error.ts';
+import * as services from '../../services.ts';
+import { IncorrectPassword, TooManyLoginAttemptsError } from '../../user/error.ts';
 
 type PasswordParameters = {
   password: string;

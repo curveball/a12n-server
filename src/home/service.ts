@@ -1,7 +1,7 @@
-import { ServerStats } from '../types.js';
-import { getPrincipalStats } from '../principal/service.js';
-import { findPrivilegeTypes } from '../privilege/service.js';
-import { lastTokenId } from '../oauth2/service.js';
+import { ServerStats } from '../types.ts';
+import { getPrincipalStats } from '../principal/service.ts';
+import { findPrivilegeTypes } from '../privilege/service.ts';
+import { lastTokenId } from '../oauth2/service.ts';
 
 export async function getServerStats(): Promise<ServerStats> {
 

@@ -1,0 +1,37 @@
+name: a12n-server-dev
+
+services:
+  db:
+      image: postgres
+      restart: always
+      ports:
+        - "5432:5432"
+      environment:
+        - DB_HOST=db
+        - DB_DRIVER=pg
+        - DB_PASSWORD='password'
+        - DB_USER=root
+        - DB_DATABASE=a12nserver
+        - POSTGRES_PASSWORD=password
+  a12n-server:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8531:8531"
+    environment:
+        - NODE_ENV=development
+        - PORT=8531
+        - DATABASE_URL=postgresql://a12nserver:password@db:5432/a12nserver
+        - JWT_SECRET=secret
+        - JWT_PRIVATE_KEY=jwt_secret.key
+    depends_on:
+      - db
+
+secrets:
+  JWT_SECRET:
+    file: ./jwt_secret.key
+
+volumes:
+  db:
+   

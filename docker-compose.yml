@@ -32,7 +32,6 @@ services:
         - DB_PASSWORD=password
         - DB_DATABASE=a12nserver
         - POSTGRES_HOST=db
-        - POSTGRES_PORT=5432
     depends_on:
       - db
 

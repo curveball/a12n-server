@@ -70,8 +70,8 @@ The server supports OAuth2 and OpenID Connect, with support for the following fe
 - 🛠️ [Configure the server](/docs/server-settings.md)
 - 🔗 [Integrate with a browser client](/docs/integration.md)
 - 🔍 [Manage users with our APIs](/docs/user-api.md)
-- [📝 Contribution Guidelines](/CONTRIBUTING.md)
-- [📰 Code of Conduct](/CODE_OF_CONDUCT.md)
+- 📝 [Contribution Guidelines](/.github/CONTRIBUTING.md)
+- 📰 [Code of Conduct](/.github/CODE_OF_CONDUCT.md)
 
 
 [1]: https://tools.ietf.org/html/rfc8414 "OAuth 2.0 Authorization Server Metadata"

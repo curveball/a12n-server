@@ -1,0 +1,45 @@
+services:
+  db:
+      image: postgres
+      restart: always
+      ports:
+        - "5432:5432"
+      environment:
+        - POSTGRES_USER=a12nserver
+        - POSTGRES_PASSWORD=password
+        - POSTGRES_PORT=5432
+        - PGDATA=/var/lib/postgresql/data
+      healthcheck:
+        test: ["CMD-SHELL", "pg_isready -U a12nserver"]
+        interval: 5s
+        timeout: 5s
+        retries: 3
+      volumes:
+         - pgdata:/var/lib/postgresql/data
+  a12n-server:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8531:8531"
+    environment:
+        - NODE_ENV=development
+        - PORT=8531
+        - JWT_PRIVATE_KEY=jwt_secret.key
+        - DB_HOST=db
+        - DB_DRIVER=pg
+        - DB_USER=a12nserver
+        - DB_PASSWORD=password
+        - DB_DATABASE=a12nserver
+        - POSTGRES_HOST=db
+    depends_on:
+      - db
+
+secrets:
+  JWT_PRIVATE_KEY:
+    file: ./jwt_secret.key
+
+volumes:
+  pgdata:
+    driver: local
+   

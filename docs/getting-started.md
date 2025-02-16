@@ -3,9 +3,14 @@ Getting started
 
 Contents:
 
-* [The dev server](#the-dev-server)
-* [Deploying in production](#deploying-in-production)
-* [Running from source](#running-from-source)
+- [Getting started](#getting-started)
+  - [The dev server](#the-dev-server)
+    - [What's next](#whats-next)
+  - [Deploying in production](#deploying-in-production)
+  - [Running from source locally](#running-from-source-locally)
+  - [Running with docker-compose](#running-with-docker-compose)
+    - [Setup](#setup)
+    - [Commands](#commands)
 
 
 The dev server
@@ -72,8 +77,8 @@ SMTP_EMAIL_FROM=Your friendly neighbourhood auth server <no-reply@example.org>
 REDIS_URI=redis://some-redis-serveR:6379
 ```
 
-Running from source
--------------------
+Running from source locally
+--------------------------
 
 If you are interested to run a12n-server from the github source, for making modifications
 or running the latest development version, you can follow the instructions below.
@@ -105,3 +110,32 @@ Or to start the auto-restarting development server:
 ```sh
 make start-dev
 ```
+
+Running with docker-compose
+----------------------
+
+The `Dockerfile` and `docker-compose.yml` file at the root of the project work together to start the
+development server with a MySQL database.
+
+Prerequisites:
+
+- [Docker Desktop](https://docs.docker.com/desktop/) or CLI
+
+### Setup
+1. Ensure the variables match the values in the `docker-compose.yml` file.
+1. Create a RSA JWT private key at the root of the project with `openssl genrsa -out ./jwt_secret.key 4096`
+It will be read by the server from as the `JWT_PRIVATE_KEY` environment variable.
+
+### Commands
+
+First time setup:
+`docker compose up --build` will build the Docker image before starting the container
+
+Thereafter:
+`docker compose up` will start the server and the database containers. The server will be available at <https://localhost:8531>.
+
+`docker compose ps` will list all active containers.
+
+`docker compose down` will stop the server and the database.
+
+`docker compose down --volumes` will stop the server && database, and also delete the volumes with data. This is useful if you want to start fresh.

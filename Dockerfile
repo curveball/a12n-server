@@ -1,5 +1,5 @@
 # Stage 1: build
-FROM node:20-alpine as build-stage
+FROM node:20-alpine AS build-stage
 WORKDIR /opt/app
 
 COPY package.json package.json Makefile tsconfig.json ./

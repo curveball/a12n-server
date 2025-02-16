@@ -114,7 +114,7 @@ make start-dev
 Running with docker-compose
 ----------------------
 
-The `Dockerfile.dev` and `docker-compose.yml` file at the root of the project work together to start the
+The `Dockerfile` and `docker-compose.yml` file at the root of the project work together to start the
 development server with a MySQL database.
 
 Prerequisites:
@@ -137,3 +137,5 @@ Thereafter:
 `docker compose ps` will list all active containers.
 
 `docker compose down` will stop the server and the database.
+
+`docker compose down --volumes` will stop the server && database, and also delete the volumes with data. This is useful if you want to start fresh.

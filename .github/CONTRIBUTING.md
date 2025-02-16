@@ -11,7 +11,6 @@ Pre-requisites:
 - `node` <= 18 and `npm` 
 - `mysql`, `sqlite` or `postgres`
 
-
 [Run from source](../docs/getting-started.md#running-from-source-locally)
 
 [Run the codebase with Docker](../docs/getting-started.md#running-with-docker-compose)
@@ -89,6 +88,10 @@ See [Integration with a browser client](/docs/integration.md) for context on bas
 👩‍💻 Development Resources
 ------------------------
 
-- 🚀 [Getting started](/docs/getting-started.md)
-- 🔍 [Manage users with our APIs](/docs/user-api.md)
-- ✉️  [Testing email](/docs/testing-email.md)
+🚀 [Getting started](/docs/getting-started.md)
+
+🛠️ [Configure the server](/docs/server-settings.md)
+
+🔍 [Manage users with our APIs](/docs/user-api.md)
+
+✉️  [Testing email](/docs/testing-email.md)

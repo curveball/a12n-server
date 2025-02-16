@@ -11,21 +11,11 @@ Pre-requisites:
 - `node` <= 18 and `npm` 
 - `mysql`, `sqlite` or `postgres`
 
-See [Getting Started](./docs/getting-started.md) for standard instructions.
+[Run from source](../docs/getting-started.md#running-from-source-locally)
 
-Instead of using Docker, run the server locally and connect to a local MySQL database.
+[Run the codebase with Docker](../docs/getting-started.md#running-with-docker-compose)
 
-1. Install all dependencies: `npm i`
-2. Create a `.env` file by copying `.env.defaults` with `cp .env.default .env` and set the following in `.env`:
-
-```sh
-export MYSQL_HOST=127.0.0.1
-export MYSQL_PASSWORD=.... # your password
-export MYSQL_USER=root
-export MYSQL_DATABASE=a12nserver
-```
-3. run `make` to start the server locally.
-
+For more, see [Getting Started](../docs/getting-started.md) for standard instructions.
 
 🧦 Linting
 -------
@@ -42,7 +32,7 @@ A non-exhaustive overview of core tools:
 |------|-------------|
 | [TypeScript](https://www.typescriptlang.org/) | Type safety |
 | [Node.js](https://nodejs.org/) | Runtime |
-| [Knex](https://knexjs.org/) | Database migrations |
+| [Knex](https://knexjs.org/) | Database migrations and query building |
 | [Handlebars](https://handlebarsjs.com/) | Lightweight view templating |
 | [ESLint](https://eslint.org/) | Linting |
 | [jose](https://github.com/panva/jose) | JSON Object encryption and signing |
@@ -52,17 +42,18 @@ A non-exhaustive overview of core tools:
 
 👀 Whats Inside
 ---------------
+Everything prepended with `_` is either a hidden file or a build artifact.
 
 ```sh 
-.
-.gitignore
-.env.defaults             default environment variables
+.github                   CI workflows
+├── .gitignore
+├── .env.defaults         default environment variables
 ├── Dockerfile
 ├── LICENSE
-├── Makefile
+├── Makefile              The most comprehensive source of truth for build commands
 ├── README.md
 ├── assets                static files for running in browser (css, js)
-├── bin                   scripts for generating JSON schemas and db migration
+├── bin                   scripts for generating JSON schemas and running db migrations
 ├── changelog.md
 ├── _dist                 built output of type definitions
 ├── docs
@@ -77,8 +68,30 @@ A non-exhaustive overview of core tools:
 └── tsconfig.json
 ```
 
-Pick an issue 🏷️
+Ways to Contribute
 ----------------
 
-Check out the tagged [Issues list](https://github.com/evert/a12n-server/issues) and [labels](https://github.com/curveball/a12n-server/labels). 
+### Pick an issue 🏷️
+
+Check out the tagged [Issues list](https://github.com/evert/a12n-server/issues) and [labels](https://github.com/evert/a12n-server/labels). 
+
 The issues require different skill levels, so for your first issue, pick something you're comfortable with.
+
+### Contribute an integration for your favorite framework
+
+This project could use sandboxes and examples of integrating a12n-server with different front end frameworks!
+
+Check out a12n-server x Next.js: [`@curveball/next-a12n`](https://github.com/curveball/next-a12n)
+
+See [Integration with a browser client](/docs/integration.md) for context on basic usage.
+
+👩‍💻 Development Resources
+------------------------
+
+🚀 [Getting started](/docs/getting-started.md)
+
+🛠️ [Configure the server](/docs/server-settings.md)
+
+🔍 [Manage users with our APIs](/docs/user-api.md)
+
+✉️  [Testing email](/docs/testing-email.md)

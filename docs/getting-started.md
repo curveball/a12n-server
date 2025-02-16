@@ -98,6 +98,8 @@ to run the server on a sqlite database.
 cp .env.defaults .env
 ```
 
+Run your database of choice locally. If you don't pick one, the server will use sqlite.
+
 After this, you can edit your `.env` for any changes you want to make and then run the
 server with:
 
@@ -115,7 +117,7 @@ Running with docker-compose
 ----------------------
 
 The `Dockerfile` and `docker-compose.yml` file at the root of the project work together to start the
-development server with a MySQL database.
+development server with a postgres database.
 
 Prerequisites:
 
@@ -123,8 +125,8 @@ Prerequisites:
 
 ### Setup
 1. Ensure the variables match the values in the `docker-compose.yml` file.
-1. Create a RSA JWT private key at the root of the project with `openssl genrsa -out ./jwt_secret.key 4096`
-It will be read by the server from as the `JWT_PRIVATE_KEY` environment variable.
+1. Create a RSA JWT private key at the root of the project with `openssl genrsa -out ./jwt_secret.key 4096`.
+It will be read by Docker as the `JWT_PRIVATE_KEY` environment variable.
 
 ### Commands
 

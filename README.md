@@ -12,7 +12,7 @@ in production.
 Requirements
 ------------
 
-* Node.js 18.x
+* Node.js > 18.x
 * MySQL, Postgres or Sqlite
 
 Try it out!
@@ -31,39 +31,36 @@ current directory.
 Then, just open [http://localhost:8531/](http://localhost:8531/) to create your admin account. 
 See [Getting started](/docs/getting-started.md) for more ways to run the server.
 
-Thinking about contributing? 
+### Contributing or just curious about the code?
 
-Try [running from source](/docs/getting-started.md#running-from-source-locally) or [running with Docker](/docs/getting-started.md#running-with-docker-compose)
+[Run from source](/docs/getting-started.md#running-from-source-locally) or run the codebase [with Docker](/docs/getting-started.md#running-with-docker-compose)
 
 🍭 Features
--------
+-----------
 
-This project has been used in production since 2018 and actively maintained.
+This project has been used in production since 2018 and continues to be actively maintained. 
 
 Instead of rolling your own authentication system, you get *A LOT* of features for free 🪄:
 
-The server supports core features such as:
+| Supported Features | Details |
+|---------|-------------|
+| User Management | • Create, update, delete and list users with our [User API](/docs/user-api.md)<br>• Password reset/recovery flow |
+| Authentication Methods | • Username/password login<br>• Multi-factor authentication (MFA): <br>• TOTP (Time-based One-Time Passcodes with Google Authenticator)<br>• Email one-time codes<br>• WebAuthN hardware keys |
+| Authorization | • Role-based access control (RBAC)<br>• Groups and permissions management<br>• Fine-grained access policies |
+| OAuth2 Support | • Multiple grant types (Authorization code, client credentials, etc)<br>• Token introspection and revocation<br>• PKCE for enhanced security<br>• JWT access tokens (RFC 9068) |
+| OpenID Connect | • Standard OIDC configuration endpoints<br>• Discovery document<br>• JSON Web Key Sets (JWKS)<br>• Multiple response types |
+| Developer Experience | • Browser-based admin UI<br>• Browsable REST API with HTML and JSON responses <br> Included registration and signup views
 
-* A User API that can be used to create, update, delete and list users.
-* User registration, login, lost password.
-* Multi-factor auth including
-  * TOTP (Google Authenticator)
-  * Email one-time passcodes.
-  * Hardware keys support (WebauthN)
-* Groups (roles) and permissions that can be assigned to users or groups.
-* A browser-based admin interface.
-* A REST API that can be traversed using a standard browser, as it spits out
-  both JSON and HTML.
 
 The server supports OAuth2 and OpenID Connect, with support for the following features and standards:
 
 * Authorization code, client credentials, password and implicit grants.
 * [OAuth2 discovery document][1] and OpenID Connect configuration endpoint.
 * [OAuth 2 Token Introspection][2].
+* [Proof Key for Code Exchange (PKCE)][3].
 * [JSON Web Key Sets][4].
 * [OAuth2 Token Revocation][5]
 * [RFC 9068][7] - JSON Web Token (JWT) Profile for OAuth 2.0 Access Tokens.
-* [PKCE][3].
 * [OAuth 2.0 Multiple Response Type Encoding Practices](https://openid.net/specs/oauth-v2-multiple-response-types-1_0.html)
 
 
@@ -73,9 +70,8 @@ The server supports OAuth2 and OpenID Connect, with support for the following fe
 - 🛠️ [Configure the server](/docs/server-settings.md)
 - 🔗 [Integrate with a browser client](/docs/integration.md)
 - 🔍 [Manage users with our APIs](/docs/user-api.md)
-
-
-[📝 Contribution Guidelines](/.github/CONTRIBUTING.md) | [📰 Code of Conduct](/.github/CODE_OF_CONDUCT.md)
+- [📝 Contribution Guidelines](/CONTRIBUTING.md)
+- [📰 Code of Conduct](/CODE_OF_CONDUCT.md)
 
 
 [1]: https://tools.ietf.org/html/rfc8414 "OAuth 2.0 Authorization Server Metadata"

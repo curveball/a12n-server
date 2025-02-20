@@ -4,6 +4,7 @@ import {
   BasePrincipal,
   Group,
   NewPrincipal,
+  PaginatedResult,
   Principal,
   PrincipalIdentity,
   PrincipalStats,
@@ -46,11 +47,11 @@ export class PrincipalService {
 
   }
 
-  async findAll(type: 'user', page: number): Promise<User[]>;
+  async findAll(type: 'user', page: number): Promise<PaginatedResult<User>>;
   async findAll(type: 'group'): Promise<Group[]>;
   async findAll(type: 'app'): Promise<App[]>;
   async findAll(): Promise<Principal[]>;
-  async findAll(type?: PrincipalType, page?: number): Promise<Principal[]> {
+  async findAll(type?: PrincipalType, page?: number): Promise<Principal[] | PaginatedResult<Principal>> {
 
     this.privileges.require('a12n:principals:list');
     const filters: Record<string, any> = {};
@@ -59,12 +60,18 @@ export class PrincipalService {
     }
 
     let result: PrincipalsRecord[] = [];
+    let total = 0;
+    let hasNextPage = false;
+    const pageSize = 100;
 
     if(type && page !== undefined){
 
+      total = (await getPrincipalStats()).user;
+
       page = page < 1 ? 1 : page;
-      const pageSize = 100;
       const offset = (page - 1) * pageSize;
+
+      hasNextPage = (offset + pageSize) < total;
 
       result = await db('principals')
         .where(filters)
@@ -80,7 +87,18 @@ export class PrincipalService {
     for (const principal of result) {
       principals.push(recordToModel(principal));
     }
-    return principals;
+
+    if(page !== undefined){ // type?
+      return {
+        principals,
+        total,
+        page,
+        pageSize,
+        hasNextPage,
+      };
+    } else {
+      return principals;
+    }
 
   }
 

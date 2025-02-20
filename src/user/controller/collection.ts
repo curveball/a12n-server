@@ -15,7 +15,9 @@ class UserCollectionController extends Controller {
     const pageInt = parseInt(ctx.request.query.page);
     const page = isNaN(pageInt) ? 1 : pageInt;
 
-    const users = await principalService.findAll('user', page);
+    const paginatedResult = await principalService.findAll('user', page);
+    const users = paginatedResult.principals;
+
     const embed = ctx.request.prefer('transclude').toString().includes('item') || ctx.query.embed?.includes('item');
 
     const embeddedUsers: HalResource[] = [];
@@ -40,8 +42,7 @@ class UserCollectionController extends Controller {
       }
     }
 
-    const pageSize = 100;
-    ctx.response.body = hal.collection(users, embeddedUsers, page, pageSize);
+    ctx.response.body = hal.collection(embeddedUsers, paginatedResult);
 
   }
 

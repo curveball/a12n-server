@@ -11,7 +11,11 @@ class UserCollectionController extends Controller {
   async get(ctx: Context) {
 
     const principalService = new services.principal.PrincipalService(ctx.privileges);
-    const users = await principalService.findAll('user');
+
+    const pageInt = parseInt(ctx.request.query.page);
+    const page = isNaN(pageInt) ? 1 : pageInt;
+
+    const users = await principalService.findAll('user', page);
     const embed = ctx.request.prefer('transclude').toString().includes('item') || ctx.query.embed?.includes('item');
 
     const embeddedUsers: HalResource[] = [];
@@ -36,7 +40,8 @@ class UserCollectionController extends Controller {
       }
     }
 
-    ctx.response.body = hal.collection(users, embeddedUsers);
+    const pageSize = 100;
+    ctx.response.body = hal.collection(users, embeddedUsers, page, pageSize);
 
   }
 

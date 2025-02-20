@@ -46,11 +46,11 @@ export class PrincipalService {
 
   }
 
-  async findAll(type: 'user'): Promise<User[]>;
+  async findAll(type: 'user', page: number): Promise<User[]>;
   async findAll(type: 'group'): Promise<Group[]>;
   async findAll(type: 'app'): Promise<App[]>;
   async findAll(): Promise<Principal[]>;
-  async findAll(type?: PrincipalType): Promise<Principal[]> {
+  async findAll(type?: PrincipalType, page?: number): Promise<Principal[]> {
 
     this.privileges.require('a12n:principals:list');
     const filters: Record<string, any> = {};
@@ -58,8 +58,23 @@ export class PrincipalService {
       filters.type = userTypeToInt(type);
     }
 
-    const result = await db('principals')
-      .where(filters);
+    let result: PrincipalsRecord[] = [];
+
+    if(type && page !== undefined){
+
+      page = page < 1 ? 1 : page;
+      const pageSize = 100;
+      const offset = (page - 1) * pageSize;
+
+      result = await db('principals')
+        .where(filters)
+        .limit(pageSize)
+        .offset(offset);
+
+    } else {
+      result = await db('principals')
+        .where(filters);
+    }
 
     const principals: Principal[] = [];
     for (const principal of result) {

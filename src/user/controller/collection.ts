@@ -12,8 +12,7 @@ class UserCollectionController extends Controller {
 
     const principalService = new services.principal.PrincipalService(ctx.privileges);
 
-    const pageInt = parseInt(ctx.request.query.page);
-    const page = isNaN(pageInt) ? 1 : pageInt;
+    const page = +ctx.request.query.page || 1;
 
     const paginatedResult = await principalService.findAll('user', page);
     const users = paginatedResult.principals;

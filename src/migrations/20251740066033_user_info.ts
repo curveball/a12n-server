@@ -3,7 +3,7 @@ import { Knex } from 'knex';
 export async function up(knex: Knex): Promise<void> {
 
   await knex.schema.createTable('user_info', table => {
-    table.integer('principal_id').notNullable().primary().references('principals.id')
+    table.integer('principal_id').notNullable().primary().references('principals.id');
     table.string('name', 200).nullable().comment('End-User\'s full name in displayable form including all name parts, possibly including titles and suffixes, ordered according to the End-User\'s locale and preferences.');
     table.string('middle_name').nullable().comment('Middle name(s) of the End-User.');
     table.string('given_name', 30).nullable().comment('Given name(s) or first name(s) of the End-User.');

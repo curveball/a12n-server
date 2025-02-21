@@ -68,6 +68,14 @@ Everything prepended with `_` is either a hidden file or a build artifact.
 └── tsconfig.json
 ```
 
+Database migrations scripts are in `src/migrations` and run in chronological order. 
+
+Filename format:
+- Old files are prefixed with numbers
+- Newer files are `<year><timestamp>.ts`
+
+See [Knex migrations](https://knexjs.org/guide/migrations.html)
+
 Ways to Contribute
 ----------------
 

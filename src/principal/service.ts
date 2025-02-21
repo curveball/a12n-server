@@ -47,11 +47,11 @@ export class PrincipalService {
 
   }
 
-  async findAll(type: 'user', page: number): Promise<PaginatedResult<User>>;
+  async findAll(type: 'user'): Promise<User[]>;
   async findAll(type: 'group'): Promise<Group[]>;
   async findAll(type: 'app'): Promise<App[]>;
   async findAll(): Promise<Principal[]>;
-  async findAll(type?: PrincipalType, page?: number): Promise<Principal[] | PaginatedResult<Principal>> {
+  async findAll(type?: PrincipalType): Promise<Principal[]> {
 
     this.privileges.require('a12n:principals:list');
     const filters: Record<string, any> = {};
@@ -59,46 +59,46 @@ export class PrincipalService {
       filters.type = userTypeToInt(type);
     }
 
-    const pageSize = 100;
-    const total = (await getPrincipalStats()).user;
-
-    let result: PrincipalsRecord[] = [];
-    let hasNextPage = false;
-
-    if(type && page !== undefined){
-
-      page = page < 1 ? 1 : page;
-      const offset = (page - 1) * pageSize;
-
-      hasNextPage = (offset + pageSize) < total;
-
-      result = await db('principals')
-        .where(filters)
-        .limit(pageSize)
-        .offset(offset);
-
-    } else {
-      result = await db('principals')
-        .where(filters);
-    }
+    const result = await db('principals')
+      .where(filters);
 
     const principals: Principal[] = [];
     for (const principal of result) {
       principals.push(recordToModel(principal));
     }
+    return principals;
 
-    if(type && page !== undefined){
-      return {
-        principals,
-        total,
-        page,
-        pageSize,
-        hasNextPage,
-      };
-    } else {
-      return principals;
+  }
+
+  async search<T extends Principal>(type: PrincipalType, page: number = 1): Promise<PaginatedResult<T>> {
+
+    this.privileges.require('a12n:principals:list');
+    const filters: Record<string, any> = {};
+    filters.type = userTypeToInt(type);
+
+    const pageSize = 100;
+    const offset = (page - 1) * pageSize;
+
+    const total = (await getPrincipalStats()).user;
+    const hasNextPage = (offset + pageSize) < total;
+
+    const result = await db('principals')
+      .where(filters)
+      .limit(pageSize)
+      .offset(offset);
+
+    const items: T[] = [];
+    for (const principal of result) {
+      items.push(recordToModel(principal) as T);
     }
 
+    return {
+      items,
+      total,
+      page,
+      pageSize,
+      hasNextPage,
+    };
   }
 
   async findByIdentity(identity: PrincipalIdentity|string): Promise<Principal> {

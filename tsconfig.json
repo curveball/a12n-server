@@ -23,9 +23,10 @@
           "DOM",
           "ES2022"
         ],
-        "declaration": true
+        "declaration": true,
     },
     "include": [
-        "src/**/*"
+        "src/**/*",
+        "test/**/*"
     ]
 }

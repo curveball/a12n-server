@@ -5,6 +5,7 @@ import * as hal from '../formats/hal.ts';
 import * as services from '../../services.ts';
 import { PrincipalNew } from '../../api-types.ts';
 import { HalResource } from 'hal-types';
+import { User } from '../../../src/types.ts';
 
 class UserCollectionController extends Controller {
 
@@ -14,8 +15,8 @@ class UserCollectionController extends Controller {
 
     const page = +ctx.request.query.page || 1;
 
-    const paginatedResult = await principalService.findAll('user', page);
-    const users = paginatedResult.principals;
+    const paginatedResult = await principalService.search<User>('user', page);
+    const users = paginatedResult.items;
 
     const embed = ctx.request.prefer('transclude').toString().includes('item') || ctx.query.embed?.includes('item');
 

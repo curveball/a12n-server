@@ -4,9 +4,9 @@ import { HalResource } from 'hal-types';
 import { LazyPrivilegeBox } from '../../privilege/service.ts';
 import { UserNewResult } from '../../api-types.ts';
 
-export function collection(embeddedUsers: HalResource[], paginatedResult: PaginatedResult<User>): HalResource {
+export function collection(embeddedUsers: HalResource[], paginatedResult: PaginatedResult<Principal>): HalResource {
 
-  const { principals: users, page: currentPage, total, pageSize, hasNextPage } = paginatedResult;
+  const { items: users, page: currentPage, total, pageSize, hasNextPage } = paginatedResult;
 
   const totalPages = Math.ceil(total / pageSize);
 

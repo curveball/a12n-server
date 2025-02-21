@@ -159,7 +159,7 @@ export type PrincipalStats = {
  * Paginated Result
  */
 export type PaginatedResult<T> = {
-  principals: T[];
+  items: T[];
   total: number;
   page: number;
   pageSize: number;

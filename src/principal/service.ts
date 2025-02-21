@@ -59,14 +59,13 @@ export class PrincipalService {
       filters.type = userTypeToInt(type);
     }
 
-    let result: PrincipalsRecord[] = [];
-    let total = 0;
-    let hasNextPage = false;
     const pageSize = 100;
+    const total = (await getPrincipalStats()).user;
+
+    let result: PrincipalsRecord[] = [];
+    let hasNextPage = false;
 
     if(type && page !== undefined){
-
-      total = (await getPrincipalStats()).user;
 
       page = page < 1 ? 1 : page;
       const offset = (page - 1) * pageSize;
@@ -88,7 +87,7 @@ export class PrincipalService {
       principals.push(recordToModel(principal));
     }
 
-    if(page !== undefined){ // type?
+    if(type && page !== undefined){
       return {
         principals,
         total,
@@ -436,8 +435,7 @@ export async function getPrincipalStats(): Promise<PrincipalStats> {
 
 }
 
-
-function recordToModel(user: PrincipalsRecord): Principal {
+export function recordToModel(user: PrincipalsRecord): Principal {
 
   return {
     id: user.id,

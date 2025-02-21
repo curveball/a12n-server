@@ -5,7 +5,7 @@ import * as hal from '../../src/user/formats/hal.ts';
 import { User } from '../../src/types.ts';
 import { HalResource } from 'hal-types';
 
-// TODO: test the collection controller directly instead
+// TODO: delete this & test the findAll db query directly instead
 describe.skip('hal.collection', () => {
   const users: User[] = [
     {

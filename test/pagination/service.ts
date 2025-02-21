@@ -1,14 +1,15 @@
 import { strict as assert } from 'node:assert';
 import { after, before, describe, it } from 'node:test';
 
-import { PrincipalsRecord } from 'knex/types/tables.ts';
-
-import { PrincipalService, recordToModel } from '../../src/principal/service.ts';
-import db, { insertAndGetId } from '../../src/database.ts';
+import { PrincipalService } from '../../src/principal/service.ts';
+import { PrincipalNew } from '../../src/api-types.ts';
+import { User } from '../../src/types.ts';
+import db from '../../src/database.ts';
 
 describe('users pagination', () => {
 
-  const userRecordsDb: PrincipalsRecord[] = [];
+  let users: User[] = [];
+  const principalService = new PrincipalService('insecure');
 
   before(async () => {
 
@@ -26,20 +27,17 @@ describe('users pagination', () => {
 
     // 3 pages worth of users
     for(let i = 1; i < 251; i++){
-      const data: Omit<PrincipalsRecord, 'id'> = {
-        identity: null,
-        external_id: i.toString(),
+      const data = {
+        type: 'user' as PrincipalNew['type'],
         nickname: `User ${i}`,
-        type: 1,
-        active: 1,
-        created_at: Date.now(),
-        modified_at: Date.now(),
-        system: 0
+        createdAt: new Date(Date.now()),
+        modifiedAt: new Date(Date.now()),
+        active: true,
       };
-
-      const id = await insertAndGetId('principals', data);
-      userRecordsDb.push({...data, id});
+      await principalService.save(data);
     }
+
+    users = await principalService.findAll('user');
   });
 
   after(async () => {
@@ -47,41 +45,35 @@ describe('users pagination', () => {
   });
 
   it('should display first page', async () => {
-    const principalService = new PrincipalService('insecure');
-
     const currentPage = 1;
     const { items, pageSize, page, hasNextPage, total } = await principalService.search('user', currentPage);
-    const expectedUsers = userRecordsDb.slice(0, pageSize).map((data) => recordToModel(data));
+    const expectedUsers = users.slice(0, pageSize);
 
     assert.equal(page, currentPage);
     assert.equal(hasNextPage, true);
-    assert.equal(total, userRecordsDb.length);
+    assert.equal(total, users.length);
     assert.deepEqual(items, expectedUsers);
   });
 
   it('should display second page', async () => {
-    const principalService = new PrincipalService('insecure');
-
     const currentPage = 2;
     const { items, pageSize, page, hasNextPage, total } = await principalService.search('user', currentPage);
-    const expectedUsers = userRecordsDb.slice(pageSize, 200).map((data) => recordToModel(data));
+    const expectedUsers = users.slice(pageSize, 200);
 
     assert.equal(page, currentPage);
     assert.equal(hasNextPage, true);
-    assert.equal(total, userRecordsDb.length);
+    assert.equal(total, users.length);
     assert.deepEqual(items, expectedUsers);
   });
 
   it('should display last (third) page', async () => {
-    const principalService = new PrincipalService('insecure');
-
     const currentPage = 3;
     const { items, page, hasNextPage, total } = await principalService.search('user', currentPage);
-    const expectedUsers = userRecordsDb.slice(200, userRecordsDb.length).map((data) => recordToModel(data));
+    const expectedUsers = users.slice(200, users.length);
 
     assert.equal(page, currentPage);
     assert.equal(hasNextPage, false);
-    assert.equal(total, userRecordsDb.length);
+    assert.equal(total, users.length);
     assert.deepEqual(items, expectedUsers);
   });
 });

@@ -435,7 +435,7 @@ export async function getPrincipalStats(): Promise<PrincipalStats> {
 
 }
 
-export function recordToModel(user: PrincipalsRecord): Principal {
+function recordToModel(user: PrincipalsRecord): Principal {
 
   return {
     id: user.id,

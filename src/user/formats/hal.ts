@@ -40,6 +40,11 @@ export function collection(embeddedUsers: HalResource[], paginatedResult: Pagina
     hal._links['previous'] = { href: `/user?page=${prevPage}` };
   }
 
+  if(hasNextPage || hasPrevPage){
+    hal._links['first'] = { href: '/user?page=1' };
+    hal._links['last'] = { href: `/user?page=${totalPages}` };
+  }
+
   if (embeddedUsers.length) {
     hal._embedded = {
       item: embeddedUsers

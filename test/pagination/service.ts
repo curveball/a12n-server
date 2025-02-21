@@ -4,7 +4,7 @@ import { after, before, describe, it } from 'node:test';
 import { PrincipalService } from '../../src/principal/service.ts';
 import { PrincipalNew } from '../../src/api-types.ts';
 import { User } from '../../src/types.ts';
-import db from '../../src/database.ts';
+import db, { init } from '../../src/database.ts';
 
 describe('users pagination', () => {
 
@@ -12,18 +12,22 @@ describe('users pagination', () => {
   const principalService = new PrincipalService('insecure');
 
   before(async () => {
+    await init();
 
-    await db.schema.createTable('principals', (table) => {
-      table.increments('id').primary();
-      table.string('identity').nullable();
-      table.string('external_id').notNullable();
-      table.string('nickname').notNullable();
-      table.integer('type').notNullable();
-      table.boolean('active').notNullable();
-      table.timestamp('created_at').defaultTo(db.fn.now());
-      table.timestamp('modified_at').defaultTo(db.fn.now());
-      table.boolean('system').notNullable();
-    });
+    const hasTable = await db.schema.hasTable('principals');
+    if (!hasTable) {
+      await db.schema.createTable('principals', (table) => {
+        table.increments('id').primary();
+        table.string('identity').nullable();
+        table.string('external_id').notNullable();
+        table.string('nickname').notNullable();
+        table.integer('type').notNullable();
+        table.bigInteger('created_at').defaultTo(db.fn.now());
+        table.bigInteger('modified_at').defaultTo(db.fn.now());
+        table.boolean('active').notNullable().defaultTo(false);
+        table.tinyint('system').notNullable().defaultTo(0);
+      });
+    }
 
     // 3 pages worth of users
     for(let i = 1; i < 251; i++){

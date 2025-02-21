@@ -17,7 +17,7 @@ docker-run:
 	docker run -it --rm --name $(DOCKER_IMAGE_NAME)-01 $(DOCKER_IMAGE_NAME)
 
 test:
-	NODE_ENV=test npx tsx --test ${TEST_FILES}
+	DB_DRIVER=sqlite DB_FILENAME=":memory:" npx tsx --test ${TEST_FILES}
 
 lint:
 	npx tsc --noemit

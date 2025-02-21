@@ -1,9 +1,6 @@
 import { strict as assert } from 'node:assert';
 import { after, before, describe, it } from 'node:test';
 
-import * as dotenv from 'dotenv';
-dotenv.config({ path: './.env.test'});
-
 import { PrincipalService, recordToModel } from '../../src/principal/service.ts';
 import db, { insertAndGetId } from '../../src/database.ts';
 

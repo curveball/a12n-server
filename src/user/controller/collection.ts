@@ -42,7 +42,7 @@ class UserCollectionController extends Controller {
       }
     }
 
-    ctx.response.body = hal.collection(embeddedUsers, paginatedResult);
+    ctx.response.body = hal.collection(paginatedResult, embeddedUsers);
 
   }
 

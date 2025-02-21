@@ -1,10 +1,10 @@
 import { PrivilegeMap } from '../../privilege/types.ts';
 import { Principal, Group, User, PrincipalIdentity, PaginatedResult } from '../../types.ts';
-import { HalResource } from 'hal-types';
+import { HalLink, HalResource } from 'hal-types';
 import { LazyPrivilegeBox } from '../../privilege/service.ts';
 import { UserNewResult } from '../../api-types.ts';
 
-export function collection(embeddedUsers: HalResource[], paginatedResult: PaginatedResult<Principal>): HalResource {
+export function collection(paginatedResult: PaginatedResult<User>, embeddedUsers: HalResource[]): HalResource {
 
   const { items: users, page: currentPage, total, pageSize, hasNextPage } = paginatedResult;
 
@@ -12,7 +12,7 @@ export function collection(embeddedUsers: HalResource[], paginatedResult: Pagina
 
   const hal: HalResource = {
     _links: {
-      'self': { href: `/user?page=${currentPage}` },
+      'self': getUserPageHref(currentPage),
       'item': users.map( user => ({
         href: user.href,
         title: user.nickname,
@@ -31,18 +31,17 @@ export function collection(embeddedUsers: HalResource[], paginatedResult: Pagina
 
   if(hasNextPage){
     const nextPage = currentPage + 1;
-    hal._links['next'] = { href: `/user?page=${nextPage}` };
+    hal._links['next'] = getUserPageHref(nextPage);
   }
 
   const hasPrevPage = currentPage > 1;
   if(hasPrevPage){
     const prevPage = currentPage - 1;
-    hal._links['previous'] = { href: `/user?page=${prevPage}` };
+    hal._links['previous'] = getUserPageHref(prevPage);
   }
-
   if(hasNextPage || hasPrevPage){
-    hal._links['first'] = { href: '/user?page=1' };
-    hal._links['last'] = { href: `/user?page=${totalPages}` };
+    hal._links['first'] = getUserPageHref(1);
+    hal._links['last'] = getUserPageHref(totalPages);
   }
 
   if (embeddedUsers.length) {
@@ -53,6 +52,14 @@ export function collection(embeddedUsers: HalResource[], paginatedResult: Pagina
 
   return hal;
 
+}
+
+function getUserPageHref(page: number): HalLink {
+  if(page === 1){
+    return { href: '/user' };
+  }
+
+  return { href: `/user?page=${page}` };
 }
 
 /**

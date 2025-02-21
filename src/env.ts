@@ -12,7 +12,13 @@ if (process.env.PUBLIC_URI === undefined) {
   // that we may be missing a .env file.
   //
   // This is the only required environment variable.
-  dotenv.config({path: dirname(fileURLToPath(import.meta.url)) + '/../.env'});
+  if(process.env.NODE_ENV === 'test'){
+    dotenv.config({ path: './.env.test' });
+  }
+  else{
+    dotenv.config({path: dirname(fileURLToPath(import.meta.url)) + '/../.env'});
+  }
+
 } else {
   console.warn('/env.js was loaded twice?');
 }

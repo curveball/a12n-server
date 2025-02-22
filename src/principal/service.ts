@@ -4,6 +4,7 @@ import {
   BasePrincipal,
   Group,
   NewPrincipal,
+  PaginatedResult,
   Principal,
   PrincipalIdentity,
   PrincipalStats,
@@ -67,6 +68,37 @@ export class PrincipalService {
     }
     return principals;
 
+  }
+
+  async search<T extends Principal>(type: PrincipalType, page: number = 1): Promise<PaginatedResult<T>> {
+
+    this.privileges.require('a12n:principals:list');
+    const filters: Record<string, any> = {};
+    filters.type = userTypeToInt(type);
+
+    const pageSize = 100;
+    const offset = (page - 1) * pageSize;
+
+    const total = (await getPrincipalStats()).user;
+    const hasNextPage = (offset + pageSize) < total;
+
+    const result = await db('principals')
+      .where(filters)
+      .limit(pageSize)
+      .offset(offset);
+
+    const items: T[] = [];
+    for (const principal of result) {
+      items.push(recordToModel(principal) as T);
+    }
+
+    return {
+      items,
+      total,
+      page,
+      pageSize,
+      hasNextPage,
+    };
   }
 
   async findByIdentity(identity: PrincipalIdentity|string): Promise<Principal> {
@@ -402,7 +434,6 @@ export async function getPrincipalStats(): Promise<PrincipalStats> {
   return principalStats;
 
 }
-
 
 function recordToModel(user: PrincipalsRecord): Principal {
 

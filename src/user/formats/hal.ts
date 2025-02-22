@@ -1,14 +1,18 @@
 import { PrivilegeMap } from '../../privilege/types.ts';
-import { Principal, Group, User, PrincipalIdentity } from '../../types.ts';
-import { HalResource } from 'hal-types';
+import { Principal, Group, User, PrincipalIdentity, PaginatedResult } from '../../types.ts';
+import { HalLink, HalResource } from 'hal-types';
 import { LazyPrivilegeBox } from '../../privilege/service.ts';
 import { UserNewResult } from '../../api-types.ts';
 
-export function collection(users: User[], embeddedUsers: HalResource[]): HalResource {
+export function collection(paginatedResult: PaginatedResult<User>, embeddedUsers: HalResource[]): HalResource {
+
+  const { items: users, page: currentPage, total, pageSize, hasNextPage } = paginatedResult;
+
+  const totalPages = Math.ceil(total / pageSize);
 
   const hal: HalResource = {
     _links: {
-      'self': { href: '/user' },
+      'self': getUserPageHref(currentPage),
       'item': users.map( user => ({
         href: user.href,
         title: user.nickname,
@@ -20,8 +24,25 @@ export function collection(users: User[], embeddedUsers: HalResource[]): HalReso
         templated: true,
       },
     },
-    total: users.length,
+    total,
+    currentPage,
+    totalPages,
   };
+
+  if(hasNextPage){
+    const nextPage = currentPage + 1;
+    hal._links['next'] = getUserPageHref(nextPage);
+  }
+
+  const hasPrevPage = currentPage > 1;
+  if(hasPrevPage){
+    const prevPage = currentPage - 1;
+    hal._links['previous'] = getUserPageHref(prevPage);
+  }
+  if(hasNextPage || hasPrevPage){
+    hal._links['first'] = getUserPageHref(1);
+    hal._links['last'] = getUserPageHref(totalPages);
+  }
 
   if (embeddedUsers.length) {
     hal._embedded = {
@@ -31,6 +52,14 @@ export function collection(users: User[], embeddedUsers: HalResource[]): HalReso
 
   return hal;
 
+}
+
+function getUserPageHref(page: number): HalLink {
+  if(page === 1){
+    return { href: '/user' };
+  }
+
+  return { href: `/user?page=${page}` };
 }
 
 /**

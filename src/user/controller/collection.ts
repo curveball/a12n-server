@@ -5,13 +5,19 @@ import * as hal from '../formats/hal.ts';
 import * as services from '../../services.ts';
 import { PrincipalNew } from '../../api-types.ts';
 import { HalResource } from 'hal-types';
+import { User } from '../../../src/types.ts';
 
 class UserCollectionController extends Controller {
 
   async get(ctx: Context) {
 
     const principalService = new services.principal.PrincipalService(ctx.privileges);
-    const users = await principalService.findAll('user');
+
+    const page = +ctx.request.query.page || 1;
+
+    const paginatedResult = await principalService.search<User>('user', page);
+    const users = paginatedResult.items;
+
     const embed = ctx.request.prefer('transclude').toString().includes('item') || ctx.query.embed?.includes('item');
 
     const embeddedUsers: HalResource[] = [];
@@ -36,7 +42,7 @@ class UserCollectionController extends Controller {
       }
     }
 
-    ctx.response.body = hal.collection(users, embeddedUsers);
+    ctx.response.body = hal.collection(paginatedResult, embeddedUsers);
 
   }
 

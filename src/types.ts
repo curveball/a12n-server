@@ -156,6 +156,17 @@ export type PrincipalStats = {
 };
 
 /**
+ * Paginated Result
+ */
+export type PaginatedResult<T> = {
+  items: T[];
+  total: number;
+  page: number;
+  pageSize: number;
+  hasNextPage: boolean;
+}
+
+/**
  * The App Client refers to a single set of credentials for an app.
  *
  * The app client usually refers to an oauth2_client, and defines its

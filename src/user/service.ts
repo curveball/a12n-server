@@ -1,12 +1,13 @@
 import { BadRequest, NotFound, UnprocessableContent } from '@curveball/http-errors';
 import * as bcrypt from 'bcrypt';
 import db from '../database.ts';
+
+import { UserInfoRecord } from 'knex/types/tables.js';
 import { UserEventLogger } from '../log/types.ts';
 import * as loginActivityService from '../login/login-activity/service.ts';
 import { getSetting } from '../server-settings.ts';
 import { User, UserInfo } from '../types.ts';
 import { IncorrectPassword, TooManyLoginAttemptsError } from './error.ts';
-
 export async function createPassword(user: User, password: string): Promise<void> {
 
   assertValidPassword(password);
@@ -155,53 +156,17 @@ export async function updateUserInfo(user: User, userInfo: UserInfo): Promise<Us
   return recordToModel(user, result);
 }
 
-type UserInfoRecord = {
-  sub: string;
-  email?: string;
-  email_verified?: boolean;
-  name: string;
-  website?: string;
-  zoneinfo?: string;
-  given_name?: string;
-  family_name?: string;
-  preferred_username?: string;
-  phone_number?: string;
-  phone_number_verified?: boolean;
-  locale?: string;
-  updated_at: number;
-  picture?: string;
-  address?: string;
-  birthdate?: string;
-}
-  
-export async function recordToModel(user: User, record: UserInfoRecord): Promise<UserInfo> {  
-  const identities = await db('principal_identities')
-    .select()
-    .where({ principal_id: user.id })
 
-  for (const identity of identities) {
-    if (!record.email && identity.uri.startsWith('mailto:') && identity.is_primary) {
-      record.email = identity.uri.replace('mailto:', '');
-      record.email_verified = identity.verified_at ? true : false;
-    }
-    if (!record.phone_number && identity.uri.startsWith('tel:') && identity.is_primary) {
-      record.phone_number = identity.uri.replace('tel:', '');
-      record.phone_number_verified = identity.verified_at ? true : false;
-    }
-  }
+export async function recordToModel(user: User, record: UserInfoRecord): Promise<UserInfo> {  
 
   return {
-    createdAt: new Date(record.updated_at),
-    modifiedAt: new Date(record.updated_at),
-    name: record.name,
-    phoneNumber: record.phone_number || '',
-    phoneNumberVerified: record.phone_number_verified || false,
-    email: record.email || '',
-    emailVerified: record.email_verified || false,
+    createdAt: new Date(record.created_at),
+    modifiedAt: new Date(record.modified_at),
+    name: record.name || '',
     locale: record.locale || '',
     givenName: record.given_name || '',
     familyName: record.family_name || '',
-    birthDate: record.birthdate ||  '',
+    birthDate: record.birthdate || '',
     address: record.address || '',
     zoneInfo: record.zoneinfo || '',
   };

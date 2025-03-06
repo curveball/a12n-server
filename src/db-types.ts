@@ -14,6 +14,7 @@ interface Tables {
   privileges: PrivilegesRecord;
   server_settings: ServerSettingsRecord;
   user_app_permissions: UserAppPermissionsRecord;
+  user_info: UserInfoRecord;
   user_log: UserLogRecord;
   user_login_activity: UserLoginActivityRecord;
   user_passwords: UserPasswordsRecord;
@@ -164,7 +165,7 @@ export type PrincipalsRecord = {
   modified_at: number;
 
   /**
-   * System principals are built-in and cannot be deleted
+   * System are built-in and cannot be deleted
    */
   system: number;
 };
@@ -208,6 +209,60 @@ export type UserAppPermissionsRecord = {
    * Last time this application issued or refreshed an access token
    */
   last_used_at: number | null;
+};
+export type UserInfoRecord = {
+  principal_id: number;
+
+  /**
+   * End-User's full name in displayable form including all name parts, possibly including titles and suffixes, ordered according to the End-User's locale and preferences.
+   */
+  name: string | null;
+
+  /**
+   * Middle name(s) of the End-User.
+   */
+  middle_name: string | null;
+
+  /**
+   * Given name(s) or first name(s) of the End-User.
+   */
+  given_name: string | null;
+
+  /**
+   * Surname(s) or last name(s) of the End-User.
+   */
+  family_name: string | null;
+
+  /**
+   * End-User's birthday
+   */
+  birthdate: Date | null;
+
+  /**
+   * End-User's preferred postal address.
+   */
+  address: string | null;
+
+  /**
+   * End-User's locale. For example, en-US or fr-CA.
+   */
+  locale: string | null;
+
+  /**
+   * End-User's time zone. For example, Europe/Paris or America/Los_Angeles.
+   */
+  zoneinfo: string | null;
+
+  /**
+   * Time the user_info record was created.
+   */
+  created_at: number | null;
+
+  /**
+   * Time the End-User's information was last updated.
+   */
+  modified_at: number | null;
+  metadata: string | null;
 };
 export type UserLogRecord = {
   id: number;

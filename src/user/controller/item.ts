@@ -40,6 +40,7 @@ class UserController extends Controller {
       currentUserPrivileges,
       await principalService.findGroupsForPrincipal(principal),
       await principalIdentityService.findByPrincipal(principal),
+      await userService.findUserInfoByUser(principal)
     );
 
   }

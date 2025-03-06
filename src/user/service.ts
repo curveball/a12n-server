@@ -3,7 +3,6 @@ import * as bcrypt from 'bcrypt';
 import db from '../database.ts';
 import { UserEventLogger } from '../log/types.ts';
 import * as loginActivityService from '../login/login-activity/service.ts';
-import { toUserInfo } from '../oidc/format/json.ts';
 import { getSetting } from '../server-settings.ts';
 import { User, UserInfo } from '../types.ts';
 import { IncorrectPassword, TooManyLoginAttemptsError } from './error.ts';
@@ -124,7 +123,7 @@ export async function validateUserCredentials(user: User, password: string, log:
  * @returns The UserInfo record for the user.
  * @throws NotFound - If the UserInfo record is not found.
  */
-export async function findUserInfoById(user: User): Promise<UserInfo> {
+export async function findUserInfoByUser(user: User): Promise<UserInfo> {
 
   const result = await db('user_info')
       .select()
@@ -133,7 +132,7 @@ export async function findUserInfoById(user: User): Promise<UserInfo> {
 
   if (!result) throw new NotFound(`UserInfo for user "${user.id}" not found.`);
 
-  return toUserInfo(user, result);
+  return recordToModel(user, result);
 }
 
 /**
@@ -149,39 +148,61 @@ export async function updateUserInfo(user: User, userInfo: UserInfo): Promise<Us
     .where({principal_id: user.id})
     .update(userInfo)
     .returning('*')
-    .first();
+    .first()
 
   if (!result) throw new BadRequest(`UserInfo for user "${user.id}" was not updated.`);
 
-  return toUserInfo(user, result);
+  return recordToModel(user, result);
 }
 
-export type UserInfoModel = {
+type UserInfoRecord = {
   sub: string;
+  email?: string;
+  email_verified?: boolean;
   name: string;
-  middleName: string;
-  givenName: string;
-  familyName: string;
-  birthDate?: string | null;
-  address: string;
-  locale: string;
-  createdAt: Date;
-  modifiedAt: Date;
-  zoneInfo?: string | null;
+  website?: string;
+  zoneinfo?: string;
+  given_name?: string;
+  family_name?: string;
+  preferred_username?: string;
+  phone_number?: string;
+  phone_number_verified?: boolean;
+  locale?: string;
+  updated_at: number;
+  picture?: string;
+  address?: string;
+  birthdate?: string;
 }
+  
+export async function recordToModel(user: User, record: UserInfoRecord): Promise<UserInfo> {  
+  const identities = await db('principal_identities')
+    .select()
+    .where({ principal_id: user.id })
 
-export function recordToModel(user: User, userInfo: UserInfo): UserInfoModel {
+  for (const identity of identities) {
+    if (!record.email && identity.uri.startsWith('mailto:') && identity.is_primary) {
+      record.email = identity.uri.replace('mailto:', '');
+      record.email_verified = identity.verified_at ? true : false;
+    }
+    if (!record.phone_number && identity.uri.startsWith('tel:') && identity.is_primary) {
+      record.phone_number = identity.uri.replace('tel:', '');
+      record.phone_number_verified = identity.verified_at ? true : false;
+    }
+  }
+
   return {
-    sub: userInfo.sub,
-    createdAt: new Date(userInfo.created_at),
-    modifiedAt: new Date(userInfo.modified_at),
-    name: userInfo.name,
-    middleName: userInfo.middle_name || '',
-    givenName: userInfo.given_name || '',
-    familyName: userInfo.family_name || '',
-    birthDate: userInfo.birthdate ||  null,
-    address: userInfo.address || '',
-    locale: userInfo.locale || '',
-    zoneInfo: userInfo.zoneinfo || '',
+    createdAt: new Date(record.updated_at),
+    modifiedAt: new Date(record.updated_at),
+    name: record.name,
+    phoneNumber: record.phone_number || '',
+    phoneNumberVerified: record.phone_number_verified || false,
+    email: record.email || '',
+    emailVerified: record.email_verified || false,
+    locale: record.locale || '',
+    givenName: record.given_name || '',
+    familyName: record.family_name || '',
+    birthDate: record.birthdate ||  '',
+    address: record.address || '',
+    zoneInfo: record.zoneinfo || '',
   };
 }

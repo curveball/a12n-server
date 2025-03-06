@@ -213,18 +213,13 @@ export type AppClient = {
 };
 
 export type UserInfo = {
-  name: string;
-  middleName?: string;
-  givenName?: string;
-  phoneNumber?: string;
-  phoneNumberVerified?: boolean;
-  email?: string;
-  emailVerified?: boolean;
-  familyName?: string;
-  birthDate?: string;
-  address?: string;
-  locale?: string;
-  createdAt: Date;
-  modifiedAt: Date;
-  zoneInfo?: string;
+  name: string | null;
+  givenName: string | null;
+  familyName: string | null;
+  birthDate: Date | null;
+  address: string | null;
+  locale: string | null;
+  createdAt: Date | null;
+  modifiedAt: Date | null;
+  zoneInfo: string | null;
 }

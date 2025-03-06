@@ -160,14 +160,14 @@ export async function updateUserInfo(user: User, userInfo: UserInfo): Promise<Us
 export async function recordToModel(user: User, record: UserInfoRecord): Promise<UserInfo> {  
 
   return {
-    createdAt: new Date(record.created_at),
-    modifiedAt: new Date(record.modified_at),
-    name: record.name || '',
-    locale: record.locale || '',
-    givenName: record.given_name || '',
-    familyName: record.family_name || '',
-    birthDate: record.birthdate || '',
-    address: record.address || '',
-    zoneInfo: record.zoneinfo || '',
+    createdAt: record.created_at ? new Date(record.created_at) : null,
+    modifiedAt: record.modified_at ? new Date(record.modified_at) : null,
+    name: record.name || null,
+    locale: record.locale || null,
+    givenName: record.given_name || null,
+    familyName: record.family_name || null,
+    birthDate: record.birthdate || null,
+    address: record.address || null,
+    zoneInfo: record.zoneinfo || null,
   };
 }

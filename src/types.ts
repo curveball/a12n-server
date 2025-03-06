@@ -220,6 +220,7 @@ export type UserInfo = {
   website?: string;
   zoneinfo?: string;
   given_name?: string;
+  middle_name?: string;
   family_name?: string;
   preferred_username?: string;
   phone_number?: string;
@@ -230,4 +231,5 @@ export type UserInfo = {
   address?: string;
   birthdate?: string;
   created_at: number;
+  modified_at: number;
 }

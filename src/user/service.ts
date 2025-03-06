@@ -148,9 +148,40 @@ export async function updateUserInfo(user: User, userInfo: UserInfo): Promise<Us
   const result = await db('user_info')
     .where({principal_id: user.id})
     .update(userInfo)
-    .returning('*');
+    .returning('*')
+    .first();
 
   if (!result) throw new BadRequest(`UserInfo for user "${user.id}" was not updated.`);
 
   return toUserInfo(user, result);
+}
+
+export type UserInfoModel = {
+  sub: string;
+  name: string;
+  middleName: string;
+  givenName: string;
+  familyName: string;
+  birthDate?: string | null;
+  address: string;
+  locale: string;
+  createdAt: Date;
+  modifiedAt: Date;
+  zoneInfo?: string | null;
+}
+
+export function recordToModel(user: User, userInfo: UserInfo): UserInfoModel {
+  return {
+    sub: userInfo.sub,
+    createdAt: new Date(userInfo.created_at),
+    modifiedAt: new Date(userInfo.modified_at),
+    name: userInfo.name,
+    middleName: userInfo.middle_name || '',
+    givenName: userInfo.given_name || '',
+    familyName: userInfo.family_name || '',
+    birthDate: userInfo.birthdate ||  null,
+    address: userInfo.address || '',
+    locale: userInfo.locale || '',
+    zoneInfo: userInfo.zoneinfo || '',
+  };
 }

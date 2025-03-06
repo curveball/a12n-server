@@ -1,11 +1,11 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
+import { PrincipalEdit } from '../../api-types.ts';
+import * as principalIdentityService from '../../principal-identity/service.ts';
+import { PrincipalService } from '../../principal/service.ts';
 import * as privilegeService from '../../privilege/service.ts';
 import * as userHal from '../formats/hal.ts';
 import * as userService from '../service.ts';
-import { PrincipalService } from '../../principal/service.ts';
-import * as principalIdentityService from '../../principal-identity/service.ts';
-import { PrincipalEdit } from '../../api-types.ts';
 
 class UserController extends Controller {
 
@@ -52,12 +52,16 @@ class UserController extends Controller {
     const principalService = new PrincipalService(ctx.privileges);
 
     const user = await principalService.findByExternalId(ctx.params.id);
-    user.active = !!ctx.request.body.active;
-    user.nickname = ctx.request.body.nickname;
+  
+    if (user.type === 'user') {
+      user.active = !!ctx.request.body.active;
+      user.nickname = ctx.request.body.nickname;
 
+      await userService.updateUserInfo(user, ctx.request.body.userInfo);
+    }
+  
     await principalService.save(user);
     ctx.status = 204;
-
   }
 }
 

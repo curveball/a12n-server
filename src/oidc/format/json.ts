@@ -1,27 +1,6 @@
 import { getGlobalOrigin } from '@curveball/kernel';
 import { resolve } from 'url';
-import { PrincipalIdentity, User } from '../../types.ts';
-
-type UserInfo = {
-  sub: string;
-  email?: string;
-  email_verified?: boolean;
-  name: string;
-  website?: string;
-  zoneinfo?: string;
-  given_name?: string;
-  family_name?: string;
-  preferred_username?: string;
-  phone_number?: string;
-  phone_number_verified?: boolean;
-  locale?: string;
-  updated_at: number;
-  picture?: string;
-  address?: string;
-  birthdate?: string;
-  created_at: number;
-}
-
+import { PrincipalIdentity, User, UserInfo } from '../../types.ts';
 
 /**
  * This function converts a a12n-server User object, and returns an OIDC-formatted UserInfo object.

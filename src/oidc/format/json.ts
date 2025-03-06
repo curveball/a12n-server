@@ -1,11 +1,31 @@
-import { getGlobalOrigin } from '@curveball/kernel';
 import { resolve } from 'url';
-import { PrincipalIdentity, User, UserInfo } from '../../types.ts';
+import { User, PrincipalIdentity } from '../../types.ts';
+import { getGlobalOrigin } from '@curveball/kernel';
+
+type UserInfo = {
+  sub: string;
+  email?: string;
+  email_verified?: boolean;
+  name: string;
+  website?: string;
+  zoneinfo?: string;
+  given_name?: string;
+  family_name?: string;
+  preferred_username?: string;
+  phone_number?: string;
+  phone_number_verified?: boolean;
+  locale?: string;
+  updated_at: number;
+  picture?: string;
+  address?: string;
+  birthdate?: string;
+}
+
 
 /**
  * This function converts a a12n-server User object, and returns an OIDC-formatted UserInfo object.
  */
-export function toUserInfo(user: User, identities: PrincipalIdentity[]): UserInfo {
+export function userInfo(user: User, identities: PrincipalIdentity[]): UserInfo {
 
   let emailIdentity;
   let phoneIdentity;
@@ -28,8 +48,7 @@ export function toUserInfo(user: User, identities: PrincipalIdentity[]): UserInf
   const result: UserInfo = {
     sub: resolve(origin, user.href),
     name: user.nickname,
-    created_at: Math.floor(user.createdAt.getTime() / 1000 ),
-    updated_at: Math.floor(user.modifiedAt.getTime() / 1000),
+    updated_at: Math.floor(user.modifiedAt.getTime() / 1000 ),
   };
 
   if (emailIdentity) {

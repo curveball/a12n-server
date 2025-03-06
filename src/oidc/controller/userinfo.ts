@@ -1,8 +1,8 @@
 import { Controller } from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { BadRequest } from '@curveball/http-errors';
-import { userInfo } from '../format/json.ts';
 import * as services from '../../services.ts';
+import { toUserInfo } from '../format/json.ts';
 
 class OidcUserInfoController extends Controller {
 
@@ -15,8 +15,7 @@ class OidcUserInfoController extends Controller {
     }
     const identities = await services.principalIdentity.findByPrincipal(user);
 
-    ctx.response.body = userInfo(user, identities);
-
+    ctx.response.body = toUserInfo(user, identities);
   }
 
 }

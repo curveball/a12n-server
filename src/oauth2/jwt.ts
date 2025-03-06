@@ -1,10 +1,10 @@
-import { User, App, AppClient, PrincipalIdentity } from '../types.ts';
-import { generateSecretToken } from '../crypto.ts';
-import { getSetting } from '../server-settings.ts';
-import { createPrivateKey, KeyObject, createPublicKey } from 'crypto';
-import { SignJWT } from 'jose';
 import { getGlobalOrigin } from '@curveball/kernel';
-import { userInfo } from '../oidc/format/json.ts';
+import { createPrivateKey, createPublicKey, KeyObject } from 'crypto';
+import { SignJWT } from 'jose';
+import { generateSecretToken } from '../crypto.ts';
+import { toUserInfo } from '../oidc/format/json.ts';
+import { getSetting } from '../server-settings.ts';
+import { App, AppClient, PrincipalIdentity, User } from '../types.ts';
 
 type AccessTokenOptions = {
   principal: User|App;
@@ -51,7 +51,7 @@ export async function generateJWTIDToken(options: IDTokenOptions) {
 
   const privateKey = getPrivateKey();
 
-  const body: Record<string, number|string|boolean> = userInfo(options.principal, options.identities);
+  const body: Record<string, number|string|boolean> = toUserInfo(options.principal, options.identities);
 
   if (options.nonce) {
     body.nonce = options.nonce;

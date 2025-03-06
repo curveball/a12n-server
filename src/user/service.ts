@@ -1,10 +1,11 @@
-import { UnprocessableContent } from '@curveball/http-errors';
+import { BadRequest, NotFound, UnprocessableContent } from '@curveball/http-errors';
 import * as bcrypt from 'bcrypt';
 import db from '../database.ts';
 import { UserEventLogger } from '../log/types.ts';
 import * as loginActivityService from '../login/login-activity/service.ts';
+import { toUserInfo } from '../oidc/format/json.ts';
 import { getSetting } from '../server-settings.ts';
-import { User } from '../types.ts';
+import { User, UserInfo } from '../types.ts';
 import { IncorrectPassword, TooManyLoginAttemptsError } from './error.ts';
 
 export async function createPassword(user: User, password: string): Promise<void> {
@@ -117,3 +118,39 @@ export async function validateUserCredentials(user: User, password: string, log:
   return true;
 }
 
+/**
+ * @description - Given a principal User, uses the principal id to find the UserInfo record for a user.
+ * @param user - The principal User to find the UserInfo record for.
+ * @returns The UserInfo record for the user.
+ * @throws NotFound - If the UserInfo record is not found.
+ */
+export async function findUserInfoById(user: User): Promise<UserInfo> {
+
+  const result = await db('user_info')
+      .select()
+      .where({principal_id: user.id})
+      .first();
+
+  if (!result) throw new NotFound(`UserInfo for user "${user.id}" not found.`);
+
+  return toUserInfo(user, result);
+}
+
+/**
+ * @description - Given a principal User, uses the principal id to find the Principal user and update the UserInfo record for a user.
+ * @param user - The principal User to update the UserInfo record for.
+ * @param userInfo - new UserInfo object to update the UserInfo record with.
+ * @returns The updated UserInfo record.
+ * @throws BadRequest - If the UserInfo record is not updated.
+ */
+export async function updateUserInfo(user: User, userInfo: UserInfo): Promise<UserInfo> {
+  
+  const result = await db('user_info')
+    .where({principal_id: user.id})
+    .update(userInfo)
+    .returning('*');
+
+  if (!result) throw new BadRequest(`UserInfo for user "${user.id}" was not updated.`);
+
+  return toUserInfo(user, result);
+}

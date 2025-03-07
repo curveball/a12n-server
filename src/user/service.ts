@@ -143,17 +143,14 @@ export async function findUserInfoByUser(user: User): Promise<UserInfo> {
  * @returns The updated UserInfo record.
  * @throws BadRequest - If the UserInfo record is not updated.
  */
-export async function updateUserInfo(user: User, userInfo: UserInfo): Promise<UserInfo> {
+export async function updateUserInfo(user: User, userInfo: UserInfo): Promise<void> {
   
   const result = await db('user_info')
     .where({principal_id: user.id})
     .update(userInfo)
-    .returning('*')
-    .first()
 
   if (!result) throw new BadRequest(`UserInfo for user "${user.id}" was not updated.`);
 
-  return recordToModel(user, result);
 }
 
 

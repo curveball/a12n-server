@@ -217,7 +217,12 @@ export type UserInfo = {
   givenName: string | null;
   familyName: string | null;
   birthDate: Date | null;
-  address: string | null;
+  address: {
+    locality: string | null;
+    region: string | null;
+    postalCode: string | null;
+    country: string | null;
+  } | null;
   locale: string | null;
   createdAt: Date | null;
   modifiedAt: Date | null;

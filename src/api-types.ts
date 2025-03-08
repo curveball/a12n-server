@@ -285,6 +285,9 @@ export interface PrincipalEdit {
   privileges?: {
     [k: string]: unknown;
   };
+  userInfo?: {
+    [k: string]: unknown;
+  };
 }
 /* eslint-disable */
 /**

@@ -147,7 +147,17 @@ export async function updateUserInfo(user: User, userInfo: UserInfo): Promise<vo
   
   const result = await db('user_info')
     .where({principal_id: user.id})
-    .update(userInfo)
+    .update(
+      {
+        name: userInfo.name,
+        locale: userInfo.locale,
+        given_name: userInfo.givenName,
+        family_name: userInfo.familyName,
+        birthdate: userInfo.birthDate,
+        address: userInfo.address ? JSON.stringify(userInfo.address) : null,
+        zoneinfo: userInfo.zoneInfo,
+      }
+    );
 
   if (!result) throw new BadRequest(`UserInfo for user "${user.id}" was not updated.`);
 
@@ -157,14 +167,14 @@ export async function updateUserInfo(user: User, userInfo: UserInfo): Promise<vo
 export async function recordToModel(user: User, record: UserInfoRecord): Promise<UserInfo> {  
 
   return {
-    createdAt: record.created_at ? new Date(record.created_at) : null,
-    modifiedAt: record.modified_at ? new Date(record.modified_at) : null,
+    createdAt: record.created_at ? new Date(+record.created_at) : null,
+    modifiedAt: record.modified_at ? new Date(+record.modified_at) : null,
     name: record.name || null,
     locale: record.locale || null,
     givenName: record.given_name || null,
     familyName: record.family_name || null,
     birthDate: record.birthdate || null,
-    address: record.address || null,
+    address: record.address ? JSON.parse(record.address) : null,
     zoneInfo: record.zoneinfo || null,
   };
 }

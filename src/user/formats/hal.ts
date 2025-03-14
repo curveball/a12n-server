@@ -70,6 +70,7 @@ function getUserPageHref(page: number): HalLink {
  * has full admin privileges
  */
 export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, hasPassword: boolean, currentUserPrivileges: LazyPrivilegeBox, groups: Group[], identities: PrincipalIdentity[], userInfo: UserInfo): HalResource {
+  const { modifiedAt, ...restOfUserInfo } = userInfo;
 
   const hal: HalResource = {
     _links: {
@@ -94,7 +95,7 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
     modifiedAt: user.modifiedAt.toISOString(),
     type: user.type,
     privileges,
-    ...userInfo,
+    ...restOfUserInfo,
   };
 
   if (hasControl || currentUserPrivileges.has('a12n:one-time-token:generate')) {

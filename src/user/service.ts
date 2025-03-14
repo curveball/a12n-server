@@ -158,7 +158,7 @@ export async function updateUserInfo(user: User, userInfo?: UserInfo): Promise<v
   };
 
   const result = await db('user_info').where({ principal_id: user.id }).update(data);
-  
+
   // No rows for existing user_info was found, so insert a new record
   if (result === 0) {
     await db('user_info')

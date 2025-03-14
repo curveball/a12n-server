@@ -133,7 +133,7 @@ export async function findUserInfoByUser(user: User): Promise<UserInfo> {
 
   if (!result) throw new NotFound(`UserInfo for user "${user.id}" not found.`);
 
-  return recordToModel(user, result);
+  return recordToModel(result);
 }
 
 /**

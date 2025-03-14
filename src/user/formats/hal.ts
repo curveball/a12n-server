@@ -83,10 +83,6 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
         href: group.href,
         title: group.nickname,
       })),
-      'userinfo': {
-        href: `${user.href}/userinfo`,
-        title: 'User Info'
-      },
       'describedby': {
         href: 'https://curveballjs.org/schemas/a12nserver/user.json',
         type: 'application/schema+json',
@@ -284,9 +280,6 @@ export function newUserResult(user: User, password: string|null, identities: Pri
       'me': identities.map( identity => (
         { href: identity.uri, title: user.nickname ?? undefined }
       )),
-      'userinfo': {
-        href: `${user.href}/userinfo`,
-      },
       'describedby': {
         href: 'https://curveballjs.org/schemas/a12nserver/user-new-result.json',
         type: 'application/schema+json',

@@ -187,6 +187,10 @@ export function getSettings(): Knex.Config {
       loadExtensions: ['.js'],
     },
     pool,
+    seeds: {
+      directory: path.dirname(fileURLToPath(import.meta.url)) + '/seeds',
+      loadExtensions: ['.js'],
+    },
     debug: process.env.DEBUG ? true : false,
     useNullAsDefault: useNullAsDefault,
   };

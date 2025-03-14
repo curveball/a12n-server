@@ -68,13 +68,31 @@ Everything prepended with `_` is either a hidden file or a build artifact.
 └── tsconfig.json
 ```
 
-Database migrations scripts are in `src/migrations` and run in chronological order. 
+## 🔄 Database Migrations
+
+Database migrations scripts are in `src/migrations` and run in chronological order when the server starts. 
 
 Filename format:
 - Old files are prefixed with numbers
 - Newer files are `<year><timestamp>.ts`
 
 See [Knex migrations](https://knexjs.org/guide/migrations.html)
+
+If you are running MySQL, you can update the Knex types with: 
+
+```sh
+node ./bin/generate-db-types.mjs
+```
+
+This will generate a `src/db-types.ts` file that will be used by Knex to type the database tables.
+
+
+## Type Conventions
+
+This project uses:
+- snake_case for database properties and web standards.
+- camelCase for API responses – convention chosen because the clients consuming the API would be in JavaScript/Typescript.
+
 
 Ways to Contribute
 ----------------

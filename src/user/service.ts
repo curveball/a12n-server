@@ -169,8 +169,6 @@ export async function updateUserInfo(user: User, userInfo?: UserInfo): Promise<v
 export async function recordToModel(user: User, record: UserInfoRecord): Promise<UserInfo> {
 
   return {
-    createdAt: record.created_at ? new Date(+record.created_at) : null,
-    modifiedAt: record.modified_at ? new Date(+record.modified_at) : null,
     name: record.name || null,
     locale: record.locale || null,
     givenName: record.given_name || null,

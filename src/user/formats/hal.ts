@@ -98,7 +98,7 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
     modifiedAt: user.modifiedAt.toISOString(),
     type: user.type,
     privileges,
-    userInfo,
+    ...userInfo,
   };
 
   if (hasControl || currentUserPrivileges.has('a12n:one-time-token:generate')) {

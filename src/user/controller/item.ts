@@ -53,14 +53,14 @@ class UserController extends Controller {
     const principalService = new PrincipalService(ctx.privileges);
 
     const user = await principalService.findByExternalId(ctx.params.id);
-  
+
     if (user.type === 'user') {
       user.active = !!ctx.request.body.active;
       user.nickname = ctx.request.body.nickname;
 
-      await userService.updateUserInfo(user, ctx.request.body.userInfo);
+      await userService.updateUserInfo(user, ctx.request?.body?.userInfo);
     }
-  
+
     await principalService.save(user);
     ctx.status = 204;
   }

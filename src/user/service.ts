@@ -1,4 +1,4 @@
-import { BadRequest, NotFound, UnprocessableContent } from '@curveball/http-errors';
+import { NotFound, UnprocessableContent } from '@curveball/http-errors';
 import * as bcrypt from 'bcrypt';
 import db from '../database.ts';
 
@@ -147,22 +147,34 @@ export async function updateUserInfo(user: User, userInfo?: UserInfo): Promise<v
 
   if (!userInfo) return;
 
-  const result = await db('user_info')
-    .where({principal_id: user.id})
-    .update(
-      {
-        name: userInfo.name,
-        locale: userInfo.locale,
-        given_name: userInfo.givenName,
-        family_name: userInfo.familyName,
-        birthdate: userInfo.birthDate,
-        address: userInfo.address ? JSON.stringify(userInfo.address) : null,
-        zoneinfo: userInfo.zoneInfo,
-      }
-    );
+  const data = {
+    principal_id: user.id,
+    name: userInfo.name,
+    locale: userInfo.locale,
+    given_name: userInfo.givenName,
+    family_name: userInfo.familyName,
+    birthdate: userInfo.birthDate,
+    address: userInfo.address ? JSON.stringify(userInfo.address) : null,
+    zoneinfo: userInfo.zoneInfo,
+  };
 
-  if (!result) throw new BadRequest(`UserInfo for user "${user.id}" was not updated.`);
+  const result = await db('user_info').where({principal_id: user.id}).update(data);
 
+  if (result === 0) {
+    // No rows for existing user_info was found, so insert a new record
+    await db('user_info')
+      .insert(data)
+      .onConflict('principal_id')
+      .merge({
+      name: data.name,
+      locale: data.locale,
+      given_name: data.given_name,
+      family_name: data.family_name,
+      birthdate: data.birthdate,
+      address: data.address,
+      zoneinfo: data.zoneinfo,
+    });
+  }
 }
 
 

@@ -225,4 +225,5 @@ export type UserInfo = {
   } | null;
   locale: string | null;
   zoneInfo: string | null;
+  modifiedAt: Date | null;
 }

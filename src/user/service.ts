@@ -155,7 +155,7 @@ export async function updateUserInfo(user: User, userInfo?: UserInfo): Promise<v
     family_name: userInfo.familyName,
     birthdate: userInfo.birthDate,
     address: userInfo.address ? JSON.stringify(userInfo.address) : null,
-    zoneinfo: userInfo.zoneInfo,
+    zoneinfo: userInfo.zoneInfo
   };
 
   const result = await db('user_info').where({principal_id: user.id}).update(data);
@@ -163,22 +163,30 @@ export async function updateUserInfo(user: User, userInfo?: UserInfo): Promise<v
   if (result === 0) {
     // No rows for existing user_info was found, so insert a new record
     await db('user_info')
-      .insert(data)
+      .insert({
+        ...data,
+        modified_at: Date.now(),
+      })
       .onConflict('principal_id')
       .merge({
-      name: data.name,
-      locale: data.locale,
-      given_name: data.given_name,
-      family_name: data.family_name,
-      birthdate: data.birthdate,
-      address: data.address,
-      zoneinfo: data.zoneinfo,
-    });
+        name: data.name,
+        locale: data.locale,
+        given_name: data.given_name,
+        family_name: data.family_name,
+        birthdate: data.birthdate,
+        address: data.address,
+        zoneinfo: data.zoneinfo,
+        modified_at: Date.now(),
+      });
   }
 }
 
-
-export async function recordToModel(user: User, record: UserInfoRecord): Promise<UserInfo> {
+/**
+ * @description - Given a UserInfo record from database, converts the record to a UserInfo object.
+ * @param record - The UserInfo record to convert to a UserInfo object.
+ * @returns The UserInfo object.
+ */
+export async function recordToModel(record: UserInfoRecord): Promise<UserInfo> {
 
   return {
     name: record.name || null,
@@ -188,5 +196,6 @@ export async function recordToModel(user: User, record: UserInfoRecord): Promise
     birthDate: record.birthdate || null,
     address: record.address ? JSON.parse(record.address) : null,
     zoneInfo: record.zoneinfo || null,
+    modifiedAt: record.modified_at ? new Date(+record.modified_at) : null,
   };
 }

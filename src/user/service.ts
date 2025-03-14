@@ -127,9 +127,9 @@ export async function validateUserCredentials(user: User, password: string, log:
 export async function findUserInfoByUser(user: User): Promise<UserInfo> {
 
   const result = await db('user_info')
-      .select()
-      .where({principal_id: user.id})
-      .first();
+    .select()
+    .where({principal_id: user.id})
+    .first();
 
   if (!result) throw new NotFound(`UserInfo for user "${user.id}" not found.`);
 
@@ -143,8 +143,10 @@ export async function findUserInfoByUser(user: User): Promise<UserInfo> {
  * @returns The updated UserInfo record.
  * @throws BadRequest - If the UserInfo record is not updated.
  */
-export async function updateUserInfo(user: User, userInfo: UserInfo): Promise<void> {
-  
+export async function updateUserInfo(user: User, userInfo?: UserInfo): Promise<void> {
+
+  if (!userInfo) return;
+
   const result = await db('user_info')
     .where({principal_id: user.id})
     .update(
@@ -164,7 +166,7 @@ export async function updateUserInfo(user: User, userInfo: UserInfo): Promise<vo
 }
 
 
-export async function recordToModel(user: User, record: UserInfoRecord): Promise<UserInfo> {  
+export async function recordToModel(user: User, record: UserInfoRecord): Promise<UserInfo> {
 
   return {
     createdAt: record.created_at ? new Date(+record.created_at) : null,

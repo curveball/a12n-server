@@ -1,5 +1,6 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
+import { UserInfo } from '../../types.ts';
 import { PrincipalEdit } from '../../api-types.ts';
 import * as principalIdentityService from '../../principal-identity/service.ts';
 import { PrincipalService } from '../../principal/service.ts';
@@ -58,7 +59,7 @@ class UserController extends Controller {
       user.active = !!ctx.request.body.active;
       user.nickname = ctx.request.body.nickname;
 
-      await userService.updateUserInfo(user, ctx.request?.body?.userInfo);
+      await userService.updateUserInfo(user, ctx.request?.body?.userInfo as UserInfo);
     }
 
     await principalService.save(user);

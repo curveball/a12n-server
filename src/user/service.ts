@@ -141,7 +141,6 @@ export async function findUserInfoByUser(user: User): Promise<UserInfo> {
  * @param user - The principal User to update the UserInfo record for.
  * @param userInfo - new UserInfo object to update the UserInfo record with.
  * @returns The updated UserInfo record.
- * @throws BadRequest - If the UserInfo record is not updated.
  */
 export async function updateUserInfo(user: User, userInfo?: UserInfo): Promise<void> {
 
@@ -158,13 +157,14 @@ export async function updateUserInfo(user: User, userInfo?: UserInfo): Promise<v
     zoneinfo: userInfo.zoneInfo
   };
 
-  const result = await db('user_info').where({principal_id: user.id}).update(data);
-
+  const result = await db('user_info').where({ principal_id: user.id }).update(data);
+  
+  // No rows for existing user_info was found, so insert a new record
   if (result === 0) {
-    // No rows for existing user_info was found, so insert a new record
     await db('user_info')
       .insert({
         ...data,
+        created_at: Date.now(),
         modified_at: Date.now(),
       })
       .onConflict('principal_id')

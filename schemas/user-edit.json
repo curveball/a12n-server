@@ -1,11 +1,11 @@
 {
   "$schema": "https://json-schema.org/draft/2019-09/schema",
-  "$id": "https://curveballjs.org/schemas/a12nserver/user.json",
+  "$id": "https://curveballjs.org/schemas/a12nserver/user-edit.json",
   "type": "object",
   "title": "User",
-  "description": "A user",
+  "description": "This object describes the JSON repsentation of a PUT request on a user. It's mostly similar to the user schema, but with some fields not required.",
 
-  "required": ["nickname", "active", "createdAt", "name", "givenName", "middleName", "familyName", "birthdate", "modifiedAt", "type", "privileges", "address","hasPassword", "zoneinfo", "metadata"],
+  "required": ["nickname", "active"],
   "additionalProperties": false,
 
   "properties": {
@@ -47,7 +47,7 @@
       "required": ["address", "locality", "region", "postalCode", "country"],
       "properties": {
         "address": {
-          "type": ["array", "null"],
+          "type": "array",
           "items": {
             "type": "string"
           },
@@ -99,6 +99,7 @@
       "description": "May be 'user', 'app' or 'group'"
     },
     "privileges": {
+      "description": "List of privileges. This object gets ignored in PUT requests and exists so API clients can GET a full user object, make their changes and then send it in the same shape.",
       "type": "object",
       "additionalProperties": {
         "type": "array",

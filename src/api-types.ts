@@ -10,29 +10,33 @@
  */
 export interface AppClientEditFormBody {
   /**
+   * client_id for this client. May be omitted for edits and must not change from the original
+   */
+  clientId?: string;
+  /**
    * Can the client can use the 'client_credentials' flow
    */
-  allowClientCredentials?: "on";
+  allowClientCredentials?: string;
   /**
    * Can the client can use the 'authorization_code' flow
    */
-  allowAuthorizationCode?: "on";
+  allowAuthorizationCode?: string;
   /**
    * Can the client can use the OAuth 2.0 for First Party Applications flow
    */
-  allowAuthorizationChallenge?: "on";
+  allowAuthorizationChallenge?: string;
   /**
    * Can the client can use the deprecated 'implicit' flow
    */
-  allowImplicit?: "on";
+  allowImplicit?: string;
   /**
    * Is the client allowed to refresh tokens
    */
-  allowRefreshToken?: "on";
+  allowRefreshToken?: string;
   /**
    * Can the client can use the 'password' flow flow
    */
-  allowPassword?: "on";
+  allowPassword?: string;
   /**
    * List of redirect uris for the authorization_code and implicit flows.
    */
@@ -40,7 +44,7 @@ export interface AppClientEditFormBody {
   /**
    * Require 'Proof of Key Code Exchange' for authorization_code flow. If not set, PKCE is supported but not enforced.
    */
-  requirePkce?: "on";
+  requirePkce?: string;
 }
 /* eslint-disable */
 /**
@@ -56,27 +60,27 @@ export interface AppClientNewFormBody {
   /**
    * Can the client can use the 'client_credentials' flow
    */
-  allowClientCredentials?: "on";
+  allowClientCredentials?: string;
   /**
    * Can the client can use the 'authorization_code' flow
    */
-  allowAuthorizationCode?: "on";
+  allowAuthorizationCode?: string;
   /**
    * Can the client can use the OAuth 2.0 for First Party Applications flow
    */
-  allowAuthorizationChallenge?: "on";
+  allowAuthorizationChallenge?: string;
   /**
    * Can the client can use the deprecated 'implicit' flow
    */
-  allowImplicit?: "on";
+  allowImplicit?: string;
   /**
    * Is the client allowed to refresh tokens
    */
-  allowRefreshToken?: "on";
+  allowRefreshToken?: string;
   /**
    * Can the client can use the 'password' flow flow
    */
-  allowPassword?: "on";
+  allowPassword?: string;
   /**
    * List of redirect uris for the authorization_code and implicit flows.
    */
@@ -88,7 +92,7 @@ export interface AppClientNewFormBody {
   /**
    * Require 'Proof of Key Code Exchange' for authorization_code flow. If not set, PKCE is supported but not enforced.
    */
-  requirePkce?: "on";
+  requirePkce?: string;
 }
 /* eslint-disable */
 /**

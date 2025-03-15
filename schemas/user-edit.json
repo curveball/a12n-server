@@ -2,7 +2,7 @@
   "$schema": "https://json-schema.org/draft/2019-09/schema",
   "$id": "https://curveballjs.org/schemas/a12nserver/user-edit.json",
   "type": "object",
-  "title": "User",
+  "title": "UserEdit",
   "description": "This object describes the JSON repsentation of a PUT request on a user. It's mostly similar to the user schema, but with some fields not required.",
 
   "required": ["nickname", "active"],

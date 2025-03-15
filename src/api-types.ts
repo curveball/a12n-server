@@ -447,7 +447,7 @@ export interface UserAppPermissions {
 /**
  * This object describes the JSON repsentation of a PUT request on a user. It's mostly similar to the user schema, but with some fields not required.
  */
-export interface User {
+export interface UserEdit {
   /**
    * HAL Links
    */

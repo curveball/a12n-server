@@ -3,7 +3,7 @@ import { Context } from '@curveball/core';
 import { UnsupportedMediaType } from '@curveball/http-errors';
 
 import { UserInfo } from '../../types.ts';
-import { PrincipalEdit } from '../../api-types.ts';
+import { PrincipalEdit, UserEdit } from '../../api-types.ts';
 import * as principalIdentityService from '../../principal-identity/service.ts';
 import { PrincipalService } from '../../principal/service.ts';
 import * as privilegeService from '../../privilege/service.ts';
@@ -82,7 +82,7 @@ class UserController extends Controller {
 
   async putJson(ctx: Context) {
 
-    ctx.request.validate<PrincipalEdit>(
+    ctx.request.validate<UserEdit>(
       'https://curveballjs.org/schemas/a12nserver/user-edit.json'
     );
     const principalService = new PrincipalService(ctx.privileges);

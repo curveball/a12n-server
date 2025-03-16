@@ -2,98 +2,57 @@ import * as bcrypt from 'bcrypt';
 import { randomUUID } from 'crypto';
 import { Knex } from 'knex';
 
+const initialUsers = [
+  {
+    nickname: 'admin',
+    given_name: 'Admin',
+    family_name: 'User',
+  },
+  {
+    nickname: 'apple',
+    given_name: 'Apple',
+    family_name: 'Cake',
+  },
+  {
+    nickname: 'banana',
+    given_name: 'Banana',
+    family_name: 'Bread',
+  },
+  {
+    nickname: 'cherry',
+    given_name: 'Cherry',
+    family_name: 'Tart',
+  },
+] as const;
+
 export async function seed(knex: Knex): Promise<void> {
+  for (const user of initialUsers) {
+    // Insert principal and get the generated ID
+    const [principal] = await knex('principals')
+      .insert({
+        active: 1,
+        nickname: user.nickname,
+        type: 1,
+        external_id: randomUUID().slice(0, 6),
+        created_at: new Date().getTime(),
+        modified_at: new Date().getTime(),
+      })
+      .returning('id');
 
-  // Insert seed users
-  const users = await knex('principals').insert([
-    {
-      active: 1,
-      nickname: 'admin',
-      type: 1,
-      external_id: randomUUID().slice(0, 6),
-      created_at: +new Date(),
-      modified_at: +new Date(),
-    },
-    {
-      active: 1,
-      nickname: 'apple',
-      type: 1,
-      external_id: randomUUID().slice(0, 6),
-      created_at: +new Date(),
-      modified_at: +new Date(),
-    },
-    {
-      active: 1,
-      nickname: 'banana',
-      type: 1,
-      external_id: randomUUID().slice(0, 6),
-      created_at: +new Date(),
-      modified_at: +new Date(),
-    },
-    {
-      active: 1,
-      nickname: 'cherry',
-      type: 1,
-      external_id: randomUUID().slice(0, 6),
-      created_at: +new Date(),
-      modified_at: +new Date(),
-    }
-  ]).returning('id')
+    // Use the principal_id for related tables
+    await knex('user_info').insert({
+      principal_id: principal.id,
+      name: `${user.given_name} ${user.family_name}`,
+      given_name: user.given_name,
+      family_name: user.family_name,
+      locale: 'en-US',
+      created_at: new Date().getTime(),
+      modified_at: new Date().getTime(),
+    })
 
-  // Insert user_info
-  await knex('user_info').insert([
-    {
-      principal_id: users[0].id,
-      name: 'Admin User',
-      given_name: 'Admin',
-      family_name: 'User',
-      locale: 'en-US',
-      modified_at: +new Date(),
-    },
-    {
-      principal_id: users[1].id,
-      name: 'Apple Cake',
-      given_name: 'Apple',
-      family_name: 'Cake',
-      locale: 'en-US',
-      modified_at: +new Date(),
-    },
-    {
-      principal_id: users[2].id,
-      name: 'Banana Bread',
-      given_name: 'Banana',
-      family_name: 'Bread',
-      locale: 'en-US',
-      modified_at: +new Date(),
-    },
-    {
-      principal_id: users[3].id,
-      name: 'Cherry Tart',
-      given_name: 'Cherry',
-      family_name: 'Tart',
-      locale: 'en-US',
-      modified_at: +new Date(),
-    }
-  ]);
-
-  // Insert passwords (hashed)
-  const hashedPassword = await bcrypt.hash('password123', 12);
-  await knex('user_passwords').insert([
-    {
-      user_id: users[0].id,
-      password: hashedPassword,
-    },
-    {
-      user_id: users[1].id,
-      password: hashedPassword,
-    },
-    {
-      user_id: users[2].id,
-      password: hashedPassword,
-    },
-    {
-      user_id: users[3].id,
-      password: hashedPassword,
-    }
-  ]);
+    await knex('user_passwords').insert({
+      user_id: principal.id,
+      password: await bcrypt.hash('password123', 12)
+    });
+  }
 }

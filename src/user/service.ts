@@ -1,4 +1,4 @@
-import { BadRequest, NotFound, UnprocessableContent } from '@curveball/http-errors';
+import { BadRequest, UnprocessableContent } from '@curveball/http-errors';
 import * as bcrypt from 'bcrypt';
 import db from '../database.ts';
 
@@ -127,14 +127,32 @@ export async function validateUserCredentials(user: User, password: string, log:
 export async function findUserInfoByUser(user: User): Promise<UserInfo> {
   if (!user || user.type !== 'user') throw new BadRequest('UserInfo lookup failed: user is not a user or is not found');
 
-  const result = await db('user_info')
+  let result = await db('user_info')
     .select()
     .where({principal_id: user.id})
     .first();
 
-  if (!result) throw new NotFound(`UserInfo for user "${user.id}" not found.`);
+  if (!result) {
+    console.info(`UserInfo for user ${user.id} not found. Inserting new record...`);
 
-  return recordToModel(result);
+    await db('user_info')
+      .insert({
+        principal_id: user.id,
+        given_name: user.nickname,
+        created_at: Date.now(),
+        modified_at: Date.now(),
+      });
+    //@ts-expect-error - Create a partial UserInfoRecord for inserting any
+    // fields that could link a user to a userInfo record
+    result = {
+      principal_id: user.id,
+      given_name: user.nickname,
+      created_at: Date.now(),
+      modified_at: Date.now(),
+    };
+  }
+
+  return recordToModel(result as UserInfoRecord);
 }
 
 /**

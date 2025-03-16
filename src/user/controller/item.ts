@@ -96,13 +96,14 @@ class UserController extends Controller {
       const userInfo = await userService.findUserInfoByUser(user);
       // 1. They have a value, and you want to update the database.
       // Check if the PUT request is for JSON, if so, we want to update the userInfo object
-      if (userInfo != null && ctx.request.headers.get('Content-Type') === 'application/json') {
-      const newFields = ctx.request.body.userInfo;
-      await userService.updateUserInfo(user, {...userInfo, ...newFields} as UserInfo);
+      if (userInfo != null && ctx.request.is('json')) {
+        const newFields = ctx.request.body.userInfo;
+        const updatedUserInfo = {...userInfo, ...newFields} as UserInfo;
+        await userService.updateUserInfo(user, updatedUserInfo);
       }
-      
+
       // 2. They are set to null, which means we want to clear the value in the database
-      const nullProperties = Object.keys(userInfo).filter(key => userInfo[key as keyof UserInfo] === null)
+      const nullProperties = Object.keys(userInfo).filter(key => userInfo[key as keyof UserInfo] === null);
       if (nullProperties.length > 0) {
         await userService.deleteFieldsFromUserInfo(user, nullProperties);
       }
@@ -111,9 +112,9 @@ class UserController extends Controller {
       //    have control over clients and we need to have some kind of backwards compatibility,
       //    at least for a few versions. So an old client might know about these new properties
       //    and shouldn't inadvertently clear them.
-      const undefinedProperties = Object.keys(userInfo).filter(key => !userInfo[key as keyof UserInfo])
+      const undefinedProperties = Object.keys(userInfo).filter(key => !userInfo[key as keyof UserInfo]);
       if (undefinedProperties.length > 0) {
-       // not sure what to do here... which is the old value?
+        // not sure what to do here... which is the old value?
       }
     }
 

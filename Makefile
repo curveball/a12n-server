@@ -34,6 +34,9 @@ knex-migrate: dist/build
 knex-make-migration:
 	cd src; npx knex migrate:make migration_name -x ts
 
+knex-seed:
+	cd src; npx knex seed:run
+
 start-dev:
 	npx tsc-watch --onSuccess 'node --inspect=9339 dist/app.js'
 

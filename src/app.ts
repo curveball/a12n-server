@@ -24,7 +24,10 @@ if (!process.env.PUBLIC_URI) {
   process.title = 'a12n-server/' + VERSION;
 
   await initDb();
-  process.env.NODE_ENV === 'production' ? await load() : await initWithSeeds();
+
+  if (process.env.NODE_ENV === 'production') await load();
+  else await initWithSeeds();
+  
   await loadWordList();
 
   const app = new Application();

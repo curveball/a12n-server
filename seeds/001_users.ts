@@ -2,35 +2,65 @@ import * as bcrypt from 'bcrypt';
 import { Knex } from 'knex';
 
 export async function seed(knex: Knex): Promise<void> {
-  // First, delete existing entries to start fresh
 
   // Insert seed users
   const users = await knex('principals').insert([
     {
-      identity: 'admin@example.com',
       active: true,
       created_at: new Date(),
-      modified_at: new Date()
+      modified_at: new Date(),
+      nickname: 'admin',
     },
     {
-      identity: 'user1@example.com',
       active: true,
       created_at: new Date(),
-      modified_at: new Date()
+      modified_at: new Date(),
+      nickname: 'apple',
     },
     {
-        identity: 'user2@example.com',
         active: true,
         created_at: new Date(),
-        modified_at: new Date()
+        modified_at: new Date(),
+        nickname: 'banana',
     },
     {
-        identity: 'user3@example.com',
         active: true,
         created_at: new Date(),
-        modified_at: new Date()
+        modified_at: new Date(),
+        nickname: 'cherry',
     }
-  ]).returning('id');
+  ]).returning('id')
+
+await knex('principal_identities').insert([
+    {
+      principal_id: users[0].id,
+      identity: 'admin@example.com',
+      is_primary: true,
+      created_at: new Date(),
+      modified_at: new Date(),
+    },
+    {
+      principal_id: users[1].id,
+      identity: 'apple@example.com',
+      is_primary: true,
+      created_at: new Date(),
+      modified_at: new Date(),
+    },
+    {
+      principal_id: users[2].id,
+      identity: 'banana@example.com',
+      is_primary: true,
+      created_at: new Date(),
+      modified_at: new Date(),
+    },
+    {
+      principal_id: users[3].id,
+      identity: 'cherry@example.com',
+      is_primary: true,
+      created_at: new Date(),
+      modified_at: new Date(),
+    },
+  ]);
 
   // Insert user_info
   await knex('user_info').insert([

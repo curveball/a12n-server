@@ -289,6 +289,20 @@ export interface PrincipalEdit {
   privileges?: {
     [k: string]: unknown;
   };
+  userInfo?: {
+    name?: string | null;
+    givenName?: string | null;
+    familyName?: string | null;
+    birthDate?: string | null;
+    address?: {
+      locality?: string | null;
+      region?: string | null;
+      postalCode?: string | null;
+      country?: string | null;
+    } | null;
+    locale?: string | null;
+    zoneInfo?: string | null;
+  };
 }
 /* eslint-disable */
 /**
@@ -516,6 +530,20 @@ export interface UserEdit {
    * Does the user have a password set? This will be removed in a future version. Use the authFactors resource instead.
    */
   hasPassword?: boolean;
+  userInfo?: {
+    name?: string | null;
+    givenName?: string | null;
+    familyName?: string | null;
+    birthDate?: string | null;
+    address?: {
+      locality?: string | null;
+      region?: string | null;
+      postalCode?: string | null;
+      country?: string | null;
+    } | null;
+    locale?: string | null;
+    zoneInfo?: string | null;
+  };
 }
 /* eslint-disable */
 /**

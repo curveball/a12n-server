@@ -34,7 +34,7 @@ class UserController extends Controller {
     const principalPrivileges = await privilegeService.get(principal);
 
     const currentUserPrivileges = ctx.privileges;
-
+    const userInfo = await userService.findUserInfoByUser(principal);
     ctx.response.body = userHal.item(
       principal,
       principalPrivileges.getAll(),
@@ -43,7 +43,7 @@ class UserController extends Controller {
       currentUserPrivileges,
       await principalService.findGroupsForPrincipal(principal),
       await principalIdentityService.findByPrincipal(principal),
-      await userService.findUserInfoByUser(principal)
+      userInfo ?? null
     );
 
   }

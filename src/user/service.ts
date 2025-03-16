@@ -1,6 +1,6 @@
 import { BadRequest, UnprocessableContent } from '@curveball/http-errors';
 import * as bcrypt from 'bcrypt';
-import db from '../database.ts';
+import db, { insertAndGetId } from '../database.ts';
 
 import { UserInfoRecord } from 'knex/types/tables.js';
 import { UserEventLogger } from '../log/types.ts';
@@ -134,18 +134,16 @@ export async function findUserInfoByUser(user: User): Promise<UserInfo> {
 
   if (!result) {
     console.info(`UserInfo for user ${user.id} not found. Inserting new record...`);
-
-    await db('user_info')
-      .insert({
-        principal_id: user.id,
-        given_name: user.nickname,
-        created_at: Date.now(),
-        modified_at: Date.now(),
-      });
+    const id = await insertAndGetId('user_info', {
+      principal_id: user.id,
+      given_name: user.nickname,
+      created_at: Date.now(),
+      modified_at: Date.now(),
+    });
     //@ts-expect-error - Create a partial UserInfoRecord for inserting any
     // fields that could link a user to a userInfo record
-    result = {
-      principal_id: user.id,
+    result = {  
+      principal_id: id,
       given_name: user.nickname,
       created_at: Date.now(),
       modified_at: Date.now(),

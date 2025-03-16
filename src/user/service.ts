@@ -1,4 +1,4 @@
-import { NotFound, UnprocessableContent } from '@curveball/http-errors';
+import { BadRequest, NotFound, UnprocessableContent } from '@curveball/http-errors';
 import * as bcrypt from 'bcrypt';
 import db from '../database.ts';
 
@@ -125,6 +125,7 @@ export async function validateUserCredentials(user: User, password: string, log:
  * @throws NotFound - If the UserInfo record is not found.
  */
 export async function findUserInfoByUser(user: User): Promise<UserInfo> {
+  if (!user || user.type !== 'user') throw new BadRequest('UserInfo lookup failed: user is not a user or is not found');
 
   const result = await db('user_info')
     .select()
@@ -161,6 +162,7 @@ export async function updateUserInfo(user: User, userInfo?: UserInfo): Promise<v
 
   // No rows for existing user_info was found, so insert a new record
   if (result === 0) {
+    console.log('inserting new user_info record...');
     await db('user_info')
       .insert({
         ...data,

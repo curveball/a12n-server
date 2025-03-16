@@ -72,7 +72,6 @@ class UserController extends Controller {
     if (user.type === 'user') {
       user.active = !!ctx.request.body.active;
       user.nickname = ctx.request.body.nickname;
-
     }
 
     await principalService.save(user);
@@ -94,10 +93,12 @@ class UserController extends Controller {
       user.nickname = ctx.request.body.nickname;
 
       // One thing to keep in mind is that there's really 3 cases for the new properties:
-      // 1. They have a value, and you want to update the database.
       const userInfo = await userService.findUserInfoByUser(user);
-      if (userInfo != null) {
-      await userService.updateUserInfo(user, userInfo as UserInfo);
+      // 1. They have a value, and you want to update the database.
+      // Check if the PUT request is for JSON, if so, we want to update the userInfo object
+      if (userInfo != null && ctx.request.headers.get('Content-Type') === 'application/json') {
+      const newFields = ctx.request.body.userInfo;
+      await userService.updateUserInfo(user, {...userInfo, ...newFields} as UserInfo);
       }
       
       // 2. They are set to null, which means we want to clear the value in the database

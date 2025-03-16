@@ -8,10 +8,13 @@ let settings: Knex.Config | null = null;
 const db: Knex = knex(getSettings());
 
 export async function init() {
-
   console.info('Running database migrations');
   await db.migrate.latest();
+}
 
+export async function initWithSeeds() {
+  await init();
+  await db.seed.run();
 }
 
 export default db;
@@ -188,12 +191,13 @@ export function getSettings(): Knex.Config {
     },
     pool,
     seeds: {
-      directory: path.dirname(fileURLToPath(import.meta.url)) + '/seeds',
+      // Only run seed in development mode
+      directory: process.env.NODE_ENV === 'development' ? path.dirname(fileURLToPath(import.meta.url)) + '/seeds' : undefined,
       loadExtensions: ['.js'],
     },
     debug: process.env.DEBUG ? true : false,
     useNullAsDefault: useNullAsDefault,
   };
-
+  
   return settings;
 }

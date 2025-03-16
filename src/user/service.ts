@@ -162,7 +162,6 @@ export async function updateUserInfo(user: User, userInfo?: UserInfo): Promise<v
 
   // No rows for existing user_info was found, so insert a new record
   if (result === 0) {
-    console.log('inserting new user_info record...');
     await db('user_info')
       .insert({
         ...data,

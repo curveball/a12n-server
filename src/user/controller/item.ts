@@ -98,7 +98,19 @@ class UserController extends Controller {
       // Check if the PUT request is for JSON, if so, we want to update the userInfo object
       if (userInfo != null && ctx.request.is('json')) {
         const newFields = ctx.request.body.userInfo;
-        const updatedUserInfo = {...userInfo, ...newFields} as UserInfo;
+        if (!newFields) return;
+
+        const updatedUserInfo: UserInfo = {
+          ...userInfo,
+          ...newFields,
+          birthDate: newFields.birthDate ? new Date(newFields.birthDate) : null,
+          address: newFields.address ? {
+            locality: newFields.address.locality ?? null,
+            region: newFields.address.region ?? null,
+            postalCode: newFields.address.postalCode ?? null,
+            country: newFields.address.country ?? null
+          } : null
+        };
         await userService.updateUserInfo(user, updatedUserInfo);
       }
 

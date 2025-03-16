@@ -3,9 +3,6 @@ import { Knex } from 'knex';
 
 export async function seed(knex: Knex): Promise<void> {
   // First, delete existing entries to start fresh
-  await knex('user_info').del();
-  await knex('user_passwords').del();
-  await knex('principals').del();
 
   // Insert seed users
   const users = await knex('principals').insert([

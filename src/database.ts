@@ -198,6 +198,6 @@ export function getSettings(): Knex.Config {
     debug: process.env.DEBUG ? true : false,
     useNullAsDefault: useNullAsDefault,
   };
-  
+
   return settings;
 }

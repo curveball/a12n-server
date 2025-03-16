@@ -28,49 +28,6 @@
     },
     "privileges": {
       "readOnly": true
-    },
-    "userInfo": {
-      "type": "object",
-      "properties": {
-        "email": {
-          "type": "string",
-          "format": "email"
-        },
-        "phone": {
-          "type": "string",
-          "format": "phone"
-        },
-        "address": {
-          "type": "string",
-          
-        },
-        "postalCode": {
-          "type": "string",
-          "format": "postalCode"
-        },
-        "city": {
-          "type": "string"
-        },
-        "country": {
-          "type": "string"
-        },
-        "birthdate": {
-          "type": "string",
-          "format": "date"
-        },
-        "zoneinfo": {
-          "type": "string"
-        },
-        "givenName": {
-          "type": "string"
-        },
-        "familyName": {
-          "type": "string"
-        },
-        "middleName": {
-          "type": "string"
-        }
-      }
     }
   }
 }

@@ -112,7 +112,26 @@
       "type": "boolean",
       "description": "Does the user have a password set? This will be removed in a future version. Use the authFactors resource instead.",
       "deprecated": true
+    },
+    "userInfo": {
+      "type": "object",
+      "properties": {
+        "name": { "type": ["string", "null"] },
+        "givenName": { "type": ["string", "null"] },
+        "familyName": { "type": ["string", "null"] },
+        "birthDate": { "type": ["string", "null"], "format": "date" },
+        "address": {
+          "type": ["object", "null"],
+          "properties": {
+            "locality": { "type": ["string", "null"] },
+            "region": { "type": ["string", "null"] },
+            "postalCode": { "type": ["string", "null"] },
+            "country": { "type": ["string", "null"] }
+          }
+        },
+        "locale": { "type": ["string", "null"] },
+        "zoneInfo": { "type": ["string", "null"] }
+      }
     }
-
   }
 }

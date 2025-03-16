@@ -2,11 +2,11 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { UnsupportedMediaType } from '@curveball/http-errors';
 
-import { UserInfo } from '../../types.ts';
 import { PrincipalEdit, UserEdit } from '../../api-types.ts';
 import * as principalIdentityService from '../../principal-identity/service.ts';
 import { PrincipalService } from '../../principal/service.ts';
 import * as privilegeService from '../../privilege/service.ts';
+import { UserInfo } from '../../types.ts';
 import * as userHal from '../formats/hal.ts';
 import * as userService from '../service.ts';
 
@@ -93,16 +93,27 @@ class UserController extends Controller {
       user.active = !!ctx.request.body.active;
       user.nickname = ctx.request.body.nickname;
 
-      // @usrrname: FIX THIS
-      //
       // One thing to keep in mind is that there's really 3 cases for the new properties:
       // 1. They have a value, and you want to update the database.
+      const userInfo = await userService.findUserInfoByUser(user);
+      if (userInfo != null) {
+      await userService.updateUserInfo(user, userInfo as UserInfo);
+      }
+      
       // 2. They are set to null, which means we want to clear the value in the database
+      const nullProperties = Object.keys(userInfo).filter(key => userInfo[key as keyof UserInfo] === null)
+      if (nullProperties.length > 0) {
+        await userService.deleteFieldsFromUserInfo(user, nullProperties);
+      }
+
       // 3. It's undefined, in which case we want to keep the old value. Remember that we don't
       //    have control over clients and we need to have some kind of backwards compatibility,
       //    at least for a few versions. So an old client might know about these new properties
       //    and shouldn't inadvertently clear them.
-      await userService.updateUserInfo(user, ctx.request?.body?.userInfo as UserInfo);
+      const undefinedProperties = Object.keys(userInfo).filter(key => !userInfo[key as keyof UserInfo])
+      if (undefinedProperties.length > 0) {
+       // not sure what to do here... which is the old value?
+      }
     }
 
     await principalService.save(user);

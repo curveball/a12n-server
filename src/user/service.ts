@@ -199,3 +199,13 @@ export async function recordToModel(record: UserInfoRecord): Promise<UserInfo> {
     modifiedAt: record.modified_at ? new Date(+record.modified_at) : null,
   };
 }
+
+export async function deleteFieldsFromUserInfo(user: User, fields: string[]): Promise<void> {
+  if (!fields || fields.length === 0) return;
+
+  for (const field of fields) {
+    await db('user_info').where({ principal_id: user.id })
+      .whereNotIn(field, [field])
+      .delete();
+  }
+}

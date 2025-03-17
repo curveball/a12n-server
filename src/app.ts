@@ -27,7 +27,7 @@ if (!process.env.PUBLIC_URI) {
 
   if (process.env.NODE_ENV === 'production') await load();
   else await initWithSeeds();
-  
+
   await loadWordList();
 
   const app = new Application();

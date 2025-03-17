@@ -482,7 +482,32 @@ export interface UserEdit {
    * End-User's birthday, represented in YYYY-MM-DD format.
    */
   birthdate?: string | null;
-  address?: string | null;
+  address?: {
+    /**
+     * Street address. This property can be specified as an array to add multiple address lines.
+     */
+    streetAddress: string[];
+    /**
+     * City or locality component.
+     */
+    locality: string | null;
+    /**
+     * State, province, prefecture, or region component. Should be specified as a code for countries where this is applicable.
+     */
+    region: string | null;
+    /**
+     * Zip code or postal code component.
+     */
+    postalCode: string | null;
+    /**
+     * Country, specified as an ISO 3166-1 alpha-2 country code. (e.g.: 'CA' or 'NL')
+     */
+    country: string | null;
+  } | null;
+  /**
+   * End-User's preferred locale. This should follow the BCP47 format.
+   */
+  locale?: string | null;
   /**
    * String from the IANA Time Zone Database representing the End-User's time zone. For example, 'Europe/Amsterdam' or 'America/Los_Angeles'.
    */
@@ -640,7 +665,32 @@ export interface User {
    * End-User's birthday, represented in YYYY-MM-DD format.
    */
   birthdate: string | null;
-  address: string | null;
+  address: {
+    /**
+     * Street address. This property can be specified as an array to add multiple address lines.
+     */
+    streetAddress: string[] | null;
+    /**
+     * City or locality component.
+     */
+    locality: string | null;
+    /**
+     * State, province, prefecture, or region component. Should be specified as a code for countries where this is applicable.
+     */
+    region: string | null;
+    /**
+     * Zip code or postal code component.
+     */
+    postalCode: string | null;
+    /**
+     * Country, specified as an ISO 3166-1 alpha-2 country code. (e.g.: 'CA' or 'NL')
+     */
+    country: string | null;
+  } | null;
+  /**
+   * End-User's preferred locale. This should follow the BCP47 format.
+   */
+  locale?: string | null;
   /**
    * String from the IANA Time Zone Database representing the End-User's time zone. For example, 'Europe/Amsterdam' or 'America/Los_Angeles'.
    */

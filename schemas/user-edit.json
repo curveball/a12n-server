@@ -43,10 +43,10 @@
       "description": "End-User's birthday, represented in YYYY-MM-DD format."
     },
     "address": {
-      "type": ["string", "null"],
-      "required": ["address", "locality", "region", "postalCode", "country"],
+      "type": ["object", "null"],
+      "required": ["streetAddress", "locality", "region", "postalCode", "country"],
       "properties": {
-        "address": {
+        "streetAddress": {
           "type": "array",
           "items": {
             "type": "string"
@@ -71,6 +71,11 @@
           "pattern": "^[A-Z]{2}$"
         }
       }
+    },
+    "locale": {
+      "type": ["string", "null"],
+      "description": "End-User's preferred locale. This should follow the BCP47 format.",
+      "pattern": "^[a-zA-Z]{2,3}(-[a-zA-Z]{4})?(-[a-zA-Z]{2,3})?(-[0-9]{3})?$"
     },
     "zoneinfo": {
       "type": ["string", "null"],

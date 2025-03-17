@@ -6,7 +6,6 @@ import { PrincipalEdit, UserEdit } from '../../api-types.ts';
 import * as principalIdentityService from '../../principal-identity/service.ts';
 import { PrincipalService } from '../../principal/service.ts';
 import * as privilegeService from '../../privilege/service.ts';
-import { UserInfo } from '../../types.ts';
 import * as userHal from '../formats/hal.ts';
 import * as userService from '../service.ts';
 
@@ -67,13 +66,7 @@ class UserController extends Controller {
     );
     const principalService = new PrincipalService(ctx.privileges);
 
-    const user = await principalService.findByExternalId(ctx.params.id);
-
-    if (user.type === 'user') {
-      user.active = !!ctx.request.body.active;
-      user.nickname = ctx.request.body.nickname;
-    }
-
+    const user = await principalService.findByExternalId(ctx.params.id, 'user');
     await principalService.save(user);
     ctx.status = 204;
 
@@ -84,50 +77,40 @@ class UserController extends Controller {
     ctx.request.validate<UserEdit>(
       'https://curveballjs.org/schemas/a12nserver/user-edit.json'
     );
+    const body = ctx.request.body;
     const principalService = new PrincipalService(ctx.privileges);
 
-    const user = await principalService.findByExternalId(ctx.params.id);
+    const user = await principalService.findByExternalId(ctx.params.id, 'user');
 
-    if (user.type === 'user') {
-      user.active = !!ctx.request.body.active;
-      user.nickname = ctx.request.body.nickname;
+    user.active = !!ctx.request.body.active;
+    user.nickname = ctx.request.body.nickname;
 
-      // One thing to keep in mind is that there's really 3 cases for the new properties:
-      const userInfo = await userService.findUserInfoByUser(user);
-      // 1. They have a value, and you want to update the database.
-      // Check if the PUT request is for JSON, if so, we want to update the userInfo object
-      if (userInfo != null && ctx.request.is('json')) {
-        const newFields = ctx.request.body.userInfo;
-        if (!newFields) return;
+    const userInfo = await userService.findUserInfoByUser(user);
 
-        const updatedUserInfo: UserInfo = {
-          ...userInfo,
-          ...newFields,
-          birthDate: newFields.birthDate ? new Date(newFields.birthDate) : null,
-          address: newFields.address ? {
-            locality: newFields.address.locality ?? null,
-            region: newFields.address.region ?? null,
-            postalCode: newFields.address.postalCode ?? null,
-            country: newFields.address.country ?? null
-          } : null
-        };
-        await userService.updateUserInfo(user, updatedUserInfo);
+    if (userInfo != null && ctx.request.is('json')) {
+
+      // Do the string keys first.
+      const userInfoKeys = [
+        'name',
+        'locale',
+        'givenName',
+        'middleName',
+        'familyName',
+        'zoneinfo',
+      ] as const;
+      for(const key of userInfoKeys) {
+        if (key in body && body[key] !== undefined) {
+          userInfo[key] = body[key];
+        }
+      }
+      if (body.birthdate !== undefined) {
+        userInfo.birthdate = body.birthdate === null ? null : new Date(body.birthdate);
+      }
+      if (body.address !== undefined) {
+        userInfo.address = body.address;
       }
 
-      // 2. They are set to null, which means we want to clear the value in the database
-      const nullProperties = Object.keys(userInfo).filter(key => userInfo[key as keyof UserInfo] === null);
-      if (nullProperties.length > 0) {
-        await userService.deleteFieldsFromUserInfo(user, nullProperties);
-      }
-
-      // 3. It's undefined, in which case we want to keep the old value. Remember that we don't
-      //    have control over clients and we need to have some kind of backwards compatibility,
-      //    at least for a few versions. So an old client might know about these new properties
-      //    and shouldn't inadvertently clear them.
-      const undefinedProperties = Object.keys(userInfo).filter(key => !userInfo[key as keyof UserInfo]);
-      if (undefinedProperties.length > 0) {
-        // not sure what to do here... which is the old value?
-      }
+      await userService.updateUserInfo(user, userInfo);
     }
 
     await principalService.save(user);

@@ -193,7 +193,6 @@ export type AppClient = {
    */
   clientId: string;
 
-
   /**
    * A secret string. This is hashed using bcrypt2
    */
@@ -212,18 +211,23 @@ export type AppClient = {
   requirePkce: boolean;
 };
 
+/**
+ * Additional information about a user.
+ */
 export type UserInfo = {
   name: string | null;
   givenName: string | null;
+  middleName: string | null;
   familyName: string | null;
-  birthDate: Date | null;
+  birthdate: Date | null;
   address: {
+    streetAddress: string[] | null;
     locality: string | null;
     region: string | null;
     postalCode: string | null;
     country: string | null;
   } | null;
   locale: string | null;
-  zoneInfo: string | null;
-  modifiedAt: Date | null;
+  zoneinfo: string | null;
+  metadata: Record<string, string>;
 }

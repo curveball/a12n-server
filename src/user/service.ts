@@ -1,6 +1,6 @@
 import { BadRequest, UnprocessableContent } from '@curveball/http-errors';
 import * as bcrypt from 'bcrypt';
-import db, { insertAndGetId } from '../database.ts';
+import db from '../database.ts';
 
 import { UserInfoRecord } from 'knex/types/tables.js';
 import { UserEventLogger } from '../log/types.ts';
@@ -127,26 +127,23 @@ export async function validateUserCredentials(user: User, password: string, log:
 export async function findUserInfoByUser(user: User): Promise<UserInfo> {
   if (!user || user.type !== 'user') throw new BadRequest('UserInfo lookup failed: user is not a user or is not found');
 
-  let result = await db('user_info')
+  const result = await db('user_info')
     .select()
     .where({principal_id: user.id})
     .first();
 
   if (!result) {
-    console.info(`UserInfo for user ${user.id} not found. Inserting new record...`);
-    const id = await insertAndGetId('user_info', {
-      principal_id: user.id,
-      given_name: user.nickname,
-      created_at: Date.now(),
-      modified_at: Date.now(),
-    });
-    //@ts-expect-error - Create a partial UserInfoRecord for inserting any
-    // fields that could link a user to a userInfo record
-    result = {  
-      principal_id: id,
-      given_name: user.nickname,
-      created_at: Date.now(),
-      modified_at: Date.now(),
+    // No user_info record found, so return an empty UserInfo object
+    return {
+      name: null,
+      locale: null,
+      givenName: null,
+      middleName: null,
+      familyName: null,
+      birthdate: null,
+      address: null,
+      zoneinfo: null,
+      metadata: {},
     };
   }
 
@@ -159,70 +156,47 @@ export async function findUserInfoByUser(user: User): Promise<UserInfo> {
  * @param userInfo - new UserInfo object to update the UserInfo record with.
  * @returns The updated UserInfo record.
  */
-export async function updateUserInfo(user: User, userInfo?: UserInfo): Promise<void> {
+export async function updateUserInfo(user: User, userInfo: UserInfo): Promise<void> {
 
-  if (!userInfo) return;
-
-  const data = {
-    principal_id: user.id,
+  const newUserInfoValues: Partial<UserInfoRecord> = {
     name: userInfo.name,
     locale: userInfo.locale,
     given_name: userInfo.givenName,
     family_name: userInfo.familyName,
-    birthdate: userInfo.birthDate,
-    address: userInfo.address ? JSON.stringify(userInfo.address) : null,
-    zoneinfo: userInfo.zoneInfo
+    birthdate: userInfo.birthdate,
+    address: userInfo.address ? JSON.stringify(userInfo.address.streetAddress) : null,
+    zoneinfo: userInfo.zoneinfo
   };
 
-  const result = await db('user_info').where({ principal_id: user.id }).update(data);
-
-  // No rows for existing user_info was found, so insert a new record
-  if (result === 0) {
-    await db('user_info')
-      .insert({
-        ...data,
-        created_at: Date.now(),
-        modified_at: Date.now(),
-      })
-      .onConflict('principal_id')
-      .merge({
-        name: data.name,
-        locale: data.locale,
-        given_name: data.given_name,
-        family_name: data.family_name,
-        birthdate: data.birthdate,
-        address: data.address,
-        zoneinfo: data.zoneinfo,
-        modified_at: Date.now(),
-      });
-  }
+  await db('user_info')
+    .insert({
+      ...newUserInfoValues,
+      principal_id: user.id,
+      created_at: Date.now(),
+      modified_at: Date.now(),
+    })
+    .onConflict('principal_id')
+    .merge({
+      ...newUserInfoValues,
+      modified_at: Date.now(),
+    });
 }
 
 /**
- * @description - Given a UserInfo record from database, converts the record to a UserInfo object.
- * @param record - The UserInfo record to convert to a UserInfo object.
- * @returns The UserInfo object.
+ * Given a UserInfo record from database, converts the record to a UserInfo object.
+ * @param {UserInfoRecord} record - The UserInfo record to convert to a UserInfo object.
  */
 export async function recordToModel(record: UserInfoRecord): Promise<UserInfo> {
 
   return {
-    name: record.name || null,
-    locale: record.locale || null,
-    givenName: record.given_name || null,
-    familyName: record.family_name || null,
-    birthDate: record.birthdate || null,
+    name: record.name,
+    locale: record.locale,
+    givenName: record.given_name,
+    middleName: record.middle_name,
+    familyName: record.family_name,
+    birthdate: record.birthdate,
     address: record.address ? JSON.parse(record.address) : null,
-    zoneInfo: record.zoneinfo || null,
-    modifiedAt: record.modified_at ? new Date(+record.modified_at) : null,
+    zoneinfo: record.zoneinfo,
+    metadata: record.metadata ? JSON.parse(record.metadata) : {},
   };
-}
-
-export async function deleteFieldsFromUserInfo(user: User, fields: string[]): Promise<void> {
-  if (!fields || fields.length === 0) return;
-
-  for (const field of fields) {
-    await db('user_info').where({ principal_id: user.id })
-      .whereNotIn(field, [field])
-      .delete();
-  }
 }

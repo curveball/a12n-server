@@ -1,8 +1,8 @@
-import { PrivilegeMap } from '../../privilege/types.ts';
-import { Principal, Group, User, PrincipalIdentity, PaginatedResult } from '../../types.ts';
 import { HalLink, HalResource } from 'hal-types';
+import { UserNewResult, User as UserHal } from '../../api-types.ts';
 import { LazyPrivilegeBox } from '../../privilege/service.ts';
-import { UserNewResult } from '../../api-types.ts';
+import { PrivilegeMap } from '../../privilege/types.ts';
+import { Group, PaginatedResult, Principal, PrincipalIdentity, User, UserInfo } from '../../types.ts';
 
 export function collection(paginatedResult: PaginatedResult<User>, embeddedUsers: HalResource[]): HalResource {
 
@@ -22,7 +22,7 @@ export function collection(paginatedResult: PaginatedResult<User>, embeddedUsers
         title: 'Find a user through a identity/href (exact match)',
         href: '/user/byhref/{href}',
         templated: true,
-      },
+      }
     },
     total,
     currentPage,
@@ -69,9 +69,9 @@ function getUserPageHref(page: number): HalLink {
  * we're generating the repsonse for, or if the current authenticated user
  * has full admin privileges
  */
-export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, hasPassword: boolean, currentUserPrivileges: LazyPrivilegeBox, groups: Group[], identities: PrincipalIdentity[]): HalResource {
+export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, hasPassword: boolean, currentUserPrivileges: LazyPrivilegeBox, groups: Group[], identities: PrincipalIdentity[], userInfo: UserInfo): HalResource {
 
-  const hal: HalResource = {
+  const hal: HalResource<UserHal> = {
     _links: {
       'self': {href: user.href, title: user.nickname },
       'me': identities.map( identity => (
@@ -83,7 +83,6 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
         href: group.href,
         title: group.nickname,
       })),
-
       'describedby': {
         href: 'https://curveballjs.org/schemas/a12nserver/user.json',
         type: 'application/schema+json',
@@ -94,7 +93,8 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
     createdAt: user.createdAt.toISOString(),
     modifiedAt: user.modifiedAt.toISOString(),
     type: user.type,
-    privileges
+    privileges,
+    ...userInfo,
   };
 
   if (hasControl || currentUserPrivileges.has('a12n:one-time-token:generate')) {

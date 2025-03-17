@@ -1,11 +1,11 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { BadRequest, Conflict, NotFound, UnprocessableContent } from '@curveball/http-errors';
-import * as hal from '../formats/hal.ts';
-import * as services from '../../services.ts';
-import { PrincipalNew } from '../../api-types.ts';
 import { HalResource } from 'hal-types';
 import { User } from '../../../src/types.ts';
+import { PrincipalNew } from '../../api-types.ts';
+import * as services from '../../services.ts';
+import * as hal from '../formats/hal.ts';
 
 class UserCollectionController extends Controller {
 
@@ -37,6 +37,7 @@ class UserCollectionController extends Controller {
             ctx.privileges,
             await principalService.findGroupsForPrincipal(user),
             await services.principalIdentity.findByPrincipal(user),
+            await services.user.findUserInfoByUser(user)
           )
         );
       }

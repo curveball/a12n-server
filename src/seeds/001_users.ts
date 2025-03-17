@@ -46,9 +46,7 @@ export async function seed(knex: Knex): Promise<void> {
       given_name: user.given_name,
       family_name: user.family_name,
       locale: 'en-US',
-      created_at: new Date().getTime(),
-      modified_at: new Date().getTime(),
-    })
+    });
 
     await knex('user_passwords').insert({
       user_id: principal.id,

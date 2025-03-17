@@ -236,7 +236,7 @@ export type UserInfoRecord = {
   /**
    * End-User's birthday
    */
-  birthdate: string | null;
+  birthdate: Date | null;
 
   /**
    * End-User's preferred postal address.

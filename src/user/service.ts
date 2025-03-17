@@ -163,7 +163,7 @@ export async function updateUserInfo(user: User, userInfo: UserInfo): Promise<vo
     locale: userInfo.locale,
     given_name: userInfo.givenName,
     family_name: userInfo.familyName,
-    birthdate: userInfo.birthdate,
+    birthdate: userInfo.birthdate ? new Date(userInfo.birthdate) : null,
     address: userInfo.address ? JSON.stringify(userInfo.address) : null,
     zoneinfo: userInfo.zoneinfo
   };
@@ -194,7 +194,9 @@ export async function recordToModel(record: UserInfoRecord): Promise<UserInfo> {
     givenName: record.given_name,
     middleName: record.middle_name,
     familyName: record.family_name,
-    birthdate: record.birthdate,
+    // Sqlite gives us a string, MySQL and PG give us a Date object. Wrapping the result in new Date()
+    // ensures we always get a Date object, which we then grab the date portion of (first 10 characters).
+    birthdate: record.birthdate ? new Date(record.birthdate).toISOString().slice(0, 10) : null,
     address: record.address ? JSON.parse(record.address) : null,
     zoneinfo: record.zoneinfo,
     metadata: record.metadata ? JSON.parse(record.metadata) : {},

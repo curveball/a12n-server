@@ -12,8 +12,8 @@ export async function up(knex: Knex): Promise<void> {
     table.text('address').nullable().comment('End-User\'s preferred postal address. ');
     table.string('locale', 5).nullable().comment('End-User\'s locale. For example, en-US or fr-CA.');
     table.string('zoneinfo').nullable().comment('End-User\'s time zone. For example, Europe/Paris or America/Los_Angeles.');
-    table.integer('created_at').unsigned().comment('Time the user_info record was created.');
-    table.integer('modified_at').unsigned().nullable().comment('Time the End-User\'s information was last updated.');
+    table.bigInteger('created_at').unsigned().comment('Time the user_info record was created.');
+    table.bigInteger('modified_at').unsigned().nullable().comment('Time the End-User\'s information was last updated.');
     table.text('metadata');
   });
 

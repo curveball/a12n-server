@@ -90,7 +90,6 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.14.0",
-    "@faker-js/faker": "^9.6.0",
     "@simplewebauthn/browser": "^10.0.0",
     "@types/bcrypt": "^5.0.0",
     "@types/eff-diceware-passphrase": "^3.0.2",

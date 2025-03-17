@@ -219,7 +219,7 @@ export type UserInfo = {
   givenName: string | null;
   middleName: string | null;
   familyName: string | null;
-  birthdate: Date | null;
+  birthdate: string | null;
   address: {
     streetAddress: string[] | null;
     locality: string | null;

@@ -455,7 +455,7 @@ export interface UserEdit {
     [k: string]: unknown;
   };
   /**
-   * Human-readable displayname for the user.
+   * User-chosen nickname or displayname.
    */
   nickname: string;
   /**
@@ -463,23 +463,23 @@ export interface UserEdit {
    */
   active: boolean;
   /**
-   * End-User's full name in displayable form including all name parts, possibly including titles and suffixes, ordered according to the End-User's locale and preferences.
+   * User's full name, ordered according to the End-User's locale and preferences.
    */
   name?: string;
   /**
-   * Given name(s) or first name(s) of the End-User.
+   * Given name or first name.
    */
   givenName?: string | null;
   /**
-   * Middle name(s) of the End-User.
+   * Middle name(s).
    */
   middleName?: string | null;
   /**
-   * Surname(s) or last name(s) of the End-User.
+   * Surname or last name.
    */
   familyName?: string | null;
   /**
-   * End-User's birthday, represented in YYYY-MM-DD format.
+   * Birthday, in YYYY-MM-DD format.
    */
   birthdate?: string | null;
   address?: {
@@ -488,11 +488,11 @@ export interface UserEdit {
      */
     streetAddress: string[];
     /**
-     * City or locality component.
+     * City, town, or locality.
      */
     locality: string | null;
     /**
-     * State, province, prefecture, or region component. Should be specified as a code for countries where this is applicable.
+     * State, province, prefecture, or region component. Should be specified as a code when applicable.
      */
     region: string | null;
     /**
@@ -505,11 +505,11 @@ export interface UserEdit {
     country: string | null;
   } | null;
   /**
-   * End-User's preferred locale. This should follow the BCP47 format.
+   * Preferred language, for example en-FR or nl-NL.
    */
   locale?: string | null;
   /**
-   * String from the IANA Time Zone Database representing the End-User's time zone. For example, 'Europe/Amsterdam' or 'America/Los_Angeles'.
+   * Users' preferred timezone. For example, 'Europe/Amsterdam' or 'America/Toronto'.
    */
   zoneinfo?: string | null;
   /**
@@ -632,23 +632,23 @@ export interface User {
    */
   active: boolean;
   /**
-   * End-User's full name in displayable form including all name parts, possibly including titles and suffixes, ordered according to the End-User's locale and preferences.
+   * User's full name, ordered according to the End-User's locale and preferences.
    */
   name: string | null;
   /**
-   * Given name(s) or first name(s) of the End-User.
+   * Given name or first name.
    */
   givenName: string | null;
   /**
-   * Middle name(s) of the End-User.
+   * Middle name(s).
    */
   middleName: string | null;
   /**
-   * Surname(s) or last name(s) of the End-User.
+   * Surname or last name.
    */
   familyName: string | null;
   /**
-   * End-User's birthday, represented in YYYY-MM-DD format.
+   * Birthday, in YYYY-MM-DD format.
    */
   birthdate: string | null;
   address: {
@@ -657,11 +657,11 @@ export interface User {
      */
     streetAddress: string[] | null;
     /**
-     * City or locality component.
+     * City, town, or locality.
      */
     locality: string | null;
     /**
-     * State, province, prefecture, or region component. Should be specified as a code for countries where this is applicable.
+     * State, province, prefecture, or region component. Should be specified as a code when applicable.
      */
     region: string | null;
     /**
@@ -674,11 +674,11 @@ export interface User {
     country: string | null;
   } | null;
   /**
-   * End-User's preferred locale. This should follow the BCP47 format.
+   * Preferred language, for example en-FR or nl-NL.
    */
   locale?: string | null;
   /**
-   * String from the IANA Time Zone Database representing the End-User's time zone. For example, 'Europe/Amsterdam' or 'America/Los_Angeles'.
+   * Users' preferred timezone. For example, 'Europe/Amsterdam' or 'America/Toronto'.
    */
   zoneinfo: string | null;
   /**

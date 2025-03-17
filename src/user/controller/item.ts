@@ -97,14 +97,12 @@ class UserController extends Controller {
         'middleName',
         'familyName',
         'zoneinfo',
+        'birthdate',
       ] as const;
       for(const key of userInfoKeys) {
         if (key in body && body[key] !== undefined) {
           userInfo[key] = body[key];
         }
-      }
-      if (body.birthdate !== undefined) {
-        userInfo.birthdate = body.birthdate === null ? null : new Date(body.birthdate);
       }
       if (body.address !== undefined) {
         userInfo.address = body.address;

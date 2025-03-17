@@ -15,7 +15,7 @@
     "nickname": {
       "type": "string",
       "minLength": 3,
-      "description": "Human-readable displayname for the user."
+      "description": "User-chosen nickname or displayname."
     },
     "active": {
       "type": "boolean",
@@ -23,24 +23,24 @@
     },
     "name": {
       "type": "string",
-      "description": "End-User's full name in displayable form including all name parts, possibly including titles and suffixes, ordered according to the End-User's locale and preferences."
+      "description": "User's full name, ordered according to the End-User's locale and preferences."
     },
     "givenName": {
       "type": ["string", "null"],
-      "description": "Given name(s) or first name(s) of the End-User."
+      "description": "Given name or first name."
     },
     "middleName": {
       "type": ["string", "null"],
-      "description": "Middle name(s) of the End-User."
+      "description": "Middle name(s)."
     },
     "familyName": {
       "type": ["string", "null"],
-      "description": "Surname(s) or last name(s) of the End-User."
+      "description": "Surname or last name."
     },
     "birthdate": {
       "type": ["string", "null"],
       "format": "date",
-      "description": "End-User's birthday, represented in YYYY-MM-DD format."
+      "description": "Birthday, in YYYY-MM-DD format."
     },
     "address": {
       "type": ["object", "null"],
@@ -55,11 +55,11 @@
         },
         "locality": {
           "type": ["string", "null"],
-          "description": "City or locality component."
+          "description": "City, town, or locality."
         },
         "region": {
           "type": ["string", "null"],
-          "description": "State, province, prefecture, or region component. Should be specified as a code for countries where this is applicable."
+          "description": "State, province, prefecture, or region component. Should be specified as a code when applicable."
         },
         "postalCode": {
           "type": ["string", "null"],
@@ -74,12 +74,12 @@
     },
     "locale": {
       "type": ["string", "null"],
-      "description": "End-User's preferred locale. This should follow the BCP47 format.",
+      "description": "Preferred language, for example en-FR or nl-NL.",
       "pattern": "^[a-zA-Z]{2,3}(-[a-zA-Z]{4})?(-[a-zA-Z]{2,3})?(-[0-9]{3})?$"
     },
     "zoneinfo": {
       "type": ["string", "null"],
-      "description": "String from the IANA Time Zone Database representing the End-User's time zone. For example, 'Europe/Amsterdam' or 'America/Los_Angeles'.",
+      "description": "Users' preferred timezone. For example, 'Europe/Amsterdam' or 'America/Toronto'.",
       "pattern": "^[A-Za-z0-9/_-]+$"
     },
     "metadata": {

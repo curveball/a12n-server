@@ -164,7 +164,7 @@ export async function updateUserInfo(user: User, userInfo: UserInfo): Promise<vo
     given_name: userInfo.givenName,
     family_name: userInfo.familyName,
     birthdate: userInfo.birthdate,
-    address: userInfo.address ? JSON.stringify(userInfo.address.streetAddress) : null,
+    address: userInfo.address ? JSON.stringify(userInfo.address) : null,
     zoneinfo: userInfo.zoneinfo
   };
 

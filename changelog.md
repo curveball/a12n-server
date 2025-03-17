@@ -16,6 +16,9 @@ Changelog
 * Limit passwords to 72 characters to avoid issues with bcrypt trunctating the
   input.
 * Fix an issue with lost password not working on MariaDB.
+* Users now have a lot of new fields associated to them, allowing you to store
+  full names, adddresses, timezone, preferred language and arbitrary metadata.
+  (@usrrname)
 
 
 0.29.0 (2025-02-07)

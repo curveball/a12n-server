@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.30.0 (????-??-??)
+0.30.0 (2025-03-17)
 -------------------
 
 * Users now have a lot of new fields associated to them, allowing you to store

@@ -1,24 +1,30 @@
 Changelog
 =========
 
-0.29.1 (????-??-??)
+0.30.0 (????-??-??)
 -------------------
 
+* Users now have a lot of new fields associated to them, allowing you to store
+  full names, adddresses, timezone, preferred language and arbitrary metadata.
+  (@usrrname).
+* The user collection is now paginated, and limited to 100 items per page.
+  (@Zen-cronic).
+* Added a `docker-compose.yml` file for quickly setting up a server along with
+  all its dependencies, such as a database and Redis. (@usrrname)
+* Tons of documentation upgrades. (@usrrname)
+* `hasPassword` property on users is now deprecated. Use the `authFactors`
+  endpoint instead. `hasPassword` will remain available but will be removed
+  from a future version.
 * Removed outdated `eff-diceware-passphrase` dependency. It was breaking the
   build on arm64 due to old transitive dependencies. We've instead included the
   EFF wordlist and generate diceware passwords ourselves.
-* Docker image could not be built on arm64 due to a transative dependency using
-  an old version of libsodium.
 * Reduced docker image from 366MB to 216MB with no loss of functionality.
-* This small refactoring allows us to emit `too_many_failed_login_attempts`
-  from the `authorization_challenge` system. Before, it emitted
-  `invalid_username_or_password` which is confusing.
+* The authorization_challenge API now emits `too_many_failed_login_attempts`
+  when a user tried logging in with incorrect credentials too many times.
+  Before, it emitted `invalid_username_or_password` which is confusing.
 * Limit passwords to 72 characters to avoid issues with bcrypt trunctating the
   input.
 * Fix an issue with lost password not working on MariaDB.
-* Users now have a lot of new fields associated to them, allowing you to store
-  full names, adddresses, timezone, preferred language and arbitrary metadata.
-  (@usrrname)
 
 
 0.29.0 (2025-02-07)
@@ -45,7 +51,7 @@ Changelog
 * Added 'email', 'phone' and 'name' claims to OpenID id token.
 * Support for OpenID Connect 'userinfo' endpoint.
 * #596: Support for 'prompt' parameter in OIDC authorize request.
-* Support for `auth_time` in OIDC id_token
+* Support for `auth_time` in OIDC `id_token`
 * Force users to go through login process after changing their password. Before
   this change a change-password token was enough to complete login, but this
   could allow a user to circumvent other authentication factors such as TOTP.

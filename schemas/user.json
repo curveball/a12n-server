@@ -5,7 +5,7 @@
   "title": "User",
   "description": "A user",
 
-  "required": ["nickname", "active", "createdAt", "name", "givenName", "middleName", "familyName", "birthdate", "modifiedAt", "type", "privileges", "address","hasPassword", "zoneinfo", "metadata"],
+  "required": ["nickname", "active", "createdAt", "name", "givenName", "middleName", "familyName", "birthdate", "modifiedAt", "type", "privileges", "address", "zoneinfo", "metadata"],
   "additionalProperties": false,
 
   "properties": {
@@ -22,7 +22,7 @@
       "description": "If false, the user will not be able to log in."
     },
     "name": {
-      "type": "string",
+      "type": ["string", "null"],
       "description": "End-User's full name in displayable form including all name parts, possibly including titles and suffixes, ordered according to the End-User's locale and preferences."
     },
     "givenName": {

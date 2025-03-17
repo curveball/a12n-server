@@ -1,5 +1,5 @@
 import { HalLink, HalResource } from 'hal-types';
-import { UserNewResult } from '../../api-types.ts';
+import { UserNewResult, User as UserHal } from '../../api-types.ts';
 import { LazyPrivilegeBox } from '../../privilege/service.ts';
 import { PrivilegeMap } from '../../privilege/types.ts';
 import { Group, PaginatedResult, Principal, PrincipalIdentity, User, UserInfo } from '../../types.ts';
@@ -71,7 +71,7 @@ function getUserPageHref(page: number): HalLink {
  */
 export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, hasPassword: boolean, currentUserPrivileges: LazyPrivilegeBox, groups: Group[], identities: PrincipalIdentity[], userInfo: UserInfo): HalResource {
 
-  const hal: HalResource = {
+  const hal: HalResource<UserHal> = {
     _links: {
       'self': {href: user.href, title: user.nickname },
       'me': identities.map( identity => (
@@ -94,7 +94,16 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
     modifiedAt: user.modifiedAt.toISOString(),
     type: user.type,
     privileges,
-    userInfo,
+
+    name: userInfo.name,
+    givenName: userInfo.givenName,
+    middleName: userInfo.middleName,
+    familyName: userInfo.familyName,
+    birthdate: userInfo.birthdate?.toDateString() ?? null,
+    address: userInfo.address,
+    zoneinfo: userInfo.zoneinfo,
+    locale: userInfo.locale,
+    metadata: userInfo.metadata,
   };
 
   if (hasControl || currentUserPrivileges.has('a12n:one-time-token:generate')) {

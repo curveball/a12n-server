@@ -634,7 +634,7 @@ export interface User {
   /**
    * End-User's full name in displayable form including all name parts, possibly including titles and suffixes, ordered according to the End-User's locale and preferences.
    */
-  name: string;
+  name: string | null;
   /**
    * Given name(s) or first name(s) of the End-User.
    */
@@ -706,7 +706,7 @@ export interface User {
    * @deprecated
    * Does the user have a password set? This will be removed in a future version. Use the authFactors resource instead.
    */
-  hasPassword: boolean;
+  hasPassword?: boolean;
 }
 /* eslint-disable */
 /**

@@ -9,12 +9,17 @@ const db: Knex = knex(getSettings());
 
 export async function init() {
   console.info('Running database migrations');
-  await db.migrate.latest();
-}
-
-export async function initWithSeeds() {
-  await init();
-  await db.seed.run();
+  await db.migrate.latest()
+    .then(() => {
+        console.info('Running database seeds');
+        return db.seed.run();
+    }).then(() => {
+    console.info('Database migrations and seeds completed');
+    })
+    .catch((error) => {
+    console.error('Migrations failed', error);
+    process.exit(1);
+  });
 }
 
 export default db;

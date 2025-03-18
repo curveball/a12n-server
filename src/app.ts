@@ -2,7 +2,7 @@
 import accessLog from '@curveball/accesslog';
 import { Application } from '@curveball/core';
 
-import { init as initDb, initWithSeeds } from './database.ts';
+import { init as initDb } from './database.ts';
 import './env.js';
 import mainMw from './main-mw.ts';
 import { load } from './server-settings.ts';
@@ -25,8 +25,7 @@ if (!process.env.PUBLIC_URI) {
 
   await initDb();
 
-  if (process.env.NODE_ENV === 'production') await load();
-  else await initWithSeeds();
+  await load();
 
   await loadWordList();
 

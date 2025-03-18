@@ -11,15 +11,15 @@ export async function init() {
   console.info('Running database migrations');
   await db.migrate.latest()
     .then(() => {
-        console.info('Running database seeds');
-        return db.seed.run();
+      console.info('Running database seeds');
+      return db.seed.run();
     }).then(() => {
-    console.info('Database migrations and seeds completed');
+      console.info('Database migrations and seeds completed');
     })
     .catch((error) => {
-    console.error('Migrations failed', error);
-    process.exit(1);
-  });
+      console.error('Migrations failed', error);
+      process.exit(1);
+    });
 }
 
 export default db;

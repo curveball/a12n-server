@@ -3,10 +3,9 @@ import { Knex, default as knex } from 'knex';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import './env.ts';
-import * as dotenv from 'dotenv';
-dotenv.config()
+
 let settings: Knex.Config | null = null;
-const db: Knex = knex(getSettings());
+const db: Knex = knex(await getSettings());
 
 export async function init() {
   console.info('Running database migrations');
@@ -14,8 +13,6 @@ export async function init() {
     .then(() => {
       console.info('Running database seeds');
       return db.seed.run();
-    }).then(() => {
-      console.info('Database migrations and seeds completed');
     })
     .catch((error) => {
       console.error('Migrations failed', error);
@@ -77,7 +74,7 @@ export async function insertAndGetId<T extends Record<string, any>> (
 }
 
 
-export function getSettings(): Knex.Config {
+export async function getSettings(): Promise<Knex.Config> {
 
   let connection: Knex.MySql2ConnectionConfig | Knex.PgConnectionConfig | Knex.Sqlite3ConnectionConfig;
   let client;
@@ -182,29 +179,28 @@ export function getSettings(): Knex.Config {
       default:
         throw new Error(`Unknown value for DB_DRIVER: ${process.env.DB_DRIVER}`);
 
-
     }
 
   }
   const isDevelopment = process.env.NODE_ENV === 'development';
-  const isSeedAllEnabled = process.env.SEED_ALL === 'true';
-  const isSeedUsersEnabled = process.env.SEED_USERS === 'true';
-  const isCorsAllowedOriginEnabled = process.env.CORS_ALLOW_ORIGIN !== null;
+  const isSeedAllEnabled = !!process.env.SEED_ALL;
+  const isSeedUsersEnabled = !!process.env.SEED_USERS;
+  const isCorsAllowedOriginEnabled = process.env.CORS_ALLOW_ORIGIN != null;
   const seedDirectory = path.dirname(fileURLToPath(import.meta.url)) + '/seeds';
-  let seedInfo = {
+
+  const seedInfo: Knex.SeederConfig = {
     directory: '',
     loadExtensions: ['.js'],
-  }
-  if (isDevelopment) {
-    if (isSeedAllEnabled) {
-      seedInfo.directory = seedDirectory;
-    }
-    if (isSeedUsersEnabled) {
-      seedInfo.directory = seedDirectory + '/users';
-    }
-    if (isCorsAllowedOriginEnabled) {
-      seedInfo.directory = seedDirectory + '/cors';
-    }
+  };
+
+  if (isSeedAllEnabled) {
+    seedInfo.directory = seedDirectory;
+  } else if (isSeedUsersEnabled) {
+    seedInfo.directory = seedDirectory + '/users';
+    seedInfo.specific = '001_users.js';
+  } else if (isCorsAllowedOriginEnabled) {
+    seedInfo.directory = seedDirectory + '/cors';
+    seedInfo.specific = '001_corsAllowOrigin.js';
   }
 
   settings = {

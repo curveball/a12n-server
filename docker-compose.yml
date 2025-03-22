@@ -22,6 +22,8 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8531:8531"
+    env_file:
+      - .env
     environment:
         - NODE_ENV=development
         - PORT=8531

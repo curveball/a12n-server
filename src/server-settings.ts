@@ -92,18 +92,6 @@ export const settingsRules: SettingsRules = {
     default: null,
     env: 'CORS_ALLOW_ORIGIN',
   },
-  'seed.all': {
-    description: 'Whether to seed the database with all default values',
-    fromDb: true,
-    default: false,
-    env: 'SEED_ALL',
-  },
-  'seed.users': {
-    description: 'Whether to seed the database with dummy users',
-    fromDb: true,
-    default: false,
-    env: 'SEED_USERS',
-  },
   /*
   'db.driver': {
     description: 'Database client to use. Only "pg", "sqlite3" and "mysql" are supported',
@@ -156,7 +144,18 @@ export const settingsRules: SettingsRules = {
     env: 'DB_FILENAME',
   },
   */
-
+  'seed.all': {
+    description: 'Whether to seed the database with all default values',
+    fromDb: true,
+    default: false,
+    env: 'SEED_ALL',
+  },
+  'seed.users': {
+    description: 'Whether to seed the database with dummy users',
+    fromDb: true,
+    default: false,
+    env: 'SEED_USERS',
+  },
   'smtp.url' : {
     description: 'The url to the SMTP server. See the node-mailer documentation for possible values',
     env: 'SMTP_URL',
@@ -315,13 +314,13 @@ export async function load(): Promise<void> {
   for (const row of result) {
 
     if (!isValidSettingName(row.setting)) {
-      // eslint-disable-next-line no-console
+
       console.warn('Unknown setting in database: %s. We ignored it.', row.setting);
       continue;
     }
 
     if (!(settingsRules as any)[row.setting].fromDb) {
-      // eslint-disable-next-line no-console
+
       console.warn('The setting %s may not be set from the database. We ignored it');
       continue;
     }

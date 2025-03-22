@@ -27,3 +27,6 @@
 
 # etc
 .DS_Store
+
+# Code formatters
+.prettierignore

@@ -1,6 +1,6 @@
 import { render } from '../../templates.ts';
 
-export function registrationForm(msg: string, error: string, mfaRegistrationEnabled: boolean, firstRunMode: boolean, continueUrl?: string): string {
+export function registrationForm(msg: string, error: string, mfaRegistrationEnabled: boolean, firstRunMode: boolean, loginUri: string, continueUrl?: string): string {
 
   const hiddenFields: Record<string,string> = {};
   if (continueUrl) {
@@ -13,6 +13,7 @@ export function registrationForm(msg: string, error: string, mfaRegistrationEnab
     error: error,
     action: '/register',
     mfaRegistrationEnabled,
+    loginUri,
     hiddenFields,
   }, 'minimal-form');
 

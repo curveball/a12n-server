@@ -11,7 +11,7 @@ Some of the following server settings are also enabled as environment variables 
 
 | Name                      | Type | Default value | Description | Environment Variable?
 |:--------------------------|------|--------------:|-------------|----------------------:|
-| `cors.allowOrigin`          | Integer | `null`          | List of allowed origins that may directly talk to the server. This should only ever be 1st party, trusted domains. By default CORS is not enabled. | `CORS_ALLOW_ORIGIN`    
+| `cors.allowOrigin`          | String | `null`          | List of allowed origins that may directly talk to the server. This should only ever be 1st party, trusted domains. By default CORS is not enabled. | `CORS_ALLOW_ORIGIN`    
 | `jwt.privateKey`            | String  | `null` | The RSA private key to sign JWT access tokens. Usually this value has the contents of a .pem file. If not set, JWT will be disabled | `JWT_PRIVATE_KEY`
 | `login.defaultRedirect`     | String  | `/`         | The url that the user will be redirected to after the log in to a12nserver, and no other redirect_uri is provided by the application. It's a good idea to set this to your application URL.
 | `logo_url`                  | String  | `null` | The application logo to display on the a12nserver pages. If no logo url is provided, the application will show the Curveball logo by default. |

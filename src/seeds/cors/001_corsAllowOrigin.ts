@@ -1,16 +1,19 @@
 import { Knex } from 'knex';
+import * as dotenv from 'dotenv';
 
-import { getSetting } from '../../server-settings.js';
-
-const corsAllowOrigin = getSetting('cors.allowOrigin');
-
+dotenv.config();
 export async function seed(knex: Knex): Promise<void> {
-    console.log('Seeding cors.allowOrigin');
-    await knex('server_settings').where('setting', 'cors.allowOrigin').delete();
-    await knex('server_settings').insert([
-        {
-            setting: 'cors.allowOrigin',
-            value: corsAllowOrigin,
-        },
-    ]);
+  const corsAllowOrigin = process.env.CORS_ALLOW_ORIGIN;
+  console.info('CORS_ALLOW_ORIGIN', corsAllowOrigin);
+
+  console.info('Seeding cors.allowOrigin...');
+
+  await knex('server_settings').where('setting', 'cors.allowOrigin').delete();
+  await knex('server_settings').insert([
+    {
+      setting: 'cors.allowOrigin',
+      value: `${corsAllowOrigin}`,
+    },
+  ]);
+  console.info('Seeding cors.allowOrigin complete!');
 }

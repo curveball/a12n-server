@@ -1,7 +1,7 @@
 import { getSettings } from './database.ts';
 import './env.js';
 
-const settings = getSettings();
+const settings = await getSettings();
 
 export default {
 

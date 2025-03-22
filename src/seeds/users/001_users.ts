@@ -33,6 +33,14 @@ const initialUsers = [
 ] as const;
 
 export async function seed(knex: Knex): Promise<void> {
+  console.log('Seeding users...');
+
+  await knex.schema.dropTableIfExists('principals');
+  await knex.schema.dropTableIfExists('principal_identities');
+  await knex.schema.dropTableIfExists('user_info');
+  await knex.schema.dropTableIfExists('user_passwords');
+  await knex.schema.dropTableIfExists('user_privileges');
+
   for (const user of initialUsers) {
     // Insert principal and get the generated ID
     const [principal] = await knex('principals')

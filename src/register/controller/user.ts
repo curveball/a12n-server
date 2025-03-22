@@ -11,6 +11,10 @@ class UserRegistrationController extends Controller {
   async get(ctx: Context) {
 
     const firstRun = !(await services.principal.hasUsers());
+    const continueParam = ctx.query.continue
+      ? '?' + new URLSearchParams({ continue: ctx.query.continue })
+      : '';
+    const loginUri = '/login' + continueParam;
 
     ctx.response.type = 'text/html';
     ctx.response.body = registrationForm(
@@ -18,6 +22,7 @@ class UserRegistrationController extends Controller {
       ctx.query.error,
       getSetting('registration.mfa.enabled'),
       firstRun,
+      loginUri,
       ctx.query.continue
     );
 
@@ -50,7 +55,7 @@ class UserRegistrationController extends Controller {
       await principalService.findByIdentity('mailto:' + body.emailAddress);
       ctx.status = 303;
       ctx.response.headers.set('Location', '/register?' + new URLSearchParams({
-        error: 'User with this email adddress already exists',
+        error: 'User with this email address already exists',
         ...( body.continue ? {continue: body.continue} : {} )
       }));
       return;

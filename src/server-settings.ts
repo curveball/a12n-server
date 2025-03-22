@@ -5,7 +5,8 @@ export type Settings = {
   'registration.enabled': boolean;
   'registration.mfa.enabled': boolean;
   'cors.allowOrigin': string[] | null;
-
+  'seed.all': boolean | null;
+  'seed.users': boolean | null;
   /*
   'db.driver': 'mysql2' | 'pg' | 'sqlite3' | 'mysql';
   'db.host': string | null;
@@ -89,8 +90,20 @@ export const settingsRules: SettingsRules = {
     description: 'List of allowed origins that may directly talk to the server. This should only ever be 1st party, trusted domains. By default CORS is not enabled',
     fromDb: true,
     default: null,
+    env: 'CORS_ALLOW_ORIGIN',
   },
-
+  'seed.all': {
+    description: 'Whether to seed the database with all default values',
+    fromDb: true,
+    default: false,
+    env: 'SEED_ALL',
+  },
+  'seed.users': {
+    description: 'Whether to seed the database with dummy users',
+    fromDb: true,
+    default: false,
+    env: 'SEED_USERS',
+  },
   /*
   'db.driver': {
     description: 'Database client to use. Only "pg", "sqlite3" and "mysql" are supported',

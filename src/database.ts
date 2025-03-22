@@ -11,8 +11,10 @@ export async function init() {
   console.info('Running database migrations');
   await db.migrate.latest()
     .then(() => {
-      console.info('Running database seeds');
-      return db.seed.run();
+      if (process.env.NODE_ENV === 'development') {
+        console.info('Running database seeds');
+        return db.seed.run();
+      }
     })
     .catch((error) => {
       console.error('Migrations failed', error);

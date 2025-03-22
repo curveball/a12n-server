@@ -5,7 +5,6 @@ export type Settings = {
   'registration.enabled': boolean;
   'registration.mfa.enabled': boolean;
   'cors.allowOrigin': string[] | null;
-  'seed.all': boolean | null;
   'seed.users': boolean | null;
   /*
   'db.driver': 'mysql2' | 'pg' | 'sqlite3' | 'mysql';
@@ -144,12 +143,6 @@ export const settingsRules: SettingsRules = {
     env: 'DB_FILENAME',
   },
   */
-  'seed.all': {
-    description: 'Whether to seed the database with all default values',
-    fromDb: true,
-    default: false,
-    env: 'SEED_ALL',
-  },
   'seed.users': {
     description: 'Whether to seed the database with dummy users',
     fromDb: true,

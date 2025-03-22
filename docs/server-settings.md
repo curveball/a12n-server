@@ -28,5 +28,4 @@ Some of the following server settings are also enabled as environment variables 
 | `webauthn.serviceName`      | String  | `a12n-server` | The service name that should appear in Webauthn dialogs.
 | `webauthn.expectedOrigin`   | String  | `null` | The "origin" of this server. This must be set for webauthn to work
 | `webauthn.relyingPartyId`   | String  | `null` | The origin of the application performing the login.
-|`seed.all` | boolean | `null` | Whether to run all seed scripts to populate database with users | `SEED_ALL`
 |`seed.users`| boolean | `null` | Whether to populate local database with dummy users | `SEED_USERS`

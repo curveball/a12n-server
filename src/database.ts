@@ -73,6 +73,15 @@ export async function insertAndGetId<T extends Record<string, any>> (
 
 }
 
+/**
+ * Checks if an environment variable exists and is not empty.
+ * @param key - The key of the environment variable to check.
+ * @returns `true` if the environment variable exists and is not empty, `false` otherwise.
+ */
+export function envVarExists(key: string): boolean {
+  const value = process.env[key];
+  return value !== undefined && value !== '';
+};
 
 export async function getSettings(): Promise<Knex.Config> {
 
@@ -182,19 +191,20 @@ export async function getSettings(): Promise<Knex.Config> {
     }
 
   }
-  const isDevelopment = process.env.NODE_ENV === 'development';
-  const isSeedAllEnabled = !!process.env.SEED_ALL;
+  const isDevelopment = envVarExists('NODE_ENV') && process.env.NODE_ENV === 'development';
   const isSeedUsersEnabled = !!process.env.SEED_USERS;
-  const isCorsAllowedOriginEnabled = process.env.CORS_ALLOW_ORIGIN != null;
+  const isCorsAllowedOriginEnabled = envVarExists('CORS_ALLOW_ORIGIN');
   const seedDirectory = path.dirname(fileURLToPath(import.meta.url)) + '/seeds';
 
+  /** Knex Seed API @link {https://knexjs.org/guide/migrations.html#seed-api} */
   const seedInfo: Knex.SeederConfig = {
     directory: '',
     loadExtensions: ['.js'],
   };
 
-  if (isSeedAllEnabled) {
+  if (isSeedUsersEnabled && isCorsAllowedOriginEnabled) {
     seedInfo.directory = seedDirectory;
+    seedInfo.recursive = true;
   } else if (isSeedUsersEnabled) {
     seedInfo.directory = seedDirectory + '/users';
     seedInfo.specific = '001_users.js';

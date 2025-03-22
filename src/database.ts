@@ -3,15 +3,24 @@ import { Knex, default as knex } from 'knex';
 import * as path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import './env.ts';
-
+import * as dotenv from 'dotenv';
+dotenv.config()
 let settings: Knex.Config | null = null;
 const db: Knex = knex(getSettings());
 
 export async function init() {
-
   console.info('Running database migrations');
-  await db.migrate.latest();
-
+  await db.migrate.latest()
+    .then(() => {
+      console.info('Running database seeds');
+      return db.seed.run();
+    }).then(() => {
+      console.info('Database migrations and seeds completed');
+    })
+    .catch((error) => {
+      console.error('Migrations failed', error);
+      process.exit(1);
+    });
 }
 
 export default db;
@@ -177,6 +186,26 @@ export function getSettings(): Knex.Config {
     }
 
   }
+  const isDevelopment = process.env.NODE_ENV === 'development';
+  const isSeedAllEnabled = process.env.SEED_ALL === 'true';
+  const isSeedUsersEnabled = process.env.SEED_USERS === 'true';
+  const isCorsAllowedOriginEnabled = process.env.CORS_ALLOW_ORIGIN !== null;
+  const seedDirectory = path.dirname(fileURLToPath(import.meta.url)) + '/seeds';
+  let seedInfo = {
+    directory: '',
+    loadExtensions: ['.js'],
+  }
+  if (isDevelopment) {
+    if (isSeedAllEnabled) {
+      seedInfo.directory = seedDirectory;
+    }
+    if (isSeedUsersEnabled) {
+      seedInfo.directory = seedDirectory + '/users';
+    }
+    if (isCorsAllowedOriginEnabled) {
+      seedInfo.directory = seedDirectory + '/cors';
+    }
+  }
 
   settings = {
     client,
@@ -187,6 +216,7 @@ export function getSettings(): Knex.Config {
       loadExtensions: ['.js'],
     },
     pool,
+    seeds: isDevelopment ? seedInfo : undefined,
     debug: process.env.DEBUG ? true : false,
     useNullAsDefault: useNullAsDefault,
   };

@@ -1,14 +1,14 @@
 /* eslint no-console: 0 */
-import { Application } from '@curveball/core';
 import accessLog from '@curveball/accesslog';
+import { Application } from '@curveball/core';
 
-import mainMw from './main-mw.ts';
 import { init as initDb } from './database.ts';
-import { load } from './server-settings.ts';
 import './env.js';
+import mainMw from './main-mw.ts';
+import { load } from './server-settings.ts';
 
-import { NAME, VERSION } from './version.ts';
 import { loadWordList } from './crypto.ts';
+import { NAME, VERSION } from './version.ts';
 
 console.info('⚾ %s %s', NAME, VERSION);
 
@@ -24,7 +24,9 @@ if (!process.env.PUBLIC_URI) {
   process.title = 'a12n-server/' + VERSION;
 
   await initDb();
+
   await load();
+
   await loadWordList();
 
   const app = new Application();

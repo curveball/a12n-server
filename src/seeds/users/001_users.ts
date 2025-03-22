@@ -33,7 +33,7 @@ const initialUsers = [
 ] as const;
 
 export async function seed(knex: Knex): Promise<void> {
-  console.log('Seeding users...');
+  console.info('Seeding users...');
 
   for (const user of initialUsers) {
     // Insert principal and get the generated ID
@@ -78,4 +78,5 @@ export async function seed(knex: Knex): Promise<void> {
     privilege: 'admin',
     resource: '*',
   });
+  console.info('Seeding users complete!');
 }

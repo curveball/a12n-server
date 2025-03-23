@@ -184,24 +184,17 @@ export async function getSettings(): Promise<Knex.Config> {
 
   }
   const isSeedUsersEnabled = !!process.env.SEED_USERS;
-  const isCorsAllowedOriginEnabled = envVarExists('CORS_ALLOW_ORIGIN');
   const seedDirectory = path.dirname(fileURLToPath(import.meta.url)) + '/seeds';
 
   /** Knex Seed API @link {https://knexjs.org/guide/migrations.html#seed-api} */
-  let seedConfig: Knex.SeederConfig = {
+  let seedConfig: Knex.SeederConfig | undefined = {
     directory: '',
     loadExtensions: ['.js'],
   };
 
-  if (isSeedUsersEnabled && isCorsAllowedOriginEnabled) {
-    seedConfig.directory = seedDirectory;
-    seedConfig.recursive = true;
-  } else if (isSeedUsersEnabled) {
+  if (isSeedUsersEnabled) {
     seedConfig.directory = seedDirectory + '/users';
     seedConfig.specific = '001_users.js';
-  } else if (isCorsAllowedOriginEnabled) {
-    seedConfig.directory = seedDirectory + '/cors';
-    seedConfig.specific = '001_corsAllowOrigin.js';
   } else {
     // no env variable set, no seeding needed
     seedConfig = undefined;
@@ -217,7 +210,7 @@ export async function getSettings(): Promise<Knex.Config> {
       loadExtensions: ['.js'],
     },
     pool,
-    seeds: seedConfig,
+    seeds: seedConfig ?? {},
     debug: process.env.DEBUG ? true : false,
     useNullAsDefault: useNullAsDefault,
   };

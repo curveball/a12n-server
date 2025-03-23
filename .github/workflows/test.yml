@@ -76,6 +76,16 @@ jobs:
         MYSQL_DATABASE: a12nserver
         MYSQL_HOST: 127.0.0.1
       run: make knex-migrate
+    - name: Test seed migrations
+      env:
+        MYSQL_USER: a12nserver
+        MYSQL_PASSWORD: password
+        MYSQL_DATABASE: a12nserver
+        MYSQL_HOST: 127.0.0.1
+        NODE_ENV: development
+        CORS_ALLOW_ORIGIN: ["http://localhost:3000"]
+        SEED_USERS: true
+      run: make knex-seed
   postgres:
     name: Test Postgres migrations
     needs: build
@@ -86,6 +96,8 @@ jobs:
         env:
           POSTGRES_USER: a12nserver
           POSTGRES_PASSWORD: password
+          POSTGRES_DATABASE: a12nserver
+          POSTGRES_HOST: 127.0.0.1
         ports:
           - 5432:5432
     steps:
@@ -109,6 +121,9 @@ jobs:
         PG_PASSWORD: password
         PG_DATABASE: a12nserver
         PG_HOST: 127.0.0.1
+        NODE_ENV: development
+        CORS_ALLOW_ORIGIN: ["http://localhost:3000"]
+        SEED_USERS: true
       run: make knex-seed
   sqlite:
     name: Test Sqlite migrations
@@ -125,3 +140,10 @@ jobs:
       env:
         DB_DRIVER: sqlite3
       run: make knex-migrate
+    - name: Test seed migrations
+      env:
+        DB_DRIVER: sqlite3
+        CORS_ALLOW_ORIGIN: ["http://localhost:3000"]
+        NODE_ENV: development
+        SEED_USERS: true
+      run: make knex-seed

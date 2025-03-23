@@ -10,16 +10,6 @@ const db: Knex = knex(await getSettings());
 export async function init() {
   console.info('Running database migrations');
   await db.migrate.latest()
-    .then(() => {
-      if (process.env.NODE_ENV === 'development') {
-        console.info('Running database seeds');
-        return db.seed.run();
-      }
-    })
-    .catch((error) => {
-      console.error('Migrations failed', error);
-      process.exit(1);
-    });
 }
 
 export default db;

@@ -68,7 +68,7 @@ Everything prepended with `_` is either a hidden file or a build artifact.
 └── tsconfig.json
 ```
 
-Note: The `MAKEFILE` contains all commands for codebase operations, while the `package.json` scripts contains basic commands for startup and build. 
+Note: The `Makefile` contains all commands for codebase operations, while the `package.json` scripts contains basic commands for startup and build. 
 
 ## 🔄 Database Migrations
 

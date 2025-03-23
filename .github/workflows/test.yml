@@ -103,6 +103,13 @@ jobs:
         PG_DATABASE: a12nserver
         PG_HOST: 127.0.0.1
       run: make knex-migrate
+     - name: Test seed migrations
+      env:
+        PG_USER: a12nserver
+        PG_PASSWORD: password
+        PG_DATABASE: a12nserver
+        PG_HOST: 127.0.0.1
+      run: make knex-seed
   sqlite:
     name: Test Sqlite migrations
     needs: build

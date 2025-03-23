@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcrypt';
-import { randomUUID } from 'crypto';
+import { generatePublicId } from '../../crypto.ts';
 import { Knex } from 'knex';
 
 const initialUsers = [
@@ -10,25 +10,25 @@ const initialUsers = [
     privilege: 'admin',
     resource: '*',
     scope: '*',
-    external_id: randomUUID().slice(0, 6),
+    external_id: generatePublicId(),
   },
   {
     nickname: 'apple',
     given_name: 'Apple',
     family_name: 'Cake',
-    external_id: randomUUID().slice(0, 6),
+    external_id: generatePublicId(),
   },
   {
     nickname: 'banana',
     given_name: 'Banana',
     family_name: 'Bread',
-    external_id: randomUUID().slice(0, 6),
+    external_id: generatePublicId(),
   },
   {
     nickname: 'cherry',
     given_name: 'Cherry',
     family_name: 'Tart',
-    external_id: randomUUID().slice(0, 6),
+    external_id: generatePublicId(),
   },
 ] as const;
 

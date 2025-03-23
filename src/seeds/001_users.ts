@@ -1,7 +1,7 @@
 import * as bcrypt from 'bcrypt';
-import { generatePublicId } from '../../crypto.ts';
+import { generatePublicId } from '../crypto.ts';
 import { Knex } from 'knex';
-
+import { insertAndGetId } from '../database.ts';
 const initialUsers = [
   {
     nickname: 'admin',
@@ -10,25 +10,25 @@ const initialUsers = [
     privilege: 'admin',
     resource: '*',
     scope: '*',
-    external_id: generatePublicId(),
+    external_id: await generatePublicId(),
   },
   {
     nickname: 'apple',
     given_name: 'Apple',
     family_name: 'Cake',
-    external_id: generatePublicId(),
+    external_id: await generatePublicId(),
   },
   {
     nickname: 'banana',
     given_name: 'Banana',
     family_name: 'Bread',
-    external_id: generatePublicId(),
+    external_id: await generatePublicId(),
   },
   {
     nickname: 'cherry',
     given_name: 'Cherry',
     family_name: 'Tart',
-    external_id: generatePublicId(),
+    external_id: await generatePublicId(),
   },
 ] as const;
 
@@ -45,8 +45,7 @@ export async function seed(knex: Knex): Promise<void> {
         external_id: user.external_id,
         created_at: new Date().getTime(),
         modified_at: new Date().getTime(),
-      })
-      .returning('id');
+      });
 
     await knex('principal_identities').insert({
       principal_id: principal.id,

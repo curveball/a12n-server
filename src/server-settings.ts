@@ -89,7 +89,6 @@ export const settingsRules: SettingsRules = {
     description: 'List of allowed origins that may directly talk to the server. This should only ever be 1st party, trusted domains. By default CORS is not enabled',
     fromDb: true,
     default: null,
-    env: 'CORS_ALLOW_ORIGIN',
   },
   /*
   'db.driver': {

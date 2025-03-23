@@ -83,7 +83,6 @@ jobs:
         MYSQL_DATABASE: a12nserver
         MYSQL_HOST: 127.0.0.1
         NODE_ENV: development
-        CORS_ALLOW_ORIGIN: ["http://localhost:3000"]
         SEED_USERS: true
       run: make knex-seed
   postgres:
@@ -122,7 +121,6 @@ jobs:
         PG_DATABASE: a12nserver
         PG_HOST: 127.0.0.1
         NODE_ENV: development
-        CORS_ALLOW_ORIGIN: ["http://localhost:3000"]
         SEED_USERS: true
       run: make knex-seed
   sqlite:
@@ -143,7 +141,6 @@ jobs:
     - name: Test seed migrations
       env:
         DB_DRIVER: sqlite3
-        CORS_ALLOW_ORIGIN: ["http://localhost:3000"]
         NODE_ENV: development
         SEED_USERS: true
       run: make knex-seed

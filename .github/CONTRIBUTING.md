@@ -90,7 +90,7 @@ This will generate a `src/db-types.ts` file that will be used by Knex to type th
 
 ## Seed Users
 
-For ease of contribution or bootstrapping client integrations, seeding of dummy users was included and can be enabled if env variable for `SEED_USERS=true` in `.env`
+To quickly get some test data set up, we've inluded database seed files. To insert this data, run `make knex-seed`. This should only be done after onboarding has been completed.
 
 You'll be able to login as admin or any of the dummy users with `password123`
 :warning: This is only for development ease and should not be used on production.

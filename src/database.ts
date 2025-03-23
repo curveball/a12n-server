@@ -183,23 +183,13 @@ export async function getSettings(): Promise<Knex.Config> {
     }
 
   }
-  const isSeedUsersEnabled = !!process.env.SEED_USERS;
   const seedDirectory = path.dirname(fileURLToPath(import.meta.url)) + '/seeds';
 
   /** Knex Seed API @link {https://knexjs.org/guide/migrations.html#seed-api} */
-  let seedConfig: Knex.SeederConfig | undefined = {
-    directory: '',
+  const seedConfig: Knex.SeederConfig | undefined = {
+    directory: seedDirectory,
     loadExtensions: ['.js'],
   };
-
-  if (isSeedUsersEnabled) {
-    seedConfig.directory = seedDirectory + '/users';
-    seedConfig.specific = '001_users.js';
-  } else {
-    // no env variable set, no seeding needed
-    seedConfig = undefined;
-  }
-
 
   settings = {
     client,

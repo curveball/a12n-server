@@ -68,6 +68,8 @@ Everything prepended with `_` is either a hidden file or a build artifact.
 └── tsconfig.json
 ```
 
+Note: The `MAKEFILE` contains all commands for codebase operations, while the `package.json` scripts contains basic commands for startup and build. 
+
 ## 🔄 Database Migrations
 
 Database migrations scripts are in `src/migrations` and run in chronological order when the server starts. 
@@ -85,6 +87,13 @@ node ./bin/generate-db-types.mjs
 ```
 
 This will generate a `src/db-types.ts` file that will be used by Knex to type the database tables.
+
+## Seed Users
+
+For ease of contribution or bootstrapping client integrations, seeding of dummy users was included and can be enabled if env variable for `SEED_USERS=true` in `.env`
+
+You'll be able to login as admin or any of the dummy users with `password123`
+:warning: This is only for development ease and should not be used on production.
 
 
 ## Type Conventions

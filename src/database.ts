@@ -200,7 +200,7 @@ export async function getSettings(): Promise<Knex.Config> {
       loadExtensions: ['.js'],
     },
     pool,
-    seeds: seedConfig ?? {},
+    seeds: seedConfig,
     debug: process.env.DEBUG ? true : false,
     useNullAsDefault: useNullAsDefault,
   };

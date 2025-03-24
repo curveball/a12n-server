@@ -4,6 +4,7 @@ import * as privilegeService from '../../privilege/service.ts';
 import * as hal from '../formats/hal.ts';
 import { PrincipalService } from '../../principal/service.ts';
 import { PrincipalEdit } from '../../api-types.ts';
+import * as principalIdentityService from '../../principal-identity/service.ts';
 
 class AppController extends Controller {
 
@@ -20,6 +21,7 @@ class AppController extends Controller {
       principalPrivileges.getAll(),
       isAdmin,
       await principalService.findGroupsForPrincipal(app),
+      await principalIdentityService.findByPrincipal(app),
     );
 
   }

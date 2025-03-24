@@ -5,7 +5,6 @@ export type Settings = {
   'registration.enabled': boolean;
   'registration.mfa.enabled': boolean;
   'cors.allowOrigin': string[] | null;
-  'seed.users': boolean | null;
   /*
   'db.driver': 'mysql2' | 'pg' | 'sqlite3' | 'mysql';
   'db.host': string | null;
@@ -142,12 +141,6 @@ export const settingsRules: SettingsRules = {
     env: 'DB_FILENAME',
   },
   */
-  'seed.users': {
-    description: 'Whether to seed the database with dummy users',
-    fromDb: true,
-    default: false,
-    env: 'SEED_USERS',
-  },
   'smtp.url' : {
     description: 'The url to the SMTP server. See the node-mailer documentation for possible values',
     env: 'SMTP_URL',

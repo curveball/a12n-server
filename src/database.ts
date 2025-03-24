@@ -5,10 +5,10 @@ import { fileURLToPath } from 'node:url';
 import './env.ts';
 
 let settings: Knex.Config | null = null;
-const db: Knex = knex(await getSettings());
+const db: Knex = knex(getSettings());
 
 export async function init() {
-  settings = await getSettings();
+  settings = getSettings();
   if (!settings) {
     throw new Error('Database settings not found');
   }
@@ -68,7 +68,7 @@ export async function insertAndGetId<T extends Record<string, any>> (
   return result[0]?.id ?? result[0];
 
 }
-export async function getSettings(): Promise<Knex.Config> {
+export function getSettings(): Knex.Config {
 
   let connection: Knex.MySql2ConnectionConfig | Knex.PgConnectionConfig | Knex.Sqlite3ConnectionConfig;
   let client;
@@ -163,7 +163,6 @@ export async function getSettings(): Promise<Knex.Config> {
         if (process.env.DB_DRIVER === undefined) {
           console.warn('No database settings were found, so we\'re creating a sqlite database in the current directory. This is not recommended for production');
         }
-
         connection = {
           filename: process.env.DB_FILENAME || 'a12nserver.sqlite3',
         };
@@ -199,4 +198,13 @@ export async function getSettings(): Promise<Knex.Config> {
   };
 
   return settings;
+}
+
+/**
+ * Executes the 'seed' files, which populates the database with test data.
+ */
+export async function seed() {
+
+  await db.seed.run();
+
 }

@@ -34,7 +34,7 @@ knex-migrate: dist/build
 knex-make-migration:
 	cd src; npx knex migrate:make migration_name -x ts
 
-knex-seed:
+knex-seed: build
 	bin/db-seed.mjs
 
 start-dev:

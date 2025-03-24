@@ -1,5 +1,5 @@
 import { PrivilegeMap } from '../../privilege/types.ts';
-import { Group, App } from '../../types.ts';
+import { Group, App, PrincipalIdentity } from '../../types.ts';
 import { HalResource } from 'hal-types';
 
 export function collection(apps: App[]): HalResource {
@@ -27,12 +27,24 @@ export function collection(apps: App[]): HalResource {
  * we're generating the repsonse for, or if the current authenticated user
  * has full admin privileges
  */
-export function item(app: App, privileges: PrivilegeMap, isAdmin: boolean, groups: Group[]): HalResource {
+export function item(app: App, privileges: PrivilegeMap, isAdmin: boolean, groups: Group[], identities: PrincipalIdentity[]): HalResource {
 
   const hal: HalResource = {
     _links: {
       'self': {href: app.href, title: app.nickname },
       'up' : { href: '/app', title: 'List of apps' },
+      'me': identities.map( identity => {
+        if (identity.label) {
+          return {
+            href: identity.uri,
+            title: identity.label,
+          };
+        } else {
+          return {
+            href: identity.uri,
+          };
+        }
+      }),
       'group': groups.map( group => ({
         href: group.href,
         title: group.nickname,

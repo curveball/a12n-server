@@ -29,7 +29,7 @@ const initialUsers = [
     given_name: 'Cherry',
     family_name: 'Tart',
     external_id: await generatePublicId(),
-  },
+  }
 ] as const;
 
 export async function seed(knex: Knex): Promise<void> {
@@ -37,18 +37,17 @@ export async function seed(knex: Knex): Promise<void> {
 
   for (const user of initialUsers) {
     // Insert principal and get the generated ID
-    const [principal] = await knex('principals')
-      .insert({
-        active: 1,
-        nickname: user.nickname,
-        type: 1,
-        external_id: user.external_id,
-        created_at: new Date().getTime(),
-        modified_at: new Date().getTime(),
-      });
+    const principalId = await insertAndGetId('principals', {
+      active: 1,
+      nickname: user.nickname,
+      type: 1,
+      external_id: user.external_id,
+      created_at: new Date().getTime(),
+      modified_at: new Date().getTime(),
+    });
 
     await knex('principal_identities').insert({
-      principal_id: principal.id,
+      principal_id: principalId,
       external_id: user.external_id,
       uri: `mailto:${user.nickname}@example.com`,
       is_primary: 1,
@@ -59,7 +58,7 @@ export async function seed(knex: Knex): Promise<void> {
 
     // Use the principal_id for related tables
     await knex('user_info').insert({
-      principal_id: principal.id,
+      principal_id: principalId,
       name: `${user.given_name} ${user.family_name}`,
       given_name: user.given_name,
       family_name: user.family_name,
@@ -67,11 +66,11 @@ export async function seed(knex: Knex): Promise<void> {
     });
 
     await knex('user_passwords').insert({
-      user_id: principal.id,
+      user_id: principalId,
       password: await bcrypt.hash('password123', 12)
     });
   }
-
+  // Add admin privilege to admin user
   await knex('user_privileges').insert({
     user_id: 2,
     privilege: 'admin',

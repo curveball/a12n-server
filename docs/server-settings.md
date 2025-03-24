@@ -9,7 +9,7 @@ To store a string, it needs to be surrounded by double-quotes. For example, a le
 Some of the following server settings are also enabled as environment variables for ease of local development.
 
 
-| Name                      | Type | Default value | Description | Environment Variable?
+| Name                      | Type | Default value | Description | Environment Variable
 |:--------------------------|------|--------------:|-------------|----------------------:|
 | `cors.allowOrigin`          | String | `null`          | List of allowed origins that may directly talk to the server. This should only ever be 1st party, trusted domains. By default CORS is not enabled. 
 | `jwt.privateKey`            | String  | `null` | The RSA private key to sign JWT access tokens. Usually this value has the contents of a .pem file. If not set, JWT will be disabled | `JWT_PRIVATE_KEY`
@@ -20,12 +20,11 @@ Some of the following server settings are also enabled as environment variables 
 | `oauth2.refreshToken.expiry`| Integer | `3600 * 6` | The expiry time (in seconds) for OAuth2 refresh tokens. | `OAUTH2_REFRESHTOKEN_EXPIRY`
 | `registration.enabled`      | Boolean | `true`    | Allow users to register new accounts. By default new accounts will be disabled and have no permissions.| `REGISTRATION_ENABLED`
 | `registration.mf.enabled`   | Boolean | `true` | Allow users to register new accounts. By default new accounts will be disabled and have no permissions.
-| `smtp.url`                  | String  | `null`  | The url to the SMTP server. See the node-mailer documentation for possible values
-|  `smtp.emailFrom`            | String  | `null` | The "from" address that should be used for all outgoing emails
+| `smtp.url`                  | String  | `null`  | The url to the SMTP server. See the node-mailer documentation for possible values | `SMTP_URL`
+| `smtp.emailFrom`            | String  | `null` | The "from" address that should be used for all outgoing emails | `SMTP_EMAIL_FROM`
 | `totp`                      | String  | `enabled` | Whether TOTP is enabled. TOTP uses authenticator apps like Google Authenticator and Authy. This can be set to "enabled", "disabled", and "required"
 | `totp.serviceName`          | String  | `a12n-server API` | The name of the application that should show up in authenticator apps
 | `webauthn`                  | String  | `enabled` | Whether webauthn is "enabled", "disabled" or "required".'
 | `webauthn.serviceName`      | String  | `a12n-server` | The service name that should appear in Webauthn dialogs.
 | `webauthn.expectedOrigin`   | String  | `null` | The "origin" of this server. This must be set for webauthn to work
 | `webauthn.relyingPartyId`   | String  | `null` | The origin of the application performing the login.
-|`seed.users`| boolean | `null` | Whether to populate local database with dummy users | `SEED_USERS`

@@ -35,7 +35,7 @@ knex-make-migration:
 	cd src; npx knex migrate:make migration_name -x ts
 
 knex-seed:
-	npx knex --knexfile=dist/database.js seed:run
+	bin/db-seed.mjs
 
 start-dev:
 	npx tsc-watch --onSuccess 'node --inspect=9339 dist/app.js'

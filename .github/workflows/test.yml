@@ -82,7 +82,6 @@ jobs:
         MYSQL_PASSWORD: password
         MYSQL_DATABASE: a12nserver
         MYSQL_HOST: 127.0.0.1
-        NODE_ENV: development
       run: make knex-seed
   postgres:
     name: Test Postgres migrations
@@ -119,7 +118,6 @@ jobs:
         PG_PASSWORD: password
         PG_DATABASE: a12nserver
         PG_HOST: 127.0.0.1
-        NODE_ENV: development
       run: make knex-seed
   sqlite:
     name: Test Sqlite migrations
@@ -139,5 +137,4 @@ jobs:
     - name: Test seed migrations
       env:
         DB_DRIVER: sqlite3
-        NODE_ENV: development
       run: make knex-seed

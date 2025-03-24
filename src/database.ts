@@ -8,6 +8,10 @@ let settings: Knex.Config | null = null;
 const db: Knex = knex(await getSettings());
 
 export async function init() {
+  settings = await getSettings();
+  if (!settings) {
+    throw new Error('Database settings not found');
+  }
   console.info('Running database migrations');
   await db.migrate.latest();
 }
@@ -64,17 +68,6 @@ export async function insertAndGetId<T extends Record<string, any>> (
   return result[0]?.id ?? result[0];
 
 }
-
-/**
- * Checks if an environment variable exists and is not empty.
- * @param key - The key of the environment variable to check.
- * @returns `true` if the environment variable exists and is not empty, `false` otherwise.
- */
-export function envVarExists(key: string): boolean {
-  const value = process.env[key];
-  return value !== undefined && value !== '';
-};
-
 export async function getSettings(): Promise<Knex.Config> {
 
   let connection: Knex.MySql2ConnectionConfig | Knex.PgConnectionConfig | Knex.Sqlite3ConnectionConfig;

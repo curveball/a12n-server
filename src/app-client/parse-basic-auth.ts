@@ -17,6 +17,9 @@ export default function parseBasic(ctx: Context): null | [string, string] {
     return null;
   }
 
-  return [decodedMatch[1], decodedMatch[2]] as [string, string];
+  return [
+    decodeURIComponent(decodedMatch[1]),
+    decodeURIComponent(decodedMatch[2])
+  ];
 
 }

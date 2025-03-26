@@ -1,6 +1,6 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { BadRequest, Conflict, UnprocessableContent } from '@curveball/http-errors';
+import { BadRequest, Conflict, NotFound, UnprocessableContent } from '@curveball/http-errors';
 import * as hal from '../formats/hal.ts';
 import * as services from '../../services.ts';
 import { PrincipalNew } from '../../api-types.ts';
@@ -33,8 +33,15 @@ class AppCollectionController extends Controller {
       if (!identity.href.match(/^https?:(.*)$/)) {
         throw new UnprocessableContent('App "me" URI must be a http or https URI');
       }
-      if (await services.principalIdentity.findByUri(identity.href)) {
+      try {
+        await services.principalIdentity.findByUri(identity.href);
         throw new Conflict(`The uri "${identity.href}" already exists`);
+      } catch (err) {
+        if (err instanceof NotFound) {
+          // Good!
+        } else {
+          throw err;
+        }
       }
     }
 

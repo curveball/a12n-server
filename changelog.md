@@ -8,6 +8,7 @@ Changelog
   relationship from the app endpoint.
 * Basic-auth headers for OAuth2 token requests are percent-decoded. This was
   always required for OAuth2, but I missed this at the time.
+* Fix: error when creating an App via the REST api and a App URL is specified.
 
 
 0.30.0 (2025-03-17)

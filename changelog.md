@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.30.1 (????-??-??)
+-------------------
+
+* If an app has 'uri' set during creation, it's now returned as a me link
+  relationship from the app endpoint.
+
+
 0.30.0 (2025-03-17)
 -------------------
 

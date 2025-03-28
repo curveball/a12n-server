@@ -8,10 +8,12 @@ let settings: Knex.Config | null = null;
 const db: Knex = knex(getSettings());
 
 export async function init() {
-
+  settings = getSettings();
+  if (!settings) {
+    throw new Error('Database settings not found');
+  }
   console.info('Running database migrations');
   await db.migrate.latest();
-
 }
 
 export default db;
@@ -66,8 +68,6 @@ export async function insertAndGetId<T extends Record<string, any>> (
   return result[0]?.id ?? result[0];
 
 }
-
-
 export function getSettings(): Knex.Config {
 
   let connection: Knex.MySql2ConnectionConfig | Knex.PgConnectionConfig | Knex.Sqlite3ConnectionConfig;
@@ -163,7 +163,6 @@ export function getSettings(): Knex.Config {
         if (process.env.DB_DRIVER === undefined) {
           console.warn('No database settings were found, so we\'re creating a sqlite database in the current directory. This is not recommended for production');
         }
-
         connection = {
           filename: process.env.DB_FILENAME || 'a12nserver.sqlite3',
         };
@@ -173,10 +172,16 @@ export function getSettings(): Knex.Config {
       default:
         throw new Error(`Unknown value for DB_DRIVER: ${process.env.DB_DRIVER}`);
 
-
     }
 
   }
+  const seedDirectory = path.dirname(fileURLToPath(import.meta.url)) + '/seeds';
+
+  /** Knex Seed API @link {https://knexjs.org/guide/migrations.html#seed-api} */
+  const seedConfig: Knex.SeederConfig | undefined = {
+    directory: seedDirectory,
+    loadExtensions: ['.js'],
+  };
 
   settings = {
     client,
@@ -187,9 +192,19 @@ export function getSettings(): Knex.Config {
       loadExtensions: ['.js'],
     },
     pool,
+    seeds: seedConfig,
     debug: process.env.DEBUG ? true : false,
     useNullAsDefault: useNullAsDefault,
   };
 
   return settings;
+}
+
+/**
+ * Executes the 'seed' files, which populates the database with test data.
+ */
+export async function seed() {
+
+  await db.seed.run();
+
 }

@@ -2,9 +2,9 @@ import { HalResource } from 'hal-types';
 import { getSetting } from '../../server-settings.ts';
 import { Principal, ServerStats } from '../../types.ts';
 
-export default (version: string, authenticatedUser: Principal, isAdmin: boolean, stats: ServerStats) => {
+export default (version: string, authenticatedUser: Principal, isAdmin: boolean, stats: ServerStats): HalResource => {
 
-  const result: HalResource = {
+  return {
     _links: {
       'self': { href: '/', title: 'Home' },
       'authenticated-as': { href: authenticatedUser.href, title: authenticatedUser.nickname },
@@ -57,31 +57,29 @@ export default (version: string, authenticatedUser: Principal, isAdmin: boolean,
       'jwks': {
         href: '/.well-known/jwks.json',
         title: 'JSON Web Key Set (JWKS)',
-      }
+      },
+
+      ...getSetting('registration.enabled') && {
+        'registration': {
+          href: '/register',
+          title: 'Create a new user account',
+          type: 'text/html'
+        }
+      },
+
+      ...isAdmin && {
+        'exchange-one-time-token': {
+          href: '/exchange-one-time-token',
+          title: 'Exchange a one-time token for a Access and Refresh token',
+        },
+        'settings': {
+          href: '/settings',
+          title: 'Server settings',
+        },
+      },
     },
     version: version,
     stats
   };
-
-  if (getSetting('registration.enabled')) {
-    result._links.registration = {
-      href: '/register',
-      title: 'Create a new user account',
-      type: 'text/html'
-    };
-  }
-
-  if (isAdmin) {
-    result._links['exchange-one-time-token'] = {
-      href: '/exchange-one-time-token',
-      title: 'Exchange a one-time token for a Access and Refresh token',
-    };
-    result._links['settings'] = {
-      href: '/settings',
-      title: 'Server settings',
-    };
-  }
-
-  return result;
 
 };

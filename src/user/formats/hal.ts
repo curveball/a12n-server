@@ -10,8 +10,7 @@ export function collection(paginatedResult: PaginatedResult<User>, embeddedUsers
 
   const totalPages = Math.ceil(total / pageSize);
 
-  const hal: HalResource = {
-    _links: {
+  const links: Record<string, HalLink|HalLink[]> = {
       'self': getUserPageHref(currentPage),
       'item': users.map( user => ({
         href: user.href,
@@ -23,26 +22,28 @@ export function collection(paginatedResult: PaginatedResult<User>, embeddedUsers
         href: '/user/byhref/{href}',
         templated: true,
       }
-    },
-    total,
-    currentPage,
-    totalPages,
   };
 
   if(hasNextPage){
     const nextPage = currentPage + 1;
-    hal._links['next'] = getUserPageHref(nextPage);
+    links['next'] = getUserPageHref(nextPage);
   }
 
   const hasPrevPage = currentPage > 1;
   if(hasPrevPage){
     const prevPage = currentPage - 1;
-    hal._links['previous'] = getUserPageHref(prevPage);
+    links['previous'] = getUserPageHref(prevPage);
   }
   if(hasNextPage || hasPrevPage){
-    hal._links['first'] = getUserPageHref(1);
-    hal._links['last'] = getUserPageHref(totalPages);
+    links['first'] = getUserPageHref(1);
+    links['last'] = getUserPageHref(totalPages);
   }
+  const hal: HalResource = {
+    _links: links,
+    total,
+    currentPage,
+    totalPages,
+  };
 
   if (embeddedUsers.length) {
     hal._embedded = {
@@ -69,36 +70,27 @@ function getUserPageHref(page: number): HalLink {
  * we're generating the repsonse for, or if the current authenticated user
  * has full admin privileges
  */
-export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, hasPassword: boolean, currentUserPrivileges: LazyPrivilegeBox, groups: Group[], identities: PrincipalIdentity[], userInfo: UserInfo): HalResource {
+export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, currentUserPrivileges: LazyPrivilegeBox, groups: Group[], identities: PrincipalIdentity[], userInfo: UserInfo): HalResource<UserHal> {
 
-  const hal: HalResource<UserHal> = {
-    _links: {
-      'self': {href: user.href, title: user.nickname },
-      'me': identities.map( identity => (
-        { href: identity.uri, title: user.nickname ?? undefined }
-      )),
-      'auth-log': { href: `${user.href}/log`, title: 'Authentication log', type: 'text/csv' },
-      'up' : { href: '/user', title: 'List of users' },
-      'group': groups.map( group => ({
-        href: group.href,
-        title: group.nickname,
-      })),
-      'describedby': {
-        href: 'https://curveballjs.org/schemas/a12nserver/user.json',
-        type: 'application/schema+json',
-      }
-    },
-    nickname: user.nickname,
-    active: user.active,
-    createdAt: user.createdAt.toISOString(),
-    modifiedAt: user.modifiedAt.toISOString(),
-    type: user.type,
-    privileges,
-    ...userInfo,
-  };
+  const links: Record<string, HalLink|HalLink[]> = {
+    'self': {href: user.href, title: user.nickname },
+    'me': identities.map( identity => (
+      { href: identity.uri, title: user.nickname ?? undefined }
+    )),
+    'auth-log': { href: `${user.href}/log`, title: 'Authentication log', type: 'text/csv' },
+    'up' : { href: '/user', title: 'List of users' },
+    'group': groups.map( group => ({
+      href: group.href,
+      title: group.nickname,
+    })),
+    'describedby': {
+      href: 'https://curveballjs.org/schemas/a12nserver/user.json',
+      type: 'application/schema+json',
+    }
+  }
 
   if (hasControl || currentUserPrivileges.has('a12n:one-time-token:generate')) {
-    hal._links['one-time-token'] = {
+    links['one-time-token'] = {
       href: `${user.href}/one-time-token`,
       title: 'Generate a one-time login token.',
       hints: {
@@ -108,7 +100,7 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
   }
 
   if (hasControl || currentUserPrivileges.has('a12n:access-token:generate', user.href)) {
-    hal._links['access-token'] = {
+    links['access-token'] = {
       href: `${user.href}/access-token`,
       title: 'Generate an access token for this user.',
       hints: {
@@ -118,39 +110,37 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
 
   }
   if (hasControl || currentUserPrivileges.has('a12n:user:manage-identities', user.href)) {
-    hal._links['identity-collection'] = {
+    links['identity-collection'] = {
       href: `${user.href}/identity`,
       title: 'List of identities the user is associated with'
     };
   }
 
   if (hasControl) {
-    hal.hasPassword = hasPassword;
-
-    hal._links['auth-factor-collection'] = {
+    links['auth-factor-collection'] = {
       href: `${user.href}/auth-factor`,
       title: 'List of authentication methods / authentication factors for a user',
     };
-    hal._links['active-sessions'] = {
+    links['active-sessions'] = {
       href: `${user.href}/sessions`,
       title: 'Active user sessions'
     };
-    hal._links['app-permission-collection'] = {
+    links['app-permission-collection'] = {
       href: `${user.href}/app-permission`,
       title: 'App Permissions',
     };
-    hal._links['edit-form'] = {
+    links['edit-form'] = {
       href: `${user.href}/edit`,
       title: `Edit ${user.nickname}`
     };
 
-    hal._links['privileges'] = {
+    links['privileges'] = {
       href: `${user.href}/edit/privileges`,
       title: 'Change privilege policy',
     };
   }
   if (currentUserPrivileges.has('a12n:user:change-password', user.href)) {
-    hal._links['password'] = {
+    links['password'] = {
       href: `${user.href}/password`,
       title: 'Change user\'s password',
       hints: {
@@ -158,8 +148,16 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
       }
     };
   }
-
-  return hal;
+  return {
+    _links: links,
+    nickname: user.nickname,
+    active: user.active,
+    createdAt: user.createdAt.toISOString(),
+    modifiedAt: user.modifiedAt.toISOString(),
+    type: user.type,
+    privileges,
+    ...userInfo,
+  };
 
 }
 

@@ -27,13 +27,11 @@ class UserCollectionController extends Controller {
 
       for (const user of users) {
         const hasControl = isAdmin || ctx.auth.equals(user);
-        const hasPassword = hasControl && await services.user.hasPassword(user);
         embeddedUsers.push(
           hal.item(
             user,
             (await services.privilege.get(user)).getAll(),
             hasControl,
-            hasPassword,
             ctx.privileges,
             await principalService.findGroupsForPrincipal(user),
             await services.principalIdentity.findByPrincipal(user),

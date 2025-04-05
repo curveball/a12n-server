@@ -29,7 +29,7 @@ export function collection(apps: App[]): HalResource {
  */
 export function item(app: App, privileges: PrivilegeMap, isAdmin: boolean, groups: Group[], identities: PrincipalIdentity[]): HalResource {
 
-  const hal: HalResource = {
+  return {
     _links: {
       'self': {href: app.href, title: app.nickname },
       'up' : { href: '/app', title: 'List of apps' },
@@ -56,6 +56,12 @@ export function item(app: App, privileges: PrivilegeMap, isAdmin: boolean, group
       'describedby': {
         href: 'https://curveballjs.org/schemas/a12nserver/app.json',
         type: 'application/schema+json',
+      },
+      ...isAdmin && {
+        privileges: {
+          href: `${app.href}/edit/privileges`,
+          title: 'Change privilege policy',
+        }
       }
     },
     nickname: app.nickname,
@@ -65,15 +71,5 @@ export function item(app: App, privileges: PrivilegeMap, isAdmin: boolean, group
     type: app.type,
     privileges
   };
-
-
-  if (isAdmin) {
-    hal._links['privileges'] = {
-      href: `${app.href}/edit/privileges`,
-      title: 'Change privilege policy',
-    };
-  }
-
-  return hal;
 
 }

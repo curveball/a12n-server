@@ -45,7 +45,7 @@ export function collection(groups: Group[]): HalResource {
  */
 export function item(group: Group, privileges: PrivilegeMap, isAdmin: boolean, groups: Group[], members: Principal[]): HalResource {
 
-  const hal: HalResource = {
+  return {
     _links: {
       self: {href: group.href, title: group.nickname },
       up : { href: '/group', title: 'List of groups' },
@@ -60,6 +60,12 @@ export function item(group: Group, privileges: PrivilegeMap, isAdmin: boolean, g
       describedby: {
         href: 'https://curveballjs.org/schemas/a12nserver/group.json',
         type: 'application/schema+json',
+      },
+      ...isAdmin && {
+        privileges: {
+          href: `${group.href}/edit/privileges`,
+          title: 'Change privilege policy',
+        },
       }
     },
     nickname: group.nickname,
@@ -67,23 +73,16 @@ export function item(group: Group, privileges: PrivilegeMap, isAdmin: boolean, g
     modifiedAt: group.modifiedAt,
     type: group.type,
     system: group.system || undefined,
-    privileges
+    privileges,
+    _templates: {
+      ...isAdmin && {
+        'add-member': addMemberForm(group),
+      },
+      ...members.length>0 && {
+        'remove-member': removeMemberForm(group, members),
+      }
+    },
   };
-
-  if (isAdmin) {
-    hal._links['privileges'] = {
-      href: `${group.href}/edit/privileges`,
-      title: 'Change privilege policy',
-    };
-    hal._templates = {
-      'add-member': addMemberForm(group),
-    };
-    if (members.length>0) {
-      hal._templates['remove-member'] = removeMemberForm(group, members);
-    }
-  }
-
-  return hal;
 
 }
 
@@ -95,14 +94,20 @@ export function item(group: Group, privileges: PrivilegeMap, isAdmin: boolean, g
  */
 export function itemAllUsers(group: Group, privileges: PrivilegeMap, isAdmin: boolean): HalResource {
 
-  const hal: HalResource = {
+  return {
     _links: {
       'self': {href: group.href, title: group.nickname },
       'up' : { href: '/group', title: 'List of groups' },
       'describedby': {
         href: 'https://curveballjs.org/schemas/a12nserver/group.json',
         type: 'application/schema+json',
-      }
+      },
+      ...isAdmin && {
+        privileges: {
+          href: `${group.href}/edit/privileges`,
+          title: 'Change privilege policy',
+        }
+      },
     },
     nickname: group.nickname,
     createdAt: group.createdAt,
@@ -111,15 +116,6 @@ export function itemAllUsers(group: Group, privileges: PrivilegeMap, isAdmin: bo
     system: true,
     privileges
   };
-
-  if (isAdmin) {
-    hal._links['privileges'] = {
-      href: `${group.href}/edit/privileges`,
-      title: 'Change privilege policy',
-    };
-  }
-
-  return hal;
 
 }
 

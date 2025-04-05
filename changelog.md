@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.30.2 (????-??-??)
+-------------------
+
+* Deprecated hasPassword. We now have an authFactors endpoint that has a lot
+  more detail about the kinds of credentials the user has set up.
+
+
 0.30.1 (2025-03-26)
 -------------------
 

@@ -11,17 +11,17 @@ export function collection(paginatedResult: PaginatedResult<User>, embeddedUsers
   const totalPages = Math.ceil(total / pageSize);
 
   const links: Record<string, HalLink|HalLink[]> = {
-      'self': getUserPageHref(currentPage),
-      'item': users.map( user => ({
-        href: user.href,
-        title: user.nickname,
-      })),
-      'create-form': { href: '/user/new', title: 'Create New User', type: 'text/html'},
-      'find-by-href': {
-        title: 'Find a user through a identity/href (exact match)',
-        href: '/user/byhref/{href}',
-        templated: true,
-      }
+    'self': getUserPageHref(currentPage),
+    'item': users.map( user => ({
+      href: user.href,
+      title: user.nickname,
+    })),
+    'create-form': { href: '/user/new', title: 'Create New User', type: 'text/html'},
+    'find-by-href': {
+      title: 'Find a user through a identity/href (exact match)',
+      href: '/user/byhref/{href}',
+      templated: true,
+    }
   };
 
   if(hasNextPage){
@@ -87,7 +87,7 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
       href: 'https://curveballjs.org/schemas/a12nserver/user.json',
       type: 'application/schema+json',
     }
-  }
+  };
 
   if (hasControl || currentUserPrivileges.has('a12n:one-time-token:generate')) {
     links['one-time-token'] = {

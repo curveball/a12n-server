@@ -17,17 +17,12 @@ class UserController extends Controller {
     const principal = await principalService.findByExternalId(ctx.params.id, 'user');
 
     let hasControl = false;
-    let hasPassword = false;
     const isAdmin = ctx.privileges.has('admin');
 
     if (ctx.auth.equals(principal)) {
       hasControl = true;
     } else if (isAdmin) {
       hasControl = true;
-    }
-
-    if (hasControl && principal.type === 'user') {
-      hasPassword = await userService.hasPassword(principal);
     }
 
     const principalPrivileges = await privilegeService.get(principal);
@@ -38,7 +33,6 @@ class UserController extends Controller {
       principal,
       principalPrivileges.getAll(),
       hasControl,
-      hasPassword,
       currentUserPrivileges,
       await principalService.findGroupsForPrincipal(principal),
       await principalIdentityService.findByPrincipal(principal),

@@ -12,6 +12,9 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
 
     steps:
     - uses: actions/checkout@v4
@@ -25,6 +28,9 @@ jobs:
     name: Lint
     runs-on: ubuntu-latest
     needs: build
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
     steps:
     - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
@@ -52,6 +58,9 @@ jobs:
     name: Test MySQL migrations
     needs: build
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
     services:
       mysql:
         image: mysql
@@ -76,16 +85,28 @@ jobs:
         MYSQL_DATABASE: a12nserver
         MYSQL_HOST: 127.0.0.1
       run: make knex-migrate
+    - name: Test seed migrations
+      env:
+        MYSQL_USER: a12nserver
+        MYSQL_PASSWORD: password
+        MYSQL_DATABASE: a12nserver
+        MYSQL_HOST: 127.0.0.1
+      run: make knex-seed
   postgres:
     name: Test Postgres migrations
     needs: build
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
     services:
       postgres:
         image: postgres
         env:
           POSTGRES_USER: a12nserver
           POSTGRES_PASSWORD: password
+          POSTGRES_DATABASE: a12nserver
+          POSTGRES_HOST: 127.0.0.1
         ports:
           - 5432:5432
     steps:
@@ -103,10 +124,20 @@ jobs:
         PG_DATABASE: a12nserver
         PG_HOST: 127.0.0.1
       run: make knex-migrate
+    - name: Test seed migrations
+      env:
+        PG_USER: a12nserver
+        PG_PASSWORD: password
+        PG_DATABASE: a12nserver
+        PG_HOST: 127.0.0.1
+      run: make knex-seed
   sqlite:
     name: Test Sqlite migrations
     needs: build
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
     steps:
     - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
@@ -118,3 +149,7 @@ jobs:
       env:
         DB_DRIVER: sqlite3
       run: make knex-migrate
+    - name: Test seed migrations
+      env:
+        DB_DRIVER: sqlite3
+      run: make knex-seed

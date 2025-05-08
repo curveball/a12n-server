@@ -15,6 +15,19 @@ export function loginForm(msg: string, error: string, hiddenFields: KeyValue, re
 
 }
 
+export function loginExperimentalForm(props: {
+  title: string,
+  msg: string,
+  error: string,
+  hiddenFields: KeyValue, 
+  registrationEnabled: boolean, 
+  registrationUri: string, 
+  resetPasswordUri: string
+}): string {
+  return render('login-experimental', props, 'minimal-form');
+
+}
+
 export function mfaForm(
   msg: string,
   error: string,

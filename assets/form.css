@@ -1,3 +1,7 @@
+* {
+  box-sizing: border-box;
+}
+
 body {
   background: #ECEFF1;
 }
@@ -29,80 +33,134 @@ header h1 {
 
 form {
   font-size: 18px;
-  margin: 2em  auto;
-  padding: 0;
   border-radius: .5ex;
   background: white;
   max-width: 25em;
   box-shadow: 0 1ex 7em -3ex #b0c4d5;
-  overflow: hidden;
-}
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  margin: 0 auto;
+  padding: 16px;
 
+  fieldset {
+    border: none;
+    display: flex;
+    flex-direction: column;
+    gap: 32px;
+    width: 100%;
+  }
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+}
 
 input, button, select {
   font: inherit;
 }
 
-form fieldset {
-  border:none;
-  padding: 2em;
-  margin: 0 auto;
-  grid-template-rows: 3em 2em 2em;
-}
-
-form label {
-  display: flex;
-  flex-direction: column;
-}
-
-form label:not(:last-child) {
-  margin-bottom: 3em;
-}
-
-form fieldset.radiogroup label:not(:last-child) {
-  margin-bottom: 1em;
-}
-
-form input:not([type='checkbox']):not([type='radio']),
-form button,
-form select {
-  min-height: 3em;
-  line-height: 3;
-  padding: 0;
-  border-radius: .25ex;
-}
-
-form input,
-form select {
+input[type='text'],
+input[type='email'],
+input[type='password'],
+input[type='url']
+select {
   background: rgba(0,0,0,.04);
+  min-height: 3em;
+  padding: 4px;
   border-width: 0 0 2px 0;
   border-style: solid;
   border-color: #CcCcCc;
   text-indent: 1ex;
   transition: border-color .5s cubic-bezier(0.075, 0.82, 0.165, 1);
-  margin-top: 1ex;
+
+  &:focus {
+    outline-color: transparent;
+    border-color: #1E88E5;
+    outline: none;
+    ::-moz-focus-inner {border:0;}
+  }
+
+  &:hover {
+    border-color: #8c8c8c;
+  }
+  &:invalid {
+    border-color: #F44336;
+  }
+
 }
 
-form input:hover {
-  border-color: #8c8c8c;
+
+button {
+  border: none;
+  background: #1E88E5;
+  color: white;
+  cursor: pointer;
+  transition: transform .15s;
+  padding: 8px;
+
+  &:hover {
+    transform: translateY(-2px) scale(1.02);
+  }
+  &:focus {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: #3ca4ff 0px 0px 10px;
+    outline: none;
+    ::-moz-focus-inner {border:0;}
+  }
+
+
 }
 
-form input:focus {
-  outline-color: transparent;
-  border-color: #1E88E5;
+form:invalid button[type=submit] {
+  background-color: #CCC;
+  transform: none;
+  pointer-events: none;
 }
 
-form input:invalid {
-  box-shadow: none;
-  outline: none;
-  outline-color: transparent;
-  border-color: transparent;
+.form-options {
+  display: flex;
+  flex-direction: row;
+  gap: 16px;
+  font-size: 90%;
+  justify-content: center;
 }
 
-form input:invalid:focus {
-  border-color: #F44336;
+.msg {
+  background: #ccc;
+  padding: 8px 8px 4px;
+  font-weight: 800;
+  border-radius: .5ex;
+
+  display: flex;
+  gap: 8px;
+
+  color: white;
+  &.info {
+    background: #1e88e5;
+
+    &::before {
+      content: '⚠';
+    }
+  }
+  &.error {
+    background: #F44336;
+
+    &::before {
+      content: '\26A0';
+    }
+  }
 }
 
+input.totp {
+  font-family: monospace;
+}
+
+
+/*
 form input[type=checkbox],
 form input[type=radio] {
   -moz-appearance: none;
@@ -120,6 +178,7 @@ form input[type=checkbox] {
 form input[type=radio] {
   border-radius: 50%;
 }
+
 
 form input[type=checkbox]:checked,
 form input[type=radio]:checked {
@@ -143,59 +202,10 @@ form select:focus {
   border-color: #1e88e5;
 }
 
-:focus {outline:none;}
-::-moz-focus-inner {border:0;}
+*/
 
-form button {
-  border: none;
-  background: #1E88E5;
-  color: white;
-  cursor: pointer;
-  transition: transform .15s;
-}
 
-form button:hover {
-  transform: translateY(-2px) scale(1.02);
-}
-
-form button:focus {
-  transform: translateY(-2px) scale(1.02);
-  box-shadow: #3ca4ff 0px 0px 10px;
-}
-
-form:invalid button[type=submit] {
-  background-color: #CCC;
-  transform: none;
-  pointer-events: none;
-}
-
-.msg.info {
-  padding: 1em 2em;
-  margin: 0 auto 1em;
-  max-width: 33em;
-  font-weight: 800;
-  background: #1e88e5;
-  color: white;
-  position: relative;
-  text-indent: -2.6ex;
-}
-
-.msg.info::before {
-  content: '\2713';
-  margin-right: 1ex;
-}
-
-.msg.info::after {
-  content: '';
-  display: block;
-  position: absolute;
-  width: 1em;
-  height: 1em;
-  top: 100%;
-  transform: rotate(45deg) translateY(-1.5ex);
-  background: #1e88e5;
-}
-
+/*
 .msg.error {
   padding: 1em 2em;
   margin: 0 auto 1em;
@@ -276,10 +286,6 @@ form a:focus {
   margin-bottom: 2em;
 }
 
-.form-options {
-  text-align: center;
-}
-
 .hidden {
   display: none;
 }
@@ -299,4 +305,4 @@ form a:focus {
   font-weight: bold;
   background-color: #e0e0e0;
   padding: 0.5em;
-}
+}*/

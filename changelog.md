@@ -6,6 +6,7 @@ Changelog
 
 * Deprecated hasPassword. We now have an authFactors endpoint that has a lot
   more detail about the kinds of credentials the user has set up.
+* API endpoint and HAL form for creating new identities.
 
 
 0.30.1 (2025-03-26)

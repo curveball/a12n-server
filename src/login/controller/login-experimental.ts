@@ -11,7 +11,7 @@ import { render } from '../../templates.ts';
 import { LoginSession } from '../types.ts';
 
 const challenges = ['username', 'password'] as const;
-type Challenge = typeof challenges[number]; 
+type Challenge = typeof challenges[number];
 
 const ErrorMap: Partial<Record<ChallengeErrorCode, string>> = {
   'username_or_password_invalid': 'The username or password you entered was incorrect. Try again',
@@ -37,10 +37,10 @@ class LoginExperimentalController extends Controller {
       ctx.redirect(302, registrationUri);
       return;
     }
-    
+
     const session = await initSession(ctx);
 
-    let error = ctx.query.error ?
+    const error = ctx.query.error ?
       (ErrorMap[ctx.query.error as ChallengeErrorCode] ?? ctx.query.error) :
       undefined;
 
@@ -88,7 +88,7 @@ class LoginExperimentalController extends Controller {
 
     let result;
     try {
-       result = await loginService.challenge(client, session, parameters);
+      result = await loginService.challenge(client, session, parameters);
     } catch (e) {
       if (e instanceof A12nLoginChallengeError) {
         let challenge: Challenge;
@@ -100,10 +100,10 @@ class LoginExperimentalController extends Controller {
           default :
             challenge = 'username';
             error = e.errorCode;
-            break; 
+            break;
         }
         ctx.session.loginAuthSession = session.authSession;
-        
+
         redirectToLogin(ctx, {
           continue: ctx.request.body.continue || undefined,
           challenge,

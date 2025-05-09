@@ -22,7 +22,7 @@ export async function up(knex: Knex): Promise<void> {
       .where('external_id', '$system')
       .first();
 
-    if (!result) { 
+    if (!result) {
       throw new Error('Ehh');
     }
 
@@ -34,7 +34,7 @@ export async function up(knex: Knex): Promise<void> {
       require_pkce: 0,
     });
 
-  });  
+  });
 
 }
 

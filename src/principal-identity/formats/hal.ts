@@ -68,7 +68,7 @@ export function item(principal: Principal, identity: PrincipalIdentity): HalReso
     modifiedAt: identity.modifiedAt.toISOString(),
   };
 
-  if (identity.uri.startsWith('mailto:')) {
+  if (identity.supportsVerification) {
     res._templates = {
       verify: {
         method: 'POST',

@@ -119,6 +119,13 @@ export type PrincipalIdentity = {
   label: string | null;
 
   /**
+   * Whether it's possible to verify this identity type.
+   *
+   * For example, a mailto: identity can be verified by sending a verification code to the email.
+   */
+  supportsVerification: boolean;
+
+  /**
    * If set, when the user verified ownership of the id.
    *
    * For uuid IDs this will automatically be set to true, but email and tel ids may need
@@ -137,9 +144,10 @@ export type PrincipalIdentity = {
    * Last time the identity was updated.
    */
   modifiedAt: Date;
+
 }
 
-export type NewPrincipalIdentity = Omit<PrincipalIdentity, 'id' | 'href' | 'externalId' | 'createdAt' | 'modifiedAt' | 'verifiedAt'> & {
+export type NewPrincipalIdentity = Omit<PrincipalIdentity, 'id' | 'href' | 'externalId' | 'createdAt' | 'modifiedAt' | 'verifiedAt' | 'supportsVerification'> & {
   /**
    * Immediately mark the identity as verified.
    */

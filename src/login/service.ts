@@ -56,6 +56,7 @@ async function startLoginSession(client: AppClient, scope?: string[]): Promise<L
     expiresAt: Math.floor(Date.now() / 1000) + LOGIN_SESSION_EXPIRY,
     principalId: null,
     principalIdentityId: null,
+    username: null,
     challengesCompleted: [],
     scope,
   };
@@ -93,6 +94,7 @@ export async function challenge(client: AppClient, session: LoginSession, parame
     );
     session.principalId = principal.id;
     session.principalIdentityId = identity.id;
+    session.username = parameters.username ?? null;
 
     if (logSessionStart) log('login-challenge-started');
 

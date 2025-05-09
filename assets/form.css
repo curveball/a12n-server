@@ -160,6 +160,10 @@ input.totp {
 }
 
 
+.hidden {
+  display: none;
+}
+
 /*
 form input[type=checkbox],
 form input[type=radio] {
@@ -286,9 +290,6 @@ form a:focus {
   margin-bottom: 2em;
 }
 
-.hidden {
-  display: none;
-}
 
 .qrcode {
   text-align: center;

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://curveballjs.org/schemas/a12nserver/principal-identity-new-form.json",
+  "type": "object",
+  "title": "PrincipalIdentityNewForm",
+  "description": "This is the request body used by the HTML form for creating a new principal identity.",
+
+  "required": ["uri"],
+  "additionalProperties": false,
+
+  "properties": {
+    "uri": {
+      "type": "string",
+      "description": "URI of the identity. Can be a mailto:, tel: or any other URI scheme.",
+      "pattern": "^([a-zA-Z][a-zA-Z0-9+.-]*):.*$"
+    },
+    "label": {
+      "type": "string",
+      "description": "Label for the identity. This is a human-readable name for the identity."
+    }
+  }
+}

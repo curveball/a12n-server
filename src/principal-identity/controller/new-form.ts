@@ -3,9 +3,9 @@ import { Context } from '@curveball/core';
 import { Forbidden } from '@curveball/http-errors';
 import * as hal from '../formats/hal.ts';
 import * as services from '../../services.ts';
-import { PrincipalIdentityNew } from '../../api-types.ts';
+import { PrincipalIdentityNewForm } from '../../api-types.ts';
 
-class PrincipalIdentityCollection extends Controller {
+class PrincipalIdentityForm extends Controller {
 
   async get(ctx: Context) {
 
@@ -17,7 +17,7 @@ class PrincipalIdentityCollection extends Controller {
       throw new Forbidden('You can only use this API for yourself, or if you have the \'a12n:user:manage-identities\'privilege');
     }
 
-    ctx.response.body = hal.collection(
+    ctx.response.body = hal.newForm(
       principal,
       identities,
     );
@@ -26,7 +26,7 @@ class PrincipalIdentityCollection extends Controller {
 
   async post(ctx: Context) {
 
-    ctx.request.validate<PrincipalIdentityNew>('https://curveballjs.org/schemas/a12nserver/principal-identity-new.json');
+    ctx.request.validate<PrincipalIdentityNewForm>('https://curveballjs.org/schemas/a12nserver/principal-identity-new-form.json');
 
     const principalService = new services.principal.PrincipalService(ctx.privileges);
     const principal = await principalService.findByExternalId(ctx.params.id, 'user');
@@ -44,4 +44,4 @@ class PrincipalIdentityCollection extends Controller {
 
 }
 
-export default new PrincipalIdentityCollection();
+export default new PrincipalIdentityForm();

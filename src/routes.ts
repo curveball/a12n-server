@@ -31,10 +31,13 @@ import oauth2Token from './oauth2/controller/token.ts';
 import passwordToken from './reset-password/controller/token.ts';
 import oidcConfiguration from './well-known/controller/openid-configuration.ts';
 import oidcUserInfo from './oidc/controller/userinfo.ts';
+
 import principalIdentityCollection from './principal-identity/controller/collection.ts';
 import principalIdentityItem from './principal-identity/controller/item.ts';
 import principalIdentityVerify from './principal-identity/controller/verify.ts';
 import principalIdentityVerifyResponse from './principal-identity/controller/verify-response.ts';
+import principalIdentityNewForm from './principal-identity/controller/new-form.ts';
+
 import privilegeCollection from './privilege/controller/collection.ts';
 import privilegeItem from './privilege/controller/item.ts';
 import privilegeSearch from './privilege/controller/search.ts';
@@ -127,6 +130,7 @@ const routes = [
   router('/user/:id/app-permission', userAppPermissionCollection),
   router('/user/:id/app-permission/:appId', userAppPermissionItem),
   router('/user/:id/identity', principalIdentityCollection),
+  router('/user/:id/identity/new', principalIdentityNewForm),
   router('/user/:id/identity/:identityId', principalIdentityItem),
   router('/user/:id/identity/:identityId/verify', principalIdentityVerify),
   router('/user/:id/identity/:identityId/verify-response', principalIdentityVerifyResponse),

@@ -81,8 +81,10 @@ export async function create(identity: NewPrincipalIdentity): Promise<PrincipalI
 
   const externalId = await generatePublicId();
 
+  const uri = validateIdentityUri(identity.uri);
+
   const id = await insertAndGetId('principal_identities', {
-    uri: identity.uri,
+    uri,
     external_id: externalId,
     principal_id: identity.principal.id,
     label: identity.label ?? null,
@@ -97,6 +99,7 @@ export async function create(identity: NewPrincipalIdentity): Promise<PrincipalI
     href: `${identity.principal.href}/identity/${externalId}`,
     externalId,
     ...identity,
+    uri,
     verifiedAt: new Date(),
     createdAt: new Date(),
     modifiedAt: new Date(),
@@ -224,5 +227,36 @@ function recordToModel(principal: Principal, record: PrincipalIdentitiesRecord):
     createdAt: new Date(+record.created_at),
     modifiedAt: new Date(+record.modified_at),
   };
+
+}
+
+/**
+ * Helper function to validate a bunch of URI formats
+ */
+function validateIdentityUri(uri: string) {
+
+  const uriObj = new URL(uri);
+  switch(uri) {
+    case 'http:':
+    case 'https:':
+      return uriObj.toString();
+
+    case 'mailto:':
+      if (/^[^@]+@[^@]+\.[^@]+$/.test(uriObj.pathname)) {
+        return uriObj.toString();
+      } else {
+        throw new BadRequest('Invalid email address');
+      }
+    case 'tel:':
+      if (/^\+?[0-9]+$/.test(uriObj.pathname)) {
+        return uriObj.toString();
+      } else {
+        throw new BadRequest('Invalid phone number. We only currently support international phone numbers in the format tel:+[0-9]+, without spaces or other characters.');
+      }
+
+    default:
+      throw new BadRequest('Invalid identity URI. Only http(s), mailto and tel URIs are supported at the moment, but we want to support your use-case! Let us know');
+
+  }
 
 }

@@ -5,7 +5,6 @@ export type Settings = {
   'registration.enabled': boolean;
   'registration.mfa.enabled': boolean;
   'cors.allowOrigin': string[] | null;
-
   /*
   'db.driver': 'mysql2' | 'pg' | 'sqlite3' | 'mysql';
   'db.host': string | null;
@@ -90,7 +89,6 @@ export const settingsRules: SettingsRules = {
     fromDb: true,
     default: null,
   },
-
   /*
   'db.driver': {
     description: 'Database client to use. Only "pg", "sqlite3" and "mysql" are supported',
@@ -143,7 +141,6 @@ export const settingsRules: SettingsRules = {
     env: 'DB_FILENAME',
   },
   */
-
   'smtp.url' : {
     description: 'The url to the SMTP server. See the node-mailer documentation for possible values',
     env: 'SMTP_URL',
@@ -302,13 +299,13 @@ export async function load(): Promise<void> {
   for (const row of result) {
 
     if (!isValidSettingName(row.setting)) {
-      // eslint-disable-next-line no-console
+
       console.warn('Unknown setting in database: %s. We ignored it.', row.setting);
       continue;
     }
 
     if (!(settingsRules as any)[row.setting].fromDb) {
-      // eslint-disable-next-line no-console
+
       console.warn('The setting %s may not be set from the database. We ignored it');
       continue;
     }

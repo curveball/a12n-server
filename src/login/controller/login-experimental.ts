@@ -9,12 +9,14 @@ import { AuthorizationChallengeRequest } from '../../api-types.ts';
 import { A12nLoginChallengeError, ChallengeErrorCode } from '../error.ts';
 import { render } from '../../templates.ts';
 import { LoginSession } from '../types.ts';
+import { OAuth2Error } from '../../oauth2/errors.ts';
 
 const challenges = ['username', 'password'] as const;
 type Challenge = typeof challenges[number];
 
-const ErrorMap: Partial<Record<ChallengeErrorCode, string>> = {
+const ErrorMap: Partial<Record<ChallengeErrorCode | 'login_session_invalid', string>> = {
   'username_or_password_invalid': 'The username or password you entered was incorrect. Try again',
+  'login_session_invalid': 'The login session has expired. Try logging in again.',
 };
 
 /**
@@ -39,6 +41,9 @@ class LoginExperimentalController extends Controller {
     }
 
     const session = await initSession(ctx);
+    if (!session) {
+      return;
+    }
 
     const error = ctx.query.error ?
       (ErrorMap[ctx.query.error as ChallengeErrorCode] ?? ctx.query.error) :
@@ -74,9 +79,10 @@ class LoginExperimentalController extends Controller {
     if (!ctx.accepts('html')) {
       throw new Forbidden('Hey there! It looks like you tried to directly submit to the /login endpoint. This is not allowed. If you want to authenticate your app with a12n-server, you should use an OAuth2 flow instead. This form and endpoint is only meant for humans.');
     }
-    const parameters: AuthorizationChallengeRequest = {
-      username: ctx.request.body.userName,
-    };
+    const parameters: AuthorizationChallengeRequest = {};
+    if (ctx.request.body.username?.length > 0) {
+      parameters.username = ctx.request.body.username;
+    }
     if (ctx.request.body.password?.length > 0) {
       parameters.password = ctx.request.body.password;
     }
@@ -84,6 +90,9 @@ class LoginExperimentalController extends Controller {
     console.log(ctx.request.body);
 
     const session = await initSession(ctx);
+    if (!session) {
+      return;
+    }
     console.log('Session:', session);
 
     let result;
@@ -105,7 +114,6 @@ class LoginExperimentalController extends Controller {
         ctx.session.loginAuthSession = session.authSession;
 
         redirectToLogin(ctx, {
-          continue: ctx.request.body.continue || undefined,
           challenge,
           error,
         });
@@ -125,9 +133,8 @@ class LoginExperimentalController extends Controller {
 }
 
 type RedirectParams = {
-  continue?: string;
   challenge: Challenge,
-  error?: ChallengeErrorCode
+  error?: ChallengeErrorCode | 'login_session_invalid';
 };
 
 /**
@@ -137,9 +144,13 @@ function redirectToLogin(ctx: Context, redirectParams: RedirectParams) {
 
   const params = new URLSearchParams(
     Object.fromEntries(
-      Object.entries(redirectParams).filter(([key, value]) => value !== undefined)
+      Object.entries(redirectParams).filter(([key, value]) => value !== undefined && value !== null)
     )
   );
+  const cont = ctx.request.body?.continue || ctx.query.continue || undefined;
+  if (cont) {
+    params.set('continue', cont);
+  }
 
   ctx.redirect(303, '/login/experimental' + '?' + params);
 
@@ -148,25 +159,45 @@ function redirectToLogin(ctx: Context, redirectParams: RedirectParams) {
 /**
  * Returns a login session, or creates a new one.
  */
-async function initSession(ctx: Context): Promise<LoginSession> {
+async function initSession(ctx: Context): Promise<LoginSession|null> {
 
   if (ctx.session.loginAuthSession) {
-    return loginService.getSession(
-      await services.appClient.findSystemClient(),
-      {
-        auth_session: ctx.session.loginAuthSession,
+    try {
+      return await loginService.getSession(
+        await services.appClient.findSystemClient(),
+        {
+          auth_session: ctx.session.loginAuthSession,
+        }
+      );
+    } catch (e) {
+      if (e instanceof OAuth2Error && e.errorCode === 'invalid_grant') {
+
+        // The session is invalid, so we need to start over
+        ctx.session.loginAuthSession = null;
+        redirectToLogin(ctx, {
+          challenge: 'username',
+          error: 'login_session_invalid',
+        });
+        return null;
+      } else {
+        throw e;
       }
-    );
+    }
   } else {
-    const session = await loginService.getSession(
-      await services.appClient.findSystemClient(),
-      {
-      }
-    );
-    ctx.session.loginAuthSession = session.authSession;
-    return session;
+    return newAuthSession(ctx);
   }
 }
 
+async function newAuthSession(ctx: Context): Promise<LoginSession> {
+
+  const session = await loginService.getSession(
+    await services.appClient.findSystemClient(),
+    {
+    }
+  );
+  ctx.session.loginAuthSession = session.authSession;
+  return session;
+
+}
 
 export default new LoginExperimentalController();

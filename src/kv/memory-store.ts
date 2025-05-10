@@ -38,7 +38,7 @@ export class MemoryKvStore extends KvStore {
    * Sets an item in the cache
    */
   async set(key: string, value: string, options?: SetOptions): Promise<void> {
-
+  
     this.store.set(key, {
       value,
       expires: options?.ttl ? Date.now() + options.ttl : null,

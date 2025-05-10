@@ -133,8 +133,10 @@ jobs:
     - name: Run migrations
       env:
         DB_DRIVER: sqlite3
+        DB_FILENAME: "${{ github.workspace }}/a12nserver.sqlite3"
       run: make knex-migrate
     - name: Test seed migrations
       env:
         DB_DRIVER: sqlite3
+        DB_FILENAME: "${{ github.workspace }}/a12nserver.sqlite3"
       run: make knex-seed

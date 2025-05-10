@@ -6,6 +6,7 @@ import { generatePublicId } from '../crypto.ts';
 import { sendTemplatedMail } from '../mailer/service.ts';
 import * as services from '../services.ts';
 import { generateVerificationDigits } from '../crypto.ts';
+import { sendVerificationCode } from '../sms/service.ts';
 
 export async function findByPrincipal(principal: Principal): Promise<PrincipalIdentity[]> {
 
@@ -81,8 +82,10 @@ export async function create(identity: NewPrincipalIdentity): Promise<PrincipalI
 
   const externalId = await generatePublicId();
 
+  const uri = validateIdentityUri(identity.uri);
+
   const id = await insertAndGetId('principal_identities', {
-    uri: identity.uri,
+    uri,
     external_id: externalId,
     principal_id: identity.principal.id,
     label: identity.label ?? null,
@@ -97,6 +100,8 @@ export async function create(identity: NewPrincipalIdentity): Promise<PrincipalI
     href: `${identity.principal.href}/identity/${externalId}`,
     externalId,
     ...identity,
+    uri,
+    supportsVerification: uri.startsWith('mailto:') || uri.startsWith('tel:'),
     verifiedAt: new Date(),
     createdAt: new Date(),
     modifiedAt: new Date(),
@@ -132,27 +137,45 @@ export async function markVerified(identity: PrincipalIdentity): Promise<void> {
 
 export async function sendVerificationRequest(identity: PrincipalIdentity, ip: string): Promise<void> {
 
-  if (!identity.uri.startsWith('mailto:')) {
-    throw new MethodNotAllowed('Only email identities can be verified currently. Make a feature request if you want to support other kinds of identities');
+  if (!identity.supportsVerification) {
+    throw new MethodNotAllowed('Only mailto: and tel: identities can be verified currently. Make a feature request if you want to support other kinds of identities');
   }
 
-  await sendTemplatedMail({
-    templateName: 'emails/verify-email',
-    to: identity.uri.slice(7),
-    subject: 'Verify your email',
-  }, {
-    code: await getCodeForIdentity(identity),
-    expireMinutes: CODE_LIFETIME_MINUTES,
-    name: identity.principal.nickname,
-    date: new Date().toISOString(),
-    ip,
-  });
+  const uri = new URL(identity.uri);
+
+  switch(uri.protocol) {
+    case 'mailto:':
+      await sendTemplatedMail({
+        templateName: 'emails/verify-email',
+        to: uri.pathname,
+        subject: 'Verify your email',
+      }, {
+        code: await getCodeForIdentity(identity),
+        expireMinutes: CODE_LIFETIME_MINUTES,
+        name: identity.principal.nickname,
+        date: new Date().toISOString(),
+        ip,
+      });
+      break;
+
+    case 'tel:':
+      await sendVerificationCode(
+        uri.pathname,
+        await getCodeForIdentity(identity),
+      );
+      break;
+    default:
+      throw new MethodNotAllowed('Only mailto: and tel: identities can be verified currently. Make a feature request if you want to support other kinds of identities');
+
+  }
+
+
 
 }
 export async function sendOtpRequest(identity: PrincipalIdentity, ip: string): Promise<void> {
 
   if (!identity.uri.startsWith('mailto:')) {
-    throw new MethodNotAllowed('Only email identities can be verified currently. Make a feature request if you want to support other kinds of identities');
+    throw new MethodNotAllowed('Only email identities are supported here currently. Make a feature request if you want to support other kinds of identities');
   }
   if (!identity.isMfa) {
     throw new MethodNotAllowed('This identity is not configured for mfa');
@@ -220,9 +243,41 @@ function recordToModel(principal: Principal, record: PrincipalIdentitiesRecord):
     label: record.label,
     isPrimary: !!record.is_primary,
     isMfa: !!record.is_mfa,
+    supportsVerification: record.uri.startsWith('mailto:') || record.uri.startsWith('tel:'),
     verifiedAt: record.verified_at ? new Date(+record.verified_at) : null,
     createdAt: new Date(+record.created_at),
     modifiedAt: new Date(+record.modified_at),
   };
+
+}
+
+/**
+ * Helper function to validate a bunch of URI formats
+ */
+function validateIdentityUri(uri: string) {
+
+  const uriObj = new URL(uri);
+  switch(uri) {
+    case 'http:':
+    case 'https:':
+      return uriObj.toString();
+
+    case 'mailto:':
+      if (/^[^@]+@[^@]+\.[^@]+$/.test(uriObj.pathname)) {
+        return uriObj.toString();
+      } else {
+        throw new BadRequest('Invalid email address');
+      }
+    case 'tel:':
+      if (/^\+?[0-9]+$/.test(uriObj.pathname)) {
+        return uriObj.toString();
+      } else {
+        throw new BadRequest('Invalid phone number. We only currently support international phone numbers in the format tel:+[0-9]+, without spaces or other characters.');
+      }
+
+    default:
+      throw new BadRequest('Invalid identity URI. Only http(s), mailto and tel URIs are supported at the moment, but we want to support your use-case! Let us know');
+
+  }
 
 }

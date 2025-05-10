@@ -25,6 +25,10 @@ export function collection(principal: Principal, identities: PrincipalIdentity[]
           title: identity.uri,
         };
       }),
+      'create-form': {
+        href: `${principal.href}/identity/new`,
+        title: 'Add identity',
+      },
     },
     total: identities.length
 
@@ -64,7 +68,7 @@ export function item(principal: Principal, identity: PrincipalIdentity): HalReso
     modifiedAt: identity.modifiedAt.toISOString(),
   };
 
-  if (identity.uri.startsWith('mailto:')) {
+  if (identity.supportsVerification) {
     res._templates = {
       verify: {
         method: 'POST',
@@ -173,6 +177,50 @@ export function verifyFail(identity: PrincipalIdentity, err: HttpError): HalReso
         target: `${identity.href}/verify`
       }
     }
+  };
+
+}
+
+export function newForm(principal: Principal, identities: PrincipalIdentity[]): HalResource {
+
+  return {
+    _links: {
+      self: {
+        href: `${principal.href}/identity/new`,
+      },
+      up: {
+        href: `${principal.href}/identity`,
+        title: 'Back to collection',
+      },
+      principal: {
+        href: principal.href,
+        title: principal.nickname,
+      },
+    },
+    title: 'Add identity',
+    description: 'Add a new identity to this principal. Identiies can be email addresses, phone numbers or other URIs',
+    _templates: {
+      'create-identity': {
+        method: 'POST',
+        title: 'Add identity',
+        target: `${principal.href}/identity/new`,
+        properties: [
+          {
+            name: 'uri',
+            type: 'url',
+            prompt: 'Identity URI',
+            required: true,
+            regex: '^.+$'
+          },
+          {
+            name: 'label',
+            type: 'text',
+            prompt: 'Label (optional)',
+            required: false,
+          }
+        ]
+      }
+    },
   };
 
 }

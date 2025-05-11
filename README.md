@@ -2,11 +2,8 @@
 ==================
 <span style="display: flex; justify-content: start; padding: 0 0.5rem;">
 
-[![Docker](https://github.com/curveball/a12n-server/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/curveball/a12n-server/actions/workflows/docker-publish.yml)
+[![Tests](https://github.com/curveball/a12n-server/actions/workflows/test.yml/badge.svg)](https://github.com/curveball/a12n-server/actions/workflows/test.yml) [![Docker build](https://github.com/curveball/a12n-server/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/curveball/a12n-server/actions/workflows/docker-publish.yml) [![NPM build](https://github.com/curveball/a12n-server/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/curveball/a12n-server/actions/workflows/npm-publish.yml)
 
-[![Publish NPM package](https://github.com/curveball/a12n-server/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/curveball/a12n-server/actions/workflows/npm-publish.yml)
-
-[![Test](https://github.com/curveball/a12n-server/actions/workflows/test.yml/badge.svg)](https://github.com/curveball/a12n-server/actions/workflows/test.yml)
 
 </span>
 

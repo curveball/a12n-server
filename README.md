@@ -1,5 +1,14 @@
 `@curveball/a12n-server`: A simple authentication server
 ==================
+<span style="display: flex; justify-content: start; padding: 0 0.5rem;">
+
+[![Docker](https://github.com/curveball/a12n-server/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/curveball/a12n-server/actions/workflows/docker-publish.yml)
+
+[![Publish NPM package](https://github.com/curveball/a12n-server/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/curveball/a12n-server/actions/workflows/npm-publish.yml)
+
+[![Test](https://github.com/curveball/a12n-server/actions/workflows/test.yml/badge.svg)](https://github.com/curveball/a12n-server/actions/workflows/test.yml)
+
+</span>
 
 *a12n* is short for "authentication".
 

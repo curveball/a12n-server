@@ -1,12 +1,14 @@
 Changelog
 =========
 
-0.30.2 (????-??-??)
--------------------
+0.31.0 (????-??-??)
+------------------
 
 * Deprecated hasPassword. We now have an authFactors endpoint that has a lot
   more detail about the kinds of credentials the user has set up.
 * API endpoint and HAL form for creating new identities.
+* Phone numbers can now be verified via SMS. Currently only AWS SNS is
+  supported. More adapters will follow.
 
 
 0.30.1 (2025-03-26)

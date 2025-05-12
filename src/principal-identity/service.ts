@@ -257,7 +257,7 @@ function recordToModel(principal: Principal, record: PrincipalIdentitiesRecord):
 function validateIdentityUri(uri: string) {
 
   const uriObj = new URL(uri);
-  switch(uri) {
+  switch(uriObj.protocol) {
     case 'http:':
     case 'https:':
       return uriObj.toString();

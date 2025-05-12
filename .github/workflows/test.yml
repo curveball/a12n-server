@@ -52,14 +52,14 @@ jobs:
     name: Test MySQL migrations
     needs: build
     runs-on: ubuntu-latest
-    services:
-      mysql:
-        image: mysql
-        env:
+    env:
           MYSQL_USER: a12nserver
           MYSQL_PASSWORD: password
           MYSQL_DATABASE: a12nserver
           MYSQL_ROOT_PASSWORD: password
+    services:
+      mysql:
+        image: mysql
         ports:
           - 3306:3306
     steps:
@@ -70,31 +70,21 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
     - name: Run migrations
-      env:
-        MYSQL_USER: a12nserver
-        MYSQL_PASSWORD: password
-        MYSQL_DATABASE: a12nserver
-        MYSQL_HOST: 127.0.0.1
       run: make knex-migrate
     - name: Test seed migrations
-      env:
-        MYSQL_USER: a12nserver
-        MYSQL_PASSWORD: password
-        MYSQL_DATABASE: a12nserver
-        MYSQL_HOST: 127.0.0.1
       run: make knex-seed
   postgres:
     name: Test Postgres migrations
     needs: build
     runs-on: ubuntu-latest
+    env:
+      POSTGRES_USER: a12nserver
+      POSTGRES_PASSWORD: password
+      POSTGRES_DATABASE: a12nserver
+      POSTGRES_HOST: 127.0.0.1
     services:
       postgres:
         image: postgres
-        env:
-          POSTGRES_USER: a12nserver
-          POSTGRES_PASSWORD: password
-          POSTGRES_DATABASE: a12nserver
-          POSTGRES_HOST: 127.0.0.1
         ports:
           - 5432:5432
     steps:
@@ -106,23 +96,16 @@ jobs:
     - run: npm ci
     - run: PGPASSWORD=password psql -h 127.0.0.1 -d a12nserver -U a12nserver -c 'CREATE SCHEMA a12nserver;'
     - name: Run migrations
-      env:
-        PG_USER: a12nserver
-        PG_PASSWORD: password
-        PG_DATABASE: a12nserver
-        PG_HOST: 127.0.0.1
       run: make knex-migrate
-     - name: Test seed migrations
-      env:
-        PG_USER: a12nserver
-        PG_PASSWORD: password
-        PG_DATABASE: a12nserver
-        PG_HOST: 127.0.0.1
+    - name: Test seed migrations
       run: make knex-seed
   sqlite:
     name: Test Sqlite migrations
     needs: build
     runs-on: ubuntu-latest
+    env:
+      DB_DRIVER: sqlite3
+      DB_FILENAME: "${{ github.workspace }}/a12nserver.sqlite3"
     steps:
     - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
@@ -131,9 +114,6 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
     - name: Run migrations
-      env:
-        DB_DRIVER: sqlite3
-        DB_FILENAME: "${{ github.workspace }}/a12nserver.sqlite3"
       run: make knex-migrate
     - name: Test seed migrations
       env:

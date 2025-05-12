@@ -17,6 +17,7 @@ export class AwsSnsSmsSender extends SmsSenderAdapter {
       PhoneNumber: phoneNumber, // E.164 format, e.g., "+15555555555"
     });
 
+    debug('Sending message to phone number:', phoneNumber);
     const response = await snsClient.send(command);
     debug('Message sent. Message ID:', response.MessageId);
 

@@ -53,11 +53,10 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     env:
-      DB_DRIVER: mysql
-      DB_USER: a12nserver
-      DB_PASSWORD: password
-      DB_DATABASE: a12nserver
-      DB_ROOT_PASSWORD: password
+          MYSQL_USER: a12nserver
+          MYSQL_PASSWORD: password
+          MYSQL_DATABASE: a12nserver
+          MYSQL_ROOT_PASSWORD: password
     services:
       mysql:
         image: mysql

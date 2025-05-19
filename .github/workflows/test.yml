@@ -88,7 +88,7 @@ jobs:
         DB_PASSWORD: password
         DB_DATABASE: a12nserver
         DB_HOST: 127.0.0.1
-        DB_DRIVER: postgres
+        DB_DRIVER: pg
       run: |
         make knex-migrate
         make knex-seed

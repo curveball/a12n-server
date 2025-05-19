@@ -41,11 +41,17 @@ jobs:
         node-version: ['18.x', '20.x', '22.x']
         db-driver: ['mysql', 'postgres', 'sqlite3']
     needs: build
+    concurrency: parallel
     services:
       mysql:
         image: mysql
         ports:
           - 3306:3306
+        env:
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: a12nserver
+          MYSQL_USER: a12nserver
+          MYSQL_PASSWORD: password
       postgres:
         image: postgres
         ports:
@@ -77,6 +83,8 @@ jobs:
         POSTGRES_DATABASE: a12nserver
         POSTGRES_HOST: 127.0.0.1
       run: |
+        timeout 20s bash -c 'until pg_isready -h ${{env.POSTGRES_HOST}} -p 5432 -U ${{env.POSTGRES_USER}}; do sleep 1; done;'
+        PGPASSWORD=${{env.POSTGRES_PASSWORD}} psql -h ${{env.POSTGRES_HOST}} -U ${{env.POSTGRES_USER}} -c 'CREATE DATABASE ${{env.POSTGRES_DATABASE}};'
         PGPASSWORD=${{env.POSTGRES_PASSWORD}} psql -h ${{env.POSTGRES_HOST}} -d ${{env.POSTGRES_DATABASE}} -U ${{env.POSTGRES_USER}} -c 'CREATE SCHEMA a12nserver;'
         make knex-migrate
         make knex-seed

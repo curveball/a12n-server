@@ -41,7 +41,6 @@ jobs:
         node-version: ['18.x', '20.x', '22.x']
         db-driver: ['mysql', 'postgres', 'sqlite3']
     needs: build
-    concurrency: parallel
     services:
       mysql:
         image: mysql

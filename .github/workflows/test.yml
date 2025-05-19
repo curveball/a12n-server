@@ -43,12 +43,10 @@ jobs:
     needs: build
     services:
       mysql:
-        if: matrix.db-driver == 'mysql'
         image: mysql
         ports:
           - 3306:3306
       postgres:
-        if: matrix.db-driver == 'postgres'
         image: postgres
         ports:
           - 5432:5432

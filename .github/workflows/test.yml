@@ -2,17 +2,19 @@
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
 name: Test
-
 on:
   push:
     branches: [ main ]
   pull_request:
-
+ 
 jobs:
+
   build:
+    strategy:
+      matrix:
+        node-version: ['18.x', '20.x', '22.x']
     name: Build
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
@@ -27,74 +29,27 @@ jobs:
     needs: build
     steps:
     - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Use Node.js
       uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
     - run: npm ci
     - run: make lint
   test:
     name: Test
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [18.x, 20.x, 22.x]
-    runs-on: ubuntu-latest
+        node-version: ['18.x', '20.x', '22.x']
+        db-driver: ['mysql', 'postgres', 'sqlite3']
     needs: build
-    steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm ci
-    - run: make test
-  mysql:
-    name: Test MySQL migrations
-    needs: build
-    runs-on: ubuntu-latest
     services:
       mysql:
+        if: matrix.db-driver == 'mysql'
         image: mysql
-        env:
-          MYSQL_USER: a12nserver
-          MYSQL_PASSWORD: password
-          MYSQL_DATABASE: a12nserver
-          MYSQL_ROOT_PASSWORD: password
         ports:
           - 3306:3306
-    steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm ci
-    - name: Run migrations
-      env:
-        MYSQL_USER: a12nserver
-        MYSQL_PASSWORD: password
-        MYSQL_DATABASE: a12nserver
-        MYSQL_HOST: 127.0.0.1
-      run: make knex-migrate
-    - name: Test seed migrations
-      env:
-        MYSQL_USER: a12nserver
-        MYSQL_PASSWORD: password
-        MYSQL_DATABASE: a12nserver
-        MYSQL_HOST: 127.0.0.1
-      run: make knex-seed
-  postgres:
-    name: Test Postgres migrations
-    needs: build
-    runs-on: ubuntu-latest
-    services:
       postgres:
+        if: matrix.db-driver == 'postgres'
         image: postgres
-        env:
-          POSTGRES_USER: a12nserver
-          POSTGRES_PASSWORD: password
-          POSTGRES_DATABASE: a12nserver
-          POSTGRES_HOST: 127.0.0.1
         ports:
           - 5432:5432
     steps:
@@ -104,39 +59,34 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
-    - run: PGPASSWORD=password psql -h 127.0.0.1 -d a12nserver -U a12nserver -c 'CREATE SCHEMA a12nserver;'
-    - name: Run migrations
+    - run: make test
+    - name: Test MySQL migrations
+      if: matrix.db-driver == 'mysql'
       env:
-        PG_USER: a12nserver
-        PG_PASSWORD: password
-        PG_DATABASE: a12nserver
-        PG_HOST: 127.0.0.1
-      run: make knex-migrate
-     - name: Test seed migrations
+        DB_DRIVER: mysql
+        DB_USER: a12nserver
+        DB_PASSWORD: password
+        DB_DATABASE: a12nserver
+        DB_ROOT_PASSWORD: password
+      run: |
+        make knex-migrate
+        make knex-seed
+    - name: Test Postgres migrations
+      if: matrix.db-driver == 'postgres'
       env:
-        PG_USER: a12nserver
-        PG_PASSWORD: password
-        PG_DATABASE: a12nserver
-        PG_HOST: 127.0.0.1
-      run: make knex-seed
-  sqlite:
-    name: Test Sqlite migrations
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
-    - uses: actions/checkout@v4
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v4
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm ci
-    - name: Run migrations
+        POSTGRES_USER: a12nserver
+        POSTGRES_PASSWORD: password
+        POSTGRES_DATABASE: a12nserver
+        POSTGRES_HOST: 127.0.0.1
+      run: |
+        PGPASSWORD=password psql -h 127.0.0.1 -d a12nserver -U a12nserver -c 'CREATE SCHEMA a12nserver;'
+        make knex-migrate
+        make knex-seed
+    - name: Test SQLite migrations
+      if: matrix.db-driver == 'sqlite3'
       env:
         DB_DRIVER: sqlite3
         DB_FILENAME: "${{ github.workspace }}/a12nserver.sqlite3"
-      run: make knex-migrate
-    - name: Test seed migrations
-      env:
-        DB_DRIVER: sqlite3
-        DB_FILENAME: "${{ github.workspace }}/a12nserver.sqlite3"
-      run: make knex-seed
+      run: |
+        make knex-migrate
+        make knex-seed

@@ -77,7 +77,7 @@ jobs:
         POSTGRES_DATABASE: a12nserver
         POSTGRES_HOST: 127.0.0.1
       run: |
-        PGPASSWORD=password psql -h 127.0.0.1 -d a12nserver -U a12nserver -c 'CREATE SCHEMA a12nserver;'
+        PGPASSWORD=${{env.POSTGRES_PASSWORD}} psql -h ${{env.POSTGRES_HOST}} -d ${{env.POSTGRES_DATABASE}} -U ${{env.POSTGRES_USER}} -c 'CREATE SCHEMA a12nserver;'
         make knex-migrate
         make knex-seed
     - name: Test SQLite migrations

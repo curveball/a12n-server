@@ -55,6 +55,13 @@ jobs:
         image: postgres
         ports:
           - 5432:5432
+        env:
+          POSTGRES_USER: a12nserver
+          POSTGRES_PASSWORD: password
+          POSTGRES_DATABASE: a12nserver
+          POSTGRES_HOST: 127.0.0.1
+          POSTGRES_PORT: 5432
+          POSTGRES_DATA_DIR: "${{ github.workspace }}/var/lib/postgresql/data"
     steps:
     - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
@@ -77,11 +84,11 @@ jobs:
     - name: Test Postgres migrations
       if: matrix.db-driver == 'postgres'
       env:
-        PG_USER: a12nserver
-        PG_PASSWORD: password
-        PG_DATABASE: a12nserver
-        PG_HOST: 127.0.0.1
-        PGDATA: "${{ github.workspace }}/var/lib/postgresql/data"
+        DB_USER: a12nserver
+        DB_PASSWORD: password
+        DB_DATABASE: a12nserver
+        DB_HOST: 127.0.0.1
+        DB_DRIVER: postgres
       run: |
         make knex-migrate
         make knex-seed

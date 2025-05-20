@@ -64,13 +64,7 @@ jobs:
           DB_HOST: 127.0.0.1
           DB_PORT: 5432
           DB_DATA_DIR: "${{ github.workspace }}/var/lib/postgresql/data"
-      sqlite3:
-        image: sqlite
-        ports:
-          - 5432:5432
-        env:
-          DB_DRIVER: sqlite3
-          DB_FILENAME: "${{ github.workspace }}/a12nserver.sqlite3"
+
           
     steps:
     - uses: actions/checkout@v4
@@ -81,12 +75,21 @@ jobs:
     - run: npm ci
     - run: make test
     - name: Test ${{ matrix.db-driver }} migrations
+      if: matrix.db-driver != 'sqlite3'
       env:
         DB_DRIVER: ${{ matrix.db-driver }}
         DB_USER: ${{ env.DB_USER }}
         DB_PASSWORD: ${{ env.DB_PASSWORD }}
         DB_DATABASE: ${{ env.DB_DATABASE }}
         DB_HOST: ${{ env.DB_HOST }}
+      run: |
+        make knex-migrate
+        make knex-seed
+    - name: Test SQLite migrations
+      if: matrix.db-driver == 'sqlite3'
+      env:
+        DB_DRIVER: sqlite3
+        DB_FILENAME: "${{ github.workspace }}/a12nserver.sqlite3"
       run: |
         make knex-migrate
         make knex-seed

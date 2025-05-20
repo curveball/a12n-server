@@ -6,7 +6,9 @@ on:
   push:
     branches: [ main ]
   pull_request:
- 
+permissions:
+  contents: read
+  checks: write
 jobs:
 
   build:
@@ -47,25 +49,21 @@ jobs:
         ports:
           - 3306:3306
         env:
-          DB_DRIVER: mysql
-          DB_USER: a12nserver
-          DB_PASSWORD: password
-          DB_DATABASE: a12nserver
-          DB_ROOT_PASSWORD: password
+          MYSQL_ROOT_PASSWORD: password
+          MYSQL_DATABASE: a12nserver
+          MYSQL_USER: a12nserver
+          MYSQL_PASSWORD: password
       postgres:
         image: postgres
         ports:
           - 5432:5432
         env:
-          DB_DRIVER: pg
-          DB_USER: a12nserver
-          DB_PASSWORD: password
-          DB_DATABASE: a12nserver
-          DB_HOST: 127.0.0.1
-          DB_PORT: 5432
-          DB_DATA_DIR: "${{ github.workspace }}/var/lib/postgresql/data"
-
-          
+          POSTGRES_USER: a12nserver
+          POSTGRES_PASSWORD: password
+          POSTGRES_DATABASE: a12nserver
+          POSTGRES_HOST: 127.0.0.1
+          POSTGRES_PORT: 5432
+          POSTGRES_DATA_DIR: "${{ github.workspace }}/var/lib/postgresql/data"
     steps:
     - uses: actions/checkout@v4
     - name: Use Node.js ${{ matrix.node-version }}
@@ -74,14 +72,25 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm ci
     - run: make test
-    - name: Test ${{ matrix.db-driver }} migrations
-      if: matrix.db-driver != 'sqlite3'
+    - name: Test MySQL migrations
+      if: matrix.db-driver == 'mysql'
       env:
-        DB_DRIVER: ${{ matrix.db-driver }}
-        DB_USER: ${{ env.DB_USER }}
-        DB_PASSWORD: ${{ env.DB_PASSWORD }}
-        DB_DATABASE: ${{ env.DB_DATABASE }}
-        DB_HOST: ${{ env.DB_HOST }}
+        DB_DRIVER: mysql
+        DB_USER: a12nserver
+        DB_PASSWORD: password
+        DB_DATABASE: a12nserver
+        DB_ROOT_PASSWORD: password
+      run: |
+        make knex-migrate
+        make knex-seed
+    - name: Test Postgres migrations
+      if: matrix.db-driver == 'postgres'
+      env:
+        DB_USER: a12nserver
+        DB_PASSWORD: password
+        DB_DATABASE: a12nserver
+        DB_HOST: 127.0.0.1
+        DB_DRIVER: pg
       run: |
         make knex-migrate
         make knex-seed

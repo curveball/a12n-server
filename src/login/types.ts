@@ -38,6 +38,11 @@ export type LoginSession = {
   principalIdentityId: number | null;
 
   /**
+   * The username or email address used to log in.
+   */
+  username: string | null;
+
+  /**
    * List of OAuth2 scopes
    */
   scope?: string[];
@@ -64,4 +69,9 @@ export type LoginSessionWithPrincipal = LoginSession & {
    * Identity ID
    */
   principalIdentityId: number;
+
+  /**
+   * The username or email address used to log in.
+   */
+  username: string;
 }

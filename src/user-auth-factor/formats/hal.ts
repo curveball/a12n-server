@@ -6,7 +6,7 @@ export function collection(principal: User, authFactors: UserAuthFactor[]): HalR
 
   const actions: Record<string, HalFormsTemplate> = {};
 
-  if (!authFactors.some(f => f.type === 'totp')) {
+  if (!factorsIncludes(authFactors, 'totp')) {
     actions['add-totp'] = addTotpAction(principal);
   }
 
@@ -26,11 +26,15 @@ export function collection(principal: User, authFactors: UserAuthFactor[]): HalR
       })),
     },
     total: authFactors.length,
+    factors: {
+      'password': factorsIncludes(authFactors, 'password'),
+      'totp': factorsIncludes(authFactors, 'totp'),
+      'email-otp': factorsIncludes(authFactors, 'email-otp'),
+    },
     _templates: actions,
   };
 
 }
-
 
 function addTotpAction(principal: User): HalFormsTemplate {
 
@@ -40,4 +44,8 @@ function addTotpAction(principal: User): HalFormsTemplate {
     title: 'Set up TOTP',
   };
 
+}
+
+function factorsIncludes(authFactors: UserAuthFactor[], type: UserAuthFactor['type']): boolean {
+  return authFactors.some(f => f.type === type);
 }

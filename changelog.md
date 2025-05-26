@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.31.1 (????-??-??)
+0.31.1 (2025-05-26)
 -------------------
 
 * Include a small summary of the available auth factors on the

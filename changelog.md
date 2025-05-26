@@ -1,8 +1,15 @@
 Changelog
 =========
 
+0.31.1 (????-??-??)
+-------------------
+
+* Include a small summary of the available auth factors on the
+  `/user/:id/auth-factor` route
+
+
 0.31.0 (2025-05-12)
-------------------
+-------------------
 
 * Deprecated hasPassword. We now have an authFactors endpoint that has a lot
   more detail about the kinds of credentials the user has set up.

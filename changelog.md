@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.31.2 (????-??-??)
+-------------------
+
+* Add `a12n:user:manage-auth-factors` privilege for access to the
+  `auth-factors` endpoint.
+
+
 0.31.1 (2025-05-26)
 -------------------
 

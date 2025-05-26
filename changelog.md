@@ -6,6 +6,7 @@ Changelog
 
 * Include a small summary of the available auth factors on the
   `/user/:id/auth-factor` route
+* Add helper scripts for seeding the database for maintainers. (@usrrname)
 
 
 0.31.0 (2025-05-12)

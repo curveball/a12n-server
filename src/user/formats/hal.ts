@@ -116,11 +116,14 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
     };
   }
 
-  if (hasControl) {
+  if (hasControl || currentUserPrivileges.has('a12n:user:manage-auth-factors', user.href)) {
     links['auth-factor-collection'] = {
       href: `${user.href}/auth-factor`,
       title: 'List of authentication methods / authentication factors for a user',
     };
+  }
+
+  if (hasControl) {
     links['active-sessions'] = {
       href: `${user.href}/sessions`,
       title: 'Active user sessions'

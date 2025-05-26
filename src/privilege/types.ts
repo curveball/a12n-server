@@ -24,4 +24,5 @@ export type InternalPrivilege =
   | 'a12n:one-time-token:exchange'
   | 'a12n:user:change-password'
   | 'a12n:user:manage-identities'
+  | 'a12n:user:manage-auth-factors'
   | 'a12n:access-token:generate';

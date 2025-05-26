@@ -12,7 +12,7 @@ class UserAuthFactorCollection extends Controller {
     const principalService = new services.principal.PrincipalService(ctx.privileges);
     const principal = await principalService.findByExternalId(ctx.params.id, 'user');
 
-    if (ctx.auth.equals(principal) && !ctx.privileges.has('admin')) {
+    if (ctx.auth.equals(principal) && !ctx.privileges.has('a12n:user:manage-auth-factors')) {
       throw new Forbidden('You can only use this API for yourself, or if you have \'admin\' privileges');
     }
 

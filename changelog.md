@@ -4,8 +4,9 @@ Changelog
 0.31.2 (????-??-??)
 -------------------
 
-* Add `a12n:user:manage-auth-factors` privilege for access to the
+* Add `a12n:user:read-auth-factors` privilege for access to the
   `auth-factors` endpoint.
+* Upgraded to bcrypt v6, nodemailer v7.
 
 
 0.31.1 (2025-05-26)

@@ -116,7 +116,7 @@ export function item(user: User, privileges: PrivilegeMap, hasControl: boolean, 
     };
   }
 
-  if (hasControl || currentUserPrivileges.has('a12n:user:manage-auth-factors', user.href)) {
+  if (hasControl || currentUserPrivileges.has('a12n:user:read-auth-factors', user.href)) {
     links['auth-factor-collection'] = {
       href: `${user.href}/auth-factor`,
       title: 'List of authentication methods / authentication factors for a user',

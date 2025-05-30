@@ -4,6 +4,7 @@ export type Settings = {
   'login.defaultRedirect': string;
   'registration.enabled': boolean;
   'registration.mfa.enabled': boolean;
+  'reset-password.enabled': boolean;
   'cors.allowOrigin': string[] | null;
   /*
   'db.driver': 'mysql2' | 'pg' | 'sqlite3' | 'mysql';
@@ -70,6 +71,12 @@ export const settingsRules: SettingsRules = {
   'registration.enabled': {
     description: 'Allow users to register new accounts. By default new accounts will be disabled and have no permissions.',
     env: 'REGISTRATION_ENABLED',
+    fromDb: true,
+    default: true,
+  },
+  'reset-password.enabled': {
+    description: 'Allow users to reset their own password via the HTML form. This does not apply to API clients, which can always reset passwords if they have the correct privileges.',
+    env: 'RESET_PASSWORD_ENABLED',
     fromDb: true,
     default: true,
   },

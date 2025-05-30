@@ -17,12 +17,13 @@ export type PrivilegeEntry = {
 
 export type InternalPrivilege =
   | 'admin'
-  | 'a12n:principals:list'
-  | 'a12n:principals:create'
-  | 'a12n:principals:update'
-  | 'a12n:one-time-token:generate'
+  | 'a12n:access-token:generate'
   | 'a12n:one-time-token:exchange'
+  | 'a12n:one-time-token:generate'
+  | 'a12n:principals:create'
+  | 'a12n:principals:list'
+  | 'a12n:principals:update'
+  | 'a12n:reset-password:request'
   | 'a12n:user:change-password'
   | 'a12n:user:manage-identities'
-  | 'a12n:user:read-auth-factors'
-  | 'a12n:access-token:generate';
+  | 'a12n:user:read-auth-factors';

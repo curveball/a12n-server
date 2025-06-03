@@ -48,6 +48,9 @@ export async function getResetPasswordTokens(user: User, identity: PrincipalIden
     throw new BadRequest('You can only request a password reset with an email address.');
   }
 
+  if (urlTemplate && !urlTemplate.includes('{token}')) {
+    throw new BadRequest('The provided urlTemplate must include a {token} placeholder.');
+  }
   const targetUrl = parseTemplate(urlTemplate || getGlobalOrigin() + '/reset-password/token/{token}').expand({
     token: token.token
   });

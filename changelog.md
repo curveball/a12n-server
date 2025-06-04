@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.31.3 (????-??-??)
+0.31.3 (2025-06-04)
 -------------------
 
 * Add an API for programmatic access to firing off a reset password email. The
@@ -10,6 +10,7 @@ Changelog
 
 
 0.31.2 (2025-05-27)
+-------------------
 -------------------
 
 * Add `a12n:user:read-auth-factors` privilege for access to the `auth-factors`

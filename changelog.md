@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.31.3 (????-??-??)
+0.31.3 (2025-06-04)
 -------------------
 
 * Add an API for programmatic access to firing off a reset password email. The

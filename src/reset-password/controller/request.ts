@@ -78,10 +78,11 @@ class ResetPasswordRequestController extends Controller {
 
   async postJson(ctx: Context) {
 
+    console.log(ctx);
     ctx.privileges.require('a12n:reset-password:request');
-    ctx.request.validate<ResetPasswordRequest>('https://curveballjs.org/schemas/reset-password-request.json');
+    ctx.request.validate<ResetPasswordRequest>('https://curveballjs.org/schemas/a12nserver/reset-password-request.json');
 
-    const principalService = new services.principal.PrincipalService('insecure');
+    const principalService = new services.principal.PrincipalService(ctx.privileges);
     const identity = await services.principalIdentity.findByUri(ctx.request.body.href);
     const user = await principalService.findByIdentity(identity);
     if (user.type !== 'user') {
@@ -92,14 +93,14 @@ class ResetPasswordRequestController extends Controller {
       ctx.response.body = await services.resetPassword.getResetPasswordTokens(
         user,
         identity,
-        ctx.request.body['url-template'],
+        ctx.request.body.urlTemplate
       );
       throw new Error('not yet implemented');
     } else {
       await services.resetPassword.sendResetPasswordEmail(
         user,
         identity,
-        ctx.request.body['url-template'],
+        ctx.request.body.urlTemplate
       );
       ctx.response.status = 202;
       ctx.response.body = {

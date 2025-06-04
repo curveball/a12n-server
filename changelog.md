@@ -1,6 +1,14 @@
 Changelog
 =========
 
+0.31.3 (????-??-??)
+-------------------
+
+* Add an API for programmatic access to firing off a reset password email. The
+  API supports setting a custom return URL, and can either return a token or
+  send the standard email.
+
+
 0.31.2 (2025-05-27)
 -------------------
 

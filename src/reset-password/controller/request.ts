@@ -78,7 +78,6 @@ class ResetPasswordRequestController extends Controller {
 
   async postJson(ctx: Context) {
 
-    console.log(ctx);
     ctx.privileges.require('a12n:reset-password:request');
     ctx.request.validate<ResetPasswordRequest>('https://curveballjs.org/schemas/a12nserver/reset-password-request.json');
 

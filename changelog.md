@@ -11,6 +11,7 @@ Changelog
 
 0.31.2 (2025-05-27)
 -------------------
+-------------------
 
 * Add `a12n:user:read-auth-factors` privilege for access to the `auth-factors`
   endpoint.

@@ -465,7 +465,7 @@ export interface ResetPasswordRequest {
   /**
    * A URI template that will be used to generate the reset password URL. The template should contain a {token} placeholder. If not set, this will point to the default a12n-server reset password endpoint.
    */
-  "url-template"?: string;
+  urlTemplate?: string;
 }
 /* eslint-disable */
 /**

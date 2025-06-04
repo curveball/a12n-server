@@ -5,21 +5,35 @@ import { App, User, Principal, AppClient } from '../types.ts';
 import * as privilegeService from '../privilege/service.ts';
 import * as services from '../services.ts';
 
-const whitelistPath = [
+/**
+ * Don't check or authenticate these paths.
+ *
+ * This is for public endpoints, or endpoints that handle auth on their own.
+ */
+const ignoreAuthPaths = [
   '/login',
   '/assets',
   '/health',
   '/register',
   '/authorize',
   '/authorization-challenge',
-  '/reset-password',
   '/token',
   '/introspect',
   '/revoke',
   '/.well-known/jwks.json',
   '/.well-known/oauth-authorization-server',
   '/.well-known/openid-configuration',
+
 ];
+
+/**
+ * List of paths that *may* support auth and provide enhanced functionality, but if
+ * no auth is provided they will not block.
+ */
+const optionalAuthPaths = [
+  '/reset-password',
+
+]
 
 declare module '@curveball/kernel' {
 
@@ -82,17 +96,23 @@ export default function(): Middleware {
 
   return async (ctx, next): Promise<void> => {
 
-    let inWhitelist = false;
-    for (const path of whitelistPath) {
+    let authOptional = false;
 
+    for (const path of ignoreAuthPaths) {
       if (ctx.path === path || ctx.path.startsWith(path + '/')) {
-        inWhitelist = true;
+        // Skip auth
+        return next();
+      }
+    }
+    for (const path of optionalAuthPaths) {
+      if (ctx.path === path || ctx.path.startsWith(path + '/')) {
+        authOptional = true;
         break;
       }
     }
 
 
-    if (!inWhitelist && ctx.request.headers.has('Authorization')) {
+    if (ctx.request.headers.has('Authorization')) {
       // We had an authorization header, lets validate it
       const authHeader = ctx.request.headers.get('Authorization')!;
 
@@ -135,7 +155,8 @@ export default function(): Middleware {
 
     }
 
-    if (inWhitelist) {
+    if (authOptional) {
+      // The user is not logged in, but this endpoint is optional.
       return next();
     }
 

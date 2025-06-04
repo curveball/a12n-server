@@ -33,7 +33,7 @@ const ignoreAuthPaths = [
 const optionalAuthPaths = [
   '/reset-password',
 
-]
+];
 
 declare module '@curveball/kernel' {
 

@@ -26,4 +26,5 @@ export type InternalPrivilege =
   | 'a12n:reset-password:request'
   | 'a12n:user:change-password'
   | 'a12n:user:manage-identities'
-  | 'a12n:user:read-auth-factors';
+  | 'a12n:user:read-auth-factors'
+  | 'a12n:verify-uri';

@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://curveballjs.org/schemas/a12nserver/verify-uri-validate.json",
+  "title": "verifyUriValidate",
+  "type": "object",
+  "properties": {
+    "uri": {
+      "type": "string",
+      "format": "uri",
+      "description": "The URI to verify"
+    },
+    "code": {
+      "type": "string",
+      "pattern": "^[0-9]{6}$",
+      "description": "The 6-digit verification code"
+    }
+  },
+  "required": ["uri", "code"],
+  "additionalProperties": false
+} 

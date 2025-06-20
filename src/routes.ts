@@ -65,6 +65,8 @@ import verificationTokenExchange from './verification-token/controller/exchange.
 import webAuthnRegistration from './mfa/webauthn/controller/registration.ts';
 import userAuthFactorCollection from './user-auth-factor/controller/collection.ts';
 import totpAddToUserController from './mfa/totp/controller/add-to-user.ts';
+import verifyUri from './uri-verification/controller/start.ts';
+import verifyUriValidate from './uri-verification/controller/validate.ts';
 import { fileURLToPath } from 'url';
 import { join } from 'path';
 
@@ -143,6 +145,9 @@ const routes = [
   router('/reset-password', resetPassword),
   router('/reset-password/token/:token', passwordToken),
   router('/reset-password/change-password', resetPasswordRedirect),
+
+  router('/verify-uri', verifyUri),
+  router('/verify-uri/validate', verifyUriValidate),
 
   router('/.well-known/jwks.json', jwks),
   router('/.well-known/oauth-authorization-server', oauth2Metadata),

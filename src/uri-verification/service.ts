@@ -120,4 +120,4 @@ function validateVerificationUri(uri: string): string {
     default:
       throw new BadRequest('Invalid verification URI. Only mailto and tel URIs are supported for verification at the moment, but we want to support your use-case! Let us know');
   }
-} 
+}

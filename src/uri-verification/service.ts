@@ -45,7 +45,7 @@ export async function sendVerificationRequest(uri: string, ip: string, name?: st
  */
 export async function sendOtpRequest(uri: string, ip: string, name?: string): Promise<void> {
   const validatedUri = validateVerificationUri(uri);
-  
+
   if (!validatedUri.startsWith('mailto:')) {
     throw new MethodNotAllowed('Only email URIs are supported for OTP currently. Make a feature request if you want to support other kinds of URIs');
   }
@@ -69,7 +69,7 @@ export async function sendOtpRequest(uri: string, ip: string, name?: string): Pr
  */
 export async function verifyCode(uri: string, code: string): Promise<boolean> {
   const validatedUri = validateVerificationUri(uri);
-  
+
   const storedCode = await kv.get<string>(verificationNS + validatedUri);
   // Delete code after, whether it was correct or not.
   await kv.del(verificationNS + validatedUri);
@@ -103,7 +103,7 @@ async function getCodeForUri(uri: string): Promise<string> {
  */
 function validateVerificationUri(uri: string): string {
   const uriObj = new URL(uri);
-  
+
   switch(uriObj.protocol) {
     case 'mailto:':
       if (/^[^@]+@[^@]+\.[^@]+$/.test(uriObj.pathname)) {
@@ -120,4 +120,4 @@ function validateVerificationUri(uri: string): string {
     default:
       throw new BadRequest('Invalid verification URI. Only mailto and tel URIs are supported for verification at the moment, but we want to support your use-case! Let us know');
   }
-} 
+}

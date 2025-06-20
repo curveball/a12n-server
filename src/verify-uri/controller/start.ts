@@ -1,7 +1,7 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { VerifyUriStart } from '../../api-types.ts';
-import * as uriVerification from '../../uri-verification/service.ts';
+import * as uriVerification from '../service.ts';
 import { verifyResponseForm, verifyUriForm } from '../formats/hal.ts';
 
 class VerifyUriStartController extends Controller {

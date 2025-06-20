@@ -2,7 +2,7 @@ import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { isHttpError } from '@curveball/http-errors';
 import { VerifyUriValidate } from '../../api-types.ts';
-import * as uriVerification from '../../uri-verification/service.ts';
+import * as uriVerification from '../service.ts';
 import { verifySuccess, verifyFail } from '../formats/hal.ts';
 
 class VerifyUriValidateController extends Controller {

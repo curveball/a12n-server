@@ -4,7 +4,7 @@ import { PrincipalIdentitiesRecord } from 'knex/types/tables.ts';
 import { NotFound, MethodNotAllowed, BadRequest } from '@curveball/http-errors';
 import { generatePublicId } from '../crypto.ts';
 import * as services from '../services.ts';
-import * as uriVerification from '../uri-verification/service.ts';
+import * as uriVerification from '../verify-uri/service.ts';
 
 export async function findByPrincipal(principal: Principal): Promise<PrincipalIdentity[]> {
 

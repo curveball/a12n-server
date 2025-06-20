@@ -18,6 +18,7 @@ import home from './home/controller.ts';
 import introspect from './introspect/controller.ts';
 import jwks from './jwks/controller.ts';
 import login from './login/controller/login.ts';
+import loginExperimental from './login/controller/login-experimental.ts';
 import loginMfa from './login/controller/mfa.ts';
 import loginWebAuthn from './mfa/webauthn/controller/login.ts';
 import logout from './logout/controller.ts';
@@ -92,6 +93,7 @@ const routes = [
   router('/authorization-challenge', oauth2ErrorHandler, oauth2AuthorizationChallenge),
 
   router('/login', login),
+  router('/login/experimental', loginExperimental),
   router('/login/mfa', loginMfa),
   router('/login/mfa/webauthn', loginWebAuthn),
   router('/logout', logout),

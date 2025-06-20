@@ -1,6 +1,15 @@
 Changelog
 =========
 
+0.31.4 (????-??-??)
+-------------------
+
+* Added a new API that lets consumers send and validate verification codes for
+  email addresses and phone numbers, without needing to associate those
+  identities to users. Sometimes it's helpful to have this check before
+  assigning it to a user as an 'unvalidated' identity.
+
+
 0.31.3 (2025-06-04)
 -------------------
 
@@ -10,7 +19,6 @@ Changelog
 
 
 0.31.2 (2025-05-27)
--------------------
 -------------------
 
 * Add `a12n:user:read-auth-factors` privilege for access to the `auth-factors`

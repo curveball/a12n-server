@@ -65,8 +65,8 @@ import verificationTokenExchange from './verification-token/controller/exchange.
 import webAuthnRegistration from './mfa/webauthn/controller/registration.ts';
 import userAuthFactorCollection from './user-auth-factor/controller/collection.ts';
 import totpAddToUserController from './mfa/totp/controller/add-to-user.ts';
-import verifyUri from './uri-verification/controller/start.ts';
-import verifyUriValidate from './uri-verification/controller/validate.ts';
+import verifyUri from './verify-uri/controller/start.ts';
+import verifyUriValidate from './verify-uri/controller/validate.ts';
 import { fileURLToPath } from 'url';
 import { join } from 'path';
 

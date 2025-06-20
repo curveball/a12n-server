@@ -28,7 +28,7 @@ export function verifyResponseForm(uri: string): HalResource {
       'verify-response': {
         method: 'POST',
         title: 'Enter verification code',
-        target: 'verify-uri/response',
+        target: '/verify-uri/response',
         properties: [
           {
             name: 'uri',

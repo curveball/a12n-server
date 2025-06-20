@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2019-09/schema",
+  "$id": "https://curveballjs.org/schemas/a12nserver/verify-uri-start.json",
+  "type": "object",
+  "title": "VerifyUriStart",
+  "description": "The request body for the verify-uri endpoint.",
+  "required": ["uri", "name"],
+  "additionalProperties": false,
+
+  "properties": {
+    "uri": {
+      "description": "The URI to verify. Currently only mailto: and tel: URIs are supported.",
+      "type": "string",
+      "format": "uri"
+    },
+    "name": {
+      "description": "The name to use in the verification message.",
+      "type": "string",
+      "minLength": 1
+    }
+  }
+} 

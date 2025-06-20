@@ -3,8 +3,10 @@ import knex, { insertAndGetId } from '../database.ts';
 import { PrincipalIdentitiesRecord } from 'knex/types/tables.ts';
 import { NotFound, MethodNotAllowed, BadRequest } from '@curveball/http-errors';
 import { generatePublicId } from '../crypto.ts';
+import { sendTemplatedMail } from '../mailer/service.ts';
 import * as services from '../services.ts';
-import * as uriVerification from '../uri-verification/service.ts';
+import { generateVerificationDigits } from '../crypto.ts';
+import { sendVerificationCode } from '../sms/service.ts';
 
 export async function findByPrincipal(principal: Principal): Promise<PrincipalIdentity[]> {
 
@@ -139,10 +141,37 @@ export async function sendVerificationRequest(identity: PrincipalIdentity, ip: s
     throw new MethodNotAllowed('Only mailto: and tel: identities can be verified currently. Make a feature request if you want to support other kinds of identities');
   }
 
-  await uriVerification.sendVerificationRequest(identity.uri, ip, identity.principal.nickname);
+  const uri = new URL(identity.uri);
+
+  switch(uri.protocol) {
+    case 'mailto:':
+      await sendTemplatedMail({
+        templateName: 'emails/verify-email',
+        to: uri.pathname,
+        subject: 'Verify your email',
+      }, {
+        code: await getCodeForIdentity(identity),
+        expireMinutes: CODE_LIFETIME_MINUTES,
+        name: identity.principal.nickname,
+        date: new Date().toISOString(),
+        ip,
+      });
+      break;
+
+    case 'tel:':
+      await sendVerificationCode(
+        uri.pathname,
+        await getCodeForIdentity(identity),
+      );
+      break;
+    default:
+      throw new MethodNotAllowed('Only mailto: and tel: identities can be verified currently. Make a feature request if you want to support other kinds of identities');
+
+  }
+
+
 
 }
-
 export async function sendOtpRequest(identity: PrincipalIdentity, ip: string): Promise<void> {
 
   if (!identity.uri.startsWith('mailto:')) {
@@ -152,14 +181,54 @@ export async function sendOtpRequest(identity: PrincipalIdentity, ip: string): P
     throw new MethodNotAllowed('This identity is not configured for mfa');
   }
 
-  await uriVerification.sendOtpRequest(identity.uri, ip, identity.principal.nickname);
+  await sendTemplatedMail({
+    templateName: 'emails/totp-email',
+    to: identity.uri.slice(7),
+    subject: 'Your login code',
+  }, {
+    code: await getCodeForIdentity(identity),
+    expireMinutes: CODE_LIFETIME_MINUTES,
+    name: identity.principal.nickname,
+    date: new Date().toISOString(),
+    ip,
+  });
 
 }
 
+const identityNS = 'a12n:identity-verification:';
+
 export async function verifyIdentity(identity: PrincipalIdentity, code: string): Promise<void> {
 
-  await uriVerification.verifyCode(identity.uri, code);
+  const storedCode = await services.kv.get(identityNS + identity.externalId);
+  // Delete code after, whether it was correct or not.
+  await services.kv.del(identityNS + identity.externalId);
+
+  if (storedCode === null) {
+    throw new BadRequest('Verification code incorrect or expired. Try restarting the verification process');
+  } else if (storedCode !== code) {
+    throw new BadRequest('Verification code incorrect');
+  }
+
   await markVerified(identity);
+
+}
+
+const CODE_LIFETIME_MINUTES = 30;
+
+/**
+ * Generates a secret code for an identity that may be used to validate ownership later.
+ *
+ * An identity will only have 1 active code.
+ */
+async function getCodeForIdentity(identity: PrincipalIdentity): Promise<string> {
+
+  const code = generateVerificationDigits();
+  await services.kv.set(
+    identityNS + identity.externalId,
+    code,
+    { ttl: CODE_LIFETIME_MINUTES * 60000 }
+  );
+  return code;
 
 }
 

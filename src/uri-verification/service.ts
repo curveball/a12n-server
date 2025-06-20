@@ -10,7 +10,7 @@ const verificationNS = 'a12n:uri-verification:';
 /**
  * Sends a verification code to the specified URI (email or phone)
  */
-export async function sendVerificationRequest(uri: string, ip: string, name?: string): Promise<void> {
+export async function sendVerificationRequest(uri: string, ip: string, name: string): Promise<void> {
   const validatedUri = validateVerificationUri(uri);
   const uriObj = new URL(validatedUri);
 
@@ -23,7 +23,7 @@ export async function sendVerificationRequest(uri: string, ip: string, name?: st
       }, {
         code: await getCodeForUri(validatedUri),
         expireMinutes: CODE_LIFETIME_MINUTES,
-        name: name || 'there',
+        name,
         date: new Date().toISOString(),
         ip,
       });
@@ -43,7 +43,7 @@ export async function sendVerificationRequest(uri: string, ip: string, name?: st
 /**
  * Sends an OTP code to the specified email URI
  */
-export async function sendOtpRequest(uri: string, ip: string, name?: string): Promise<void> {
+export async function sendOtpRequest(uri: string, ip: string, name: string): Promise<void> {
   const validatedUri = validateVerificationUri(uri);
 
   if (!validatedUri.startsWith('mailto:')) {
@@ -58,7 +58,7 @@ export async function sendOtpRequest(uri: string, ip: string, name?: string): Pr
   }, {
     code: await getCodeForUri(validatedUri),
     expireMinutes: CODE_LIFETIME_MINUTES,
-    name: name || 'there',
+    name: name,
     date: new Date().toISOString(),
     ip,
   });

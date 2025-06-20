@@ -28,4 +28,4 @@ class VerifyUriValidateController extends Controller {
 
 }
 
-export default new VerifyUriValidateController(); 
+export default new VerifyUriValidateController();

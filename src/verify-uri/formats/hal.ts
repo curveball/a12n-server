@@ -86,7 +86,7 @@ export function verifyFail(uri: string, err: HttpError, name?: string): HalResou
     title: 'Verification failed',
     description: err.message,
     uri: uri,
-    _templates: {     
+    _templates: {
       'verify-uri': verifyUriFormTemplate(name, uri),
     }
   };

@@ -14,4 +14,4 @@ export async function down(knex: Knex): Promise<void> {
     .delete()
     .whereIn('privileges', [privilege]);
 
-} 
+}

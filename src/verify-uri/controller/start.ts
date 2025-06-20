@@ -26,4 +26,4 @@ class VerifyUriStartController extends Controller {
 
 }
 
-export default new VerifyUriStartController(); 
+export default new VerifyUriStartController();

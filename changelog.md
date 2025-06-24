@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.31.4 (????-??-??)
+0.31.4 (2025-06-24)
 -------------------
 
 * Added a new API that lets consumers send and validate verification codes for

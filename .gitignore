@@ -30,3 +30,6 @@
 
 # Code formatters
 .prettierignore
+
+# Cursor
+/.cursor

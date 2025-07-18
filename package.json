@@ -72,7 +72,7 @@
     "csv-stringify": "^6.0.5",
     "db-errors": "^0.2.3",
     "debug": "^4.4.0",
-    "dotenv": "^16.0.3",
+    "dotenv": "^16.6.0",
     "geoip-lite": "^1.0.10",
     "handlebars": "^4.7.7",
     "jose": "^6.0.10",

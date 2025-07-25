@@ -51,7 +51,7 @@
     }
   ],
   "dependencies": {
-    "@aws-sdk/client-sns": "^3.806.0",
+    "@aws-sdk/client-sns": "^3.840.0",
     "@curveball/accesslog": "^1.0.0",
     "@curveball/bodyparser": "^1.0.0",
     "@curveball/browser": "^1.1.6",

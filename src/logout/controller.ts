@@ -1,7 +1,8 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
-import { logoutForm } from './formats/html.ts';
+import { clearSession } from '../login/utilities.ts';
 import * as oauth2Service from '../oauth2/service.ts';
+import { logoutForm } from './formats/html.ts';
 
 class LogoutController extends Controller {
 
@@ -21,14 +22,12 @@ class LogoutController extends Controller {
     await oauth2Service.invalidateTokensByBrowserSessionId(
       ctx.sessionId!
     );
-    ctx.session = {};
-    ctx.sessionId = null;
+    clearSession(ctx);
     ctx.status = 303;
     ctx.redirect(
       303,
       ctx.request.body.continue || '/'
     );
-
   }
 
 }

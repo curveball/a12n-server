@@ -289,7 +289,7 @@ export interface Home {
   stats: ServerStats;
 }
 /**
- * The statistics about about the server. (ie. users, groups, apps, privileges, tokens issued)
+ * The statistics about the server. (ie. users, groups, apps, privileges, tokens issued)
  */
 export interface ServerStats {
   /**

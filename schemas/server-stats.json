@@ -1,0 +1,38 @@
+{
+    "$schema": "https://json-schema.org/draft/2019-09/schema",
+    "$id": "https://curveballjs.org/schemas/a12nserver/server-stats.json",
+    "type": "object",
+    "title": "ServerStats",
+    "description": "This object contains statistics about the server.",
+    "required": [
+        "stats"
+    ],
+    "properties": {
+        "stats": {
+            "type": "object",
+            "description": "The statistics about the server.",
+            "properties": {
+                "user": {
+                    "type": "number",
+                    "description": "The number of users of the server."
+                },
+                "app": {
+                    "type": "number",
+                    "description": "The number of apps using the server."
+                },
+                "group": {
+                    "type": "number",
+                    "description": "The number of user groups on the server."
+                },
+                "privileges": {
+                    "type": "number",
+                    "description": "The number of privileges that can be assigned to users on the server."
+                },
+                "tokensIssued": {
+                    "type": "number",
+                    "description": "The number of tokens issued by the server."
+                }
+            }
+        }
+    }
+}

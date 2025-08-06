@@ -31,5 +31,6 @@
 # Code formatters
 .prettierignore
 
-# Cursor
+# IDEs
+.vscode
 /.cursor

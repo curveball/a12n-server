@@ -1,0 +1,24 @@
+{
+    "$schema": "https://json-schema.org/draft/2019-09/schema",
+    "$id": "https://curveballjs.org/schemas/a12nserver/home.json",
+    "type": "object",
+    "title": "Home",
+    "description": "This schema represents the information displayed on the home page of a12n-server.",
+    "required": [
+        "version",
+        "stats"
+    ],
+    "properties": {
+        "_links": {
+            "description": "HAL Links"
+        },
+        "version": {
+            "type": "string",
+            "description": "The version of the a12n-server package."
+        },
+        "stats": {
+            "$ref": "server-stats.json",
+            "description": "The statistics about about the server. (ie. users, groups, apps, privileges, tokens issued)"
+        }
+    }
+}

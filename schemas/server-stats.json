@@ -12,17 +12,17 @@
             "type": "object",
             "description": "The statistics about the server.",
             "properties": {
-                "users": {
+                "user": {
                     "type": "number",
                     "description": "The number of users of the server."
                 },
-                "groups": {
-                    "type": "number",
-                    "description": "The number of user groups on the server."
-                },
-                "apps": {
+                "app": {
                     "type": "number",
                     "description": "The number of apps using the server."
+                },
+                "group": {
+                    "type": "number",
+                    "description": "The number of user groups on the server."
                 },
                 "privileges": {
                     "type": "number",

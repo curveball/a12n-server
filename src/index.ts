@@ -6,5 +6,5 @@
 export { default as mainMw } from './main-mw.ts';
 export { load as init } from './server-settings.ts';
 import './db-types.ts';
-import './types.ts';
+export * from './types.ts';
 

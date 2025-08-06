@@ -299,15 +299,15 @@ export interface ServerStats {
     /**
      * The number of users of the server.
      */
-    users?: number;
-    /**
-     * The number of user groups on the server.
-     */
-    groups?: number;
+    user?: number;
     /**
      * The number of apps using the server.
      */
-    apps?: number;
+    app?: number;
+    /**
+     * The number of user groups on the server.
+     */
+    group?: number;
     /**
      * The number of privileges that can be assigned to users on the server.
      */
@@ -538,15 +538,15 @@ export interface ServerStats {
     /**
      * The number of users of the server.
      */
-    users?: number;
-    /**
-     * The number of user groups on the server.
-     */
-    groups?: number;
+    user?: number;
     /**
      * The number of apps using the server.
      */
-    apps?: number;
+    app?: number;
+    /**
+     * The number of user groups on the server.
+     */
+    group?: number;
     /**
      * The number of privileges that can be assigned to users on the server.
      */

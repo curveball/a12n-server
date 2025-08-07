@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.31.5 (????-??-??)
+0.31.5 (2025-08-07)
 -------------------
 
 * Add JSON schema for home document. (@usrrname)

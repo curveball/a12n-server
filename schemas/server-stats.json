@@ -11,14 +11,21 @@
         "stats": {
             "type": "object",
             "description": "The statistics about the server.",
+            "required": [
+                "user",
+                "app",
+                "group",
+                "privileges",
+                "tokensIssued"
+            ],
             "properties": {
                 "user": {
                     "type": "number",
-                    "description": "The number of users of the server."
+                    "description": "Total number of users."
                 },
                 "app": {
                     "type": "number",
-                    "description": "The number of apps using the server."
+                    "description": "Total number of registered apps."
                 },
                 "group": {
                     "type": "number",
@@ -26,7 +33,7 @@
                 },
                 "privileges": {
                     "type": "number",
-                    "description": "The number of privileges that can be assigned to users on the server."
+                    "description": "The number of privilege-types."
                 },
                 "tokensIssued": {
                     "type": "number",

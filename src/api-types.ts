@@ -297,25 +297,25 @@ export interface ServerStats {
    */
   stats: {
     /**
-     * The number of users of the server.
+     * Total number of users.
      */
-    user?: number;
+    user: number;
     /**
-     * The number of apps using the server.
+     * Total number of registered apps.
      */
-    app?: number;
+    app: number;
     /**
      * The number of user groups on the server.
      */
-    group?: number;
+    group: number;
     /**
-     * The number of privileges that can be assigned to users on the server.
+     * The number of privilege-types.
      */
-    privileges?: number;
+    privileges: number;
     /**
      * The number of tokens issued by the server.
      */
-    tokensIssued?: number;
+    tokensIssued: number;
   };
 }
 /* eslint-disable */
@@ -536,25 +536,25 @@ export interface ServerStats {
    */
   stats: {
     /**
-     * The number of users of the server.
+     * Total number of users.
      */
-    user?: number;
+    user: number;
     /**
-     * The number of apps using the server.
+     * Total number of registered apps.
      */
-    app?: number;
+    app: number;
     /**
      * The number of user groups on the server.
      */
-    group?: number;
+    group: number;
     /**
-     * The number of privileges that can be assigned to users on the server.
+     * The number of privilege-types.
      */
-    privileges?: number;
+    privileges: number;
     /**
      * The number of tokens issued by the server.
      */
-    tokensIssued?: number;
+    tokensIssued: number;
   };
 }
 /* eslint-disable */

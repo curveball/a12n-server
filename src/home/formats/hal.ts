@@ -77,6 +77,11 @@ export default (version: string, authenticatedUser: Principal, isAdmin: boolean,
           title: 'Server settings',
         },
       },
+
+      describedby: {
+        href: 'https://curveballjs.org/schemas/a12nserver/home.json',
+        type: 'application/schema+json',
+      },
     },
     version: version,
     stats

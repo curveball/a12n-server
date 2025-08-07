@@ -42,7 +42,9 @@ jobs:
       matrix:
         node-version: ['18.x', '20.x', '22.x']
         db-driver: ['mysql', 'postgres', 'sqlite3']
+      fail-fast: false
     needs: build
+    
     services:
       mysql:
         image: mysql

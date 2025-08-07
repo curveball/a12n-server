@@ -7,7 +7,8 @@
 export { default as mainMw } from './main-mw.ts';
 export { load as init } from './server-settings.ts';
 
-/** db-types and src/types are internal to this project */
+// db-types.ts registers its types globally and is not explicitly
+// imported by other files. This ensures that Typescript doesn't miss these.
 import './db-types.ts';
 
 /** contract types */

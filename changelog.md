@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.31.6 (????-??-??)
+0.31.6 (2025-08-12)
 -------------------
 
 * Export all types from api-types.ts. (@usrrname)

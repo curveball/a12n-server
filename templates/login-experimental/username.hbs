@@ -1,0 +1,32 @@
+<form action="{{ action }}" method="post">
+  
+  {{# if msg}}
+  <div class="msg info">{{ msg }}</div>
+  {{/if}}
+  {{# if error}}
+  <div class="msg error">{{ error }}</div>
+  {{/if}}
+  <fieldset>
+    <label for="username">
+      <span>Email</span>
+      <input type="email" name="username" id="username" required autofocus placeholder="Enter email address" autocomplete="username" />
+    </label>
+    <input type="password" name="password" id="password" autocomplete="current-password" class="hidden" />
+
+  </fieldset>
+  <fieldset>
+    <label>
+      <button type="submit">Login</button>
+    </label>
+    <p class="form-options">
+    {{#if registrationEnabled}}
+      <a href="{{ registrationUri }}">Register</a>
+    {{/if}}
+      <a href="{{ resetPasswordUri }}">Forgot Password</a>
+    </p>
+  </fieldset>
+
+  {{#each hiddenFields}}
+    <input type="hidden" name="{{@key}}" value="{{this}}" />
+  {{/each}}
+</form>

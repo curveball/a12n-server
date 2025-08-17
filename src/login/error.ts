@@ -1,7 +1,7 @@
 import { OAuth2Error } from '../oauth2/errors.ts';
 import { LoginSession } from './types.ts';
 
-type ChallengeErrorCode =
+export type ChallengeErrorCode =
   // Account is not activated
   | 'account_not_active'
   // The principal associated with the credentials is not a user.
@@ -27,7 +27,9 @@ type ChallengeErrorCode =
   // Email verification expired and the user must enter a OTP to continue
   | 'email_verification_code_invalid'
   // User tried to log in with an incorrect password one too many times.
-  | 'too_many_failed_login_attempts';
+  | 'too_many_failed_login_attempts'
+  // Some internal error that's probably a bug.
+  | 'unknown_error';
 
 type ExtraParams = {
   censored_email?: string;

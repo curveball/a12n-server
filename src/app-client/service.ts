@@ -10,6 +10,12 @@ import { InvalidRequest } from '../oauth2/errors.ts';
 import parseBasicAuth from './parse-basic-auth.ts';
 import { App, GrantType, AppClient } from '../types.ts';
 
+
+/**
+ * Find a client by it's public 'client_id'
+ *
+ * This usually refers to the OAuth2 client_id.
+ */
 export async function findByClientId(clientId: string): Promise<AppClient> {
 
   const result = await db('app_clients')
@@ -28,6 +34,12 @@ export async function findByClientId(clientId: string): Promise<AppClient> {
     throw new Error(`App ${app.nickname} is not active`);
   }
   return mapRecordToModel(record, app);
+
+}
+
+export async function findSystemClient(): Promise<AppClient> {
+
+  return findByClientId('$system');
 
 }
 

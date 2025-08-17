@@ -50,15 +50,18 @@ async function startLoginSession(client: AppClient, scope?: string[]): Promise<L
 
   const id: string = await generateSecretToken();
 
-  return {
+  const session: LoginSession = {
     authSession: id,
     appClientId: client.id,
     expiresAt: Math.floor(Date.now() / 1000) + LOGIN_SESSION_EXPIRY,
     principalId: null,
     principalIdentityId: null,
+    username: null,
     challengesCompleted: [],
     scope,
   };
+  await storeSession(session);
+  return session;
 
 }
 
@@ -93,6 +96,9 @@ export async function challenge(client: AppClient, session: LoginSession, parame
     );
     session.principalId = principal.id;
     session.principalIdentityId = identity.id;
+    if (parameters.username) {
+      session.username = parameters.username;
+    }
 
     if (logSessionStart) log('login-challenge-started');
 

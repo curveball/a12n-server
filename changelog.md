@@ -7,6 +7,7 @@ Changelog
 * More useful output from the 'privilege-search' endpoint, now grouping by
   principal.
 * Fix a bad earlier migration that messed up a12n privilege descriptions.
+* Return a 201 when creating a new principal identity.
 
 
 0.31.6 (2025-08-12)

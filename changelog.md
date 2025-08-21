@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.31.7 (????-??-??)
+-------------------
+
+* More useful output from the 'privilege-search' endpoint, now grouping by
+  principal.
+
+
 0.31.6 (2025-08-12)
 -------------------
 

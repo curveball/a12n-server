@@ -39,13 +39,13 @@ export function item(privilege: Privilege): HalResource {
 
 export function search(resource: string, privileges: PrivilegeEntry[]): HalResource {
 
-  const groupedPrivileges = privileges.reduce((acc, privilege) => {
+  const groupedPrivileges: Record<string, string[]> = privileges.reduce((acc: Record<string, string[]>, privilege) => {
     if (!acc[privilege.principal.href]) {
       acc[privilege.principal.href] = [];
     }
     acc[privilege.principal.href].push(privilege.privilege);
     return acc;
-  }, {} as Record<string, string[]>);
+  }, {});
 
   return {
     _links: {

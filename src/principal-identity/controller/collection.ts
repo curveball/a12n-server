@@ -31,7 +31,7 @@ class PrincipalIdentityCollection extends Controller {
     const principalService = new services.principal.PrincipalService(ctx.privileges);
     const principal = await principalService.findByExternalId(ctx.params.id, 'user');
 
-    await services.principalIdentity.create({
+    const identity = await services.principalIdentity.create({
       uri: ctx.request.body.uri,
       principal: principal,
       isPrimary: false,
@@ -39,6 +39,9 @@ class PrincipalIdentityCollection extends Controller {
       label: ctx.request.body.label ? ctx.request.body.label : null,
       markVerified: false,
     });
+
+    ctx.response.status = 201;
+    ctx.response.headers.set('Location', identity.href);
 
   }
 

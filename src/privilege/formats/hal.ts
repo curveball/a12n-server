@@ -39,6 +39,14 @@ export function item(privilege: Privilege): HalResource {
 
 export function search(resource: string, privileges: PrivilegeEntry[]): HalResource {
 
+  const groupedPrivileges = privileges.reduce((acc, privilege) => {
+    if (!acc[privilege.principal.href]) {
+      acc[privilege.principal.href] = [];
+    }
+    acc[privilege.principal.href].push(privilege.privilege);
+    return acc;
+  }, {} as Record<string, string[]>);
+
   return {
     _links: {
       self: {
@@ -48,7 +56,11 @@ export function search(resource: string, privileges: PrivilegeEntry[]): HalResou
       about: {
         href: resource,
       },
+      principal: Object.keys(groupedPrivileges).map(principalHref => ({
+        href: principalHref,
+      })),
     },
+    groupedPrivileges,
     privileges: privileges.map( privilege => ({
       principal: privilege.principal.href,
       privilege: privilege.privilege,

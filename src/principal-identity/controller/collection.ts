@@ -42,6 +42,10 @@ class PrincipalIdentityCollection extends Controller {
 
     ctx.response.status = 201;
     ctx.response.headers.set('Location', identity.href);
+    ctx.response.body = hal.item(
+      principal,
+      identity,
+    );
 
   }
 

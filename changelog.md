@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.31.7 (????-??-??)
+0.31.7 (2025-08-21)
 -------------------
 
 * More useful output from the 'privilege-search' endpoint, now grouping by

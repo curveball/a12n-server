@@ -6,6 +6,7 @@ Changelog
 
 * More useful output from the 'privilege-search' endpoint, now grouping by
   principal.
+* Fix a bad earlier migration that messed up a12n privilege descriptions.
 
 
 0.31.6 (2025-08-12)

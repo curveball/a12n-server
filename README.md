@@ -1,11 +1,26 @@
 `@curveball/a12n-server`: A simple authentication server
 ==================
-<span style="display: flex; justify-content: start; padding: 0 0.5rem;">
 
-[![Tests](https://github.com/curveball/a12n-server/actions/workflows/test.yml/badge.svg)](https://github.com/curveball/a12n-server/actions/workflows/test.yml) [![Docker build](https://github.com/curveball/a12n-server/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/curveball/a12n-server/actions/workflows/docker-publish.yml) [![NPM build](https://github.com/curveball/a12n-server/actions/workflows/npm-publish.yml/badge.svg)](https://github.com/curveball/a12n-server/actions/workflows/npm-publish.yml)
+Project status update
+---------------------
+
+This project is being retired. I'm keeping this repository online so security bugs can be fixed, but
+new projects should no longer rely on this.
+
+When this project was created at the time, the space wasn't quite as crowded as it is now, and this
+project never hit a level of popularity of contributions to justify continuing to work on this.
+
+If you were a user or contributor in the past, thank you for your support! I hope you're not too
+frustrated by this decision.
+
+If you are looking for a similar project, I recommend checking out [Keycloak](https://www.keycloak.org/),
+which is a very mature and feature-rich authentication server. The [OAuth2 website also has a list of
+implementations](https://oauth.net/code/).
 
 
-</span>
+Intro
+-----
+
 
 *a12n* is short for "authentication".
 

@@ -1,6 +1,3 @@
-`@curveball/a12n-server`: A simple authentication server
-==================
-
 Project status update
 ---------------------
 

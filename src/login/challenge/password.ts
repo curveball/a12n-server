@@ -81,7 +81,7 @@ export class LoginChallengePassword extends AbstractLoginChallenge<PasswordParam
   challenge(): never {
 
     throw new A12nLoginChallengeError(
-      'A username and password are required',
+      'A password is required',
       'password_required',
     );
 

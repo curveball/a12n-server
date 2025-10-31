@@ -54,7 +54,7 @@ class TokenController extends Controller {
       case 'password' :
         return this.password(oauth2Client, ctx);
       case 'refresh_token' :
-        return this.refreshToken(oauth2Client, ctx);
+        return this.refreshToken(oauth2Client, ctx, secretUsed);
     }
 
   }
@@ -172,7 +172,7 @@ class TokenController extends Controller {
 
   }
 
-  async refreshToken(oauth2Client: AppClient, ctx: Context<any>) {
+  async refreshToken(oauth2Client: AppClient, ctx: Context<any>, secretUsed: boolean) {
 
     if (!ctx.request.body.refresh_token) {
       throw new InvalidRequest('The "refresh_token" property is required');
@@ -180,7 +180,8 @@ class TokenController extends Controller {
 
     const token = await oauth2Service.generateTokenFromRefreshToken(
       oauth2Client,
-      ctx.request.body.refresh_token
+      ctx.request.body.refresh_token,
+      secretUsed
     );
 
     ctx.response.type = 'application/json';

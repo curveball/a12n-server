@@ -388,7 +388,11 @@ export function validatePKCE(codeVerifier: string|undefined, codeChallenge: stri
  * By specifying a refresh token, a new access/refresh token pair gets
  * returned. This also expires the old token.
  */
-export async function generateTokenFromRefreshToken(client: AppClient, refreshToken: string): Promise<OAuth2Token> {
+export async function generateTokenFromRefreshToken(
+  client: AppClient,
+  refreshToken: string,
+  secretUsedNow: boolean
+): Promise<OAuth2Token> {
 
   let oldToken: OAuth2Token;
   try {
@@ -405,6 +409,8 @@ export async function generateTokenFromRefreshToken(client: AppClient, refreshTo
     throw new UnauthorizedClient('The client_id associated with the refresh did not match with the authenticated client credentials');
   }
 
+  ensureRefreshSecretRequirement(oldToken.secretUsed, secretUsedNow);
+
   await revokeToken(oldToken);
 
   return generateTokenInternal({
@@ -415,6 +421,12 @@ export async function generateTokenFromRefreshToken(client: AppClient, refreshTo
     secretUsed: oldToken.secretUsed,
   });
 
+}
+
+export function ensureRefreshSecretRequirement(originalSecretUsed: boolean, secretUsedNow: boolean): void {
+  if (originalSecretUsed && !secretUsedNow) {
+    throw new InvalidGrant('Client authentication is required to refresh this token');
+  }
 }
 
 export async function revokeByAccessRefreshToken(client: AppClient, token: string): Promise<void> {

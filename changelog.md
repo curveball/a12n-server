@@ -1,6 +1,12 @@
 Changelog
 =========
 
+0.31.8 (????-??-??)
+-------------------
+
+* .env files are now created with filemode 0600. (reported by @kta1kri)
+
+
 0.31.7 (2025-08-21)
 -------------------
 

@@ -1,5 +1,5 @@
 # Stage 1: build
-FROM node:20-alpine AS build-stage
+FROM node:24-alpine AS build-stage
 WORKDIR /opt/app
 
 COPY package.json package.json Makefile tsconfig.json ./
@@ -15,7 +15,7 @@ RUN npm i --environment=dev && npx tsc && npm prune --production && rm -r src/
 RUN rm -r node_modules/geoip-lite/data/*city*
 
 # Stage 2: run!
-FROM node:20-alpine
+FROM node:24-alpine
 LABEL org.opencontainers.image.source https://github.com/curveball/a12n-server
 
 

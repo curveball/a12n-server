@@ -73,7 +73,7 @@
     "db-errors": "^0.2.3",
     "debug": "^4.4.0",
     "dotenv": "^16.0.3",
-    "geoip-lite": "^1.0.10",
+    "geoip-lite": "^2.0.3",
     "handlebars": "^4.7.7",
     "jose": "^6.0.10",
     "knex": "^3.0.1",
@@ -95,7 +95,7 @@
     "@types/bcrypt": "^5.0.0",
     "@types/eff-diceware-passphrase": "^3.0.2",
     "@types/geoip-lite": "^1.4.1",
-    "@types/node": "^18.19.39",
+    "@types/node": "^24.19.0",
     "@types/nodemailer": "^6.4.1",
     "@types/qrcode": "^1.4.0",
     "hal-types": "^2.0.0",
@@ -107,7 +107,7 @@
     "typescript-eslint": "^8.13.0"
   },
   "engines": {
-    "node": ">= 18"
+    "node": ">= 24"
   },
   "types": "dist/",
   "allowScripts": {

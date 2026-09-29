@@ -77,19 +77,20 @@ class LoginController extends Controller {
       return this.redirectToLogin(ctx, '', 'This identity has not been verified');
     }
 
-    if (await this.shouldMfaRedirect(ctx, user)) {
-      return;
-    }
-
     try {
       await services.user.validateUserCredentials(user, ctx.request.body.password, log);
     } catch (err) {
+      console.log(err);
       if (err instanceof IncorrectPassword || err instanceof TooManyLoginAttemptsError) {
         return this.redirectToLogin(ctx, '', err.message);
       } else {
         throw err;
       }
     }
+    if (await this.shouldMfaRedirect(ctx, user)) {
+      return;
+    }
+
 
     setLoginSession(ctx, user);
     await log('login-success');

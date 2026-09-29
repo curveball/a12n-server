@@ -27,7 +27,7 @@ jobs:
         os: [ubuntu-latest, ubuntu-24.04-arm]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - name: docker build
         run: docker build . --file Dockerfile
 
@@ -41,7 +41,7 @@ jobs:
     if: github.event_name == 'push'
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Build image
         run: docker build . --file Dockerfile --tag $GH_IMAGE_NAME

@@ -21,7 +21,7 @@ if (!isConfigured()) {
 
   dotEnvSource = dotEnvSource.replace(/#\sJWT_PRIVATE_KEY=.*/, `JWT_PRIVATE_KEY="${privateKey}"`);
 
-  fs.writeFileSync('.env', dotEnvSource);
+  fs.writeFileSync('.env', dotEnvSource, { mode: 0o600 });
 
   // Reloading .env
   dotenv.config();

@@ -1,6 +1,4 @@
-import { resolve } from 'url';
 import { User, PrincipalIdentity } from '../../types.ts';
-import { getGlobalOrigin } from '@curveball/kernel';
 
 type UserInfo = {
   sub: string;
@@ -43,10 +41,9 @@ export function userInfo(user: User, identities: PrincipalIdentity[]): UserInfo 
     }
   }
 
-  const origin = getGlobalOrigin();
-
   const result: UserInfo = {
-    sub: resolve(origin, user.href),
+    // Must be identical to the 'sub' claim in the id_token.
+    sub: user.href,
     name: user.nickname,
     updated_at: Math.floor(user.modifiedAt.getTime() / 1000 ),
   };

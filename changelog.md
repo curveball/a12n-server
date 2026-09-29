@@ -10,6 +10,11 @@ Changelog
   validated before MFA. (reported by @dorakemon)
 * .env files are now created with filemode 0600. (reported by @kta1kri)
 * Testing Node 24.x, Node 26.x
+* #704: The `sub` returned by the OIDC userinfo endpoint was an absolute URL,
+  but the `sub` in the id_token was a relative path. OIDC requires these to be
+  identical, which caused strict clients such as Backstage to reject the login.
+  Userinfo now returns the same relative path as the id_token. (reported by
+  @mauricioscastro)
 * Updated dependencies, several of which with critical security issues.
 * Fixed WebAuthn registration storing the credential ID and public key in each
   other's columns, which meant WebAuthn login never worked. Existing WebAuthn

@@ -5,7 +5,7 @@ import { generateRegistrationOptions, verifyRegistrationResponse } from '@simple
 import * as webAuthnService from '../service.ts';
 import { getSetting } from '../../../server-settings.ts';
 import { User } from '../../../types.ts';
-import { isoBase64URL, isoUint8Array } from '@simplewebauthn/server/helpers';
+import { isoUint8Array } from '@simplewebauthn/server/helpers';
 
 
 class WebAuthnAttestationController extends Controller {
@@ -15,14 +15,13 @@ class WebAuthnAttestationController extends Controller {
 
     const registrationOptions = await generateRegistrationOptions({
       rpName: getSetting('webauthn.serviceName'),
-      rpID: getSetting('webauthn.relyingPartyId') || new URL(ctx.request.origin).host,
+      rpID: getSetting('webauthn.relyingPartyId') || new URL(ctx.request.origin).hostname,
       userID: isoUint8Array.fromUTF8String(user.id.toString()),
       userName: user.href,
       userDisplayName: user.nickname,
       timeout: 60000,
-      attestationType: 'indirect',
       excludeCredentials: (await webAuthnService.findDevicesByUser(user)).map(device => ({
-        id: isoBase64URL.fromBuffer(device.credentialID),
+        id: device.credentialID,
         type: 'public-key',
       })),
       /**
@@ -53,7 +52,7 @@ class WebAuthnAttestationController extends Controller {
         response: body,
         expectedChallenge,
         expectedOrigin: getSetting('webauthn.expectedOrigin') || ctx.request.origin,
-        expectedRPID: getSetting('webauthn.relyingPartyId') || new URL(ctx.request.origin).host,
+        expectedRPID: getSetting('webauthn.relyingPartyId') || new URL(ctx.request.origin).hostname,
       });
     } catch (error: any) {
       /* eslint-disable-next-line no-console */
@@ -66,16 +65,16 @@ class WebAuthnAttestationController extends Controller {
     const { verified, registrationInfo } = verification;
 
     if (verified) {
-      const { credentialPublicKey, credentialID, counter } = registrationInfo!;
+      const { credential } = registrationInfo!;
 
-      const existingDevice = (await webAuthnService.findDevicesByUser(user)).find(device => device.credentialID.toString() === credentialID);
+      const existingDevice = (await webAuthnService.findDevicesByUser(user)).find(device => device.credentialID === credential.id);
 
       if (!existingDevice) {
         await webAuthnService.save({
           user,
-          credentialID: credentialPublicKey,
-          publicKey: isoUint8Array.fromUTF8String(credentialID),
-          counter,
+          credentialID: credential.id,
+          publicKey: credential.publicKey,
+          counter: credential.counter,
         });
 
         ctx.session.registerUser = null;

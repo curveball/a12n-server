@@ -27,7 +27,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
     let attResp;
     try {
-      attResp = await startRegistration(jsonResponse);
+      attResp = await startRegistration({ optionsJSON: jsonResponse });
     } catch (error) {
       let errorText;
       if (error.name === 'InvalidStateError') {
@@ -58,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function(){
 
     let asseResp;
     try {
-      asseResp = await startAuthentication(jsonResponse);
+      asseResp = await startAuthentication({ optionsJSON: jsonResponse });
     } catch (error) {
       handleError(error, elemBeginLogin);
     }

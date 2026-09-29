@@ -1,7 +1,6 @@
 import Controller from '@curveball/controller';
 import { Context } from '@curveball/core';
 import { generateAuthenticationOptions, verifyAuthenticationResponse } from '@simplewebauthn/server';
-import { isoBase64URL } from '@simplewebauthn/server/helpers';
 
 import { getLoggerFromContext } from '../../../log/service.ts';
 import { getSetting } from '../../../server-settings.ts';
@@ -14,11 +13,11 @@ class WebAuthnLoginRequestController extends Controller {
   async get(ctx: Context) {
     const { user }: MFALoginSession = ctx.session.mfa || {};
 
-    const rpID = getSetting('webauthn.relyingPartyId')!;
+    const rpID = getSetting('webauthn.relyingPartyId') || new URL(ctx.request.origin).hostname;
     const authenticationOptions = await generateAuthenticationOptions({
       timeout: 60000,
       allowCredentials: (await webauthnService.findDevicesByUser(user)).map(device => ({
-        id: isoBase64URL.fromBuffer(device.credentialID),
+        id: device.credentialID,
         type: 'public-key',
 
       })),
@@ -50,11 +49,11 @@ class WebAuthnLoginRequestController extends Controller {
         response: body,
         expectedChallenge,
         expectedOrigin: getSetting('webauthn.expectedOrigin') || ctx.request.origin,
-        expectedRPID: getSetting('webauthn.relyingPartyId') || ctx.request.origin,
-        authenticator: {
-          credentialID: isoBase64URL.fromBuffer(authenticatorDevice.credentialID),
+        expectedRPID: getSetting('webauthn.relyingPartyId') || new URL(ctx.request.origin).hostname,
+        credential: {
+          id: authenticatorDevice.credentialID,
+          publicKey: authenticatorDevice.publicKey,
           counter: authenticatorDevice.counter,
-          credentialPublicKey: authenticatorDevice.publicKey,
         }
       });
     } catch (error: any) {

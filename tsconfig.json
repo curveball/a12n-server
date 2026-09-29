@@ -6,6 +6,7 @@
         "strict": true,
         "noFallthroughCasesInSwitch": true,
         "noUnusedLocals": true,
+        "skipLibCheck": true,
 
         "resolveJsonModule": true,
 

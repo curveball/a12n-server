@@ -77,10 +77,6 @@ class LoginController extends Controller {
       return this.redirectToLogin(ctx, '', 'This identity has not been verified');
     }
 
-    if (await this.shouldMfaRedirect(ctx, user)) {
-      return;
-    }
-
     try {
       await services.user.validateUserCredentials(user, ctx.request.body.password, log);
     } catch (err) {
@@ -89,6 +85,13 @@ class LoginController extends Controller {
       } else {
         throw err;
       }
+    }
+
+    // MFA must only happen after the password was validated. The MFA step
+    // completes the login on its own, so redirecting earlier would let users
+    // skip the password entirely.
+    if (await this.shouldMfaRedirect(ctx, user)) {
+      return;
     }
 
     setLoginSession(ctx, user);

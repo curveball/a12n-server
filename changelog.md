@@ -8,6 +8,26 @@ Changelog
 * .env files are now created with filemode 0600. (reported by @kta1kri)
 * Testing Node 24.x, Node 26.x
 * Updated dependencies, several of which with critical security issues.
+* Fixed WebAuthn registration storing the credential ID and public key in each
+  other's columns, which meant WebAuthn login never worked. Existing WebAuthn
+  devices need to be registered again.
+* Fixed WebAuthn using an invalid relying party ID when
+  `webauthn.relyingPartyId` was not set.
+* Updated nodemailer from 7 to 10, to fix 14 security vulnerabilities including
+  SMTP command injection, header injection, arbitrary file read and credential
+  disclosure (GHSA-c7w3-x93f-qmm8, GHSA-vvjj-xcjg-gr5g, GHSA-p6gq-j5cr-w38f,
+  GHSA-6vj9-mwq6-2f5v, and others).
+* Updated sqlite3 from 5 to 6. This removes a vulnerable version of tar
+  (critical) from the install tree (GHSA-34x7-hfp2-rc4v, GHSA-8qq5-rm4j-mr97,
+  GHSA-23hp-3jrh-7fpw, and others).
+* Updated geoip-lite from 1 to 2, to fix SSRF and XSS vulnerabilities in
+  ip-address (GHSA-mwp4-54f8-5fhr, GHSA-rpw4-54j3-4h4q, GHSA-v2v4-37r5-5v8g).
+* Updated @simplewebauthn/server from 10 to 14, to fix insufficient attestation
+  certificate chain validation (GHSA-6hxq-p678-4hr2).
+* Updated @curveball/browser to 1.2.1, to fix a prototype pollution
+  vulnerability in csv-parse (GHSA-8cw4-87c7-c6xx).
+* Updated @curveball/router from 2 to 3, to fix two denial of service
+  vulnerabilities in path-to-regexp (GHSA-j3q9-mxjg-w52f, GHSA-27v5-c462-wpq7).
 
 
 0.31.7 (2025-08-21)

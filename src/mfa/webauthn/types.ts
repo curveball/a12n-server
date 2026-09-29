@@ -1,10 +1,11 @@
+import type { Base64URLString } from '@simplewebauthn/server';
 import { User } from '../../types.ts';
 
 export type WebAuthnDevice = {
     id: number;
     user: User;
-    credentialID: Uint8Array;
-    publicKey: Uint8Array;
+    credentialID: Base64URLString;
+    publicKey: Uint8Array<ArrayBuffer>;
     counter: number;
 }
 

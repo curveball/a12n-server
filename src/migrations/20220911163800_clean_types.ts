@@ -5,7 +5,7 @@ export async function up(knex: Knex): Promise<void> {
     table
       .string('secret').notNullable().alter();
   });
-  switch(knex().client.driverName) {
+  switch(knex.client.driverName) {
     case 'mysql' :
     case 'mysql2' :
       await knex.raw('ALTER TABLE oauth2_tokens CHANGE access_token access_token VARCHAR(2000) CHARACTER SET ascii NOT NULL');

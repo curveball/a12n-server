@@ -1,11 +1,13 @@
 Changelog
 =========
 
-0.31.8 (????-??-??)
+0.32.0 (????-??-??)
 -------------------
 
+* BC Break: Node 24 is now the minimum supported version.
 * .env files are now created with filemode 0600. (reported by @kta1kri)
 * Testing Node 24.x, Node 26.x
+* Updated dependencies, several of which with critical security issues.
 
 
 0.31.7 (2025-08-21)

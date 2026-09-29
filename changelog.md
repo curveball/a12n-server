@@ -1,7 +1,7 @@
 Changelog
 =========
 
-0.32.0 (????-??-??)
+0.32.0 (2026-09-29)
 -------------------
 
 * BC Break: Node 24 is now the minimum supported version.

@@ -5,6 +5,9 @@ Changelog
 -------------------
 
 * BC Break: Node 24 is now the minimum supported version.
+* Security: Users with TOTP or WebAuthn MFA could log in with an incorrect
+  password, as long as they completed the MFA step. The password is now
+  validated before MFA. (reported by @dorakemon)
 * .env files are now created with filemode 0600. (reported by @kta1kri)
 * Testing Node 24.x, Node 26.x
 * Updated dependencies, several of which with critical security issues.
